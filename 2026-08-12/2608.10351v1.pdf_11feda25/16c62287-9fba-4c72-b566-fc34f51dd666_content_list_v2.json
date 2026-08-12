@@ -1,0 +1,2732 @@
+[
+    [
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Accelerated Learning of High Dimensional Functions with a Tensor-Featured Training Network"
+                    }
+                ],
+                "level": 1
+            },
+            "bbox": [
+                86,
+                61,
+                918,
+                98
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Karl Pierce<sup>†</sup>, Yuehaw Khoo<sup>∗</sup>, and Haizhao Yang<sup>†</sup>"
+                    }
+                ]
+            },
+            "bbox": [
+                313,
+                113,
+                687,
+                128
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>†</sup> The University of Maryland, College Park, College Park MD 20742 USA and"
+                    }
+                ]
+            },
+            "bbox": [
+                230,
+                127,
+                776,
+                142
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "∗ The University of Chicago, Chicago, IL 60637 USA"
+                    }
+                ]
+            },
+            "bbox": [
+                315,
+                141,
+                691,
+                155
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "(Dated: August 12, 2026)"
+                    }
+                ]
+            },
+            "bbox": [
+                413,
+                155,
+                589,
+                169
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this work we present a method to accelerate the optimization of learning high dimensional functions using deep neural network (DNN). This optimization procedure introduces contextual features into the first layer of a DNN. The parameters of DNN are optimized via standard gradient descent while keeping the input-feature basis fixed. After optimization of the DNN parameters, the feature layer is provided a chance to update and change before DNN optimization resumes. The feature layer has two types of functions: those that can be evaluated quickly in a matrix-free way on the domain (i.e. rank-1 features) and more complex features that must first be decomposed using tensor network (TN) decomposition strategies (tensor features). In particular, we study the efect of adding features which distill pretrained DNN into TNs using a discretize and decompose strategy. To eficiently decompose high-dimensional functions constructed from discretized DNN, we leverage a randomized tensor decomposition strategy. Using randomization, we are able to reduce the storage cost of decomposing high dimensional functions by at least 8 orders of magnitude. Using this approach, we are able to eficiently train models between 5 and 40 dimensions."
+                    }
+                ]
+            },
+            "bbox": [
+                171,
+                175,
+                831,
+                349
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "I. Introduction"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                436,
+                375,
+                566,
+                388
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Methods to interpolate continuous functions and solve partial diferential equations (PDEs) computationally are an interesting and on-going challenge in scientific computing. Canonical methods to represent continuous functions have require users to construct nontrivial grid-based meshes or introduce complicated numerical techniques. Not only are these strategies complicated from an implementation standpoint, but they can also require large amounts of computational resources. Grid-based strategies, in particular, sufer from the curse of dimensionality which states that the cost of storing and accessing elements of a multidimensional array grows exponentially with the number of dimensions in the array. As a means to break the curse of dimensionality and solve large and high-dimensiona problems scientific machine learning (ML) has recently emerged.[1, 2]"
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                406,
+                921,
+                523
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Scientific ML is a powerful set of tools which may be used to compactly represent high-dimensional and unknown functions. These tools work by learning the underlying structure of functions using a non-linear network of tuneable parameters. Because the scientific ML models do not attempt to memorize values of a function at specific points on a mesh, these models are commonly called mesh-free methods. By construction, these models are extremely expressive and the number of optimizable components in the models is not strongly correlated to the dimensionality of the function. Though scientific ML models are exceptionally good at representing a diverse range of functions, the optimization of a ML model can be an extremely ineficient process, requiring hundreds of compute hours even on today’s high-throughput GPU processing units. This is especially true for deep neural network (DNN) optimizations, like physics informed NNs (PINNs), as their optimization is non-convex.[3, 4] In general, training ML models become more dificult and slowly converging with increasing function dimensionality. There have been many ideas to accelerate the optimization process, some examples include sampling techniques to target high-residual sub-domains in the training process[5] and methods to construct random features using the kernel method.[6]"
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                522,
+                921,
+                696
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this work, we are interested in using ideas from tensor-networks (TN) methods to improve the eficiency of training DNNs. TNs are becoming increasingly popular in scientific computing as methods to eficiently represent highdimensional functions and data.[7] Efectively, tensor network methods seek to factorize high-dimensional functions into a sums of outer products of low-dimensional component functions. Using this factorization technique, tensor network methods are able to break the curse of dimensionality. Unlike the mesh-free ML models, TN methods do require a collocation grid. As a result, while the exact storage complexity of the method depends on the topology of the TN, in general there is a strong correlation between cost of storing a TN, the dimension of the function being decomposed and number of collocation points per dimension. How well a TN can represent a function explicitly depends on the type of function and the topology of the TN. Though these properties make TN in general more dificult to apply to problems than ML models, TN methods do shine in their ability to be eficiently optimized. This is because most tensor-network algorithms rely on linear algebra techniques such as the singular value decomposition whereas machine learning models rely on non-convex gradient descent techniques. Therefore, in this work we seek to determine methods to apply the beneficial properties of TN methods, i.e. reliable optimization and interpretability, to improve and accelerate the optimization of DNN."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                696,
+                921,
+                898
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Our idea is similar to a warm-start initialization technique and works in the following way. We generate a collection of functions and apply these functions to input data to a DNN. We add the output of these functions to the input layer of the DNN and optimize parameters of the DNN subject to the input data and these new features. A most straight-forward feature would be a previously optimized DNN. We demonstrate in this work, why this idea fails and instead use a TN decomposition strategy to improve on this ides. Furthermore, we identify two distinct subclasses of basis functions, those that can be applied quickly in a matrix-free way and those that can be approximated via a TN decomposition. "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "{ \\mathrm { W e } } ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "therefore, introduce a 2-step optimization process for DNNs where, given a set of input features, DNN parameters are optimized recursively by canonical gradient descent techniques for a fixed number of iterations. After parameter optimization, the basis functions are evaluated and updated to improve convergence. After the basis functions are modified, a new DNN is initialized and parameter training is resumed. This work draws parallels with random feature training as the DNN now could be considered the combination of it’s input layer and neuron layers. Like random feature training, we fix the parameters associated with input level features during DNN training. One major diference is that the interaction of features is facilitated implicitly by the DNN parameter layers. This gives the feature layer of the DNN an outer-product structure similar to a rank-1 TN decomposition. Therefore, we cal this technique Tensor-Featured training."
+                    }
+                ]
+            },
+            "bbox": [
+                98,
+                898,
+                919,
+                914
+            ]
+        },
+        {
+            "type": "page_aside_text",
+            "content": {
+                "page_aside_text_content": [
+                    {
+                        "type": "text",
+                        "content": "arXiv:2608.10351v1 [cs.LG] 11 Aug 2026"
+                    }
+                ]
+            },
+            "bbox": [
+                29,
+                353,
+                63,
+                799
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                65,
+                921,
+                268
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "As pointed out previously, we will introduce DNNs which are discretized and decomposed on their domain. To do this decomposition we will utilize the canonical polyadic decomposition (CPD).[8–10] We limit this work to a single tensor decomposition strategy to simplify the analysis of the procedure. In practice any flavor or combination of tensor decompositions could be enabled. Furthermore, one can contextualize the tensor decompositions, like the CPD and the tensor train decomposition, as method for computing a high dimensional Gaussian process using a kernel matrix which is constructed as a tensor product of one-dimensional kernel matrices.[11, 12] As a result, we hope to demonstrate the following: first that the introduction of tensor features acts as a regularizer in the optimization of DNN and; second that the tensor decomposition acts as a smoothing process for the DNN via non-local features introduced to the tensor kernel matrix. Because tensor decompositions can be extremely expensive in both computer time and memory, we will leverage advancements in randomized linear algebra to eficiently decompose high dimensional functions."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                268,
+                921,
+                414
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The remainder of the text is laid out in the following manner. In Section "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\operatorname { I I } ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "we will discuss the theoretical background of the work including the randomized canonical polyadic decomposition and the relationship between tensor decompositions and the gaussian process for high-dimensional functions. In Section III we describe the outlines of our experiments to learn functions which are solutions to PDEs in various degrees of dimensionality spanning from 5 to 40. In Section IV we provide results for our optimization experiments, compare our result to canonical optimization strategies and discuss methods to improve the optimization process for DNN to learn unknown functions. Finally in Section V we summarize the findings and discuss future directions and improvements for this work."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                412,
+                921,
+                516
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "II. Theoretical Background"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                390,
+                542,
+                614,
+                556
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "A. The Canonical Polyadic Decomposition"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                333,
+                574,
+                671,
+                588
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The CPD is a higher-order extension of the singular value decomposition and represents a function of d variables (expressed as an order-d tensor) as a sum of outer products of single variables, i.e. given "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathcal { T } \\in \\mathbb { R } ^ { I _ { 1 } , I _ { 2 } , \\ldots , I _ { d } }"
+                    }
+                ]
+            },
+            "bbox": [
+                83,
+                604,
+                919,
+                636
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "t _ { a , b , \\dots , n } \\stackrel { \\mathrm { C P D } } { = } \\sum _ { i = 1 } ^ { R _ { \\mathrm { C P } } } \\lambda _ { i } \\mathbf { a } _ { i } \\circ \\mathbf { b } _ { i } \\circ \\cdots \\circ \\mathbf { n } _ { i }\\tag{1}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/3ce917ec72630f3a040753764df9b17106d08cd79fe3e5131e72ce0934b66d90.jpg"
+                }
+            },
+            "bbox": [
+                375,
+                645,
+                627,
+                685
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where ◦ defines the vector outer product, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { a } _ { i } \\in \\mathbb { R } ^ { I _ { 1 } } , \\mathbf { b } _ { i } \\in \\mathbb { R } ^ { I _ { 1 } } , \\dots , \\mathbf { n } _ { i } \\in \\mathbb { R } ^ { I _ { d } } , \\ \\lambda _ { i }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is a scaling constant that allows the vectors "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "[ a _ { i } , \\ldots n _ { i } ]"
+                    },
+                    {
+                        "type": "text",
+                        "content": "be unit normalized, and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "R _ { \\mathrm { C P } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is the CP rank, i.e. the smallest set of vectors such that Eq. (1) satisfies the equality. All the vectors which span the same mode of the tensor can be group into a factor matrix, i.e. "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { A } = [ \\mathbf { a } _ { 1 } , \\dots , \\mathbf { a } _ { R _ { \\mathrm { C P } } } ] \\in \\mathbb { R } ^ { I _ { a } \\times R _ { \\mathrm { C P } } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". Therefore, the CPD reduces the storage complexity of a d-dimensional function from "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "N ^ { d }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "{ N \\approx I _ { 1 } \\approx I _ { 2 } , . . . }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "to "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "N D R _ { \\mathrm { C P } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". Although finding the exact CP rank is formally an NP-hard problem, it is straightforward and easy to discover an approximate CPD of T given a desired rank "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "R ."
+                    },
+                    {
+                        "type": "text",
+                        "content": "By construction, the CPD defines a set of 1-dimensional basis functions such that a function of d inputs as a separable set of products of functions of single inputs."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                695,
+                919,
+                813
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The most standard way to optimize the rank-R CPD is via the alternating least squares (ALS) optimization.[13, 14] The ALS method splits the optimization of the CPD into d-linear least square problems. Unfortunately, the CPD-ALS optimization is non-convex. However, based on our experience and results, we find that the non-convex nature of the CPD-ALS has minimal efect on discovering accurate decomposition’s of tensor for most cases in physics and chemistry.[15] As we will demonstrate in Section IV, this is also true for this work. A more serious issue with the CPD-ALS is that the optimization sufers from the curse of dimensionality, i.e. the computational cost of the method scales exponentially with the dimension of the function being decomposed."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                811,
+                921,
+                915
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "2"
+                    }
+                ]
+            },
+            "bbox": [
+                906,
+                34,
+                919,
+                46
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In general, the task of the CPD-ALS is to iteratively solve a collection of extremely overdetermined least squares problems. Because these problems are over-determined, a direct result of the matricization of higher order tensors along a single mode of the tensor, the CPD-ALS a perfect candidate for randomized linear algebra. There are two main ways to apply randomization to the CPD-ALS, via sampled least squares[16, 17] or via sketched and sampled least squares.[18, 19] In this work, we will only consider the sampled least squares method because of its low-cost and structure preserving properties. In the literature, it has been demonstrated that the number of samples required for the CPD randomized ALS (CPD-RALS) is proportional to the rank of the CPD and has no direct dependence on the dimensionality of the function being decomposed.[16, 20] Therefore, in this work, we will assume that the CP rank of every tensor is practically small compared to the number of interpolation points along a single dimension and does not grow (significantly) with increasing tensor dimension. The RALS procedure therefore reduces the computational complexity of the CPD from exponential in function dimension to polynomial and independent of function dimension. Using the CPD-RALS, the most time intensive component of the algorithm is the cost of sampling the target function which grows as dSN where d is the dimension of the function, S is the number of samples per mode and N is the number of interpolation points along a single dimension. To minimize the overall cost of this step, we will assume that single set of samples gathered from a uniform distribution is suficient for optimizing the CPD-RALS."
+                    }
+                ]
+            },
+            "bbox": [
+                80,
+                65,
+                921,
+                285
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this work we will not explicitly derive the sampled CPD-RALS method. We utilize a modified version of the canonical version developed by Battaglino et. al. where samples are determined via the leverage score distribution of each factor matrix. Our method deviates from the canonical method in the following way. We found that the magnitude of elements in the sampled Khatri-Rao product (KRP) associated CPD-RALS decay’s rapidly with dimensionality of the tensor. To accommodate this issue, we introduce an intermediate normalization where rows of the KRP are normalized to 1 such that"
+                    }
+                ]
+            },
+            "bbox": [
+                80,
+                284,
+                921,
+                372
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\begin{array} { r } { A x = B } \\\\ { ( l \\hat { A } ) ( x l ^ { - 1 } ) = B } \\\\ { \\hat { A } \\bar { x } = B . } \\end{array}\\tag{2}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/2d1d16539d0973310becf8247d0c02472777f33092e087e48310d2b614aead5a.jpg"
+                }
+            },
+            "bbox": [
+                441,
+                385,
+                560,
+                441
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The intermediate normalization tensor l can, without loss of generality, be factored into the column-wise normalization of ¯x and, therefore, absorbed into λ in Eq. (1). We have found that this process, in general, stabilizes the LS solver in the CPD-RALS procedure."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                455,
+                919,
+                501
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "B. The CPD-ALS as Gaussian Processes"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                338,
+                531,
+                665,
+                546
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Recently, it has been shown that there is a connection between popular tensor decomposition strategies, kernel machines[21] and Gaussian process(GP).[22] The GP is a mechanism for modeling functions and allows the user to incorporate prior knowledge of the function (i.e. random inputs on the domain and associated noisy observations). GP are fully described by two components, a mean "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mu \\in \\mathbb { R }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "which is usually chosen to be zero and a covariance or kernel matrix "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\boldsymbol { k } \\in \\mathbb { R } ^ { \\Omega _ { i } \\times \\Omega _ { i } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\Omega _ { i }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is the extent of the domain in the ith dimension. Given a set of points and their associated observations, one can determine random functions on the domain by sampling the multivariate gaussian associated with this mean and kernel matrix. The kernel matrix is commonly approximated using a finite number of basis functions[23, 24]"
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                564,
+                921,
+                683
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "k ( x , x ^ { \\prime } ) = \\varphi ( x ) ^ { T } \\Lambda \\varphi ( x ^ { \\prime } )\\tag{3}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/1a4a3faa9982138e27bb70b32e590b06e2fe42aa05c0f5906ef418ef5caf6595.jpg"
+                }
+            },
+            "bbox": [
+                415,
+                693,
+                588,
+                710
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\boldsymbol { \\varphi } ( \\boldsymbol { x } ) \\in \\mathbb { R } ^ { \\Omega _ { i } \\times M }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "are basis functions and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\boldsymbol { \\Lambda } \\in \\mathbb { R } ^ { M \\times M }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "are basis function weights. One can recognize that each CPD factor matrix are explicitly constructed as a collection of "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "R ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "1-dimensional basis functions for a on set of observed points on a predefined collocation grid."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                723,
+                919,
+                768
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The CDP-ALS iteratively constructs each 1-dimensional basis matrix (CPD factor matrix) in the following way. For convenience we limit this explanation to a three dimensional function "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\dot { \\mathcal { T } } \\in \\mathbb { R } ^ { I _ { a } \\times I _ { b } \\times I _ { c } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "but this idea can be extended to arbitrary dimension without loss of generality. First, the loss function is defined for the "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "I _ { a }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "th mode"
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                768,
+                921,
+                814
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "f ( A ) = \\| T _ { a } - A ^ { * } [ B \\otimes C ] ^ { T } \\| _ { 2 } ^ { 2 }\\tag{4}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/679a3f1955e5de64ae31763ff140b7a332cf3693308541d76f6e088fdf8b4bdb.jpg"
+                }
+            },
+            "bbox": [
+                397,
+                824,
+                606,
+                843
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "T _ { a }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is the so called matriciation of the third order tensor "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\tau"
+                    },
+                    {
+                        "type": "text",
+                        "content": "that permutes and reshapes the tensor to be "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "T _ { a } \\in \\mathbb { R } ^ { I _ { a } \\times I _ { b } I _ { c } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", a short and long matrix. Also "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\otimes"
+                    },
+                    {
+                        "type": "text",
+                        "content": "defines the Khatri-Rao tensor product (KRP) which is the columnwise Kronecker product of two tensors. The KRP defines the following product "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "W _ { r } = b _ { r } \\circ c _ { r }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "where is a matrix "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "W _ { r } \\in \\mathbb { R } ^ { I _ { b } \\times I _ { c } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "for each value of "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "r \\in \\mathbb { R } ^ { R }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". By definition "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "B"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "C"
+                    },
+                    {
+                        "type": "text",
+                        "content": "are also collections of 1D basis which were either chosen at random or drawn randomly a diferent GP. Next, one solves for "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "A ^ { * }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "by taking the gradient of the loss function and solving the following least squares problem"
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                854,
+                921,
+                915
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "3"
+                    }
+                ]
+            },
+            "bbox": [
+                906,
+                34,
+                919,
+                46
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                65,
+                921,
+                97
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "T _ { a } ( B \\otimes C ) = A ^ { * } ( B \\otimes C ) ^ { T } ( B \\otimes C ) .\\tag{5}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/8b228dc2afd5fc249486d189b3e886a7da8546ac4b0efd706edfeb76659f9105.jpg"
+                }
+            },
+            "bbox": [
+                370,
+                107,
+                629,
+                125
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "This equation consists of two parts: "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "T _ { a } ( B \\otimes C ) \\ \\in \\ \\mathbb { R } ^ { I _ { a } \\times R }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "which down-folds the high dimensional observations of the function into a single dimensional set of mean values for each basis basis function by taking the inner product of the higher order tensor and all other degrees of freedom. The second part is the construction of the squared KRP, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( B \\bar { \\otimes } C ) ^ { T } ( B \\otimes C )"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". Using Tensor Algebra, this expression can be rewritten as "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\left( B ^ { T } B \\right) * \\left( C ^ { T } C \\right)"
+                    },
+                    {
+                        "type": "text",
+                        "content": "where ∗ defines the Hadamard or element-wise product of two matrices. Written in this way one can see that "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "B ^ { \\acute { T } } B \\in \\mathbb { R } ^ { R \\times R }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "C ^ { T } C \\in \\mathbb { R } ^ { R \\times R }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "are both approximations to 1-dimensional kernel matrices. Therefore the squared KRP can be viewed as a product kernel[24] of many 1-dimensional kernel matrices. As a result, the above solution to the CPD-ALS can be viewed as a method that leverages GP to iteratively draw and refine 1-dimensional basis functions for high dimensional functions. By leveraging the basis function approximation and kernel product structure, the CPD-ALS is able to draw GP basis functions with information across the entire domain of the function with a relatively low cost. Unfortunately, one can see that the construction of the left hand side of Eq. (5) sufers from the curse of dimensionality."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                138,
+                921,
+                313
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In an efort to minimize the cost of the CPD-ALS, the CPD-RALS modifies the above process. The gradient of the CPD-RALS loss function for the "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "I _ { a }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "th mode can be written as"
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                313,
+                921,
+                343
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "( T _ { a } S _ { a } ) [ S _ { a } ^ { T } ( B \\otimes C ) ] = A ^ { * } [ S _ { a } ^ { T } ( B \\otimes C ) ] ^ { T } [ S _ { a } ^ { T } ( B \\otimes C ) ]\\tag{6}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/256e906c79be8a01788a1d2800240b8d238b91c22a16beedf61ca4ea165f7f91.jpg"
+                }
+            },
+            "bbox": [
+                313,
+                354,
+                687,
+                372
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "S _ { a } ~ \\in ~ \\mathbb { R } ^ { I _ { b } I _ { c } \\times I _ { s } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is a sparse, column-wise selection matrix chosen specifically for the "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "I _ { a } \\mathrm { t h }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "subproblem. By constructing the randomized solver in this way we may significantly reduce the cost of inner-product down-folding process from "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "I _ { a } I _ { b } I _ { c } R"
+                    },
+                    {
+                        "type": "text",
+                        "content": "to "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "I _ { a } I _ { s } R ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "provided that "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "I _ { s } \\propto R"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "R \\ll I _ { b } I _ { c } . [ 1 6 ."
+                    },
+                    {
+                        "type": "text",
+                        "content": ", 20] However, this sampling process changes the form of our kernel matrix The sampling matrix first down-folds the high-dimensional space orthogonal to the "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "I _ { a }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "into a relatively small set of observations. In this work, we choose these observations by first constructing a leverage score distribution of the kernel basis function. By taking advantage of the KRP structure of the kernel basis functions, we may randomly sample the leverage score distribution of each basis matrix independently. The row-wise leverage score distribution of each factor matrix measures how far away observations on each quadrature point are from all the other observations and thus the leverage scores are correlated with the degree of misprediction of a least squares model. Therefore, by importance sampling the KRP using the leverage score distribution, we are attempting to determine a compact basis of observations which contribute most strongly to the basis-approximated kernel matrix. After choosing this compact set of basis points, we now have a single set of kernel basis functions. In this process you can recognize that our normalization process in Eq. (2) is efectively a modification of our basis function weights, Λ."
+                    }
+                ]
+            },
+            "bbox": [
+                80,
+                385,
+                921,
+                578
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "III. Computational Experiments"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                369,
+                604,
+                633,
+                619
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "As this work serves as a preliminary study into this improved optimization process, we make a number of restrictions to simplify and limit the analysis. First we only consider functions of dimension, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "d \\in [ 5 , 4 0 ]"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". Unless otherwise stated, we will use the following parameters by default in this manuscript. In all cases we consider a DNN to have 3 layers and with 100 features per layer. We apply the following activation functions to each layer [relu, relu, identity] of the DNN. To optimize the parameters of the DNN we utilize an ADAM gradient descent algorithm. We stop the parameter update of each DNN after 3000 epoch. We consider one function that is time independent and one function which contain a time dependence. For our test and training sets, we use a spatial domain of (-1,1) and a time domain of (0,1) and determine points on this domain using a regular grid of 10,000 points per mode. The training set contains 1000 random points and the validation set contains 5000 random points. For this study a single batch of training points is drawn for all DNN optimizations and this set is not updated. This decision comes from an analysis of the structure of the randomized CPD-ALS optimization where we find no significant outliers in leverage scores across any single spatial dimension for all tested functions. This decision was validated by decomposing each known functions via the CPD-RALS procedure using a single uniformly drawn random sample. Resampling may become necessary in future works when considering more dificult learning settings such as increased dimensionality."
+                    }
+                ]
+            },
+            "bbox": [
+                80,
+                637,
+                921,
+                842
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "For the CPD, unless stated otherwise, we decompose DNN’s on a grid of 500 points per mode and to a rank of 30. For the CPD-RALS procedure, we fix the number of samples to 3000 per least squares subproblem. This reduces the size of target tensor in each least squares subproblem from "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "5 0 0 \\times 5 0 \\bar { 0 } ^ { d - 1 } \\mathrm { ~ t o ~ } 5 0 \\bar { 0 } \\times 3 0 0 0"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". In the smallest tested case, this is a 20 million times reduction in storage cost of the CPD optimization process. The CPD was optimized using 100 ALS iterations; however, early stopping conditions could be successfully applied to reduce the cost of the decomposition. When necessary, to evaluate points which are not explicitly on the quadrature grid of the CPD, a simple nearest neighbor interpolation strategy is applied."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                840,
+                923,
+                915
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "4"
+                    }
+                ]
+            },
+            "bbox": [
+                906,
+                35,
+                919,
+                45
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/b0034f646ff62f11c8fe82f6f226462cd20e6a1281271769a926c0bb32f7971d.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "(a)"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                98,
+                61,
+                349,
+                191
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/1a6bc66ad4459ac90d9e85032137862bb1604d41572eeec75552efd0e6751085.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "(b)"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                383,
+                64,
+                627,
+                191
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/d575dfe911c306e490a0825db872bd4cc62153fd7e3b7fdd73ed377a95c3ba29.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "(c)"
+                    },
+                    {
+                        "type": "text",
+                        "content": "FIG. 1: Comparison of the convergence of diferent training procedures to learn Eq. (7) in (a) 5, (b) 10, and (c) 15 dimensions."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                661,
+                64,
+                903,
+                191
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                285,
+                919,
+                314
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The experiments are primarily run on a Mac M1 Max equipped with 8 high-throughput CPU cores each with a 3.2GHz processing speed and 64 GB of unified RAM. DNN were constructed and optimized using the Julia-based Flux.jl[25, 26] library. CPD were constructed and optimized using the Julia-based ITensorCPD.jl library[27]"
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                314,
+                921,
+                359
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "IV. Results and Discussion"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                390,
+                385,
+                612,
+                398
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "A. Iterative Tensor-Featured Training via Tensor Decomposed DNN."
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                230,
+                416,
+                772,
+                431
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "First we investigate the efect of using a pretrained DNN and as a tensor feature. For this section we attempt to learn a function which is the solution to the the nonlinear elliptic equation inside a bounded domain,"
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                448,
+                919,
+                478
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "u ( x ) = \\sin ( \\frac { \\pi } { 2 } ( 1 - | x | _ { 2 } ) ^ { 2 . 5 } ) ,\\tag{7}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/c892b2959105970ea76b16ae5b10449a65a7f0c35c14327f94853df55d973850.jpg"
+                }
+            },
+            "bbox": [
+                403,
+                487,
+                599,
+                513
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "using the DNN structure described previously. We consider the problem in three dimensions d = 5, 10, and 15. In this experiment, we first use canonical optimization strategies to train a DNN over a 3000 training epoch. Throughout this work we will referred to this canonical training as Conventional Training. After this training we initialize two new DNN each with 1 additional feature added to their input layers. For one DNN, this new feature is the output of the first DNN evaluated at the input training coordinates. We call this NN Featured training. In the other DNN, we provide the approximated output of the first DNN via CPD interpolated at the input training coordinates. As explained early, for of-grid points, we use a nearest neighbor interpolation. We denote this second DNN as a Tensor-Featured trained model."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                522,
+                921,
+                638
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In Fig. 1 we compare accuracy of the three training strategies (conventional, NN featured and Tensor-Featured) on the set of validation points over 3000 gradient updates. For reference, we also show the error of the CPD interpolation of the conventionally trained NN on the same set of validation points. One can see, across the board, decomposing the conventionally optimized DNN into a TN can significantly improve the accuracy of learned function. As pointed out previously, we believe this is because the process of optimizing the tensor decomposition using non-local information which efectively smooths the DNN function over the domain."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                638,
+                921,
+                726
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "With respect to Tensor-Featured training, in Fig. 1 one can also see that using the DNN directly as a feature does not practically provide any improvement over the conventional training. On the other hand with the CPD interpolation as a feature, we find an improvement in accuracy over the conventional training. Unfortunately, although there is an improvement in accuracy with the Tensor-Featured training in the validation set, the improvement is not dramatic and, in all cases, the CPD approximation alone outperforms the Tensor-Featured DNN. We believe this phenomena is not a failure in the Tensor-Featured learning but, instead, associated with the accuracy of the conventionally trained model relative to the ground truth."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                724,
+                921,
+                827
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To clarify this statement, consider the heatmaps in Fig. 2 which illustrates true and predicted values of Eq. (7) on a 2000 point interpolation grids with all but 2 modes of the tensor fixed to the 500th interpolation point. One can see that, though Fig. 1 implies that the CPD approximation is a better representation of the true function, none of these models look significantly more accurate in this representation. With this example, we demonstrate that because the reference function for the CPD (the conventionally trained network) is not representation of the ground truth, its addition to the feature list in the Tensor-Featured training doesn’t significantly improve the DNN training. Therefore, we hypothesize that, if the conventional training is more similar of the ground truth, then the Tensor-Featured training procedure will be significantly accelerated."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                827,
+                921,
+                915
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "5"
+                    }
+                ]
+            },
+            "bbox": [
+                906,
+                35,
+                919,
+                46
+            ]
+        }
+    ],
+    [
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/c2a4e6c29afb8258dd03f8177c80860814ff675705e1899a268767f53ec94822.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(a)"
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                133,
+                61,
+                441,
+                233
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/ece90dca9edef6a54e0f16094be902f95592bdb214f6147381c70274944534ca.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(b)"
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                555,
+                61,
+                870,
+                233
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/efbdd444309c6d47997e59b06b886f6eb0a43dc55d0493b6cf966676fd7e354c.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "CPD approximation of Conventionally Trained DNN"
+                    },
+                    {
+                        "type": "text",
+                        "content": "(c)"
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                133,
+                266,
+                447,
+                424
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/4bf0f4d235d87f731b1ec5e8a4bc109263fac5e6dbc2e26b8af70c80128c5039.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(d)"
+                    },
+                    {
+                        "type": "text",
+                        "content": "FIG. 2: Heatmaps of (a) the true function (Eq. (7)), (b) the function learned by the conventionally trained DNN, (c) the CPD approximation of the conventionally trained DNN and (d) the Tensor-Featured trained DNN. Heatmaps are evaluated on a 2000 point interpolation grid in all modes and all but 2 modes are fixed to the 500th point on their interpolation grid. The DNN training is fixed to 1,000 samples in the training set."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                555,
+                255,
+                872,
+                424
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                549,
+                919,
+                579
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In Fig. 3, we improve the accuracy of the conventionally trained DNN by increasing the training sample batch size from 1,000 to 10,000. With a qualitatively more accuracy reference, the CPD approximation generates a function that captures more character of the true function. Finally, equipped with this CPD, the Tensor-Featured training is greatly improved and the mean squared error in the validation set falls dramatically. In general, these results demonstrate that introduced features provide context for DNN training. This 2-step optimization process of training DNN with a fixed feature and decomposing partially trained DNN into CPD can be repeated iteratively in an attempt refine the Tensor-Featured DNN."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                579,
+                921,
+                681
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "For example, we train the 15 dimensional example from above in a 3 step optimization procedure. First a DNN is trained conventionally using 10,000 samples and 3000 training epoch. After the training session, the DNN is discretized and decomposed into a CPD. This CPD is passed as a feature into a new DNN which trained for 3000 iterations using the same 10,000 training points with the value of the CPD interpolation at each training point added to the feature list. After this second training session, the resulting DNN is again decomposed into a CPD and this CPD is passed to the training of a third DNN. In Fig. 4 we show the same 2D heatmaps for the CPD of the Tensor Featured trained DNN (i.e. Fig. 3d) and the DNN constructed from the second round of Tensor-Featured training. While it is hard to tell if this network is an improvement on the first iteration, the data becomes clear when considering the relative L2 error and absolute mean squared error on the 2D slices in Table I. From these results one can see that this multi-step training process, iteratively reduces the error in the trained DNNs."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                681,
+                921,
+                827
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Because the tensor features provide context to the DNN optimization, we require that the initial training be relatively close (in some measure) to the global extrema. If the original network is not within epsilon of the solution, the Tensor-Featured training doesn’t help dramatically, if at all. In the example above, we were able to improve the canonical training solution by increasing the number of batched training point samples. In general, it may not be possible to improve the accuracy of conventional training so easily, for example there may be a limitation on the total number of available samples. We are therefore interested in developing a strategy that introduces tensor features into the DNN training process from the start. So far, we have only considered decomposing partially trained DNN however practically, we are able to introduce any one or many features into the Tensor-Featured training process. In the next section we will explore the idea of adding tensor features beyond TN decomposed DNN."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                827,
+                921,
+                915
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "6"
+                    }
+                ]
+            },
+            "bbox": [
+                906,
+                34,
+                919,
+                46
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/dad9bd674a57d4e4e16de90d54a2e597d53e969b466af31ea2c5b618435a32ef.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Convergence of Model Error over the Validation Set"
+                    },
+                    {
+                        "type": "text",
+                        "content": "(a)"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                125,
+                73,
+                449,
+                233
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/9ec47fa1934e42492296382f6df58ec7540a25d9ead9cf933023333b87c95ef1.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(b)"
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                555,
+                61,
+                867,
+                234
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/e2cfe5b460c09f6c4a669240b2533d7bf97ba84843d4bb29f269492c04293d72.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "CPD approximation of Conventionally Trained DNN"
+                    },
+                    {
+                        "type": "text",
+                        "content": "(c)"
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                133,
+                266,
+                441,
+                424
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/60d59aa5a56e4a720fe4a52283de4b6cbc161dc3e298681060dcc07b89d7a2b2.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(d)"
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                555,
+                256,
+                864,
+                424
+            ]
+        },
+        {
+            "type": "table",
+            "content": {
+                "image_source": {
+                    "path": "images/f1014e45b645fde2b503b6b1586f25de2bee5cb80e495dddab61ac51f99bbd63.jpg"
+                },
+                "table_caption": [
+                    {
+                        "type": "text",
+                        "content": "FIG. 3: (a) The convergence of diferent training procedures to learn Eq. (7) with "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "d = 1 5"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". Heatmaps of (b) the function learned by the conventionally trained DNN, (c) the CPD approximation of the conventionally trained DNN and (d) the Tensor-Featured trained DNN. Heatmaps are evaluated on a 2000 point interpolation grid in all modes and all but 2 modes are fixed to the 500th point on their interpolation grid. The DNN training is fixed to 10,000 samples in the training set."
+                    },
+                    {
+                        "type": "text",
+                        "content": "TABLE I: Relative L2 and absolute mean squared error in DNN predicted functions on a 2D slice discretized by 2000 points in each dimension."
+                    }
+                ],
+                "table_footnote": [],
+                "html": "<table><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>Conventional T</td><td rowspan=1 colspan=1>ensor-Featured Iteration 1 T</td><td rowspan=1 colspan=1>ensor-Featured Iteration 2</td></tr><tr><td rowspan=1 colspan=1>Relative L2 Error</td><td rowspan=1 colspan=1>0.272</td><td rowspan=1 colspan=1>0.119</td><td rowspan=1 colspan=1>0.0619</td></tr><tr><td rowspan=1 colspan=1>Absolute Mean Squared Error</td><td rowspan=1 colspan=1> $6 . 3 2 * 1 0 ^ { - 2 }$ </td><td rowspan=1 colspan=1> $1 . 2 0 * 1 0 ^ { - 2 }$ </td><td rowspan=1 colspan=1> $3 . 2 6 * 1 0 ^ { - 3 }$ </td></tr></table>",
+                "table_type": "complex_table",
+                "table_nest_level": 1
+            },
+            "bbox": [
+                163,
+                550,
+                839,
+                603
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                674,
+                919,
+                719
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "B. Leveraging Tensor-Featured Context to Accelerate Training"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                254,
+                750,
+                750,
+                763
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "One of the biggest challenges of the Tensor-Featured training procedure as presented in the previous section is need for features to provide meaningful context to a DNN’s training. If a target function is unknown and the convergence of conventional DNN training is slow then the Tensor-Featured training as presented thus far will not, in general, improve DNN optimization. Therefore, to improve optimization, we consider introducing alternative and additiona contextual features."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                782,
+                921,
+                854
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this section we define two types of features. The first type of features are elementary functions which can be evaluated quickly for points in the domain of the unknown function. Practically these features could be discretized and decomposed using TN methods but, because the functions can be evaluated quickly, we choose to simply access elements of the functions in a matrix-free manner. The first class of features we will call Rank-1 features. The second type of feature are more complex functions which may be either slow to evaluate for points in the functions domain or otherwise limit the Tensor-Featured optimization. For this second class of features, we will leverage tensor decomposition strategies to address these issues. An example of this type of feature are the partially trained DNN from the previous section. We call this second class of features TN features."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                856,
+                921,
+                915
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "7"
+                    }
+                ]
+            },
+            "bbox": [
+                908,
+                35,
+                919,
+                46
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/31c2cabea8a084299c3a3f1fb0703ad7e37d3573caa80f0247fb268bcb61030a.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "(a)"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                130,
+                61,
+                442,
+                234
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/5cc10a4781a1c561e38c404f0e3c6690a3503b21adb5d6c5bb3ea263c278ecf2.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "(b)"
+                    },
+                    {
+                        "type": "text",
+                        "content": "FIG. 4: Heatmaps of (a) the CPD approximation of the first Tensor-Featured trained DNN and (b) the second iteration Tensor-Featured trained DNN. Heatmaps are evaluated on a 2000 point interpolation grid in all modes and all but 2 modes are fixed to the 500th point on their interpolation grid. The DNN training is fixed to 10,000 samples in the training set."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                553,
+                60,
+                866,
+                234
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                354,
+                919,
+                412
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this section we will attempt to learn a more dificult function, the solution to the initial boundary value problem of the hyperbolic (wave) equation"
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                412,
+                919,
+                443
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "u ( t , x ) = ( \\exp ( t ^ { 2 } ) - 1 ) \\sin ( \\frac { \\pi } { 2 } ( 1 - | x | ) ^ { 2 . 5 } )\\tag{8}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/6d0d5c1d71f4acc397ec6422e0f764982415f9f7831875427b91ee4e6e9f5ac9.jpg"
+                }
+            },
+            "bbox": [
+                354,
+                452,
+                647,
+                479
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "with "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "d = 1 5"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". In this study, we only consider the following rank-1 features"
+                    }
+                ]
+            },
+            "bbox": [
+                83,
+                487,
+                612,
+                503
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\begin{array} { r l } & { \\bullet \\ { y } = \\sum _ { i } x _ { i } } \\\\ & { \\bullet \\ { y } = \\| x \\| _ { 2 } } \\\\ & { \\bullet \\ { y } = \\mathrm { s i n } ( \\| x \\| _ { 2 } ) } \\\\ & { \\bullet \\ { y } = \\mathrm { c o s } ( \\| x \\| _ { 2 } ) } \\\\ & { \\bullet \\ { y } = \\sum _ { i } \\mathrm { s i n } ( x _ { i } ) } \\\\ & { \\bullet \\ { y } = \\sum _ { i } \\mathrm { c o s } ( x _ { i } ) ) } \\\\ & { \\bullet \\ { y } = \\mathrm { c o s } ( \\| x \\| _ { 2 } ) } \\\\ & { \\bullet \\ { y } = \\mathrm { c o s } ( \\| x \\| _ { 2 } ) } \\end{array}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/3e3fb6d0895b44b1219a94fb0943fe6909049fc001303ec830a4858a4c7d396b.jpg"
+                }
+            },
+            "bbox": [
+                106,
+                511,
+                238,
+                674
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "which map "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbb { R } ^ { n } \\to \\mathbb { R }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". Our decision to use these rank-1 features is relatively arbitrary. Any function is acceptable as long as it map "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbb { R } ^ { k } \\to \\mathbb { R } ^ { m }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "k \\leq n"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbb { R } ^ { m }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is the dimensionality of function being learned. In follow-up studies we will investigate methods to automatically choose a good set of Rank-1 features. Furthermore, it should be noted that we will only consider the CPD of a previously trained DNN as a TN feature though in future work other TN features will be investigated."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                681,
+                921,
+                755
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In Fig. 5, we consider the efect of using diferent features in the Tensor-Featured training. In "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "{ \\mathrm { F i g . } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "5a we add just a single to the training and find that the feature does influence the training eficiency. One can see that adding a feature that does not align with the problem does not significantly improve the DNN optimization performance. But adding a feature that does align with the problem improves the training."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                753,
+                919,
+                813
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In Fig. 5b, we consider the efect of adding multiple features in parallel to the Tensor-Featured training. In this figure, we incrementally introduce the features from the rank-1 feature list above in the order of the list. One can see that introducing multiple features seems to systematically improve the accuracy over the conventional training and the best single feature training in Fig. 5a. In our tests we found that most of the functions in the rank-1 feature list do not significantly improve the DNN training but together they outperform any single feature. However, we note that this process can fail when a feature is added that puts the DNN close to a local extrema. For example in Fig. 5c, we add the conventionally trained DNN into feature list and find that the optimization quickly converge back to the"
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                811,
+                921,
+                915
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "8"
+                    }
+                ]
+            },
+            "bbox": [
+                906,
+                34,
+                919,
+                46
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/7c5a93ee887aef1d8f40ca5e708a8ae16dda74243c3032f185ac2e5331f42e45.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "(a)"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                125,
+                69,
+                452,
+                232
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/4766e4f27b6d05cf0f03c9485d6b7cb459e318126fab9a5eee263a059337e4b9.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "(b)"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                549,
+                73,
+                872,
+                231
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/b4aaedd5a7da09a159ea3e783448d50a3e64ba4184a009f3a439c5340358a808.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Convergence of Model Error over Validation Set"
+                    },
+                    {
+                        "type": "text",
+                        "content": "(c)"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                338,
+                265,
+                661,
+                424
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/d7ddcd2859ed2023ea956a4dea9c7ed8ee94758e6545a95fd9acf42d30c4261a.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "FIG. 5: Comparison of the convergence of diferent training procedures to learn "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\operatorname { E q . }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "(8). (a) Comparison of trainings with at most a single feature added to the DNN. (b) Comparison of trainings with single or multiple features added to the DNN."
+                    },
+                    {
+                        "type": "text",
+                        "content": "(a)"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                125,
+                520,
+                452,
+                689
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/0de10012e605ce6ef46f6781f2340d9eb741748ed55854e79bf70e8f5c2c7fe9.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "(b)"
+                    },
+                    {
+                        "type": "text",
+                        "content": "FIG. 6: Comparing the true values of "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\operatorname { E q . }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "(8) on the validation set to those predicted by trained DNN sorted from most negative to most positive. (a) Fixes the training batch size to 1,000 points and (b) fixes the training batch size to 10,000 points."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                549,
+                520,
+                874,
+                689
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Conventional Training solution. Though one can see that replacing the conventionally trained DNN with its CPD approximation can resolve this issue."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                796,
+                919,
+                827
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Using Tensor-Featured training with rank-1 features, we can now improve the eficiency of training a DNN with no prior knowledge of the function. Furthermore, the rank-1 features do not depend on a pretrained DNN, like the CPD approximation did in the previous section. In Fig. 6, we compare the accuracy of the conventional training to the Tensor-Featured training with only rank-1 features by plotting the true and predicted function values of points in the validation set. Note that the points are ordered via the value of the true function from most negative to most positive. One can see that the Tensor-Featured training using only rank-1 features more accurately predicts nearly all points in the validation set, compared to conventional training. Furthermore, the Tensor-Featured DNN training converges more quickly when the training batch size is increased."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                825,
+                921,
+                915
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "9"
+                    }
+                ]
+            },
+            "bbox": [
+                906,
+                34,
+                919,
+                46
+            ]
+        }
+    ],
+    [
+        {
+            "type": "table",
+            "content": {
+                "image_source": {
+                    "path": "images/0531c6cbab19ffe3b3745396ffebc58d4886b40247d531668e52f6e69afa4c92.jpg"
+                },
+                "table_caption": [
+                    {
+                        "type": "text",
+                        "content": "TABLE II: Costs associated with training diferent networks to represent Eq. (8) in 40 dimensions"
+                    }
+                ],
+                "table_footnote": [],
+                "html": "<table><tr><td rowspan=1 colspan=1></td><td rowspan=1 colspan=1>Time (s)</td><td rowspan=1 colspan=1>[Parameters]</td><td rowspan=1 colspan=1>Storage (KiB)</td></tr><tr><td rowspan=1 colspan=1>Conventional Training</td><td rowspan=1 colspan=1>76.93</td><td rowspan=1 colspan=1>14,301</td><td rowspan=1 colspan=1>112.031</td></tr><tr><td rowspan=1 colspan=1>Rank-1 Features</td><td rowspan=1 colspan=1>77.47</td><td rowspan=1 colspan=1>15,001</td><td rowspan=1 colspan=1>117.500</td></tr></table>",
+                "table_type": "complex_table",
+                "table_nest_level": 1
+            },
+            "bbox": [
+                302,
+                63,
+                702,
+                114
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/7262e2678eba151cadbb934af082e401bca60dc56c4926c3a0a5f2218a5b048e.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "(a)"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                125,
+                188,
+                450,
+                356
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/d68d749001d890d1bc748fd4b7480668e08b22ec12e4f4cd9ff607bc88f91144.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "(b)"
+                    },
+                    {
+                        "type": "text",
+                        "content": "FIG. 7: (a) Comparing the true values of Eq. (8) on the validation set to those predicted by a Tensor-Featured trained DNN and the CPD of the Tensor-Featured trained DNN sorted from most negative to most positive. (b) Comparison of the convergence of diferent training procedures to learn Eq. (8). All trainings utilize a training batch size of 10,000 points."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                549,
+                185,
+                874,
+                356
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                507,
+                919,
+                539
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "After training the DNN with rank-1 features, we can discretize and decompose the trained DNN as a TN. We compare the accuracy of the Tensor-Featured trained DNN to those interpolated by the CPD of this DNN in Fig. 7a. From this figure, one can see that the decomposition process has little impact on the accuracy of predicting values in the validation set. Furthermore, by decomposing the DNN we, efectively, cannibalize all of the features from the preliminary DNN optimization into a single function. We demonstrate this in Fig. 7b where we attempt to improve on the first Tensor-Featured training. In the curve marked ‘NN Feature‘ we use exactly the DNN trained via the Rank-1 Tensor Featured Training into the optimization of a new DNN. To do this optimization, we must evaluate the original DNN on the batch of training and validation points. This evaluation may be relatively slow, especially if there were many input features in this DNN or the DNN is very deep. The curve marked ‘TN Feature‘ uses only CPD interpolation of the Rank-1 Featured Training. Similar to the previous results, the CPD approximation of the DNN is more accurate than the DNN. For the curve marked ‘Rank-1 and TN Features‘ we combine the CPD with the original Rank-1 features and find that the new Tensor-Featured Training can become more accurate than the original Tensor-Featured Training. Because the original features were well captured by the CPD approximation, we are also free to modify the feature list in the DNN retraining. For example for the curve marked ‘Modified Rank-1 and TN Features‘ we remove features 1, 2, 5 and 6 from the input and find a result that outperforms the CPD approximation alone. In these optimization curves we often see oscillation in the errors and will investigate this phenomenon in future studies. This two step process of training DNN and updating features can be repeated iteratively until some convergence is reached."
+                    }
+                ]
+            },
+            "bbox": [
+                80,
+                550,
+                923,
+                814
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Finally in Fig. 8, we the accuracy of training a DNN to learn Eq. (8) in 40 dimensions with either conventional training or Tensor-Featured training using only rank-1 features. One can see that the Tensor-Featured training more accurately learns the objective function in just 3000 epoch. Though comparing this figure to Fig. 6b, one can see that increasing the dimensionality of the problem slows the convergence of both training procedures. In Table II, we show the cost comparing conventional training to Tensor-Featured with only rank-1 features and see that the Tensor-Featured training is only marginally more expensive in both optimization time and storage complexity."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                825,
+                923,
+                915
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "10"
+                    }
+                ]
+            },
+            "bbox": [
+                898,
+                34,
+                919,
+                46
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/5c65414012693522b4e30118d5075ff90c151e1815836a0310d3a5f131e69bad.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "FIG. 8: (a) Comparing the true values of Eq. (8) where d = 40 on the validation set to those predicted by a Tensor-Featured trained DNN sorted from most negative to most positive. Trainings utilize a training batch size of 10,000 points."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                212,
+                66,
+                784,
+                361
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "V. Conclusion and Outlook"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                388,
+                454,
+                614,
+                467
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this work we introduce an strategy to add context-oriented features into the input layer of a DNN and leverage tensor decomposition strategy to develop a 2-step optimization strategy for DNN training. We are motivated by the idea of introducing pretrained DNN as input features similar to a warm-start initialization strategies and by the outer product structure of tensor decompositions. We find that DNN optimized with a pretrained DNN feature quickly converge to the same local minima as their pretrained feature. Therefore, to improve this optimization strategy, we discretize the DNN over the domain of the problem on a quadrature grid and decompose the resulting higher-order tensor using eficient randomized tensor decomposition strategies. We restrict this work by only considering the CPD and to optimize the CPD we utilize a leveraged-score based column selected randomized ALS scheme. This CPD-RALS strategy reducing the overall memory requirements of the decomposition by between 8 and 34 orders of magnitude. We recognize that tensor decomposition algorithms like the ALS have a relationship to multidimensiona gaussian process strategies. This global optimization strategy appears to have a smoothing efect on functions that are encoded in trained DNN. We introduce this TN approximation as a feature in the DNN optimization as a means to eficiently kick optimizations out of local minima."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                487,
+                923,
+                678
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Our initial testing shows mixed results when the only feature introduced is the TN decomposition of a DNN. Primarily, we found that, if the trained DNN is relatively close to a global extrema, Tensor-Featured training can significantly improve the optimization of the subsequent DNN. However, if the trained DNN is not close to a global extrema then the tensor feature does not improve the training, i.e. the context provided by the tensor feature is irrelevant. We recognize that it may be dificult to train a DNN to be suficiently close to a global extrema, which limits the utility of the Tensor-Featured training as described above. As a results, we introduce a more robust strategy to improve optimization."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                678,
+                921,
+                780
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "For this robust strategy, we recognize it is acceptable to introduce any number of functions that acts on any portion of the domain as features to the DNN optimization. We therefore introduce an improved method where many functions, which we believe may provide context, are added as features to the DNN optimization. The category of features can be split into functions which are easy to apply to points on the domain, which we call rank-1 features, and functions which must first be decomposed as a TN to be applied eficiently, i.e. partially optimized DNN. Using a combination of rank-1 and TN features, we are able to significantly accelerate the convergence of model error in the validation set compared to conventional DNN training procedures."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                781,
+                921,
+                883
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In follow-up work, we will consider methods to eficiently choose rank-1 features, determine the location and number of quadrature grid points for TN decomposition strategies and pick which TN decomposition strategy is necessary for particular problems. We are also interested in studying how the product structure of these features influences the optimization of parameters in a DNN. For example, when does adding a feature improve optimization, how do diferent features influence optimization of DNN parameters, and is there an interplay between activation functions and rank-1 features? Finally, in this work we found some dificulties when optimizing extremely high dimensional functions using the randomized CPD-ALS. We are, therefore, interested in determining methods to improve the CPD optimization such as leveraging the symmetry and sparsity of high-dimensional PDEs."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                883,
+                921,
+                915
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "11"
+                    }
+                ]
+            },
+            "bbox": [
+                898,
+                34,
+                918,
+                46
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                80,
+                65,
+                921,
+                155
+            ]
+        },
+        {
+            "type": "list",
+            "content": {
+                "list_type": "reference_list",
+                "list_items": [
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[1] M. I. Jordan and T. M. Mitchell, Machine learning: Trends, perspectives, and prospects, Science 349, 255 (2015)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[2] M. Raissi, P. Perdikaris, and G. Karniadakis, Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial diferential equations, Journal of Computational Physics 378 686 (2019)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[3] Z. Hu, K. Shukla, G. E. Karniadakis, and K. Kawaguchi, Tackling the curse of dimensionality with physics-informed neural networks, Neural Networks 176, 106369 (2024)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[4] J. F. Urb´an, P. Stefanou, and J. A. Pons, Unveiling the optimization process of physics informed neural networks: How accurate and competitive can pinns be?, Journal of Computational Physics 523, 113656 (2025)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[5] Y. Gu, H. Yang, and C. Zhou, SelectNet: Self-paced learning for high-dimensional partial diferential equations, Journal of Computational Physics 441, 110444 (2021)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[6] C. Liao, Solving partial diferential equations with random feature models, Communications in Nonlinear Science and Numerical Simulation 152, 109343 (2026)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[7] L. Richter, L. Sallandt, and N. N¨usken, Solving high-dimensional parabolic pdes using the tensor train format, Arxiv (2021)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[8] F. L. Hitchcock, The expression of a tensor or a polyadic as a sum of products, Journal of Mathematics and Physics "
+                            },
+                            {
+                                "type": "equation_inline",
+                                "content": "\\mathbf { 6 } ,"
+                            },
+                            {
+                                "type": "text",
+                                "content": "164 (1927)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[9] J. D. Carroll and J.-J. Chang, Analysis of individual diferences in multidimensional scaling via an n-way generalization of “eckart-young” decomposition, Psychometrika 35, 283 (1970)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[10] R. A. Harshman et al., Foundations of the parafac procedure: Models and conditions for an “explanatory” multi-moda factor analysis, UCLA working papers in phonetics 16, 84 (1970)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[11] F. Wesel and K. Batselier, Tensor network-constrained kernel machines as gaussian processes, in Proceedings of The 28th International Conference on Artificial Intelligence and Statistics, Proceedings of Machine Learning Research, Vol. 258, edited by Y. Li, S. Mandt, S. Agrawal, and E. Khan (PMLR, 2025) pp. 2161–2169."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[12] Q. Yuan, Z. Xu, Y. Chen, Y. Xu, H. Owhadi, and S. Zhe, Tensor gaussian processes: Eficient solvers for nonlinear pdes, Arxiv (2026)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[13] P. M. Kroonenberg and J. de Leeuw, Principal component analysis of three-mode data by means of alternating least squares algorithms, Psychometrika 45, 69 (1980)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[14] G. Beylkin and M. J. Mohlenkamp, Numerical operator calculus in higher dimensions, Proc. Natl. Acad. Sci. 99, 10246 (2002)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[15] K. Pierce, V. Rishi, and E. F. Valeev, Robust Approximation of Tensor Networks: Application to Grid-Free Tensor Factorization of the Coulomb Interaction, J. Chem. Theory Comput. 17, 2217 (2021)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[16] C. Battaglino, G. Ballard, and T. G. Kolda, A practical randomized cp tensor decomposition, SIAM Journal on Matrix Analysis and Applications 39, 876 (2018)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[17] B. W. Larsen and T. G. Kolda, Practical leverage-based sampling for low-rank tensor decomposition, SIAM Journal on Matrix Analysis and Applications 43, 1488 (2022)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[18] D. P. Woodruf, Sketching as a tool for numerical linear algebra, Foundations and Trends® in Theoretical Computer Science 10, 1 (2014)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[19] V. Rokhlin and M. Tygert, A fast randomized algorithm for overdetermined linear least-squares regression, Proceedings of the National Academy of Sciences 105, 13212 (2008)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[20] I. Fakih, L. Grigori, and K. Pierce, Accelerating the Canonical Polyadic Alternating Least Squares Optimization via a Randomized Interpolative Decomposition, Arxiv (2026)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[21] E. Stoudenmire and D. Schwab, Supervised learning with tensor networks, in Advances in Neural Information Processing Systems, Vol. 29, edited by D. Lee, M. Sugiyama, U. Luxburg, I. Guyon, and R. Garnett (Curran Associates, Inc., 2016)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[22] F. Wesel and K. Batselier, Tensor network-constrained kernel machines as gaussian processes, Arxiv (2024)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[23] J. Quinonero-Candela and C. Rasmussen, A unifying view of sparse approximate gaussian process regression, Journal of Machine Learning Research, v.6, 1935-1959 (2005) 6 (2005)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[24] C. E. Rasmussen and C. K. I. Williams, Gaussian processes for machine learning (MIT Press, 2006) p. 248."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[25] M. Innes, E. Saba, K. Fischer, D. Gandhi, M. C. Rudilosso, N. M. Joy, T. Karmali, A. Pal, and V. Shah, Fashionable modelling with flux, CoRR abs/1811.01457 (2018), arXiv:1811.01457."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[26] M. Innes, Flux: Elegant machine learning with julia, Journal of Open Source Software 10.21105/joss.00602 (2018)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[27] Itensorcpd library (2026), accessed: 2026-01-01."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "bbox": [
+                91,
+                208,
+                870,
+                223
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "12"
+                    }
+                ]
+            },
+            "bbox": [
+                898,
+                34,
+                919,
+                46
+            ]
+        }
+    ]
+]
