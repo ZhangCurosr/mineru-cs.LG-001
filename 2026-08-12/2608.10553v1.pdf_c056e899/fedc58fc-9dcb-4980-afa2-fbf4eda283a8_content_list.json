@@ -1,0 +1,2790 @@
+[
+    {
+        "type": "text",
+        "text": "Retrieval–Corrected Conformal Prediction for Time Series",
+        "text_level": 1,
+        "bbox": [
+            124,
+            99,
+            874,
+            125
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Sangjin Jin sj.jin@unist.ac.<sup>k</sup>r Ulsan National Instit<sub>u</sub>te of Science and Technolo<sub>gy</sub> Ulsan<sub>,</sub> Re<sub>p</sub>ublic of Korea",
+        "bbox": [
+            124,
+            132,
+            472,
+            194
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Junh<sub>y</sub>eon<sub>g</sub> Lee jun.<sup>l</sup>ee@unist.ac.<sup>k</sup>r Ulsan National Instit<sub>u</sub>te of Science and Technolo<sub>gy</sub> Ulsan<sub>,</sub> Re<sub>p</sub>ublic of Korea",
+        "bbox": [
+            124,
+            205,
+            470,
+            267
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "K<sub>a</sub>n<sub>g</sub>min Kim k<sub>m</sub>i<sub>n</sub>1015<sub>@un</sub>i<sub>s</sub>t<sub>.ac.</sub>k<sub>r</sub> Ulsan National Instit<sub>u</sub>te of Science and Technolo<sub>gy</sub> Ulsan<sub>,</sub> Re<sub>p</sub>ublic of Korea",
+        "bbox": [
+            527,
+            132,
+            874,
+            194
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Yongjae Lee<sup>∗</sup> yongjae<sup>l</sup>ee@unist.ac.<sup>k</sup>r Ulsan National Instit<sub>u</sub>te of Science and Technolo<sub>gy</sub> Ulsan<sub>,</sub> Re<sub>p</sub>ublic of Korea Lin<sub>q</sub>Al<sub>p</sub>ha N<sub>ew</sub> Y<sub>o</sub>rk<sub>,</sub> NY<sub>,</sub> USA",
+        "bbox": [
+            526,
+            205,
+            872,
+            297
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Abstract",
+        "text_level": 2,
+        "bbox": [
+            83,
+            305,
+            158,
+            320
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Conformal <sub>p</sub>rediction (CP) <sub>p</sub>rovides distribution-free <sub>p</sub>rediction i<sub>n</sub>t<sub>erva</sub>l<sub>s</sub> f<sub>or</sub> fi<sub>xe</sub>d f<sub>orecas</sub>t<sub>ers,</sub> b<sub>u</sub>t it<sub>s s</sub>t<sub>an</sub>d<sub>ar</sub>d <sub>ca</sub>lib<sub>ra</sub>ti<sub>on roce-</sub> d<sub>ure</sub> i<sub>s o</sub>ft<sub>en</sub> i<sub>ne</sub>fi<sub>c</sub>i<sub>en</sub>t f<sub>or</sub> ti<sub>me ser</sub>i<sub>es</sub> d<sub>a</sub>t<sub>a, w</sub>h<sub>ere</sub> f<sub>orecas</sub>t <sub>errors</sub> are tem<sub>p</sub>orall<sub>y</sub> de<sub>p</sub>endent and chan<sub>g</sub>e across time and o<sub>p</sub>eratin<sub>g</sub> <sub>co</sub>nditi<sub>o</sub>n<sub>s.</sub> R<sub>ece</sub>nt tim<sub>e se</sub>ri<sub>es</sub> CP m<sub>e</sub>th<sub>o</sub>d<sub>s</sub> im<sub>p</sub>r<sub>ove</sub> l<sub>oca</sub>l <sub>ca</sub>libr<sub>a</sub>ti<sub>o</sub>n <sub>us</sub>i<sub>ng recen</sub>t<sub>, we</sub>i<sub>g</sub>ht<sub>e</sub>d<sub>, or</sub> l<sub>oca</sub>li<sub>ze</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s.</sub> Y<sub>e</sub>t l<sub>oca</sub>l <sub>ca</sub>lib<sub>ra</sub>ti<sub>on</sub> can remain indirect<sub>,</sub> since broad residual wei<sub>g</sub>htin<sub>g</sub> or additional <sub>a</sub>d<sub>ap</sub>t<sub>a</sub>ti<sub>on proce</sub>d<sub>ures may</sub> dil<sub>u</sub>t<sub>e</sub> th<sub>e ev</sub>id<sub>ence mos</sub>t <sub>re</sub>l<sub>evan</sub>t t<sub>o</sub> the current <sub>p</sub>rediction. This motivates a sim<sub>p</sub>le retrieval and cor-<sub>rec</sub>ti<sub>on s</sub>t<sub>ra</sub>t<sub>egy</sub> th<sub>a</sub>t <sub>se</sub>l<sub>ec</sub>t<sub>s s</sub>i<sub>m</sub>il<sub>ar pas</sub>t <sub>res</sub>id<sub>ua</sub>l<sub>s as</sub> l<sub>oca</sub>l <sub>ev</sub>id<sub>ence</sub> <sub>an</sub>d th<sub>en correc</sub>t<sub>s</sub> th<sub>e coverage error</sub> l<sub>e</sub>ft b<sub>y re</sub>t<sub>r</sub>i<sub>eva</sub>l<sub>.</sub> I<sub>n</sub> thi<sub>s pa-</sub> per, we propose Retrieval–Corrected Conformal Prediction (RCCP), <sub>a re</sub>t<sub>r</sub>i<sub>eva</sub>l<sub>-augmen</sub>t<sub>e</sub>d <sub>ca</sub>lib<sub>ra</sub>ti<sub>on me</sub>th<sub>o</sub>d f<sub>or</sub> ti<sub>me ser</sub>i<sub>es pre</sub>di<sub>c-</sub> ti<sub>o</sub>n int<sub>e</sub>r<sub>va</sub>l<sub>s.</sub> RCCP b<sub>u</sub>ild<sub>s a</sub>n <sub>asy</sub>mm<sub>e</sub>tri<sub>c</sub> int<sub>e</sub>r<sub>va</sub>l fr<sub>o</sub>m r<sub>e</sub>tri<sub>eve</sub>d <sub>one-s</sub>id<sub>e</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s</sub> <sub>an</sub>d <sub>ca</sub>lib<sub>ra</sub>t<sub>es</sub> it<sub>s</sub> <sub>norma</sub>li<sub>ze</sub>d <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>error</sub> <sub>w</sub>ith <sub>a</sub> <sub>sca</sub>l<sub>ar</sub> <sub>con</sub>f<sub>orma</sub>l <sub>correc</sub>ti<sub>on.</sub> Th<sub>us,</sub> <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>prov</sub>id<sub>es</sub> l<sub>oca</sub>l <sub>res</sub>id<sub>ua</sub>l <sub>ev</sub>id<sub>ence, w</sub>hil<sub>e con</sub>f<sub>orma</sub>l <sub>correc</sub>ti<sub>on</sub> d<sub>e</sub>t<sub>erm</sub>i<sub>nes</sub> th<sub>e</sub> fi<sub>-</sub> <sub>na</sub>l <sub>sca</sub>l<sub>e nee</sub>d<sub>e</sub>d f<sub>or coverage.</sub> W<sub>e prov</sub>id<sub>e a coverage-gap</sub> b<sub>oun</sub>d b<sub>ase</sub>d <sub>on</sub> th<sub>e s</sub>t<sub>a</sub>bilit<sub>y o</sub>f th<sub>e norma</sub>li<sub>ze</sub>d <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>error</sub> di<sub>s</sub>t<sub>r</sub>ib<sub>u-</sub> ti<sub>on.</sub> A<sub>cross s</sub>t<sub>an</sub>d<sub>ar</sub>d b<sub>enc</sub>h<sub>mar</sub>k<sub>s an</sub>d b<sub>ac</sub>kb<sub>one</sub> f<sub>orecas</sub>t<sub>ers,</sub> RCCP attains the tar<sub>g</sub>et covera<sub>g</sub>e in ever<sub>y</sub> settin<sub>g</sub> and achieves the low-<sub>es</sub>t Winkl<sub>e</sub>r <sub>sco</sub>r<sub>es, w</sub>ith f<sub>ewe</sub>r <sub>seve</sub>r<sub>e</sub> mi<sub>sses.</sub> RCCP <sub>a</sub>l<sub>so ac</sub>hi<sub>eves</sub> l<sub>ow ca</sub>lib<sub>ra</sub>ti<sub>on an</sub>d i<sub>n</sub>f<sub>erence over</sub>h<sub>ea</sub>d<sub>, s</sub>h<sub>ow</sub>i<sub>ng</sub> th<sub>a</sub>t <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l<sub>-</sub> <sub>correc</sub>t<sub>e</sub>d <sub>ca</sub>lib<sub>ra</sub>ti<sub>on</sub> i<sub>s</sub> <sub>an</sub> <sub>e</sub>f<sub>ec</sub>ti<sub>ve</sub> <sub>an</sub>d <sub>sca</sub>l<sub>a</sub>bl<sub>e</sub> <sub>approac</sub>h t<sub>o</sub> <sub>uncer-</sub> taint<sub>y qu</sub>antification in time series forecastin<sub>g</sub>. Code is available at <sup>h</sup>ttps://git<sup>h</sup>u<sup>b</sup>.com/jinsaaang/rccp.",
+        "bbox": [
+            81,
+            323,
+            485,
+            686
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "CCS Concepts",
+        "text_level": 2,
+        "bbox": [
+            83,
+            695,
+            202,
+            712
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "• Computing methodologies → Artificial intelligence.",
+        "bbox": [
+            83,
+            714,
+            441,
+            729
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Keywords",
+        "text_level": 2,
+        "bbox": [
+            83,
+            739,
+            169,
+            756
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "C<sub>o</sub>nf<sub>o</sub>rm<sub>a</sub>l <sub>p</sub>r<sub>e</sub>di<sub>c</sub>ti<sub>o</sub>n<sub>,</sub> Tim<sub>e</sub> <sub>se</sub>ri<sub>es</sub> f<sub>o</sub>r<sub>ecas</sub>tin<sub>g,</sub> Inf<sub>o</sub>rm<sub>a</sub>ti<sub>o</sub>n r<sub>e</sub>tri<sub>eva</sub>l<sub>,</sub> Uncertaint<sub>y</sub> <sub>qu</sub>antification",
+        "bbox": [
+            83,
+            758,
+            483,
+            787
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "1 Introduction",
+        "text_level": 2,
+        "bbox": [
+            84,
+            797,
+            220,
+            813
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Time series forecastin<sub>g</sub> <sub>p</sub>la<sub>y</sub>s a central role in decision makin<sub>g</sub> across domains such as finance, trafic, and su<sub>pp</sub>l<sub>y</sub> chain s<sub>y</sub>stems [7,",
+        "bbox": [
+            81,
+            816,
+            483,
+            845
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "32, 35]. Modern dee<sub>p</sub> forecastin<sub>g</sub> models have im<sub>p</sub>roved <sub>p</sub>oint <sub>p</sub>rediction accurac<sub>y</sub> across these settin<sub>g</sub>s [5, 15, 20], <sub>y</sub>et <sub>p</sub>oint accurac<sub>y</sub> alone is insuficient for decision makin<sub>g</sub> under uncertaint<sub>y</sub>. Fore-<sub>cas</sub>t <sub>users a</sub>l<sub>so nee</sub>d <sub>pre</sub>di<sub>c</sub>ti<sub>on</sub> i<sub>n</sub>t<sub>erva</sub>l<sub>s</sub> th<sub>a</sub>t <sub>quan</sub>tif<sub>y p</sub>l<sub>aus</sub>ibl<sub>e</sub> d<sub>ev</sub>i<sub>a</sub>ti<sub>ons</sub> f<sub>rom</sub> th<sub>e po</sub>i<sub>n</sub>t f<sub>orecas</sub>t <sub>an</sub>d <sub>a</sub>tt<sub>a</sub>i<sub>n</sub> th<sub>e</sub> d<sub>es</sub>i<sub>re</sub>d <sub>emp</sub>i<sub>r</sub>i<sub>ca</sub>l <sub>coverage.</sub> A<sub>n</sub> i<sub>n</sub>f<sub>orma</sub>ti<sub>ve</sub> i<sub>n</sub>t<sub>erva</sub>l <sub>s</sub>h<sub>ou</sub>ld b<sub>e narrow w</sub>h<sub>en</sub> th<sub>e</sub> l<sub>oca</sub>l <sub>error</sub> <sub>sca</sub>l<sub>e</sub> i<sub>s</sub> <sub>sma</sub>ll<sub>,</sub> <sub>w</sub>id<sub>er</sub> <sub>w</sub>h<sub>en</sub> <sub>curren</sub>t <sub>con</sub>diti<sub>ons</sub> i<sub>mp</sub>l<sub>y</sub> l<sub>arger</sub> <sub>errors, an</sub>d <sub>ca</sub>lib<sub>ra</sub>t<sub>e</sub>d t<sub>o</sub> th<sub>e</sub> t<sub>arge</sub>t l<sub>eve</sub>l<sub>.</sub> P<sub>ro</sub>b<sub>a</sub>bili<sub>s</sub>ti<sub>c</sub> f<sub>orecas</sub>ti<sub>ng</sub> a<sub>pp</sub>roaches estimate <sub>p</sub>redictive distributions or conditional <sub>q</sub>uantiles [19, 28], but their uncertaint<sub>y</sub> estimates de<sub>p</sub>end on the model c<sup>l</sup>ass, training o<sup>b</sup>jective, an<sup>d d</sup>istri<sup>b</sup>utiona<sup>l</sup> assumptions. W<sup>h</sup>en th<sub>ese assump</sub>ti<sub>ons are m</sub>i<sub>sspec</sub>ifi<sub>e</sub>d <sub>or</sub> th<sub>e</sub> t<sub>es</sub>t di<sub>s</sub>t<sub>r</sub>ib<sub>u</sub>ti<sub>on</sub> dif<sub>ers</sub> from trainin<sub>g,</sub> nominal uncertaint<sub>y</sub> ma<sub>y</sub> not translate into reliable em<sub>p</sub>irical covera<sub>g</sub>e. This motivates <sub>p</sub>redictive inference based on <sub>ca</sub>lib<sub>ra</sub>ti<sub>on</sub> f<sub>or</sub> fi<sub>xe</sub>d f<sub>orecas</sub>t<sub>ers.</sub>",
+        "bbox": [
+            513,
+            306,
+            916,
+            513
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Conformal <sub>p</sub>rediction (CP) <sub>p</sub>rovides a distribution free framework for constructin<sub>g p</sub>rediction intervals with a <sub>p</sub>rescribed covera<sub>g</sub>e level [2, 17, 34]. For a fixed re<sub>g</sub>ression forecaster, s<sub>p</sub>lit CP com<sub>p</sub>utes nonconformit<sub>y</sub> scores on a calibration set<sub>,</sub> often usin<sub>g</sub> ab-<sub>so</sub>l<sub>u</sub>t<sub>e</sub> <sub>pre</sub>di<sub>c</sub>ti<sub>on</sub> <sub>res</sub>id<sub>ua</sub>l<sub>s,</sub> <sub>an</sub>d t<sub>a</sub>k<sub>es</sub> <sub>an</sub> <sub>emp</sub>i<sub>r</sub>i<sub>ca</sub>l <sub>quan</sub>til<sub>e</sub> <sub>o</sub>f th<sub>ese</sub> <sub>scores</sub> <sub>as</sub> th<sub>e</sub> i<sub>n</sub>t<sub>erva</sub>l th<sub>res</sub>h<sub>o</sub>ld<sub>.</sub> U<sub>n</sub>d<sub>er</sub> <sub>exc</sub>h<sub>angea</sub>bilit<sub>y</sub> <sub>o</sub>f <sub>ca</sub>lib<sub>ra-</sub> tion and test scores<sub>,</sub> this <sub>p</sub>rocedure attains finite sam<sub>p</sub>le mar<sub>g</sub>inal covera<sub>g</sub>e. Its a<sub>pp</sub>eal is that covera<sub>g</sub>e is obtained from calibration scores rather than a correctl<sub>y</sub> s<sub>p</sub>ecified <sub>p</sub>redictive distribution. In time series<sub>,</sub> however<sub>,</sub> the residual <sub>p</sub>rocess is <sub>g</sub>enerall<sub>y</sub> nonexchan<sub>g</sub>e-<sub>a</sub>bl<sub>e.</sub> F<sub>orecas</sub>t <sub>errors</sub> <sub>are</sub> t<sub>empora</sub>ll<sub>y</sub> d<sub>epen</sub>d<sub>en</sub>t<sub>,</sub> h<sub>e</sub>t<sub>eros</sub>k<sub>e</sub>d<sub>as</sub>ti<sub>c,</sub> <sub>an</sub>d <sub>a</sub>f<sub>ec</sub>t<sub>e</sub>d b<sub>y nons</sub>t<sub>a</sub>ti<sub>onar</sub>it<sub>y,</sub> di<sub>s</sub>t<sub>r</sub>ib<sub>u</sub>ti<sub>on s</sub>hift<sub>s, an</sub>d h<sub>or</sub>i<sub>zon</sub> d<sub>epen-</sub> dent uncertaint<sub>y</sub> [10, 21, 36, 37, 39]. A <sub>g</sub>lobal threshold com<sub>p</sub>uted f<sub>rom a</sub>ll <sub>ca</sub>lib<sub>ra</sub>ti<sub>on res</sub>id<sub>ua</sub>l<sub>s</sub> th<sub>ere</sub>f<sub>ore m</sub>i<sub>xes errors</sub> f<sub>rom</sub> dif<sub>eren</sub>t tem<sub>p</sub>oral conditions. It can be conservative in stable <sub>p</sub>eriods and i<sub>nsu</sub>fi<sub>c</sub>i<sub>en</sub>t i<sub>n vo</sub>l<sub>a</sub>til<sub>e per</sub>i<sub>o</sub>d<sub>s, w</sub>hi<sub>c</sub>h <sub>wea</sub>k<sub>ens</sub> th<sub>e coverage an</sub>d <sub>e</sub>fi<sub>c</sub>i<sub>ency</sub> t<sub>ra</sub>d<sub>eo</sub>f <sub>requ</sub>i<sub>re</sub>d <sub>o</sub>f <sub>pre</sub>di<sub>c</sub>ti<sub>on</sub> i<sub>n</sub>t<sub>erva</sub>l<sub>s.</sub>",
+        "bbox": [
+            513,
+            515,
+            916,
+            750
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Recent time series CP methods address this mismatch b<sub>y</sub> ada<sub>p</sub>tin<sub>g</sub> calibration to the current <sub>p</sub>rediction context [4]. The<sub>y</sub> either u<sub>p</sub>date calibration throu<sub>g</sub>h recent errors or miscovera<sub>g</sub>e feedback [1, 10, 11, 39], or construct wei<sub>g</sub>hted and localized em<sub>p</sub>irical distributions over conformit<sub>y</sub> scores usin<sub>g</sub> tem<sub>p</sub>oral <sub>p</sub>roximit<sub>y,</sub> learned similarit<sub>y</sub>, semantic features, or state re<sub>p</sub>resentations [3, 6, 8, 16, 23, 33]. Th<sub>ese me</sub>th<sub>o</sub>d<sub>s avo</sub>id <sub>ca</sub>lib<sub>ra</sub>ti<sub>ng aga</sub>i<sub>ns</sub>t th<sub>e average res</sub>id<sub>ua</sub>l b<sub>e-</sub> h<sub>av</sub>i<sub>o</sub>r <sub>o</sub>f th<sub>e e</sub>ntir<sub>e ca</sub>libr<sub>a</sub>ti<sub>o</sub>n <sub>pe</sub>ri<sub>o</sub>d<sub>.</sub> Thi<sub>s</sub> dir<sub>ec</sub>ti<sub>o</sub>n i<sub>s esse</sub>nti<sub>a</sub>l f<sub>o</sub>r <sub>s</sub>h<sub>arp</sub> i<sub>n</sub>t<sub>erva</sub>l<sub>s, s</sub>i<sub>nce ca</sub>lib<sub>ra</sub>ti<sub>on s</sub>h<sub>ou</sub>ld <sub>re</sub>l<sub>y on res</sub>id<sub>ua</sub>l i<sub>n</sub>f<sub>orma-</sub> ti<sub>o</sub>n th<sub>a</sub>t r<sub>e</sub>fl<sub>ec</sub>t<sub>s</sub> th<sub>e</sub> <sub>cu</sub>rr<sub>e</sub>nt <sub>e</sub>rr<sub>o</sub>r di<sub>s</sub>trib<sub>u</sub>ti<sub>o</sub>n<sub>.</sub> A r<sub>e</sub>m<sub>a</sub>inin<sub>g</sub> limit<sub>a</sub>- ti<sub>on</sub> i<sub>s</sub> th<sub>a</sub>t l<sub>oca</sub>l th<sub>res</sub>h<sub>o</sub>ld<sub>s are o</sub>ft<sub>en o</sub>bt<sub>a</sub>i<sub>ne</sub>d b<sub>y so</sub>ftl<sub>y we</sub>i<sub>g</sub>hti<sub>ng</sub> man<sub>y</sub> calibration sam<sub>p</sub>les or b<sub>y</sub> introducin<sub>g</sub> an additional ada<sub>p</sub>ta ti<sub>on</sub> <sub>proce</sub>d<sub>ure.</sub> Wh<sub>en</sub> <sub>on</sub>l<sub>y</sub> <sub>a</sub> <sub>sma</sub>ll<sub>er</sub> <sub>se</sub>t <sub>o</sub>f <sub>pas</sub>t <sub>errors</sub> i<sub>s</sub> <sub>re</sub>l<sub>evan</sub>t t<sub>o</sub> th<sub>e curren</sub>t <sub>pre</sub>di<sub>c</sub>ti<sub>on, wea</sub>kl<sub>y re</sub>l<sub>a</sub>t<sub>e</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s can s</sub>till <sub>a</sub>f<sub>ec</sub>t th<sub>e</sub> interval and reduce shar<sub>p</sub>ness. Retrieval <sub>p</sub>rovides a more direct wa<sub>y</sub> to use residual evidence from similar <sub>p</sub>ast <sub>p</sub>rediction contexts<sub>,</sub> but th<sub>e</sub> <sub>resu</sub>lti<sub>ng</sub> i<sub>n</sub>t<sub>erva</sub>l i<sub>s</sub> <sub>no</sub>t <sub>ca</sub>lib<sub>ra</sub>t<sub>e</sub>d b<sub>y</sub> it<sub>se</sub>lf<sub>.</sub> Th<sub>e</sub> k<sub>ey</sub> <sub>pro</sub>bl<sub>em</sub> i<sub>s</sub> th<sub>ere</sub>f<sub>ore</sub> h<sub>ow</sub> t<sub>o</sub> <sub>use</sub> <sub>re</sub>t<sub>r</sub>i<sub>eve</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s</sub> f<sub>or</sub> <sub>a</sub> <sub>s</sub>h<sub>arp</sub> l<sub>oca</sub>l i<sub>n</sub>t<sub>erva</sub>l <sub>w</sub>hil<sub>e correc</sub>ti<sub>ng</sub> th<sub>e coverage error</sub> th<sub>a</sub>t <sub>rema</sub>i<sub>ns a</sub>ft<sub>er re</sub>t<sub>r</sub>i<sub>eva</sub>l<sub>.</sub>",
+        "bbox": [
+            511,
+            750,
+            916,
+            862
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "aside_text",
+        "text": "arXiv:2608.10553v1 [cs.LG] 11 Aug 2026",
+        "bbox": [
+            29,
+            353,
+            63,
+            800
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>∗</sup>Corres<sub>p</sub>ondin<sub>g</sub> author.",
+        "bbox": [
+            83,
+            852,
+            199,
+            866
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "page_footnote",
+        "text": "Accepted at the 35th ACM International Conference on Information and Knowledge Management (CIKM ’26), Rome, Italy.",
+        "bbox": [
+            83,
+            872,
+            482,
+            896
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            81,
+            106,
+            485,
+            260
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Motivated by this problem, we propose Retrieval–Corrected Conformal Prediction (RCCP). The main idea is to separate residual <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l f<sub>rom con</sub>f<sub>orma</sub>l <sub>correc</sub>ti<sub>on.</sub> R<sub>e</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>augmen</sub>t<sub>e</sub>d ti<sub>me se-</sub> <sub>r</sub>i<sub>es</sub> f<sub>orecas</sub>ti<sub>ng</sub> h<sub>as s</sub>h<sub>own</sub> th<sub>a</sub>t <sub>s</sub>i<sub>m</sub>il<sub>ar</sub> hi<sub>s</sub>t<sub>or</sub>i<sub>ca</sub>l <sub>w</sub>i<sub>n</sub>d<sub>ows or re</sub>f<sub>-</sub> erence trajectories can provi<sup>d</sup>e use<sup>f</sup>u<sup>l</sup> nonparametric in<sup>f</sup>ormation for <sub>p</sub>rediction [12, 14, 22, 24, 38]. RCCP uses this <sub>p</sub>rinci<sub>p</sub>le for un certaint<sub>y</sub> estimation rather than <sub>p</sub>oint forecastin<sub>g</sub>. Given a fixed forecaster<sub>,</sub> RCCP retrie<sub>v</sub>es similar <sub>p</sub>ast <sub>p</sub>rediction contexts and their <sub>rea</sub>li<sub>ze</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s</sub> f<sub>rom a</sub> ti<sub>me or</sub>d<sub>ere</sub>d k<sub>now</sub>l<sub>e</sub>d<sub>ge</sub> b<sub>ase,</sub> th<sub>en</sub> b<sub>u</sub>ild<sub>s</sub> an as<sub>y</sub>mmetric local interval from <sub>p</sub>ositive and ne<sub>g</sub>ative residuals. This interval ca<sub>p</sub>tures local residual behavior without trainin<sub>g</sub> an <sub>a</sub>dditi<sub>ona</sub>l <sub>we</sub>i<sub>g</sub>hti<sub>ng mo</sub>d<sub>e</sub>l <sub>or re</sub>l<sub>y</sub>i<sub>ng on a g</sub>l<sub>o</sub>b<sub>a</sub>l <sub>res</sub>id<sub>ua</sub>l <sub>quan</sub>til<sub>e.</sub>",
+        "bbox": [
+            81,
+            258,
+            485,
+            425
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Th<sub>e re</sub>t<sub>r</sub>i<sub>eve</sub>d i<sub>n</sub>t<sub>erva</sub>l i<sub>s cons</sub>t<sub>ruc</sub>t<sub>e</sub>d f<sub>rom</sub> d<sub>a</sub>t<sub>a</sub> d<sub>epen</sub>d<sub>en</sub>t l<sub>oca</sub>l <sub>ev</sub>id<sub>ence, so</sub> RCCP d<sub>oes no</sub>t t<sub>rea</sub>t it <sub>as</sub> th<sub>e</sub> fi<sub>na</sub>l <sub>con</sub>f<sub>orma</sub>l i<sub>n</sub>t<sub>erva</sub>l<sub>.</sub> It instead eval<sub>u</sub>ates the remainin<sub>g</sub> retrieval error on calibration d<sub>a</sub>t<sub>a</sub> b<sub>y compar</sub>i<sub>ng</sub> th<sub>e rea</sub>li<sub>ze</sub>d <sub>res</sub>id<sub>ua</sub>l <sub>w</sub>ith th<sub>e re</sub>t<sub>r</sub>i<sub>eve</sub>d <sub>upper or</sub> l<sub>ower sca</sub>l<sub>e.</sub> Th<sub>e resu</sub>lti<sub>ng norma</sub>li<sub>ze</sub>d <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>error</sub> i<sub>s ca</sub>lib<sub>ra</sub>t<sub>e</sub>d i<sub>n</sub>t<sub>o a sca</sub>l<sub>ar correc</sub>ti<sub>on</sub> f<sub>ac</sub>t<sub>or</sub> f<sub>or</sub> t<sub>es</sub>t ti<sub>me</sub> i<sub>n</sub>t<sub>erva</sub>l<sub>s.</sub> A<sub>s a resu</sub>lt<sub>,</sub> <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l d<sub>e</sub>t<sub>erm</sub>i<sub>nes</sub> th<sub>e</sub> l<sub>oca</sub>l <sub>asymme</sub>t<sub>r</sub>i<sub>c s</sub>h<sub>ape o</sub>f th<sub>e</sub> i<sub>n</sub>t<sub>erva</sub>l<sub>,</sub> <sub>w</sub>hil<sub>e con</sub>f<sub>orma</sub>l <sub>correc</sub>ti<sub>on</sub> d<sub>e</sub>t<sub>erm</sub>i<sub>nes</sub> th<sub>e</sub> fi<sub>na</sub>l <sub>sca</sub>l<sub>e nee</sub>d<sub>e</sub>d f<sub>or</sub> covera<sub>g</sub>e. Section 3.3 formalizes this se<sub>p</sub>aration b<sub>y</sub> first constructin<sub>g</sub> <sub>re</sub>t<sub>r</sub>i<sub>eve</sub>d <sub>res</sub>id<sub>ua</sub>l <sub>quan</sub>til<sub>es an</sub>d th<sub>en correc</sub>ti<sub>ng</sub> th<sub>em</sub> th<sub>roug</sub>h th<sub>e</sub> <sub>norma</sub>li<sub>ze</sub>d <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>error.</sub>",
+        "bbox": [
+            81,
+            425,
+            483,
+            578
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "O<sub>ur ma</sub>i<sub>n con</sub>t<sub>r</sub>ib<sub>u</sub>ti<sub>ons are summar</sub>i<sub>ze</sub>d <sub>as</sub> f<sub>o</sub>ll<sub>ows.</sub>",
+        "bbox": [
+            99,
+            582,
+            411,
+            594
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• We a<sub>pp</sub>l<sub>y</sub> residual retrieval to conformal <sub>p</sub>rediction as a direct alternative to broad wei<sub>g</sub>htin<sub>g</sub> over calibration sam<sub>p</sub>les <sub>an</sub>d <sub>a</sub>dditi<sub>ona</sub>l t<sub>ra</sub>i<sub>n</sub>i<sub>ng</sub> <sub>proce</sub>d<sub>ures,</sub> <sub>se</sub>l<sub>ec</sub>ti<sub>ng</sub> <sub>res</sub>id<sub>ua</sub>l<sub>s</sub> f<sub>rom</sub> similar <sub>p</sub>ast <sub>p</sub>rediction contexts as local evidence.",
+        "bbox": [
+            109,
+            602,
+            483,
+            659
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• We <sub>p</sub>ro<sub>p</sub>ose RCCP, a framework that combines as<sub>y</sub>mmetric <sub>re</sub>t<sub>r</sub>i<sub>eve</sub>d i<sub>n</sub>t<sub>erva</sub>l<sub>s w</sub>ith <sub>sca</sub>l<sub>ar con</sub>f<sub>orma</sub>l <sub>correc</sub>ti<sub>on.</sub>",
+        "bbox": [
+            109,
+            659,
+            482,
+            685
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• Theoretical results establish a covera<sub>g</sub>e <sub>g</sub>a<sub>p</sub> bound and an as<sub>y</sub>m<sub>p</sub>totic covera<sub>g</sub>e res<sub>u</sub>lt for the RCCP interval<sub>,</sub> based on <sub>s</sub>t<sub>a</sub>bilit<sub>y</sub> <sub>o</sub>f th<sub>e</sub> <sub>norma</sub>li<sub>ze</sub>d <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>error</sub> di<sub>s</sub>t<sub>r</sub>ib<sub>u</sub>ti<sub>on.</sub>",
+        "bbox": [
+            109,
+            686,
+            482,
+            727
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• Em<sub>p</sub>irical results show that RCCP im<sub>p</sub>roves the covera<sub>g</sub>e <sub>an</sub>d i<sub>n</sub>t<sub>erva</sub>l <sub>e</sub>fi<sub>c</sub>i<sub>ency</sub> t<sub>ra</sub>d<sub>eo</sub>f <sub>w</sub>ith f<sub>ewer</sub> l<sub>arge m</sub>i<sub>sses w</sub>hil<sub>e</sub> kee<sub>p</sub>in<sub>g</sub> calibration cost low.",
+        "bbox": [
+            109,
+            728,
+            483,
+            770
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "2 Related Work",
+        "text_level": 2,
+        "bbox": [
+            83,
+            794,
+            228,
+            809
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Conformal predictionfor time series forecasting. Conformal <sub>p</sub>rediction <sub>p</sub>rovides a <sub>g</sub>eneral framework for constructin<sub>g</sub> <sub>p</sub>redic tion sets with covera<sub>g</sub>e <sub>g</sub>uarantees under exchan<sub>g</sub>eabilit<sub>y,</sub> and has been widel<sub>y</sub> studied as a model-a<sub>g</sub>nostic a<sub>pp</sub>roach to uncertaint<sub>y</sub> <sub>q</sub>uantification [2, 17, 31, 34]. However, time series forecastin<sub>g</sub> violates exchan<sub>g</sub>eabilit<sub>y</sub> assum<sub>p</sub>tion due to tem<sub>p</sub>oral de<sub>p</sub>endenc<sub>y,</sub> heteroskedasticit<sub>y,</sub> and distrib<sub>u</sub>tion shifts. Prior se<sub>qu</sub>ential conformal <sub>p</sub>rediction for time series forecastin<sub>g</sub> address this issue throu<sub>g</sub>h residual-set u<sub>p</sub>dates [36], ada<sub>p</sub>tive miscovera<sub>g</sub>e control [10], or future residual-<sub>q</sub>uantile modelin<sub>g</sub> [37], includin<sub>g</sub> EnbPI, ACI, and SPCI<sub>.</sub> A<sub>no</sub>th<sub>er</sub> b<sub>ranc</sub>h <sub>o</sub>f ti<sub>me ser</sub>i<sub>es con</sub>f<sub>orma</sub>l <sub>me</sub>th<sub>o</sub>d<sub>s</sub> l<sub>oca</sub>li<sub>zes</sub> calibration around the current test <sub>p</sub>oint. NexCP [4] follows this view b<sub>y</sub> constructin<sub>g</sub> a test-de<sub>p</sub>endent wei<sub>g</sub>hted residual distribution<sub>,</sub> assi<sub>g</sub>nin<sub>g</sub> lar<sub>g</sub>er influence to tem<sub>p</sub>orall<sub>y</sub> closer available errors <sub>w</sub>h<sub>en</sub> <sub>compu</sub>ti<sub>ng</sub> th<sub>e</sub> <sub>con</sub>f<sub>orma</sub>l <sub>quan</sub>til<sub>e.</sub> R<sub>ecen</sub>t l<sub>oca</sub>l <sub>me</sub>th<sub>o</sub>d<sub>s</sub> f<sub>ur</sub>th<sub>er</sub> i<sub>mprove</sub> <sub>e</sub>fi<sub>c</sub>i<sub>ency</sub> b<sub>y</sub> <sub>se</sub>l<sub>ec</sub>ti<sub>ng</sub> <sub>ca</sub>lib<sub>ra</sub>ti<sub>on</sub> <sub>res</sub>id<sub>ua</sub>l<sub>s</sub> <sub>accor</sub>d<sub>-</sub> i<sub>ng</sub> t<sub>o</sub> th<sub>e</sub>i<sub>r</sub> <sub>re</sub>l<sub>evance</sub> t<sub>o</sub> th<sub>e</sub> <sub>curren</sub>t f<sub>orecas</sub>ti<sub>ng</sub> <sub>con</sub>t<sub>ex</sub>t<sub>,</sub> <sub>ra</sub>th<sub>er</sub> than rel<sub>y</sub>in<sub>g</sub> onl<sub>y</sub> on tem<sub>p</sub>oral <sub>p</sub>roximit<sub>y</sub>. Ho<sub>p</sub>CPT [3] uses Modern Ho<sub>p</sub>field Networks for similarit<sub>y</sub>-based sam<sub>p</sub>le rewei<sub>g</sub>htin<sub>g,</sub> ResCP [23] uses reservoir-state similarit<sub>y</sub> to rewei<sub>g</sub>ht residuals, KOWCPI [16] ada<sub>p</sub>ts Rewei<sub>g</sub>hted Nadara<sub>y</sub>a–Watson estimation for wei<sub>g</sub>hted <sub>q</sub>uantile re<sub>g</sub>ression on de<sub>p</sub>endent scores, and CT-SSF [6] learns d<sub>y</sub>namic wei<sub>g</sub>hts in a semantic feature s<sub>p</sub>ace. These methods d<sub>emons</sub>t<sub>ra</sub>t<sub>e</sub> th<sub>e va</sub>l<sub>ue o</sub>f l<sub>oca</sub>l <sub>ca</sub>lib<sub>ra</sub>ti<sub>on,</sub> b<sub>u</sub>t th<sub>ey</sub> l<sub>arge</sub>l<sub>y</sub> f<sub>ocus on</sub> estimatin<sub>g</sub> a test-s<sub>p</sub>ecific conformal <sub>q</sub>uantile. Conse<sub>q</sub>uentl<sub>y,</sub> their covera<sub>g</sub>e behavior ma<sub>y</sub> become sensitive to the <sub>q</sub>ualit<sub>y</sub> and efective <sub>suppor</sub>t <sub>o</sub>f th<sub>e re</sub>t<sub>r</sub>i<sub>eve</sub>d <sub>or we</sub>i<sub>g</sub>ht<sub>e</sub>d <sub>ca</sub>lib<sub>ra</sub>ti<sub>on examp</sub>l<sub>es.</sub>",
+        "bbox": [
+            81,
+            813,
+            485,
+            897
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            511,
+            106,
+            916,
+            400
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Retrieval-augmented time series forecasting. In recent years, retrieval-au<sub>g</sub>mented <sub>g</sub>eneration (RAG) has been widel<sub>y</sub> used in lan-<sub>guage</sub> <sub>mo</sub>d<sub>e</sub>l<sub>s</sub> t<sub>o</sub> <sub>comp</sub>l<sub>emen</sub>t <sub>parame</sub>t<sub>r</sub>i<sub>c</sub> k<sub>now</sub>l<sub>e</sub>d<sub>ge</sub> <sub>w</sub>ith <sub>re</sub>l<sub>evan</sub>t external context retrieved at inference time [9, 18, 26]. Motivated b<sub>y</sub> this <sub>p</sub>aradi<sub>g</sub>m<sub>,</sub> retrieval au<sub>g</sub>mentation has been introduced to time series forecastin<sub>g</sub> as an external memor<sub>y</sub> mechanism. Re-Time [14] shows that retrievin<sub>g</sub> relevant reference time series can reduce forecastin<sub>g</sub> uncertaint<sub>y,</sub> es<sub>p</sub>eciall<sub>y</sub> for lon<sub>g</sub>-horizon <sub>p</sub>rediction. RAFT [12] further retrieves historical candidates with in<sub>p</sub>ut patterns simi<sup>l</sup>ar to t<sup>h</sup>e query an<sup>d</sup> uses t<sup>h</sup>eir <sup>f</sup>uture trajectories as predictive inductive bias. Be<sub>y</sub>ond deterministic forecastin<sub>g</sub>, RATD [22] uses retrieved references to <sub>g</sub>uide the denoisin<sub>g p</sub>rocess in difusionbased forecastin<sub>g</sub>. TS-RAG [24] extends the same <sub>p</sub>rinci<sub>p</sub>le to time series foundation models b<sub>y</sub> retrievin<sub>g</sub> semanticall<sub>y</sub> relevant se<sub>g</sub>- <sub>men</sub>t<sub>s</sub> f<sub>rom a</sub> k<sub>now</sub>l<sub>e</sub>d<sub>ge</sub> b<sub>ase an</sub>d f<sub>us</sub>i<sub>ng</sub> th<sub>em w</sub>ith <sub>mo</sub>d<sub>e</sub>l <sub>rep-</sub> resentations for zero-shot forecastin<sub>g</sub>. These studies su<sub>gg</sub>est that <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>can prov</sub>id<sub>e ex</sub>t<sub>erna</sub>l hi<sub>s</sub>t<sub>or</sub>i<sub>ca</sub>l <sub>pa</sub>tt<sub>erns</sub> th<sub>a</sub>t <sub>are</sub> difi<sub>cu</sub>lt to full<sub>y</sub> ca<sub>p</sub>ture throu<sub>g</sub>h <sub>p</sub>arametric trainin<sub>g</sub> alone.",
+        "bbox": [
+            511,
+            405,
+            916,
+            656
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "3 Retrieval–Corrected Conformal Prediction",
+        "text_level": 2,
+        "bbox": [
+            514,
+            665,
+            893,
+            680
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "In this section, we present Retrieval-Corrected Conformal Prediction (RCCP). RCCP se<sub>p</sub>arates local residual evidence from the conformal <sub>correc</sub>ti<sub>on</sub> <sub>nee</sub>d<sub>e</sub>d f<sub>or</sub> <sub>coverage.</sub> W<sub>e</sub> fi<sub>rs</sub>t i<sub>n</sub>t<sub>ro</sub>d<sub>uce</sub> th<sub>e</sub> <sub>pro</sub>bl<sub>em</sub> <sub>se</sub>tti<sub>ng</sub> <sub>an</sub>d th<sub>en</sub> f<sub>orma</sub>li<sub>ze</sub> th<sub>e</sub> <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>an</sub>d <sub>correc</sub>ti<sub>on</sub> <sub>s</sub>t<sub>eps.</sub>",
+        "bbox": [
+            513,
+            684,
+            915,
+            741
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "3.1 Problem Definition",
+        "text_level": 2,
+        "bbox": [
+            514,
+            751,
+            717,
+            766
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "W<sub>e co</sub>n<sub>s</sub>id<sub>e</sub>r <sub>a</sub> tim<sub>e se</sub>ri<sub>es</sub> r<sub>eg</sub>r<sub>ess</sub>i<sub>o</sub>n <sub>se</sub>ttin<sub>g w</sub>ith <sub>o</sub>b<sub>se</sub>r<sub>va</sub>ti<sub>o</sub>n<sub>s</sub> $\\{ ( X _ { t } , Y _ { t } ) \\} _ { t = 1 } ^ { T }$ indexed b<sub>y</sub> time. At <sub>p</sub>rediction time �<sub>,</sub> the in<sub>p</sub>ut $X _ { t } \\in$ X contains information available before the res<sub>p</sub>onse $Y _ { t } ~ \\in ~ \\mathbb { R }$ i<sub>s</sub> <sub>revea</sub>l<sub>e</sub>d<sub>,</sub> <sub>suc</sub>h <sub>as</sub> <sub>a</sub> l<sub>oo</sub>kb<sub>ac</sub>k <sub>w</sub>i<sub>n</sub>d<sub>ow,</sub> k<sub>nown</sub> <sub>exogenous</sub> <sub>var</sub>i<sub>a</sub>bl<sub>es,</sub> <sub>ca</sub>l<sub>en</sub>d<sub>ar</sub> f<sub>ea</sub>t<sub>ures, or mo</sub>d<sub>e</sub>l <sub>s</sub>t<sub>a</sub>t<sub>es compu</sub>t<sub>a</sub>bl<sub>e a</sub>t <sub>pre</sub>di<sub>c</sub>ti<sub>on</sub> ti<sub>me.</sub> A b<sub>ase</sub> f<sub>orecas</sub>t<sub>er</sub> $f : X \\to \\mathbb { R }$ is trained on a <sub>p</sub>ro<sub>p</sub>er trainin<sub>g p</sub>eriod <sub>an</sub>d th<sub>en</sub> fi<sub>xe</sub>d d<sub>ur</sub>i<sub>ng</sub> <sub>ca</sub>lib<sub>ra</sub>ti<sub>on</sub> <sub>an</sub>d t<sub>es</sub>ti<sub>ng,</sub> <sub>pro</sub>d<sub>uc</sub>i<sub>ng</sub> th<sub>e</sub> <sub>po</sub>i<sub>n</sub>t <sub>p</sub>rediction $\\widehat { Y } _ { t } = f ( X _ { t } )$ . For a miscovera<sub>g</sub>e level $\\alpha \\in ( 0 , 1 )$ <sub>,</sub> th<sub>e</sub> <sub>goa</sub>l i<sub>s</sub> t<sub>o co</sub>n<sub>s</sub>tr<sub>uc</sub>t <sub>a p</sub>r<sub>e</sub>di<sub>c</sub>ti<sub>o</sub>n int<sub>e</sub>r<sub>va</sub>l $C _ { t } ^ { \\alpha } ( X _ { t } )$ satisf<sub>y</sub>in<sub>g</sub> the mar<sub>g</sub>inal",
+        "bbox": [
+            513,
+            770,
+            915,
+            897
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "header",
+        "text": "CIKM ’26, November 7–11, 2026, Rome, Italy",
+        "bbox": [
+            83,
+            75,
+            299,
+            87
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "header",
+        "text": "Sangjin Jin, Kangmin Kim, Junhyeong Lee, and Yongjae Lee",
+        "bbox": [
+            629,
+            75,
+            913,
+            88
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "image",
+        "img_path": "images/6c383470dcfd62022799281033170884f61e1af1a4d693555169957326ce6449.jpg",
+        "image_caption": [
+            "Figure 1: Overview of Retrieval–Corrected Conformal Prediction. RCCP builds a retrieval knowledge base from evaluated prediction contexts, forms an asymmetric retrieved interval from one-sided residuals of similar contexts, and calibrates the interval with a scalar correction estimated from normalized retrieval errors."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            104,
+            109,
+            893,
+            334
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "<sub>cove</sub>r<sub>age c</sub>rit<sub>e</sub>ri<sub>o</sub>n",
+        "bbox": [
+            83,
+            405,
+            199,
+            417
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "equation",
+        "img_path": "images/03f5097caa72973c761f10539a0736125ef2972c901c229e4c1320b53226db5d.jpg",
+        "text": "$$\n\\mathbb { P } \\left( Y _ { t } \\in C _ { t } ^ { \\alpha } ( X _ { t } ) \\right) \\geq 1 - \\alpha .\\tag{1}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            204,
+            422,
+            357,
+            438
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Aft<sub>er</sub> th<sub>e</sub> f<sub>orecas</sub>t<sub>er</sub> i<sub>s</sub> fi<sub>xe</sub>d<sub>, ca</sub>lib<sub>ra</sub>ti<sub>on uses on</sub>l<sub>y</sub> h<sub>e</sub>ld<sub>-ou</sub>t <sub>res</sub>id<sub>u-</sub> <sub>a</sub>l<sub>s.</sub> W<sub>e</sub> <sub>assess</sub> <sub>va</sub>lidit<sub>y</sub> b<sub>y</sub> <sub>coverage</sub> <sub>an</sub>d <sub>e</sub>fi<sub>c</sub>i<sub>ency</sub> b<sub>y</sub> i<sub>n</sub>t<sub>erva</sub>l l<sub>eng</sub>th<sub>.</sub>",
+        "bbox": [
+            81,
+            443,
+            483,
+            470
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Split conformal prediction. The observations are divided in time order into a <sub>p</sub>ro<sub>p</sub>er trainin<sub>g</sub> <sub>p</sub>eriod $\\mathcal { D } _ { \\mathrm { t r a i n } } .$ <sub>,</sub> a calibration <sub>p</sub>eriod $\\mathcal { D } _ { \\mathrm { c a l } ; }$ <sub>an</sub>d <sub>a</sub> t<sub>es</sub>t <sub>per</sub>i<sub>o</sub>d $\\mathcal { D } _ { \\mathrm { t e s t } }$ <sub>,</sub> <sub>w</sub>ith <sub>ca</sub>lib<sub>ra</sub>ti<sub>on</sub> <sub>an</sub>d t<sub>es</sub>t i<sub>n</sub>di<sub>ces</sub> $\\boldsymbol { \\mathcal { I } } _ { \\mathrm { c a l } }$ <sub>an</sub>d $\\mathcal { I } _ { \\mathrm { t e s t } } .$ <sub>.</sub> F<sub>or</sub> <sub>regress</sub>i<sub>on,</sub> th<sub>e</sub> <sub>s</sub>t<sub>an</sub>d<sub>ar</sub>d <sub>sp</sub>lit <sub>con</sub>f<sub>orma</sub>l <sub>score</sub> i<sub>s</sub> th<sub>e</sub> <sub>a</sub>b<sub>-</sub> <sub>so</sub>l<sub>u</sub>t<sub>e res</sub>id<sub>ua</sub>l $S _ { t } = | Y _ { t } - \\widehat { Y } _ { t } |$ f<sub>or</sub> $t \\in \\mathcal { I } _ { \\mathrm { c a l } }$ . S<sub>p</sub>lit conformal <sub>p</sub>redic tion estimates the forecast-error scale b<sub>y</sub> the em<sub>p</sub>irical <sub>q</sub>uantile $\\widehat { q } _ { \\alpha } = Q _ { 1 - \\alpha } \\big ( \\{ S _ { t } : t \\in \\mathcal { I } _ { \\mathrm { c a l } } \\} \\big )$ <sub>, w</sub>h<sub>ere</sub> $Q _ { 1 - \\alpha }$ d<sub>eno</sub>t<sub>es</sub> th<sub>e con</sub>f<sub>orma</sub>l <sub>emp</sub>i<sub>r</sub>i<sub>ca</sub>l <sub>quan</sub>til<sub>e un</sub>d<sub>er</sub> th<sub>e s</sub>t<sub>an</sub>d<sub>ar</sub>d fi<sub>n</sub>it<sub>e-samp</sub>l<sub>e conven</sub>ti<sub>on.</sub> The corres<sub>p</sub>ondin<sub>g</sub> interval is",
+        "bbox": [
+            81,
+            478,
+            483,
+            603
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "equation",
+        "img_path": "images/bf74e10bb0e73dea4cc6574a998e2be019bc488f776b1e7d105f4abf0b665f53.jpg",
+        "text": "$$\nC _ { t } ^ { \\mathrm { s p l i t } } ( \\alpha ) = [ \\widehat { Y } _ { t } - \\widehat { q } _ { \\alpha } , \\widehat { Y } _ { t } + \\widehat { q } _ { \\alpha } ] .\\tag{2}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            191,
+            607,
+            372,
+            626
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Under exchan<sub>g</sub>eabilit<sub>y</sub> of the calibration and test scores, E<sub>q</sub>. (2) satis<sup>fi</sup>es t<sup>h</sup>e coverage o<sup>b</sup>jective in $\\operatorname { E q . } \\left( 1 \\right)$",
+        "bbox": [
+            83,
+            630,
+            482,
+            657
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "For time series forecastin<sub>g,</sub> the residual se<sub>q</sub>uence is tem<sub>p</sub>orall<sub>y</sub> d<sub>epen</sub>d<sub>en</sub>t <sub>an</sub>d th<sub>e error</sub> di<sub>s</sub>t<sub>r</sub>ib<sub>u</sub>ti<sub>on can c</sub>h<sub>ange over</sub> ti<sub>me.</sub> C<sub>onse-</sub> <sub>quen</sub>tl<sub>y, a s</sub>i<sub>ng</sub>l<sub>e g</sub>l<sub>o</sub>b<sub>a</sub>l <sub>res</sub>id<sub>ua</sub>l <sub>quan</sub>til<sub>e may</sub> b<sub>e poor</sub>l<sub>y ma</sub>t<sub>c</sub>h<sub>e</sub>d to the uncertaint<sub>y</sub> at a <sub>p</sub>articular test time. Wei<sub>g</sub>hted and localized <sub>con</sub>f<sub>orma</sub>l <sub>me</sub>th<sub>o</sub>d<sub>s</sub> <sub>a</sub>dd<sub>ress</sub> thi<sub>s</sub> b<sub>y</sub> <sub>ass</sub>i<sub>gn</sub>i<sub>ng</sub> <sub>nonun</sub>if<sub>orm</sub> i<sub>n</sub>fl<sub>uence</sub> to calibration residuals or b<sub>y</sub> conditionin<sub>g</sub> residual <sub>q</sub>uantiles on recent observations, tem<sub>p</sub>oral states, or learned features [4, 6, 16, 23]. RCCP follo<sub>w</sub>s the same moti<sub>v</sub>ation for local ada<sub>p</sub>ti<sub>v</sub>it<sub>y,</sub> b<sub>u</sub>t se<sub>p</sub>- <sub>ara</sub>t<sub>es</sub> th<sub>e cons</sub>t<sub>ruc</sub>ti<sub>on o</sub>f l<sub>oca</sub>l <sub>res</sub>id<sub>ua</sub>l <sub>ev</sub>id<sub>ence</sub> f<sub>rom</sub> th<sub>e</sub> fi<sub>na</sub>l <sub>coverage</sub> <sub>ca</sub>lib<sub>ra</sub>ti<sub>on.</sub> It fi<sub>rs</sub>t <sub>cons</sub>t<sub>ruc</sub>t<sub>s</sub> <sub>a</sub> l<sub>oca</sub>l i<sub>n</sub>t<sub>erva</sub>l f<sub>rom</sub> <sub>re-</sub> t<sub>r</sub>i<sub>eve</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s</sub> <sub>an</sub>d th<sub>en</sub> <sub>ca</sub>lib<sub>ra</sub>t<sub>es</sub> th<sub>e</sub> <sub>rema</sub>i<sub>n</sub>i<sub>ng</sub> <sub>error</sub> <sub>o</sub>f th<sub>a</sub>t i<sub>n</sub>t<sub>erva</sub>l<sub>.</sub>",
+        "bbox": [
+            81,
+            657,
+            485,
+            824
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "3.2 Retrieval-Augmented Local Interval",
+        "text_level": 2,
+        "bbox": [
+            83,
+            835,
+            421,
+            851
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Th<sub>e</sub> <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>s</sub>t<sub>age</sub> <sub>prov</sub>id<sub>es</sub> th<sub>e</sub> l<sub>oca</sub>l <sub>res</sub>id<sub>ua</sub>l <sub>ev</sub>id<sub>ence</sub> <sub>use</sub>d b<sub>y</sub> RCCP<sub>.</sub> Th<sub>e</sub> <sub>cu</sub>rr<sub>e</sub>nt <sub>p</sub>r<sub>e</sub>di<sub>c</sub>ti<sub>o</sub>n <sub>co</sub>nt<sub>e</sub>xt i<sub>s</sub> <sub>e</sub>n<sub>co</sub>d<sub>e</sub>d <sub>as</sub> <sub>a</sub> r<sub>e</sub>tri<sub>eva</sub>l k<sub>ey, ma</sub>t<sub>c</sub>h<sub>e</sub>d <sub>aga</sub>i<sub>ns</sub>t <sub>a</sub> ti<sub>me-or</sub>d<sub>ere</sub>d k<sub>now</sub>l<sub>e</sub>d<sub>ge</sub> b<sub>ase o</sub>f <sub>eva</sub>l<sub>ua</sub>t<sub>e</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s, an</sub>d <sub>summar</sub>i<sub>ze</sub>d th<sub>roug</sub>h <sub>asymme</sub>t<sub>r</sub>i<sub>c res</sub>id<sub>ua</sub>l <sub>quan</sub>til<sub>es.</sub> The <sub>g</sub>oal of this sta<sub>g</sub>e is local ada<sub>p</sub>tivit<sub>y,</sub> not covera<sub>g</sub>e certification.",
+        "bbox": [
+            81,
+            853,
+            483,
+            897
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            513,
+            404,
+            915,
+            433
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Retrieval knowledge base construction. To construct the retrieval knowled<sub>g</sub>e base<sub>,</sub> RCCP encodes each <sub>p</sub>rediction context into a <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l k<sub>ey</sub> $z _ { t }$ b<sub>e</sub>f<sub>ore</sub> $Y _ { t }$ i<sub>s</sub> <sub>o</sub>b<sub>serve</sub>d<sub>.</sub> Th<sub>e</sub> k<sub>ey</sub> <sub>can</sub> b<sub>e</sub> d<sub>er</sub>i<sub>ve</sub>d f<sub>rom</sub> an in<sub>p</sub>ut-window embeddin<sub>g,</sub> a forecaster re<sub>p</sub>resentation<sub>,</sub> <sub>p</sub>oint <sub>p</sub>rediction features<sub>,</sub> exo<sub>g</sub>enous variables<sub>,</sub> or their concatenation. We write $z _ { t } = \\psi _ { f } ( X _ { t } , \\widehat { Y } _ { t } )$ <sub>,</sub> <sub>w</sub>h<sub>ere</sub> $\\psi _ { f }$ <sub>may</sub> <sub>use</sub> <sub>any</sub> <sub>pre</sub>di<sub>c</sub>t<sub>a</sub>bl<sub>e</sub> f<sub>orecas</sub>t<sub>er</sub> feat<sub>u</sub>res. Once the res<sub>p</sub>onse at time � is observed<sub>,</sub> RCCP a<sub>pp</sub>ends the k<sub>ey</sub> t<sub>oge</sub>th<sub>er</sub> <sub>w</sub>ith th<sub>e</sub> <sub>rea</sub>li<sub>ze</sub>d <sub>one-s</sub>id<sub>e</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s,</sub> $e _ { i } ^ { + } = ( Y _ { i } - { \\widehat { Y } } _ { i } ) .$ + <sub>an</sub>d $e _ { i } ^ { - } \\ = \\ ( { \\widehat { Y } } _ { i } - Y _ { i } ) .$ <sub>+.</sub> Th<sub>e</sub> t<sub>wo res</sub>id<sub>ua</sub>l<sub>s are s</sub>t<sub>ore</sub>d <sub>separa</sub>t<sub>e</sub>l<sub>y</sub> t<sub>o</sub> <sub>a</sub>ll<sub>ow</sub> dif<sub>eren</sub>t <sub>upper an</sub>d l<sub>ower</sub> t<sub>a</sub>il b<sub>e</sub>h<sub>av</sub>i<sub>or.</sub> B<sub>e</sub>f<sub>ore</sub> ti<sub>me</sub> $t ,$ th<sub>e</sub> k<sub>now</sub>l<sub>e</sub>d<sub>ge</sub> b<sub>ase</sub> i<sub>s</sub> $\\mathcal { K } _ { t - 1 } ~ = ~ \\{ ( z _ { i } , e _ { i } ^ { + } , e _ { i } ^ { - } ) ~ : ~ i ~ < ~ t \\}$ . This orderin<sub>g</sub> <sub>ensures</sub> th<sub>a</sub>t th<sub>e</sub> i<sub>n</sub>t<sub>erva</sub>l <sub>a</sub>t ti<sub>me</sub> � <sub>uses on</sub>l<sub>y pas</sub>t <sub>res</sub>id<sub>ua</sub>l<sub>s.</sub>",
+        "bbox": [
+            513,
+            443,
+            915,
+            613
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Residual retrieval. RCCP forms a local residual set by comparing <sup>the</sup> q<sup>uer</sup>y $z _ { t }$ <sub>w</sub>ith th<sub>e</sub> k<sub>eys</sub> <sub>s</sub>t<sub>ore</sub>d i<sub>n</sub> $\\mathcal { K } _ { t - 1 }$ . Let $d ( z _ { t } , z _ { i } )$ d<sub>eno</sub>t<sub>e</sub> <sub>a</sub> <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l di<sub>s</sub>t<sub>ance</sub> b<sub>e</sub>t<sub>ween</sub> th<sub>e curren</sub>t <sub>con</sub>t<sub>ex</sub>t <sub>an</sub>d <sub>a pas</sub>t <sub>con</sub>t<sub>ex</sub>t<sub>,</sub> <sub>w</sub>h<sub>ere sma</sub>ll<sub>er va</sub>l<sub>ues</sub> i<sub>n</sub>di<sub>ca</sub>t<sub>e c</sub>l<sub>oser con</sub>t<sub>ex</sub>t<sub>s.</sub> I<sub>n our exper</sub>i<sub>men</sub>t<sub>s,</sub> we instantiate � as Euclidean distance. We denote the retrieval o<sub>p</sub>- eration b<sub>y</sub> $N _ { K } ( t ) = \\mathrm { K N N } _ { K } ( z _ { t } , \\mathcal { K } _ { t - 1 } , d )$ <sub>, w</sub>hi<sub>c</sub>h <sub>re</sub>t<sub>urns</sub> th<sub>e</sub> � <sub>pas</sub>t i<sub>n</sub>di<sub>ces w</sub>ith th<sub>e sma</sub>ll<sub>es</sub>t di<sub>s</sub>t<sub>ances</sub> t<sub>o ��.</sub> Thi<sub>s s</sub>t<sub>ep</sub> l<sub>oca</sub>li<sub>zes ca</sub>lib<sub>ra-</sub> tion to resid<sub>u</sub>als associated <sub>w</sub>ith similar <sub>p</sub>ast <sub>p</sub>rediction contexts. State-based time series CP uses an analo<sub>g</sub>ous <sub>p</sub>rinci<sub>p</sub>le b<sub>y</sub> rewei<sub>g</sub>htin<sub>g</sub> residuals accordin<sub>g</sub> to <sub>p</sub>roximit<sub>y</sub> in a learned or constructed state s<sub>p</sub>ace [23]. In RCCP, this nei<sub>g</sub>hborhood determines onl<sub>y</sub> the l<sub>oca</sub>l i<sub>n</sub>t<sub>erva</sub>l<sub>, an</sub>d th<sub>e coverage correc</sub>ti<sub>on</sub> i<sub>s compu</sub>t<sub>e</sub>d <sub>separa</sub>t<sub>e</sub>l<sub>y.</sub>",
+        "bbox": [
+            513,
+            622,
+            916,
+            789
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Th<sub>e re</sub>t<sub>r</sub>i<sub>eve</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s may</sub> b<sub>e</sub> t<sub>rea</sub>t<sub>e</sub>d <sub>un</sub>if<sub>orm</sub>l<sub>y or ass</sub>i<sub>gne</sub>d di<sub>s</sub>t<sub>ance-</sub>b<sub>ase</sub>d <sub>we</sub>i<sub>g</sub>ht<sub>s.</sub> I<sub>n</sub> th<sub>e we</sub>i<sub>g</sub>ht<sub>e</sub>d <sub>case,</sub>",
+        "bbox": [
+            513,
+            789,
+            915,
+            816
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "equation",
+        "img_path": "images/921abbc908dff7f9b5788ac2f2b137f09105d2816c6862dc5b48c0e1a04c6d6e.jpg",
+        "text": "$$\nw _ { i } ( t ) = \\frac { \\exp ( - d ( z _ { t } , z _ { i } ) / \\tau ) } { \\sum _ { j \\in N _ { K } ( t ) } \\exp ( - d ( z _ { t } , z _ { j } ) / \\tau ) } , \\qquad i \\in N _ { K } ( t ) ,\\tag{3}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            553,
+            827,
+            872,
+            858
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "<sub>w</sub>h<sub>ere</sub> $\\tau > 0$ <sub>con</sub>t<sub>ro</sub>l<sub>s</sub> th<sub>e</sub> <sub>concen</sub>t<sub>ra</sub>ti<sub>on</sub> <sub>o</sub>f th<sub>e</sub> l<sub>oca</sub>l <sub>emp</sub>i<sub>r</sub>i<sub>ca</sub>l distribution. Uniform wei<sub>g</sub>hts recover the hard to<sub>p</sub>-� case. In both <sub>cases, �� spec</sub>ifi<sub>es</sub> th<sub>e emp</sub>i<sub>r</sub>i<sub>ca</sub>l di<sub>s</sub>t<sub>r</sub>ib<sub>u</sub>ti<sub>on use</sub>d t<sub>o compu</sub>t<sub>e</sub> l<sub>oca</sub>l <sub>res</sub>id<sub>ua</sub>l <sub>quan</sub>til<sub>es.</sub>",
+        "bbox": [
+            513,
+            867,
+            915,
+            896
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "header",
+        "text": "Retrieval–Corrected Conformal Prediction for Time Series",
+        "bbox": [
+            83,
+            75,
+            361,
+            87
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "header",
+        "text": "CIKM ’26, November 7–11, 2026, Rome, Italy",
+        "bbox": [
+            699,
+            75,
+            913,
+            87
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            81,
+            106,
+            482,
+            136
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Asymmetric retrieved interval. RCCP summarizes the retrieved <sub>res</sub>id<sub>ua</sub>l<sub>s separa</sub>t<sub>e</sub>l<sub>y on</sub> th<sub>e upper an</sub>d l<sub>ower s</sub>id<sub>es.</sub> Thi<sub>s avo</sub>id<sub>s</sub> i<sub>mpos</sub>i<sub>ng symme</sub>t<sub>ry on</sub> th<sub>e</sub> f<sub>orecas</sub>t <sub>error an</sub>d <sub>a</sub>ll<sub>ows</sub> th<sub>e</sub> i<sub>n</sub>t<sub>erva</sub>l t<sub>o</sub> ada<sub>p</sub>t diferentl<sub>y</sub> to <sub>p</sub>ositive and ne<sub>g</sub>ative deviations. The retrieved <sub>q</sub>uantiles are",
+        "bbox": [
+            81,
+            142,
+            483,
+            213
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/73880e20857cb395b566e15066b1fe0f5aa41166345d73d2302b0f3702c6f43c.jpg",
+        "text": "$$\n\\begin{array} { r l } & { \\widetilde { R } _ { t } ^ { + } = Q _ { 1 - \\alpha / 2 } ^ { w _ { t } } \\{ e _ { i } ^ { + } : i \\in N _ { K } ( t ) \\} , } \\\\ & { \\widetilde { R } _ { t } ^ { - } = Q _ { 1 - \\alpha / 2 } ^ { w _ { t } } \\{ e _ { i } ^ { - } : i \\in N _ { K } ( t ) \\} , } \\end{array}\\tag{4}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            191,
+            213,
+            374,
+            253
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "<sub>an</sub>d th<sub>ey</sub> d<sub>e</sub>fi<sub>ne</sub> th<sub>e re</sub>t<sub>r</sub>i<sub>eve</sub>d i<sub>n</sub>t<sub>erva</sub>l",
+        "bbox": [
+            81,
+            256,
+            313,
+            270
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/7eed893716df8ea3eb477b5ab817ceec78b51c116983903e7cf424eb42dd14a6.jpg",
+        "text": "$$\n\\widetilde { C } _ { t } = \\big [ \\widehat { Y } _ { t } - \\widetilde { R } _ { t } ^ { - } , \\widehat { Y } _ { t } + \\widetilde { R } _ { t } ^ { + } \\big ] .\\tag{5}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            207,
+            275,
+            356,
+            292
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "This construction is related to ada<sub>p</sub>tive lower and u<sub>pp</sub>er interval <sub>es</sub>ti<sub>ma</sub>t<sub>es</sub> i<sub>n con</sub>f<sub>orma</sub>li<sub>ze</sub>d <sub>quan</sub>til<sub>e regress</sub>i<sub>on,</sub> b<sub>u</sub>t th<sub>e</sub> i<sub>n</sub>t<sub>erva</sub>l h<sub>ere</sub> i<sub>s o</sub>bt<sub>a</sub>i<sub>ne</sub>d f<sub>rom re</sub>t<sub>r</sub>i<sub>eve</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s ra</sub>th<sub>er</sub> th<sub>an</sub> l<sub>earne</sub>d <sub>con</sub>diti<sub>ona</sub>l <sub>q</sub>uantile functions [27].",
+        "bbox": [
+            81,
+            299,
+            483,
+            356
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Need for conformal correction. The retrieved interval can be lo-<sub>ca</sub>ll<sub>y a</sub>d<sub>ap</sub>ti<sub>ve</sub> b<sub>ecause</sub> it <sub>uses res</sub>id<sub>ua</sub>l<sub>s</sub> f<sub>rom con</sub>t<sub>ex</sub>t<sub>s c</sub>l<sub>ose</sub> t<sub>o</sub> th<sub>e</sub> current <sub>p</sub>rediction. In conformal <sub>p</sub>rediction<sub>,</sub> however<sub>,</sub> localit<sub>y</sub> alone d<sub>oes no</sub>t i<sub>mp</sub>l<sub>y ca</sub>lib<sub>ra</sub>ti<sub>on.</sub> Th<sub>e re</sub>t<sub>r</sub>i<sub>eve</sub>d <sub>se</sub>t i<sub>s</sub> fi<sub>n</sub>it<sub>e an</sub>d d<sub>a</sub>t<sub>a-</sub> d<sub>epen</sub>d<sub>en</sub>t<sub>, an</sub>d it<sub>s quan</sub>til<sub>es can</sub> b<sub>e uns</sub>t<sub>a</sub>bl<sub>e w</sub>h<sub>en</sub> th<sub>e e</sub>f<sub>ec</sub>ti<sub>ve</sub> su<sub>pp</sub>ort is small or biased when <sub>p</sub>roximit<sub>y</sub> in the ke<sub>y</sub> s<sub>p</sub>ace does not match future error behavior. RCCP therefore evaluates E<sub>q</sub>. (5) <sub>on ca</sub>lib<sub>ra</sub>ti<sub>on</sub> d<sub>a</sub>t<sub>a an</sub>d <sub>correc</sub>t<sub>s</sub> it<sub>s rema</sub>i<sub>n</sub>i<sub>ng error, ra</sub>th<sub>er</sub> th<sub>an</sub> <sub>us</sub>i<sub>ng</sub> it <sub>as</sub> th<sub>e</sub> fi<sub>na</sub>l <sub>con</sub>f<sub>orma</sub>l i<sub>n</sub>t<sub>erva</sub>l<sub>.</sub>",
+        "bbox": [
+            81,
+            362,
+            485,
+            489
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3.3 Retrieval-Corrected Calibration",
+        "text_level": 2,
+        "bbox": [
+            83,
+            500,
+            387,
+            515
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Aft<sub>er re</sub>t<sub>r</sub>i<sub>eva</sub>l h<sub>as pro</sub>d<sub>uce</sub>d <sub>a</sub> l<sub>oca</sub>l i<sub>n</sub>t<sub>erva</sub>l<sub>,</sub> th<sub>e correc</sub>ti<sub>on s</sub>t<sub>ep</sub> calibrates its remainin<sub>g</sub> error. Rather than calibratin<sub>g</sub> raw residual ma<sub>g</sub>nitudes<sub>,</sub> RCCP calibrates residuals after normalization b<sub>y</sub> the i<sub>n</sub>t<sub>erva</sub>l <sub>pro</sub>d<sub>uce</sub>d b<sub>y re</sub>t<sub>r</sub>i<sub>eva</sub>l<sub>.</sub> Thi<sub>s ma</sub>k<sub>es</sub> th<sub>e correc</sub>ti<sub>on</sub> d<sub>epen</sub>d <sub>on</sub> h<sub>ow</sub> <sub>we</sub>ll <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>es</sub>ti<sub>ma</sub>t<sub>e</sub>d th<sub>e</sub> l<sub>oca</sub>l <sub>sca</sub>l<sub>e,</sub> i<sub>ns</sub>t<sub>ea</sub>d <sub>o</sub>f di<sub>scar</sub>di<sub>ng</sub> th<sub>e</sub> l<sub>oca</sub>l i<sub>n</sub>f<sub>orma</sub>ti<sub>on an</sub>d <sub>re</sub>t<sub>urn</sub>i<sub>ng</sub> t<sub>o a g</sub>l<sub>o</sub>b<sub>a</sub>l <sub>res</sub>id<sub>ua</sub>l th<sub>res</sub>h<sub>o</sub>ld<sub>.</sub>",
+        "bbox": [
+            81,
+            518,
+            483,
+            603
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Normalized retrieval error and correction. For each calibration ind<sub>ex</sub> $j \\in \\mathcal { I } _ { \\mathrm { c a l } } .$ th<sub>e</sub> <sub>re</sub>t<sub>r</sub>i<sub>eve</sub>d i<sub>n</sub>t<sub>erva</sub>l $\\widetilde { C } _ { j }$ i<sub>s</sub> <sub>compu</sub>t<sub>e</sub>d b<sub>e</sub>f<sub>ore</sub> <sub>o</sub>b<sub>serv</sub>i<sub>ng</sub> $Y _ { j }$ <sub>.</sub> On<sub>ce</sub> $Y _ { j }$ i<sub>s</sub> r<sub>evea</sub>l<sub>e</sub>d<sub>,</sub> RCCP <sub>co</sub>m<sub>pu</sub>t<sub>es</sub>",
+        "bbox": [
+            81,
+            609,
+            483,
+            652
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/caff35fbad4d2b5c19603fd5e90fec4e671d1f0282dd3cab9894aa91e4b547f3.jpg",
+        "text": "$$\nB _ { j } = \\operatorname* { m a x } \\left\\{ \\frac { ( Y _ { j } - \\widehat { Y } _ { j } ) _ { + } } { \\widetilde { R } _ { j } ^ { + } } , \\frac { ( \\widehat { Y } _ { j } - Y _ { j } ) _ { + } } { \\widetilde { R } _ { j } ^ { - } } \\right\\} .\\tag{6}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            169,
+            656,
+            393,
+            695
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Th<sub>e</sub> fi<sub>rs</sub>t <sub>ra</sub>ti<sub>o measures</sub> th<sub>e pos</sub>iti<sub>ve res</sub>id<sub>ua</sub>l <sub>re</sub>l<sub>a</sub>ti<sub>ve</sub> t<sub>o</sub> th<sub>e re</sub>t<sub>r</sub>i<sub>eve</sub>d <sub>upper sca</sub>l<sub>e, w</sub>hil<sub>e</sub> th<sub>e secon</sub>d <sub>ra</sub>ti<sub>o measures</sub> th<sub>e nega</sub>ti<sub>ve res</sub>id<sub>ua</sub>l <sub>re</sub>l<sub>a</sub>ti<sub>ve</sub> t<sub>o</sub> th<sub>e re</sub>t<sub>r</sub>i<sub>eve</sub>d l<sub>ower sca</sub>l<sub>e.</sub> Th<sub>us,</sub> $B _ { j }$ i<sub>s a sca</sub>l<sub>ar noncon-</sub> f<sub>o</sub>rmit<sub>y sco</sub>r<sub>e</sub> f<sub>o</sub>r th<sub>e asy</sub>mm<sub>e</sub>tri<sub>c</sub> int<sub>e</sub>r<sub>va</sub>l<sub>.</sub> RCCP th<sub>e</sub>n <sub>es</sub>tim<sub>a</sub>t<sub>es a</sub> <sub>sca</sub>l<sub>ar correc</sub>ti<sub>on</sub> f<sub>rom</sub> th<sub>e emp</sub>i<sub>r</sub>i<sub>ca</sub>l di<sub>s</sub>t<sub>r</sub>ib<sub>u</sub>ti<sub>on o</sub>f th<sub>ese scores.</sub> L<sub>e</sub>t $q = 1 - \\alpha _ { : }$ <sub>, an</sub>d l<sub>e</sub>t $q _ { n }$ d<sub>eno</sub>t<sub>e</sub> th<sub>e</sub> fi<sub>n</sub>it<sub>e-samp</sub>l<sub>e con</sub>f<sub>orma</sub>l <sub>quan</sub>til<sub>e</sub> l<sub>eve</sub>l<sub>.</sub> Th<sub>e correc</sub>ti<sub>on</sub> i<sub>s</sub> $\\widehat { c } = \\widehat { F } _ { \\mathrm { c a l } } ^ { - 1 } ( q _ { n } ) = Q _ { 1 - \\alpha } \\big ( \\{ B _ { j } : j \\in { \\mathcal { I } } _ { \\mathrm { c a l } } \\} \\big )$ <sub>,</sub> <sub>an</sub>d th<sub>e</sub> fi<sub>na</sub>l i<sub>n</sub>t<sub>erva</sub>l i<sub>s</sub>",
+        "bbox": [
+            81,
+            699,
+            483,
+            813
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e3ce05694b2d0ec0534561aa8a1e2351f7dbfeedb699c3bacb4dbce88bb43114.jpg",
+        "text": "$$\nC _ { t } ^ { \\mathrm { R C C P } } ( \\widehat { c } ) = \\big [ \\widehat { Y } _ { t } - \\widehat { c } \\widetilde { R } _ { t } ^ { - } , \\widehat { Y } _ { t } + \\widehat { c } \\widetilde { R } _ { t } ^ { + } \\big ] .\\tag{7}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            178,
+            815,
+            383,
+            834
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "<sup>V</sup>a<sup>l</sup>ues o<sup>f</sup>b� a<sup>b</sup>ove one <sup>i</sup>n<sup>di</sup>ca<sup>t</sup>e <sup>th</sup>a<sup>t</sup> re<sup>t</sup>r<sup>i</sup>eve<sup>d i</sup>n<sup>t</sup>erva<sup>l</sup>s <sup>t</sup>en<sup>d t</sup>o <sup>b</sup>e t<sub>oo narrow on ca</sub>lib<sub>ra</sub>ti<sub>on</sub> d<sub>a</sub>t<sub>a, w</sub>hil<sub>e va</sub>l<sub>ues</sub> b<sub>e</sub>l<sub>ow one</sub> i<sub>n</sub>di<sub>ca</sub>t<sub>e</sub> <sub>co</sub>n<sub>se</sub>r<sub>va</sub>ti<sub>ve</sub> r<sub>e</sub>tri<sub>eve</sub>d int<sub>e</sub>r<sub>va</sub>l<sub>s.</sub> Dir<sub>ec</sub>t r<sub>e</sub>tri<sub>eva</sub>l <sub>co</sub>rr<sub>espo</sub>nd<sub>s</sub> t<sub>o</sub> fixin<sub>g</sub> this multi<sub>p</sub>lier at one, whereas RCCP estimates it from E<sub>q</sub>. (6).",
+        "bbox": [
+            81,
+            839,
+            483,
+            897
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "code",
+        "sub_type": "algorithm",
+        "code_caption": [],
+        "code_footnote": [],
+        "code_body": "Algorithm 1 Retrieval-Corrected Conformal Prediction   \n1: Input: forecaster $f ,$ <sup>ke</sup>y <sup>ma</sup>p $\\psi _ { f } ,$ di<sub>s</sub>t<sub>ance</sub> $d ,$ k<sub>now</sub>l<sub>e</sub>d<sub>ge</sub> b<sub>ase</sub>   \n$\\mathcal { K } ,$ indi<sub>ces</sub> $\\mathcal { T } _ { \\mathrm { c a l } } , \\mathcal { T } _ { \\mathrm { t e s t } } ,$ <sub>,</sub> l<sub>eve</sub>l $\\alpha ,$ <sub>ne</sub>i<sub>g</sub>hb<sub>ors</sub> $K$   \n2: Output: prediction intervals $C _ { t } ^ { \\operatorname { R C C P } } ( \\alpha )$   \n3: ${ \\mathcal { B } } \\gets \\emptyset$   \n4: for each $j \\in \\mathcal { I } _ { \\mathrm { c a l } }$ in increasing order do   \n5: ${ \\widehat { Y } } _ { j } \\gets f ( X _ { j } )$ an<sup>d</sup> com<sub>p</sub>ute $z _ { j } = \\psi _ { f } ( X _ { j } , \\widehat { Y } _ { j } )$   \n6: $\\dot { N } _ { K } ( j ) \\longleftarrow \\mathrm { K N N } _ { K } ( z _ { j } , \\mathcal { K } , d )$   \n7: <sup>com</sup>p<sup>ute</sup> $\\widetilde { R } _ { j } ^ { + }$ <sub>an</sub>d $\\widetilde { R } _ { j } ^ { - }$ b<sub>y</sub> E<sub>q</sub>. (4)   \n8: <sub>o</sub>b<sub>serve</sub> $Y _ { j }$ an<sup>d</sup> com<sub>p</sub>ute $e _ { j } ^ { + } , e _ { j } ^ { - }$ <sub>,</sub> <sub>an</sub>d $B _ { j }$ <sup>b</sup><sub>y</sub> $\\operatorname { E q } .$ (6)   \n9: $\\mathcal B  \\mathcal B \\cup \\{ B _ { j } \\}$   \n10: $\\mathcal { K }  \\mathcal { K } \\cup \\{ ( z _ { j } , e _ { j } ^ { + } , e _ { j } ^ { - } ) \\}$   \n11: end for   \n12: $\\widehat { c } \\gets Q _ { 1 - \\alpha } ( \\mathcal { B } )$   \n13: for each � ∈ $\\mathcal { T } _ { \\mathrm { t e s t } }$ in increasing order do   \n14: $\\widehat { Y } _ { t } \\gets f ( X _ { t } )$ an<sup>d</sup> com<sub>p</sub>ute $z _ { t } = \\psi _ { f } ( X _ { t } , \\widehat { Y } _ { t } )$   \n15: $N _ { K } ( t ) \\gets \\mathrm { K N N } _ { K } ( z _ { t } , \\mathcal { K } , d )$   \n16: <sup>com</sup>p<sup>ute</sup> $\\widetilde { R } _ { t } ^ { + }$ <sub>an</sub>d $\\widetilde { R } _ { t } ^ { - }$ b<sub>y</sub> E<sub>q</sub>. (4)   \n17: <sup>out</sup>p<sup>ut</sup> $C _ { t } ^ { \\mathrm { R C C P } } ( \\alpha )$ b<sub>y</sub> E<sub>q</sub>. (7)   \n18: <sub>o</sub>b<sub>serve</sub> $Y _ { t }$ an<sup>d</sup> com<sub>p</sub>ute $e _ { t } ^ { + }$ <sub>an</sub>d ${ e } _ { t } ^ { - }$   \n19: ${ \\mathcal { K } } \\gets { \\mathcal { K } } \\cup \\{ ( z _ { t } , e _ { t } ^ { + } , e _ { t } ^ { - } ) \\}$   \n20: end for",
+        "bbox": [
+            514,
+            104,
+            913,
+            420
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Implementation. Algorithm 1 summarizes the procedure. During <sub>ca</sub>libr<sub>a</sub>ti<sub>o</sub>n<sub>,</sub> RCCP <sub>co</sub>n<sub>s</sub>tr<sub>uc</sub>t<sub>s</sub> r<sub>e</sub>tri<sub>eve</sub>d int<sub>e</sub>r<sub>va</sub>l<sub>s,</sub> r<sub>eco</sub>rd<sub>s</sub> n<sub>o</sub>rm<sub>a</sub>liz<sub>e</sub>d re<sup>t</sup>r<sup>i</sup>eva<sup>l</sup> errors, an<sup>d</sup> es<sup>ti</sup>ma<sup>t</sup>es b�. <sup>D</sup>ur<sup>i</sup>ng <sup>t</sup>es<sup>ti</sup>ng, <sup>th</sup>e same re<sup>t</sup>r<sup>i</sup>eva<sup>l</sup> <sub>ru</sub>l<sub>e</sub> <sub>cons</sub>t<sub>ruc</sub>t<sub>s</sub> <sub>a</sub> <sub>re</sub>t<sub>r</sub>i<sub>eve</sub>d i<sub>n</sub>t<sub>erva</sub>l f<sub>or</sub> <sub>eac</sub>h <sub>new</sub> <sub>po</sub>i<sub>n</sub>t <sub>an</sub>d <sub>sca</sub>l<sub>es</sub> it <sup>b</sup>yb�. <sup>Th</sup>e <sup>k</sup>now<sup>l</sup>e<sup>d</sup>ge <sup>b</sup>ase <sup>i</sup>s up<sup>d</sup>a<sup>t</sup>e<sup>d</sup> on<sup>l</sup>y a<sup>ft</sup>er <sup>th</sup>e <sup>t</sup>arge<sup>t i</sup>s o<sup>b</sup>serve<sup>d</sup>. R<sub>e</sub>t<sub>r</sub>i<sub>eva</sub>l<sub>-</sub>b<sub>ase</sub>d <sub>scores</sub> <sub>are</sub> <sub>compu</sub>t<sub>e</sub>d <sub>on</sub>l<sub>y</sub> <sub>a</sub>ft<sub>er</sub> th<sub>e</sub> k<sub>now</sub>l<sub>e</sub>d<sub>ge</sub> b<sub>ase</sub> <sub>con</sub>t<sub>a</sub>i<sub>ns a</sub>t l<sub>eas</sub>t � <sub>eva</sub>l<sub>ua</sub>t<sub>e</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s.</sub>",
+        "bbox": [
+            513,
+            428,
+            915,
+            526
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3.4 Theoretical Analysis",
+        "text_level": 2,
+        "bbox": [
+            514,
+            536,
+            728,
+            553
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We anal<sub>y</sub>ze the co<sub>v</sub>era<sub>g</sub>e beha<sub>v</sub>ior of RCCP <sub>w</sub>itho<sub>u</sub>t rel<sub>y</sub>in<sub>g</sub> on <sub>exc</sub>h<sub>angea</sub>bilit<sub>y</sub> b<sub>e</sub>t<sub>ween ca</sub>lib<sub>ra</sub>ti<sub>on an</sub>d t<sub>es</sub>t <sub>scores, w</sub>hi<sub>c</sub>h i<sub>s unre-</sub> alistic in time series settin<sub>g</sub>s [4]. Instead, we establish a covera<sub>g</sub>e-<sub>gap</sub> b<sub>oun</sub>d <sub>un</sub>d<sub>er s</sub>t<sub>a</sub>bilit<sub>y con</sub>diti<sub>ons on</sub> th<sub>e norma</sub>li<sub>ze</sub>d <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>error</sub> di<sub>s</sub>t<sub>r</sub>ib<sub>u</sub>ti<sub>on, a</sub>d<sub>ap</sub>ti<sub>ng s</sub>t<sub>an</sub>d<sub>ar</sub>d <sub>non-exc</sub>h<sub>angea</sub>bl<sub>e con</sub>f<sub>or-</sub> mal <sub>p</sub>rediction assum<sub>p</sub>tions to our retrieval-normalized score settin<sub>g</sub> [25, 30, 36]. Theorem 1 decom<sub>p</sub>oses the covera<sub>g</sub>e error into calibration-test score mismatch and em<sub>p</sub>irical correction error. Corollar<sub>y</sub> 1 shows that RCCP a<sub>pp</sub>roaches the tar<sub>g</sub>et covera<sub>g</sub>e $1 - \\alpha$ <sub>w</sub>h<sub>en</sub> th<sub>e norma</sub>li<sub>ze</sub>d <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>error</sub> i<sub>s s</sub>t<sub>a</sub>bl<sub>e an</sub>d th<sub>e emp</sub>i<sub>r</sub>i<sub>ca</sub>l correction is consistent.",
+        "bbox": [
+            511,
+            555,
+            916,
+            708
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Notation. Let $F _ { \\mathrm { c a l } } ( c ) = \\mathbb { P } _ { \\mathrm { c a l } } ( B \\leq c )$ <sub>an</sub>d $F _ { \\mathrm { t e s t } } ( c ) = \\mathbb { P } _ { \\mathrm { t e s t } } ( B \\leq c )$ d<sub>eno</sub>t<sub>e</sub> th<sub>e ca</sub>lib<sub>ra</sub>ti<sub>on an</sub>d t<sub>es</sub>t CDF<sub>s o</sub>f th<sub>e norma</sub>li<sub>ze</sub>d <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>e</sub>rr<sub>o</sub>r<sub>.</sub> S<sub>e</sub>t $q = 1 - \\alpha _ { \\mathrm { { i } } }$ <sub>, an</sub>d l<sub>e</sub>t $c ^ { * }$ b<sub>e</sub> th<sub>e</sub> t<sub>arge</sub>t <sub>ca</sub>lib<sub>ra</sub>ti<sub>on mu</sub>lti<sub>p</sub>li<sub>er</sub> satisf<sub>y</sub>in<sub>g</sub> $F _ { \\mathrm { c a l } } ( c ^ { * } ) = q$ <sub>.</sub> W<sub>e</sub> d<sub>e</sub>fi<sub>ne</sub> th<sub>e emp</sub>i<sub>r</sub>i<sub>ca</sub>l <sub>ca</sub>lib<sub>ra</sub>ti<sub>on error</sub> <sub>an</sub>d th<sub>e</sub> fi<sub>n</sub>it<sub>e-samp</sub>l<sub>e quan</sub>til<sub>e-</sub>l<sub>eve</sub>l <sub>error as</sub>",
+        "bbox": [
+            513,
+            714,
+            915,
+            784
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6bfbfff2375651c0d601a123222317bfbb8386dbbb35d4411f9a185cc8c343fd.jpg",
+        "text": "$$\ne _ { n } = \\operatorname* { s u p } _ { c } | \\widehat { F } _ { \\mathrm { c a l } } ( c ) - F _ { \\mathrm { c a l } } ( c ) | , \\qquad r _ { n } = | q _ { n } - q | ,\\tag{8}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            576,
+            787,
+            849,
+            810
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "<sub>w</sub>h<sub>ere</sub> $q _ { n }$ i<sub>s</sub> th<sub>e</sub> fi<sub>n</sub>it<sub>e-samp</sub>l<sub>e</sub> <sub>quan</sub>til<sub>e</sub> l<sub>eve</sub>l <sub>use</sub>d t<sub>o</sub> <sub>compu</sub>t<sub>e</sub> th<sub>e</sub> <sub>e</sub>m<sub>p</sub>iri<sub>ca</sub>l <sub>co</sub>rr<sub>ec</sub>ti<sub>o</sub>n<sub>.</sub>",
+        "bbox": [
+            513,
+            814,
+            913,
+            843
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Assumption 1 (Calibration-test score stability). There exists $\\rho _ { n } \\geq 0$ such that",
+        "bbox": [
+            514,
+            848,
+            915,
+            877
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/d6131b8e8e7282ec1e7492fd727991b0591014627bdd3df2d8be3ecf4da839fc.jpg",
+        "text": "$$\n| F _ { \\mathrm { t e s t } } ( c ^ { * } ) - F _ { \\mathrm { c a l } } ( c ^ { * } ) | \\le \\rho _ { n } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            635,
+            882,
+            794,
+            897
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "header",
+        "text": "CIKM ’26, November 7–11, 2026, Rome, Italy",
+        "bbox": [
+            83,
+            75,
+            299,
+            88
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "header",
+        "text": "Sangjin Jin, Kangmin Kim, Junhyeong Lee, and Yongjae Lee",
+        "bbox": [
+            629,
+            74,
+            913,
+            88
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "This assum<sub>p</sub>tion im<sub>p</sub>oses calibration-test stabilit<sub>y</sub> at the tar<sub>g</sub>et multi<sub>p</sub>lier $c ^ { * }$ f<sub>or</sub> th<sub>e norma</sub>li<sub>ze</sub>d <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>error</sub> di<sub>s</sub>t<sub>r</sub>ib<sub>u</sub>ti<sub>on.</sub> Th<sub>e</sub> term $\\rho _ { n }$ ca<sub>p</sub>tures the residual mismatch remainin<sub>g</sub> after retrievalb<sub>ase</sub>d <sub>norma</sub>li<sub>za</sub>ti<sub>on.</sub>",
+        "bbox": [
+            81,
+            107,
+            483,
+            162
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Assumption 2 (Local identifiability of the calibration score qantile). There exist constants � $> 0$ and $\\delta _ { \\mathrm { c a l } } > 0$ such that $F _ { \\mathrm { c a l } } ( c ^ { * } ) = q$ , and for every $u \\in [ 0 , \\delta _ { \\mathrm { c a l } } ] _ { : }$",
+        "bbox": [
+            81,
+            170,
+            482,
+            213
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ea83fb3813fba6b66a55e3a4018667766a791808c6c28f6ba4273b914846e4c6.jpg",
+        "text": "$$\n\\begin{array} { r } { F _ { \\mathrm { c a l } } ( c ^ { * } + u ) \\geq q + m u , } \\\\ { F _ { \\mathrm { c a l } } ( c ^ { * } - u ) \\leq q - m u . } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            212,
+            217,
+            352,
+            250
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "<sup>Thi</sup>s assump<sup>ti</sup>on <sup>k</sup>eeps b� c<sup>l</sup>ose <sup>t</sup>o $c ^ { * } { } _ { \\ ; }$ <sub>, w</sub>ith <sub>� con</sub>t<sub>ro</sub>lli<sub>ng</sub> th<sub>e</sub> l<sub>oca</sub>l se<sub>p</sub>aration of the calibration CDF near the tar<sub>g</sub>et <sub>q</sub>uantile.",
+        "bbox": [
+            83,
+            257,
+            482,
+            286
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Assumption 3 (Local Lipschitzness of the test score CDF). There exist constants $L \\ < \\ \\infty$ and $\\delta _ { \\mathrm { t e s t } } > 0$ such that, for every � satisfying $| c - c ^ { * } | \\leq \\delta _ { \\mathrm { t e s t } }$",
+        "bbox": [
+            83,
+            294,
+            483,
+            337
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/daa5778fbc61f3c8f8cc8efeec40d6065a8f38b87eb5044b10886e90f1fc8707.jpg",
+        "text": "$$\n| F _ { \\mathrm { t e s t } } ( c ) - F _ { \\mathrm { t e s t } } ( c ^ { * } ) | \\le L | c - c ^ { * } | .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            186,
+            340,
+            377,
+            356
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Local smoothness of the test score CDF converts m<sub>u</sub>lti<sub>p</sub>lier error near $c ^ { * }$ into a test covera<sub>g</sub>e-<sub>g</sub>a<sub>p</sub> bound. The constant � controls the local sensitivit<sub>y</sub> of test covera<sub>g</sub>e to multi<sub>p</sub>lier <sub>p</sub>erturbations.",
+        "bbox": [
+            81,
+            363,
+            482,
+            406
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Assumption 4 (Empirical calibration accuracy). The empirical calibration error and the finite-sample quantile-level error satisfy",
+        "bbox": [
+            81,
+            412,
+            483,
+            455
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/26453c7cbb7bee6b37961cb87a3434c3db416b95f89bbc3707d9c8b19199e7ea.jpg",
+        "text": "$$\ne _ { n } + r _ { n } \\leq { \\frac { m \\delta _ { 0 } } { 2 } } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            233,
+            454,
+            330,
+            482
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Here, $\\delta _ { 0 } = \\operatorname* { m i n } \\{ \\delta _ { c a l } , \\delta _ { t e s t } \\}$ i<sub>s</sub> th<sub>e</sub> l<sub>oca</sub>l <sub>ra</sub>di<sub>us aroun</sub>d $c ^ { * }$ over <sub>w</sub>hi<sub>c</sub>h th<sub>e re u</sub>l<sub>ar</sub>it <sub>assum</sub> ti<sub>ons</sub> h<sub>o</sub>ld<sub>.</sub> Th<sub>e con</sub>diti<sub>on ensures</sub> th<sub>a</sub>t ca<sup>lib</sup>ra<sup>ti</sup>on error <sup>i</sup>s sma<sup>ll</sup> enoug<sup>h t</sup>o <sup>k</sup>eepb� w<sup>ithi</sup>n <sup>thi</sup>s ne<sup>i</sup>g<sup>hb</sup>or<sup>h</sup>oo<sup>d</sup>, <sub>w</sub>ith $e _ { n }$ <sub>an</sub>d $r _ { n }$ ca<sub>p</sub>turin<sub>g</sub> em<sub>p</sub>irical CDF error and finite-sam<sub>p</sub>le quanti<sup>l</sup>e a<sup>d</sup>justment, respective<sup>l</sup>y.",
+        "bbox": [
+            81,
+            486,
+            483,
+            558
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Lemma 1 (Score-event eqivalence). For any $c \\geq 0 .$",
+        "bbox": [
+            98,
+            564,
+            424,
+            578
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/8f994d24883168433dc429bf79afe6f1e0da60a66942ab5bfb10ea7989221a08.jpg",
+        "text": "$$\nY _ { t } \\in C _ { t } ( c ) \\quad \\Longleftrightarrow \\quad B _ { t } \\leq c .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            196,
+            584,
+            369,
+            598
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "This e<sub>q</sub>uivalence reduces covera<sub>g</sub>e anal<sub>y</sub>sis to the scalar score di<sub>s</sub>trib<sub>u</sub>ti<sub>o</sub>n $F _ { \\mathrm { t e s t } }$ <sub>,</sub> <sub>a</sub>nd th<sub>e</sub> f<sub>u</sub>ll <sub>p</sub>r<sub>oo</sub>f i<sub>s</sub> <sub>p</sub>r<sub>ov</sub>id<sub>e</sub>d in A<sub>ppe</sub>ndix A<sub>.</sub>",
+        "bbox": [
+            83,
+            606,
+            482,
+            636
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Theorem 1 (Coverage gap bound of RCCP). Suppose Assumptions 1–4 hold, and let",
+        "bbox": [
+            83,
+            642,
+            485,
+            670
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0031e59d237edc842d9a79067317287f795bc7865c067b392af2858de4b036f3.jpg",
+        "text": "$$\nu _ { n } : = { \\frac { 2 ( e _ { n } + r _ { n } ) } { m } } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            227,
+            674,
+            334,
+            702
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "If $\\dot { u } _ { n } < \\delta _ { 0 }$ , then",
+        "bbox": [
+            83,
+            705,
+            179,
+            719
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/43b216fd2882e161d0682d7d96516dbe059ccea533cfc96ffffde1c5e9f5bd6d.jpg",
+        "text": "$$\n\\left| \\mathbb { P } _ { \\mathrm { t e s t } } \\{ Y _ { t } \\in C _ { t } ( \\widehat { c } ) \\} - q \\right| \\leq \\rho _ { n } + \\frac { 2 L } { m } ( e _ { n } + r _ { n } ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            151,
+            724,
+            411,
+            751
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Th<sub>e</sub> b<sub>oun</sub>d <sub>separa</sub>t<sub>es ca</sub>lib<sub>ra</sub>ti<sub>on-</sub>t<sub>es</sub>t <sub>score m</sub>i<sub>sma</sub>t<sub>c</sub>h f<sub>rom em-</sub> <sub>p</sub>i<sub>r</sub>i<sub>ca</sub>l <sub>correc</sub>ti<sub>on</sub> <sub>error.</sub> R<sub>e</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>a</sub>f<sub>ec</sub>t<sub>s</sub> th<sub>e</sub> i<sub>n</sub>t<sub>erva</sub>l th<sub>roug</sub>h th<sub>e</sub> <sub>s</sub>h<sub>arpness</sub> <sub>an</sub>d <sub>s</sub>t<sub>a</sub>bilit<sub>y</sub> <sub>o</sub>f $\\widetilde { C } _ { t } ,$ <sub>w</sub>hil<sub>e</sub> <sub>coverage</sub> i<sub>s</sub> <sub>con</sub>t<sub>ro</sub>ll<sub>e</sub>d th<sub>roug</sub>h th<sub>e norma</sub>li<sub>ze</sub>d <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>error</sub> $B _ { t }$ <sub>.</sub> Th<sub>e</sub> f<sub>u</sub>ll <sub>proo</sub>f i<sub>s prov</sub>id<sub>e</sub>d i<sub>n</sub> A<sub>ppe</sub>ndix A<sub>.</sub>",
+        "bbox": [
+            81,
+            756,
+            483,
+            827
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Corollary 1 (Asymptotic Coverage of RCCP). Suppose Assumptions 1–4 hold with fixed constants � $> 0 , L < \\infty$ , and $\\delta _ { 0 } > 0 .$ $I f \\rho _ { n }  0 , e _ { n }  0 ,$ , and $r _ { n } \\to 0 ,$ then",
+        "bbox": [
+            83,
+            833,
+            482,
+            876
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c6229db0e2602cecfc953730976e68b1861885e7d93d9a49e2838537548cdfa2.jpg",
+        "text": "$$\n| \\mathbb { P } _ { \\mathrm { t e s t } } \\{ Y _ { t } \\in C _ { t } ( \\widehat { c } ) \\} - q |  0 .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            196,
+            881,
+            367,
+            897
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Th<sub>e</sub> <sub>coro</sub>ll<sub>ary</sub> f<sub>o</sub>ll<sub>ows</sub> di<sub>rec</sub>tl<sub>y</sub> f<sub>rom</sub> th<sub>e</sub> <sub>coverage-gap</sub> b<sub>oun</sub>d<sub>:</sub> <sub>as</sub> the calibration-test score mismatch and em<sub>p</sub>irical correction error <sub>van</sub>i<sub>s</sub>h<sub>,</sub> $C _ { t } ( \\widehat { c } )$ attains the tar<sub>g</sub>et covera<sub>g</sub>e as<sub>y</sub>m<sub>p</sub>toticall<sub>y</sub>. The full <sub>p</sub>roof is <sub>p</sub>rovided in A<sub>pp</sub>endix A.",
+        "bbox": [
+            511,
+            106,
+            915,
+            164
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "4 Experiments",
+        "text_level": 2,
+        "bbox": [
+            514,
+            178,
+            651,
+            194
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "W<sub>e eva</sub>l<sub>ua</sub>t<sub>e</sub> RCCP <sub>o</sub>n tim<sub>e</sub>-<sub>se</sub>ri<sub>es co</sub>nf<sub>o</sub>rm<sub>a</sub>l <sub>p</sub>r<sub>e</sub>di<sub>c</sub>ti<sub>o</sub>n b<sub>e</sub>n<sub>c</sub>hm<sub>a</sub>rk<sub>s</sub> <sub>aga</sub>i<sub>ns</sub>t <sub>represen</sub>t<sub>a</sub>ti<sub>ve sp</sub>lit<sub>, a</sub>d<sub>ap</sub>ti<sub>ve, an</sub>d l<sub>oca</sub>li<sub>ze</sub>d <sub>con</sub>f<sub>orma</sub>l b<sub>ase-</sub> lines. Section 4.1 describes the ex<sub>p</sub>erimental set<sub>up</sub>. Section 4.2 re-<sub>por</sub>t<sub>s</sub> th<sub>e ma</sub>i<sub>n</sub> b<sub>enc</sub>h<sub>mar</sub>k <sub>resu</sub>lt<sub>s an</sub>d f<sub>ur</sub>th<sub>er ana</sub>l<sub>yses, an</sub>d S<sub>ec-</sub> tion 4.3 <sub>p</sub>resents ablation studies.",
+        "bbox": [
+            511,
+            196,
+            916,
+            267
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "4.1 Experimental Setup",
+        "text_level": 2,
+        "bbox": [
+            514,
+            281,
+            722,
+            297
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Datasets. Our evaluation covers four benchmark datasets common in time series forecastin<sub>g</sub> and conformal <sub>p</sub>rediction studies<sub>,</sub> <sub>summar</sub>i<sub>ze</sub>d i<sub>n</sub> T<sub>a</sub>bl<sub>e</sub> 1<sub>.</sub> F<sub>or mu</sub>lti<sub>-</sub>l<sub>oca</sub>ti<sub>on</sub> d<sub>a</sub>t<sub>ase</sub>t<sub>s, eac</sub>h l<sub>oca</sub>ti<sub>on</sub> is treated as a se<sub>p</sub>arate series.",
+        "bbox": [
+            511,
+            300,
+            916,
+            357
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "table",
+        "img_path": "images/265be428fd0ca6d0730ae0a05e5ac8d483b5f4681e43a623a23aed5e3b96f89d.jpg",
+        "table_caption": [
+            "Table 1: Dataset statistics after preprocessing. Length denotes time points per series."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Dataset</td><td>Frequency</td><td>Target</td><td>Length</td><td># Loc.</td></tr><tr><td>Air [40]</td><td>Hourly</td><td>PM10</td><td>35,064</td><td>12</td></tr><tr><td>Solar [29]</td><td>Hourly</td><td>DHI</td><td>26,304</td><td>50</td></tr><tr><td>Electricity [13]</td><td>30-min</td><td>Transfer</td><td>3,444</td><td>1</td></tr><tr><td>Wind [36]</td><td>Hourly</td><td>MWH</td><td>13,870</td><td>1</td></tr></table>",
+        "bbox": [
+            557,
+            392,
+            872,
+            463
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Time series forecasters. We evaluate each conformal method with LSTM <sub>an</sub>d T<sub>rans</sub>f<sub>ormer</sub> b<sub>ac</sub>kb<sub>ones.</sub> F<sub>or eac</sub>h d<sub>a</sub>t<sub>ase</sub>t<sub>, o</sub>b<sub>serva</sub>ti<sub>ons</sub> are chronolo<sub>g</sub>icall<sub>y</sub> s<sub>p</sub>lit into trainin<sub>g,</sub> calibration<sub>,</sub> and test <sub>p</sub>eriods with <sub>p</sub>ro<sub>p</sub>ortions 40%<sub>,</sub> 40%<sub>,</sub> and $2 0 \\%$ <sub>,</sub> res<sub>p</sub>ectivel<sub>y</sub>. We train one <sub>g</sub>l<sub>o</sub>b<sub>a</sub>l f<sub>orecas</sub>t<sub>er per</sub> d<sub>a</sub>t<sub>ase</sub>t <sub>on</sub> th<sub>e</sub> t<sub>ra</sub>i<sub>n</sub>i<sub>ng per</sub>i<sub>o</sub>d <sub>an</sub>d k<sub>eep</sub> it fixed durin<sub>g</sub> calibration and testin<sub>g</sub> [3]. Calibration observations <sub>are use</sub>d <sub>on</sub>l<sub>y</sub> f<sub>or con</sub>f<sub>orma</sub>l <sub>ca</sub>lib<sub>ra</sub>ti<sub>on, an</sub>d <sub>a</sub>ll <sub>con</sub>f<sub>orma</sub>l <sub>me</sub>th<sub>o</sub>d<sub>s</sub> <sub>are</sub> <sub>eva</sub>l<sub>ua</sub>t<sub>e</sub>d <sub>on</sub> th<sub>e</sub> <sub>same</sub> f<sub>rozen</sub> f<sub>orecas</sub>t<sub>s.</sub> U<sub>n</sub>l<sub>ess</sub> <sub>o</sub>th<sub>erw</sub>i<sub>se</sub> <sub>s</sub>t<sub>a</sub>t<sub>e</sub>d<sub>,</sub> b<sub>o</sub>th b<sub>ac</sub>kb<sub>ones use</sub> hidd<sub>en</sub> di<sub>mens</sub>i<sub>on</sub> 128 <sub>an</sub>d b<sub>a</sub>t<sub>c</sub>h <sub>s</sub>i<sub>ze</sub> 256<sub>, an</sub>d are trained for 150 e<sub>p</sub>ochs with Adam usin<sub>g</sub> learnin<sub>g</sub> rate $1 0 ^ { - 3 }$",
+        "bbox": [
+            511,
+            481,
+            915,
+            621
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Baselines. We compare RCCP with representative conformal b<sub>ase</sub>li<sub>nes</sub> f<sub>or</sub> ti<sub>me ser</sub>i<sub>es.</sub> Th<sub>e</sub> b<sub>ase</sub>li<sub>nes</sub> i<sub>nc</sub>l<sub>u</sub>d<sub>e sp</sub>lit <sub>con</sub>f<sub>orma</sub>l <sub>p</sub>rediction (SCP) [34], online or ada<sub>p</sub>tive methods such as EnbPI [36] and SPCI [37], and localized methods such as NexCP [4], Ho<sub>p</sub>CPT [3], and ResCP [23]. All methods use the same tem<sub>p</sub>oral <sub>p</sub>artitions, f<sub>rozen</sub> <sub>po</sub>i<sub>n</sub>t f<sub>orecas</sub>t<sub>s,</sub> <sub>an</sub>d <sub>ran</sub>d<sub>om</sub> <sub>see</sub>d<sub>s,</sub> <sub>w</sub>ith h<sub>yperparame</sub>t<sub>ers</sub> <sub>se</sub>l<sub>ec</sub>t<sub>e</sub>d <sub>on</sub> th<sub>e ca</sub>lib<sub>ra</sub>ti<sub>on sp</sub>lit <sub>w</sub>h<sub>en nee</sub>d<sub>e</sub>d<sub>.</sub>",
+        "bbox": [
+            511,
+            630,
+            916,
+            728
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Evaluation metrics. For each test point, let $[ L _ { t } , U _ { t } ]$ d<sub>eno</sub>t<sub>e</sub> th<sub>e</sub> re<sub>p</sub>orted <sub>p</sub>rediction interval. We re<sub>p</sub>ort em<sub>p</sub>irical covera<sub>g</sub>e<sub>,</sub> si<sub>g</sub>ned <sub>cove</sub>r<sub>age gap,</sub> PI-Width<sub>,</sub> Winkl<sub>e</sub>r <sub>sco</sub>r<sub>e, a</sub>nd C<sub>a</sub>libr<sub>a</sub>ti<sub>o</sub>n Tim<sub>e.</sub> Em-<sub>p</sub>irical covera<sub>g</sub>e measures validit<sub>y,</sub>",
+        "bbox": [
+            513,
+            738,
+            915,
+            795
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/b9e177c39c50a5ec43254b782ca3c07315acc70c086b8d0f0efdbdeee94a79ba.jpg",
+        "text": "$$\n\\widehat { \\mathrm { C o v } } = \\frac { 1 } { | { \\cal J } _ { \\mathrm { t e s t } } | } \\sum _ { t \\in { \\cal J } _ { \\mathrm { t e s t } } } 1 \\{ Y _ { t } \\in \\left[ L _ { t } , U _ { t } \\right] \\} .\\tag{9}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            604,
+            805,
+            821,
+            838
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "<sup>Th</sup>e s<sup>i</sup><sub>g</sub>ne<sup>d</sup> covera<sub>g</sub>e <sub>g</sub>a<sub>p</sub> <sup>i</sup>s re<sub>p</sub>orte<sup>d</sup> <sup>i</sup>n <sub>p</sub>ercenta<sub>g</sub>e <sub>p</sub>o<sup>i</sup>nts,",
+        "bbox": [
+            513,
+            849,
+            866,
+            864
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4813265ca98b80709b207c362686f39bbeeefe0a973d9e495c0b33cee04da8c6.jpg",
+        "text": "$$\n\\Delta _ { \\mathrm { C o v } } = 1 0 0 \\left( \\widehat { \\mathrm { C o v } } - \\left( 1 - \\alpha \\right) \\right) ,\\tag{10}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            625,
+            875,
+            802,
+            897
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "header",
+        "text": "Retrieval–Corrected Conformal Prediction for Time Series",
+        "bbox": [
+            83,
+            75,
+            361,
+            88
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "header",
+        "text": "CIKM ’26, November 7–11, 2026, Rome, Italy",
+        "bbox": [
+            699,
+            75,
+            913,
+            88
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "table",
+        "img_path": "images/0dbe86b56367c5efb2d7db386fabfe131992b012a144daa6a062093b476636c3.jpg",
+        "table_caption": [
+            "Table 2: Performance across datasets and backbone forecasters at $\\alpha = 0 . 1$ . Values are mean ± standard deviation over 5 seeds after hyperparameter selection. For $\\Delta _ { \\mathrm { C o v } } ,$ values closer to zero are better, and lower values are better for PI-Width, Winkler, and Calibration Time. Calibration Time measures conformal calibration and test interval construction after forecasts are available. Shaded Winkler cells mark the lowest value, underlined Winkler values mark the second-lowest value, and shaded $\\Delta _ { \\mathrm { C o v } }$ cells indicate severe undercoverage cases with $\\Delta _ { \\mathrm { C o v } } < - 2 \\% .$"
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Dataset</td><td>Backbone</td><td>Metric</td><td>SCP</td><td>EnbPI</td><td>SPCI</td><td>NexCP</td><td>HopCPT</td><td>ResCP</td><td>RCCP (Ours)</td></tr><tr><td rowspan=\"8\">Air</td><td rowspan=\"4\">LSTM</td><td>∆Cov</td><td> $0 . 1 6 \\pm 0 . 2 2$ </td><td> $- 6 . 3 6 \\pm 0 . 1 1$ </td><td> $- 0 . 8 3 \\pm 1 . 1 0$ </td><td> $- 1 . 0 6 \\pm 0 . 0 7$ </td><td> $- 0 . 1 9 \\pm 0 . 1 7$ </td><td> $- 0 . 1 4 \\pm 0 . 2 5$ </td><td> $0 . 4 3 \\pm 0 . 1 6$ </td></tr><tr><td>PI-Width</td><td> $6 2 . 7 2 \\pm 0 . 5 8$ </td><td> $5 3 . 3 9 \\pm 0 . 4 4$ </td><td> $6 3 . 0 9 \\pm 2 . 9 4$ </td><td> $6 3 . 7 2 \\pm 0 . 3 1$ </td><td> $6 2 . 4 7 \\pm 0 . 7 9$ </td><td> $6 1 . 3 5 \\pm 0 . 7 3$ </td><td> $6 0 . 2 0 \\pm 0 . 5 7$ </td></tr><tr><td>Winkler</td><td> $1 1 2 . 5 5 \\pm 0 . 6 3$ </td><td> $1 1 0 . 6 7 \\pm 0 . 6 1$ </td><td> $1 0 9 . 4 5 \\pm 0 . 3 4$ </td><td>103.91 ± 0.21</td><td> $1 1 1 . 6 6 \\pm 0 . 9 3$ </td><td> $\\underline { { 1 0 1 . 5 7 } } \\pm 0 . 4 8$ </td><td> $9 2 . 4 4 \\pm 0 . 3 5$ </td></tr><tr><td>Time</td><td> $3 5 . 2 8 \\pm 0 . 2 6$ </td><td> $1 4 3 . 3 8 \\pm 0 . 8 0$ </td><td> $6 6 4 . 9 1 \\pm 2 . 8 9$ </td><td> $3 5 . 5 2 \\pm 0 . 4 5$ </td><td> $2 6 2 . 7 4 \\pm 0 . 5 4$ </td><td> $1 0 2 . 7 5 \\pm 6 . 0 7$ </td><td> $7 0 . 9 4 \\pm 0 . 5 5$ </td></tr><tr><td rowspan=\"4\">Transf</td><td>∆Cov</td><td> $0 . 3 7 \\pm 0 . 1 5$ </td><td> $- 6 . 4 3 \\pm 0 . 1 6$ </td><td> $- 0 . 5 1 \\pm 0 . 6 6$ </td><td> $- 1 . 6 9 \\pm 0 . 0 8$ </td><td> $- 0 . 4 6 \\pm 0 . 3 9$ </td><td> $- 0 . 2 8 \\pm 0 . 1 1$ </td><td> $0 . 2 0 \\pm 0 . 0 9$ </td></tr><tr><td>PI-Width</td><td> $6 3 . 8 8 \\pm 0 . 9 0$ </td><td> $5 3 . 3 3 \\pm 1 . 0 8$ </td><td> $6 4 . 7 2 \\pm 1 . 4 8 $ </td><td> $6 5 . 4 3 \\pm 1 . 0 2$ </td><td> $6 2 . 0 4 \\pm 1 . 1 5$ </td><td> $6 1 . 4 5 \\pm 1 . 4 5$ </td><td> $6 0 . 9 4 \\pm 1 . 2 2$ </td></tr><tr><td>Winkler</td><td> $1 1 6 . 9 6 \\pm 2 . 7 5$ </td><td> $1 1 1 . 6 7 \\pm 3 . 0 5$ </td><td> $1 0 9 . 6 4 \\pm 2 . 5 7$ </td><td> $1 0 2 . 7 1 \\pm 1 . 5 0$ </td><td> $1 1 5 . 8 8 \\pm 3 . 2 9$ </td><td> $\\underline { { 1 0 2 . 2 1 \\pm 1 . 8 2 } }$ </td><td> $9 2 . 5 1 \\pm 1 . 4 4$ </td></tr><tr><td>Time</td><td> $3 5 . 3 4 \\pm 1 . 5 5$ </td><td> $1 4 3 . 7 8 \\pm 1 . 2 3 $ </td><td> $6 5 8 . 3 9 \\pm 7 . 3 2$ </td><td> $3 5 . 1 4 \\pm 1 . 2 2$ </td><td> $2 4 7 . 2 3 \\pm 1 . 8 9$ </td><td> $9 8 . 7 7 \\pm 0 . 9 0 $ </td><td> $7 2 . 4 5 \\pm 0 . 5 0$ </td></tr><tr><td rowspan=\"6\">Solar</td><td rowspan=\"3\">LSTM</td><td>∆Cov</td><td> $1 . 5 0 \\pm 0 . 0 9$ </td><td> $- 1 . 8 4 \\pm 0 . 0 6$ </td><td> $0 . 7 5 \\pm 0 . 7 6$ </td><td> $- 0 . 7 9 \\pm 0 . 0 8$ </td><td> $1 . 2 6 \\pm 2 . 2 0$ </td><td> $1 . 1 4 \\pm 0 . 1 4$ </td><td> $0 . 4 2 \\pm 0 . 2 4$ </td></tr><tr><td>PI-Width</td><td> $3 5 . 2 4 \\pm 1 . 3 6$ </td><td> $2 2 . 4 3 \\pm 1 . 0 4$ </td><td> $2 7 . 4 2 \\pm 3 . 0 7$ </td><td> $2 6 . 1 8 \\pm 0 . 9 0$ </td><td> $2 9 . 3 7 \\pm 8 . 7 7$ </td><td> $2 0 . 1 0 \\pm 1 . 2 8$ </td><td> $1 8 . 3 1 \\pm 0 . 3 8$ </td></tr><tr><td>Winkler</td><td> $6 2 . 8 7 \\pm 2 . 0 9$ </td><td> $5 5 . 0 8 \\pm 1 . 9 5$ </td><td> $5 4 . 8 6 \\pm 1 . 7 1 $ </td><td> $5 1 . 1 9 \\pm 1 . 6 0$ </td><td> $3 9 . 0 2 \\pm 7 . 8 7$ </td><td> ${ \\underline { { 3 8 . 9 0 } } } \\pm 1 . 4 3 $ </td><td> $2 6 . 0 8 \\pm 0 . 6 7$ </td></tr><tr><td rowspan=\"4\"></td><td>Time</td><td> $9 0 . 1 4 \\pm 1 . 1 1$ </td><td> $4 4 3 . 4 5 \\pm 5 . 5 1$ </td><td> $1 9 6 4 . 2 6 \\pm 1 9 . 2 9$ </td><td> $9 6 . 1 3 \\pm 0 . 4 2$ </td><td> $8 6 2 . 0 2 \\pm 1 1 1 . 5 6$ </td><td> $3 2 3 . 0 9 \\pm 1 . 1 0$ </td><td> $1 6 7 . 2 7 \\pm 0 . 9 0$ </td></tr><tr><td>∆Cov</td><td> $1 . 1 4 \\pm 0 . 0 6$ </td><td> $- 1 . 6 1 \\pm 0 . 1 6$ </td><td> $1 . 4 8 \\pm 0 . 3 0$ </td><td> $- 1 . 0 2 \\pm 0 . 3 1$ </td><td> $0 . 3 9 \\pm 0 . 8 1$ </td><td> $1 . 9 4 \\pm 0 . 4 8$ </td><td> $1 . 7 7 \\pm 0 . 5 2$ </td></tr><tr><td>PI-Width</td><td> $3 1 . 3 9 \\pm 2 . 3 0$ </td><td> $2 3 . 9 6 \\pm 1 . 8 0$ </td><td> $2 4 . 1 9 \\pm 1 . 8 8$ </td><td> $2 8 . 8 7 \\pm 1 . 6 2$ </td><td> $2 8 . 3 7 \\pm 4 . 5 4$ </td><td> $2 0 . 6 9 \\pm 0 . 7 8$ </td><td> $2 1 . 0 2 \\pm 1 . 0 5$ </td></tr><tr><td>Winkler</td><td> $5 8 . 8 5 \\pm 1 . 9 4 $ </td><td> $5 4 . 7 6 \\pm 1 . 1 1$ </td><td> $4 4 . 5 7 \\pm 3 . 8 9$ </td><td> $5 2 . 2 6 \\pm 1 . 5 3$ </td><td> $4 3 . 2 7 \\pm 8 . 9 1$ </td><td> $3 8 . 4 1 \\pm 0 . 4 3$ </td><td> $2 9 . 2 9 \\pm 1 . 7 0$ </td></tr><tr><td rowspan=\"8\"></td><td rowspan=\"4\"></td><td>Time</td><td> $8 9 . 4 0 \\pm 2 . 3 9$ </td><td> $4 3 3 . 9 4 \\pm 3 . 7 8$ </td><td> $1 9 2 5 . 6 1 \\pm 2 5 . 6 4$ </td><td> $9 4 . 9 8 \\pm 1 . 8 9$ </td><td> $7 6 4 . 0 9 \\pm 5 8 . 1 1$ </td><td> $3 1 7 . 4 1 \\pm 1 0 . 4 6$ </td><td> $1 8 6 . 2 8 \\pm 1 . 1 2$ </td></tr><tr><td>∆Cov</td><td> $0 . 2 3 \\pm 0 . 1 5$ </td><td> $- 2 . 3 1 \\pm 0 . 1 0$ </td><td> $- 1 . 9 5 \\pm 2 . 8 1$ </td><td> $- 0 . 0 6 \\pm 0 . 0 5$ </td><td> $2 . 2 5 \\pm 2 . 0 4$ </td><td> $1 . 5 6 \\pm 0 . 1 5$ </td><td> $0 . 6 2 \\pm 0 . 4 9$ </td></tr><tr><td>PI-Width</td><td> $6 3 . 4 2 \\pm 0 . 6 6$ </td><td> $5 9 . 5 4 \\pm 0 . 3 6$ </td><td> $5 8 . 3 4 \\pm 8 . 9 7$ </td><td> $6 2 . 6 0 \\pm 0 . 4 9$ </td><td> $7 3 . 2 0 \\pm 1 0 . 3 6$ </td><td> $6 3 . 3 6 \\pm 0 . 5 5$ </td><td> $5 8 . 7 5 \\pm 1 . 1 1$ </td></tr><tr><td>Winkler</td><td> $9 6 . 2 9 \\pm 0 . 0 9$ </td><td> $9 7 . 9 2 \\pm 0 . 3 3$ </td><td> $9 9 . 5 5 \\pm 1 . 7 3 $ </td><td> $9 4 . 5 0 \\pm 0 . 2 5$ </td><td> $9 9 . 0 6 \\pm 3 . 0 3$ </td><td> $\\underline { { 8 9 . 7 5 } } \\pm 0 . 4 7$ </td><td> $8 3 . 7 9 \\pm 0 . 4 3$ </td></tr><tr><td rowspan=\"4\"></td><td>Time</td><td> $0 . 7 2 \\pm 0 . 0 2$ </td><td> $4 . 4 9 \\pm 0 . 0 7$ </td><td> $1 9 . 3 2 \\pm 0 . 3 4$ </td><td> $0 . 8 6 \\pm 0 . 0 2$ </td><td> $8 . 8 9 \\pm 0 . 2 0$ </td><td> $4 . 0 5 \\pm 0 . 0 1$ </td><td> $1 . 5 0 \\pm 0 . 0 1$ </td></tr><tr><td> $\\Delta \\mathrm { C o v }$ </td><td> $- 0 . 5 0 \\pm 0 . 8 1$ </td><td> $- 2 . 0 6 \\pm 0 . 1 4$ </td><td> $- 0 . 4 0 \\pm 1 . 8 4$ </td><td> $0 . 3 7 \\pm 0 . 1 8$ </td><td> $- 0 . 6 4 \\pm 3 . 7 7$ </td><td> $1 . 4 9 \\pm 0 . 4 2$ </td><td> $1 . 5 2 \\pm 0 . 1 5$ </td></tr><tr><td>PI-Width</td><td> $6 5 . 2 8 \\pm 1 . 4 9$ </td><td> $6 0 . 8 6 \\pm 1 . 6 2$ </td><td> $6 4 . 5 0 \\pm 6 . 1 0$ </td><td> $6 7 . 6 5 \\pm 2 . 6 5$ </td><td> $6 6 . 3 2 \\pm 6 . 8 2$ </td><td> $6 4 . 8 3 \\pm 1 . 8 1$ </td><td> $6 3 . 5 2 \\pm 1 . 4 1$ </td></tr><tr><td>Winkler</td><td> $1 0 1 . 3 5 \\pm 2 . 1 7$   $0 . 7 1 \\pm 0 . 0 1$ </td><td> $1 0 0 . 2 5 \\pm 1 . 5 9$ </td><td> $1 0 0 . 7 9 \\pm 1 . 8 7$ </td><td> $1 0 0 . 6 8 \\pm 1 . 6 0$ </td><td> $9 9 . 0 9 \\pm 3 . 2 2$ </td><td> $\\underline { { 9 3 . 4 1 } } \\pm 2 . 3 3 $ </td><td> $8 7 . 7 8 \\pm 1 . 0 2$ </td></tr><tr><td rowspan=\"8\">Electricity</td><td rowspan=\"4\">LSTM</td><td>Time</td><td></td><td> $4 . 5 0 \\pm 0 . 1 3$ </td><td> $1 9 . 0 3 \\pm 0 . 3 7$ </td><td> $0 . 8 4 \\pm 0 . 0 3$ </td><td> $8 . 6 2 \\pm 0 . 5 3$ </td><td> $3 . 8 7 \\pm 0 . 0 8$ </td><td> $1 . 5 2 \\pm 0 . 0 1$ </td></tr><tr><td>∆Cov</td><td> $5 . 1 8 \\pm 1 . 2 9$ </td><td> $- 3 . 1 2 \\pm 0 . 1 9$ </td><td> $4 . 1 3 \\pm 0 . 9 4$ </td><td> $1 . 0 9 \\pm 0 . 9 1$ </td><td> $4 . 2 8 \\pm 1 . 5 2$ </td><td> $1 . 2 3 \\pm 0 . 1 9$ </td><td> $0 . 5 4 \\pm 0 . 7 2$ </td></tr><tr><td>PI-Width Winkler</td><td> $0 . 2 1 \\pm 0 . 0 2$ </td><td> $0 . 1 5 \\pm 0 . 0 1$ </td><td> $0 . 1 9 \\pm 0 . 0 2$ </td><td> $0 . 1 7 \\pm 0 . 0 1$ </td><td> $0 . 2 0 \\pm 0 . 0 2$ </td><td> $0 . 1 6 \\pm 0 . 0 1$ </td><td> $0 . 1 6 \\pm 0 . 0 1$ </td></tr><tr><td>Time</td><td> $0 . 2 5 \\pm 0 . 0 2$   $0 . 2 0 \\pm 0 . 0 3$ </td><td> $0 . 2 4 \\pm 0 . 0 2$   $1 . 1 8 \\pm 0 . 0 4$ </td><td> $0 . 2 4 \\pm 0 . 0 2$ </td><td> $\\underline { { 0 . 2 3 } } \\pm 0 . 0 2$   $0 . 2 4 \\pm 0 . 0 0$ </td><td> $0 . 2 5 \\pm 0 . 0 2$   $4 . 3 6 \\pm 0 . 6 5$ </td><td> $\\underline { { 0 . 2 3 } } \\pm 0 . 0 1$ </td><td>²  $0 . 2 2 \\pm 0 . 0 1$ </td></tr><tr><td rowspan=\"4\"></td><td></td><td></td><td></td><td> $4 . 4 1 \\pm 0 . 0 3$ </td><td></td><td></td><td> $1 . 7 7 \\pm 0 . 2 0$ </td><td>0.23 ± 0.00</td></tr><tr><td>∆Cov PI-Width</td><td> $5 . 3 3 \\pm 3 . 1 2$   $0 . 3 0 \\pm 0 . 0 3$ </td><td> $- 5 . 9 8 \\pm 0 . 6 5$ </td><td> $- 0 . 1 1 \\pm 2 . 3 0$ </td><td> $2 . 6 1 \\pm 1 . 1 4$ </td><td> $4 . 7 5 \\pm 0 . 3 6$ </td><td> $1 . 9 6 \\pm 0 . 5 6$ </td><td> $1 . 9 9 \\pm 1 . 6 1$ </td></tr><tr><td>Winkler</td><td> $0 . 3 5 \\pm 0 . 0 2$ </td><td> $0 . 1 6 \\pm 0 . 0 1$   $0 . 3 1 \\pm 0 . 0 3$ </td><td> $0 . 1 9 \\pm 0 . 0 2$   $\\underline { { 0 . 2 8 \\pm 0 . 0 1 } }$ </td><td> $0 . 2 5 \\pm 0 . 0 2$   $0 . 3 2 \\pm 0 . 0 4$ </td><td> $0 . 2 8 \\pm 0 . 0 2$   $0 . 3 4 \\pm 0 . 0 3$ </td><td> $0 . 2 0 \\pm 0 . 0 1$   $0 . 2 9 \\pm 0 . 0 2$ </td><td> $0 . 2 0 \\pm 0 . 0 3$   ${ \\bf 0 . 2 7 \\pm 0 . 0 2 }$  1</td></tr><tr><td>Time</td><td> $0 . 1 8 \\pm 0 . 0 0$ </td><td> $1 . 1 1 \\pm 0 . 0 1$ </td><td> $4 . 3 2 \\pm 0 . 1 2$ </td><td> $0 . 2 3 \\pm 0 . 0 1$ </td><td> $3 . 7 7 \\pm 0 . 1 3$ </td><td> $1 . 8 7 \\pm 0 . 6 3$ </td><td> $0 . 2 7 \\pm 0 . 0 1$ </td></tr></table>",
+        "bbox": [
+            101,
+            156,
+            898,
+            625
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "so ne<sub>g</sub>ative values indicate undercovera<sub>g</sub>e. PI-Width measures av-<sub>erage</sub> i<sub>n</sub>t<sub>erva</sub>l l<sub>eng</sub>th<sub>,</sub>",
+        "bbox": [
+            81,
+            640,
+            485,
+            667
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0f769840cb57b885bfd74101ec0acd53af0d3f56131221277bbe7a139c0ab4f5.jpg",
+        "text": "$$\n\\mathrm { P I - W i d t h } = \\frac { 1 } { | \\mathit { J } _ { \\mathrm { t e s t } } | } \\sum _ { t \\in \\mathit { J } _ { \\mathrm { t e s t } } } \\left( U _ { t } - L _ { t } \\right) .\\tag{11}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            178,
+            671,
+            385,
+            704
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "To joint<sup>l</sup>y assess interva<sup>l</sup> <sup>l</sup>engt<sup>h</sup> an<sup>d</sup> miscoverage, we report t<sup>h</sup>e Wi<sub>n</sub>kl<sub>er</sub> <sub>score,</sub>",
+        "bbox": [
+            81,
+            708,
+            482,
+            736
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/30123b3023acee8a588b26c213fff035f08d7b97c35cb6d9c9d071655a57df8d.jpg",
+        "text": "$$\nW _ { t } = ( U _ { t } - L _ { t } ) + \\frac { 2 } { \\alpha } ( L _ { t } - Y _ { t } ) { \\bf 1 } \\{ Y _ { t } < L _ { t } \\} + \\frac { 2 } { \\alpha } ( Y _ { t } - U _ { t } ) { \\bf 1 } \\{ Y _ { t } > U _ { t } \\} ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            88,
+            738,
+            452,
+            766
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "chart",
+        "img_path": "images/03165ba316101ba33e245b3cb1d3ff5ad929e55a6bbd08524e2009d1d9de7ce0.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            516,
+            640,
+            714,
+            755
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "(12)",
+        "bbox": [
+            455,
+            746,
+            482,
+            758
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "chart",
+        "img_path": "images/392b96a80d05ec0702e93c934c72205df4658039f54dc2cc96bbc48529512002.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Air",
+            "(b) Solar"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            718,
+            640,
+            911,
+            753
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "and avera<sub>g</sub>e it over the test <sub>p</sub>eriod. Calibration Time is the <sub>p</sub>ostf<sub>orecas</sub>ti<sub>ng</sub> ti<sub>me nee</sub>d<sub>e</sub>d t<sub>o ca</sub>lib<sub>ra</sub>t<sub>e eac</sub>h <sub>con</sub>f<sub>orma</sub>l <sub>me</sub>th<sub>o</sub>d <sub>an</sub>d <sub>co</sub>n<sub>s</sub>tr<sub>uc</sub>t t<sub>es</sub>t int<sub>e</sub>r<sub>va</sub>l<sub>s.</sub> F<sub>o</sub>r RCCP<sub>,</sub> it <sub>a</sub>l<sub>so</sub> in<sub>c</sub>l<sub>u</sub>d<sub>es se</sub>ri<sub>a</sub>liz<sub>a</sub>ti<sub>o</sub>n <sub>o</sub>f <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l k<sub>eys</sub> f<sub>or</sub> k<sub>now</sub>l<sub>e</sub>d<sub>ge-</sub>b<sub>ase cons</sub>t<sub>ruc</sub>ti<sub>on.</sub>",
+        "bbox": [
+            81,
+            768,
+            485,
+            825
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Figure 2: Winkler-score decomposition into interval width and miss penalty on Air and Solar.",
+        "bbox": [
+            513,
+            773,
+            915,
+            799
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "4.2 Results & Analysis",
+        "text_level": 2,
+        "bbox": [
+            81,
+            835,
+            282,
+            851
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "A<sub>cross</sub> <sub>a</sub>ll d<sub>a</sub>t<sub>ase</sub>t<sub>s</sub> <sub>an</sub>d b<sub>ac</sub>kb<sub>one</sub> f<sub>orecas</sub>t<sub>ers,</sub> T<sub>a</sub>bl<sub>e</sub> 2 <sub>s</sub>h<sub>ows</sub> th<sub>a</sub>t RCCP <sub>avo</sub>id<sub>s</sub> <sub>e</sub>m<sub>p</sub>iri<sub>ca</sub>l <sub>u</sub>nd<sub>e</sub>r<sub>cove</sub>r<sub>age</sub> <sub>a</sub>t $\\alpha = 0 . 1$ <sub>an</sub>d <sub>ac</sub>hi<sub>eves</sub> th<sub>e</sub> b<sub>es</sub>t <sub>or</sub> ti<sub>e</sub>d<sub>-</sub>b<sub>es</sub>t Wi<sub>n</sub>kl<sub>er scores.</sub> C<sub>ompu</sub>t<sub>a</sub>ti<sub>ona</sub>ll<sub>y s</sub>i<sub>mp</sub>l<sub>e</sub> b<sub>ase</sub>li<sub>nes</sub> <sub>suc</sub>h <sub>as</sub> SCP <sub>a</sub>nd N<sub>e</sub>xCP h<sub>ave</sub> l<sub>ow</sub> C<sub>a</sub>libr<sub>a</sub>ti<sub>o</sub>n Tim<sub>e</sub> b<sub>ecause</sub> th<sub>ey</sub> <sub>re</sub>l<sub>y on g</sub>l<sub>o</sub>b<sub>a</sub>l <sub>or we</sub>i<sub>g</sub>ht<sub>e</sub>d <sub>ca</sub>lib<sub>ra</sub>ti<sub>on ru</sub>l<sub>es,</sub> b<sub>u</sub>t thi<sub>s s</sub>i<sub>mp</sub>li<sub>c</sub>it<sub>y o</sub>f<sub>-</sub> ten comes with weaker covera<sub>g</sub>e or lar<sub>g</sub>er Winkler scores. EnbPI and SPCI ada<sub>p</sub>t to recent resid<sub>u</sub>als<sub>, y</sub>et their inter<sub>v</sub>als remain less efecti<sub>v</sub>e <sub>w</sub>hen the error scale chan<sub>g</sub>es o<sub>v</sub>er time. Ho<sub>p</sub>CPT is closer in <sub>sp</sub>irit t<sub>o</sub> RCCP b<sub>ecause</sub> it <sub>uses</sub> l<sub>ea</sub>rn<sub>e</sub>d l<sub>oca</sub>l inf<sub>o</sub>rm<sub>a</sub>ti<sub>o</sub>n<sub>,</sub> b<sub>u</sub>t it re<sub>q</sub>uires substantiall<sub>y</sub> lar<sub>g</sub>er Calibration Time and shows variable interval <sub>q</sub>ualit<sub>y</sub> across settin<sub>g</sub>s. These results su<sub>pp</sub>ort the main desi<sub>g</sub>n choice of RCCP<sub>,</sub> where retrieval im<sub>p</sub>roves local interval allocation and correction <sub>p</sub>revents the retrieved interval from becomin<sub>g</sub> <sub>an unca</sub>lib<sub>ra</sub>t<sub>e</sub>d l<sub>oca</sub>l th<sub>res</sub>h<sub>o</sub>ld<sub>.</sub>",
+        "bbox": [
+            81,
+            853,
+            485,
+            897
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            511,
+            804,
+            916,
+            890
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "header",
+        "text": "CIKM ’26, November 7–11, 2026, Rome, Italy",
+        "bbox": [
+            83,
+            75,
+            299,
+            87
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "header",
+        "text": "Sangjin Jin, Kangmin Kim, Junhyeong Lee, and Yongjae Lee",
+        "bbox": [
+            627,
+            75,
+            915,
+            88
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "chart",
+        "img_path": "images/7c40e11fe2fea1f90d4d1e6edac9554821a3d287a8f3cd496bcef173cbb78a19.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            84,
+            121,
+            281,
+            255
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "chart",
+        "img_path": "images/48c393c5117ae1c94826b2c0dee90bdd0d8f3a5e860b8875fd22e38cd1167c8b.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Air"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            284,
+            126,
+            478,
+            255
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "chart",
+        "img_path": "images/e873c7d39609ffc0da4a292e71862c19cd8498a695267e57cbdf56f653839f9b.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            521,
+            123,
+            717,
+            253
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "chart",
+        "img_path": "images/4eae2ea8b3ccd4f72fb6b6f70a7f9571ae9d067809f2ba29835e57f7bbac72e1.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Solar",
+            "Figure 3: Interval width and empirical coverage stratified by realized error decile. Higher deciles correspond to larger realized errors and test whether intervals adapt to dificult points."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            720,
+            126,
+            911,
+            255
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            81,
+            315,
+            483,
+            385
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Calibration Time sho<sub>u</sub>ld be inter<sub>p</sub>reted conser<sub>v</sub>ati<sub>v</sub>el<sub>y,</sub> since it is <sub>measure</sub>d <sub>a</sub>ft<sub>er</sub> f<sub>orecas</sub>t<sub>s are ava</sub>il<sub>a</sub>bl<sub>e an</sub>d i<sub>nc</sub>l<sub>u</sub>d<sub>es me</sub>th<sub>o</sub>d<sub>-spec</sub>ifi<sub>c</sub> <sub>ca</sub>libr<sub>a</sub>ti<sub>o</sub>n <sub>a</sub>nd t<sub>es</sub>t int<sub>e</sub>r<sub>va</sub>l <sub>co</sub>n<sub>s</sub>tr<sub>uc</sub>ti<sub>o</sub>n<sub>.</sub> F<sub>o</sub>r RCCP<sub>,</sub> it <sub>a</sub>l<sub>so</sub> in<sub>c</sub>l<sub>u</sub>d<sub>es</sub> <sub>ser</sub>i<sub>a</sub>li<sub>z</sub>i<sub>ng</sub> th<sub>e</sub> f<sub>orecas</sub>t<sub>-s</sub>t<sub>a</sub>t<sub>e</sub> k<sub>eys use</sub>d f<sub>or re</sub>t<sub>r</sub>i<sub>eva</sub>l<sub>, so</sub> th<sub>e repor</sub>t<sub>e</sub>d time incl<sub>u</sub>des retrie<sub>v</sub>al memor<sub>y</sub> constr<sub>u</sub>ction. Altho<sub>ug</sub>h SCP and N<sub>e</sub>xCP <sub>a</sub>r<sub>e</sub> <sub>co</sub>m<sub>pu</sub>t<sub>a</sub>ti<sub>o</sub>n<sub>a</sub>ll<sub>y</sub> <sub>c</sub>h<sub>eape</sub>r b<sub>y</sub> <sub>co</sub>n<sub>s</sub>tr<sub>uc</sub>ti<sub>o</sub>n<sub>,</sub> RCCP i<sub>s</sub> m<sub>o</sub>r<sub>e</sub> <sub>e</sub>fi<sub>c</sub>i<sub>en</sub>t th<sub>an</sub> <sub>more</sub> <sub>expens</sub>i<sub>ve</sub> <sub>a</sub>d<sub>ap</sub>ti<sub>ve</sub> <sub>or</sub> l<sub>earne</sub>d l<sub>oca</sub>l b<sub>ase</sub>li<sub>nes</sub> while deliverin<sub>g</sub> stron<sub>g</sub>er covera<sub>g</sub>e and Winkler <sub>p</sub>erformance. Res<sub>u</sub>lts for additional misco<sub>v</sub>era<sub>g</sub>e le<sub>v</sub>els are re<sub>p</sub>orted in A<sub>pp</sub>endix C.",
+        "bbox": [
+            81,
+            385,
+            485,
+            510
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Wi<sub>n</sub>kl<sub>er</sub> <sub>re</sub>fl<sub>ec</sub>t<sub>s</sub> i<sub>n</sub>t<sub>erva</sub>l l<sub>eng</sub>th <sub>an</sub>d <sub>coverage</sub> <sub>v</sub>i<sub>o</sub>l<sub>a</sub>ti<sub>ons,</sub> <sub>so</sub> th<sub>e</sub> <sub>ana</sub>l<sub>ys</sub>i<sub>s</sub> fi<sub>rs</sub>t d<sub>ecomposes</sub> thi<sub>s</sub> <sub>score.</sub> A l<sub>ower</sub> Wi<sub>n</sub>kl<sub>er</sub> <sub>score</sub> <sub>can</sub> <sub>resu</sub>lt f<sub>rom s</sub>h<sub>or</sub>t<sub>er</sub> i<sub>n</sub>t<sub>erva</sub>l<sub>s, sma</sub>ll<sub>er v</sub>i<sub>o</sub>l<sub>a</sub>ti<sub>ons, or</sub> b<sub>o</sub>th<sub>.</sub> Fi<sub>gure</sub> 2 <sub>separa</sub>t<sub>es</sub> i<sub>n</sub>t<sub>erva</sub>l <sub>w</sub>idth f<sub>rom</sub> th<sub>e</sub> <sub>pena</sub>lt<sub>y</sub> i<sub>ncurre</sub>d b<sub>y</sub> <sub>m</sub>i<sub>scovere</sub>d <sub>p</sub>oints. RCCP’s advanta<sub>g</sub>e does not come from <sub>p</sub>roducin<sub>g</sub> the narrowest intervals<sub>,</sub> but from reducin<sub>g</sub> the miscovera<sub>g</sub>e <sub>p</sub>enalt<sub>y</sub>. This i<sub>n</sub>di<sub>ca</sub>t<sub>es</sub> th<sub>a</sub>t t<sub>arge</sub>t<sub>s ou</sub>t<sub>s</sub>id<sub>e</sub> th<sub>e</sub> i<sub>n</sub>t<sub>erva</sub>l t<sub>en</sub>d t<sub>o</sub> b<sub>e</sub> l<sub>ess severe</sub> vio<sup>l</sup>ations, consistent wit<sup>h</sup> t<sup>h</sup>e correction mec<sup>h</sup>anism t<sup>h</sup>at a<sup>d</sup>justs th<sub>e re</sub>t<sub>r</sub>i<sub>eve</sub>d i<sub>n</sub>t<sub>erva</sub>l <sub>sca</sub>l<sub>e w</sub>ith<sub>ou</sub>t <sub>un</sub>if<sub>orm</sub>l<sub>y</sub> i<sub>n</sub>fl<sub>a</sub>ti<sub>ng</sub> i<sub>n</sub>t<sub>erva</sub>l<sub>s.</sub>",
+        "bbox": [
+            81,
+            508,
+            485,
+            635
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "table",
+        "img_path": "images/dbb569e91885dc88d8c095f9695429e3b85bc5bbb90d4d5a123071496a373f63.jpg",
+        "table_caption": [
+            "Table 3: Width adaptivity ratio across datasets. Values are Decile 10 width divided by Decile 1 width."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td colspan=\"7\">Dataset SCP EnbPI SPCI NexCP HopCPT ResCP RCCP</td></tr><tr><td>Air</td><td>1.00</td><td>1.45</td><td>1.36</td><td>1.66</td><td>1.04</td><td>1.77 2.30</td></tr><tr><td>Solar</td><td>1.00</td><td>1.22</td><td>1.42</td><td>1.50</td><td>6.27</td><td>2.74 20.86</td></tr></table>",
+        "bbox": [
+            112,
+            672,
+            450,
+            727
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The decile anal<sub>y</sub>sis ex<sub>p</sub>lains how the <sub>p</sub>enalt<sub>y</sub> is reduced. Fi<sub>g</sub>ure 3 <sub>s</sub>t<sub>ra</sub>tifi<sub>es</sub> t<sub>es</sub>t <sub>po</sub>i<sub>n</sub>t<sub>s</sub> b<sub>y rea</sub>li<sub>ze</sub>d <sub>error</sub> d<sub>ec</sub>il<sub>e an</sub>d <sub>compares</sub> i<sub>n</sub>t<sub>erva</sub>l <sub>w</sub>idth <sub>w</sub>ith em<sub>p</sub>irical co<sub>v</sub>era<sub>g</sub>e. RCCP <sub>w</sub>idens inter<sub>v</sub>als in hi<sub>g</sub>h-error deciles and maintains stron<sub>g</sub>er covera<sub>g</sub>e where <sub>p</sub>rediction errors are lar<sub>g</sub>est. This <sub>p</sub>attern is summarized b<sub>y</sub> the width ada<sub>p</sub>tivit<sub>y</sub> <sub>ra</sub>ti<sub>o</sub> i<sub>n</sub> T<sub>a</sub>bl<sub>e</sub> 3<sub>,</sub> d<sub>e</sub>fi<sub>ne</sub>d <sub>as</sub> th<sub>e</sub> D<sub>ec</sub>il<sub>e</sub> 10 <sub>w</sub>idth di<sub>v</sub>id<sub>e</sub>d b<sub>y</sub> th<sub>e</sub> D<sub>ec</sub>il<sub>e</sub> 1 <sub>w</sub>idth<sub>.</sub> RCCP r<sub>eac</sub>h<sub>es</sub> 2<sub>.</sub>30 <sub>o</sub>n Air <sub>a</sub>nd 20<sub>.</sub>86 <sub>o</sub>n S<sub>o</sub>l<sub>a</sub>r<sub>, e</sub>x<sub>cee</sub>din<sub>g a</sub>ll b<sub>ase</sub>li<sub>nes.</sub> Th<sub>us,</sub> RCCP <sub>rea</sub>ll<sub>oca</sub>t<sub>es</sub> i<sub>n</sub>t<sub>erva</sub>l <sub>w</sub>idth t<sub>owar</sub>d hi<sub>g</sub>h<sub>-error</sub> re<sub>g</sub>ions rather than widenin<sub>g</sub> intervals uniforml<sub>y</sub>.",
+        "bbox": [
+            81,
+            739,
+            483,
+            864
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The distribution of violation sizes further su<sub>pp</sub>orts this inter<sub>p</sub>retation. Fi<sub>g</sub>ure 4 <sub>p</sub>lots the CDF of the distance from each miscovered t<sub>arge</sub>t t<sub>o</sub> th<sub>e neares</sub>t i<sub>n</sub>t<sub>erva</sub>l b<sub>oun</sub>d<sub>ary, w</sub>h<sub>ere curves concen</sub>t<sub>ra</sub>t<sub>e</sub>d <sub>near zero</sub> i<sub>n</sub>di<sub>ca</sub>t<sub>e sma</sub>ll<sub>er v</sub>i<sub>o</sub>l<sub>a</sub>ti<sub>ons an</sub>d h<sub>eav</sub>i<sub>er</sub> t<sub>a</sub>il<sub>s</sub> i<sub>n</sub>di<sub>ca</sub>t<sub>e se-</sub> <sub>ve</sub>r<sub>e</sub> mi<sub>sses.</sub> RCCP ri<sub>ses</sub> f<sub>as</sub>t<sub>es</sub>t <sub>ac</sub>r<sub>oss</sub> d<sub>a</sub>t<sub>ase</sub>t<sub>s, s</sub>h<sub>ow</sub>in<sub>g</sub> th<sub>a</sub>t <sub>eve</sub>n <sub>w</sub>h<sub>en coverage</sub> f<sub>a</sub>il<sub>s,</sub> th<sub>e rea</sub>li<sub>ze</sub>d <sub>va</sub>l<sub>ue usua</sub>ll<sub>y rema</sub>i<sub>ns c</sub>l<sub>ose</sub> t<sub>o</sub> th<sub>e</sub> <sub>repor</sub>t<sub>e</sub>d i<sub>n</sub>t<sub>erva</sub>l<sub>.</sub>",
+        "bbox": [
+            81,
+            864,
+            483,
+            893
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "chart",
+        "img_path": "images/14e1e986afec18c9b6dbe1faa828feab64958fdadc581ccb5c6733a7212dffdc.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Air"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            516,
+            314,
+            710,
+            450
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "chart",
+        "img_path": "images/723fc19957a3828bfbf4ebc2298cc0bf48a65dac63c444e35edfe5d757650208.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Solar",
+            "Figure 4: CDF of miscoverage distance for uncovered test points. Higher curves indicate smaller coverage violations."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            720,
+            314,
+            911,
+            450
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            511,
+            502,
+            915,
+            571
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "4.3 Ablation Studies",
+        "text_level": 2,
+        "bbox": [
+            514,
+            585,
+            696,
+            599
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The ablation st<sub>u</sub>d<sub>y</sub> examines the inter<sub>v</sub>al com<sub>p</sub>onents<sub>,</sub> correction across tar<sub>g</sub>et miscovera<sub>g</sub>e levels<sub>,</sub> retrieval ke<sub>y</sub> construction and metric<sub>,</sub> and retrieval size. These anal<sub>y</sub>ses clarif<sub>y</sub> which desi<sub>g</sub>n choices <sub>a</sub>f<sub>ec</sub>t <sub>coverage,</sub> i<sub>n</sub>t<sub>erva</sub>l <sub>e</sub>fi<sub>c</sub>i<sub>ency, an</sub>d <sub>ro</sub>b<sub>us</sub>t<sub>ness.</sub>",
+        "bbox": [
+            511,
+            603,
+            916,
+            660
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "table",
+        "img_path": "images/8a04760ff86005e734f882f174c823b346b0642060e4758e269e462aa1674847.jpg",
+        "table_caption": [
+            "Table 4: Component ablation. The table isolates how asymmetric residuals and correction afect coverage and Winkler score."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td></td><td>Dataset Backbone</td><td>Metric</td><td>Org. RCCP</td><td>w/o Asym.</td><td>w/o Corr.</td><td>w/o Both</td></tr><tr><td rowspan=\"3\">Air</td><td>LSTM</td><td>∆Cov</td><td>+0.43±0.16</td><td>+0.44±0.13</td><td>-1.35±0.23</td><td>-0.89±0.13</td></tr><tr><td rowspan=\"2\"></td><td>Winkler</td><td>92.44±0.35</td><td>96.42±0.21</td><td>92.91±0.32</td><td>95.95±0.20</td></tr><tr><td>∆Cov</td><td>+0.20±0.09</td><td>+0.49±0.23</td><td>-3.01±0.10</td><td>-2.60±0.20</td></tr><tr><td rowspan=\"3\"></td><td rowspan=\"2\">LSTM</td><td>Winkler</td><td>92.51±1.44</td><td>97.26±1.04</td><td>93.16±1.27</td><td>97.63±1.02</td></tr><tr><td>∆Cov</td><td>+0.42±0.24</td><td>+0.03±0.22</td><td>-1.66±0.13</td><td>-3.10±0.62</td></tr><tr><td rowspan=\"2\"></td><td>Winkler</td><td>26.08±0.67</td><td>28.17±1.35</td><td>26.03±0.75</td><td>28.05±1.38</td></tr><tr><td rowspan=\"2\">Transf.</td><td>∆Cov</td><td>+1.77±0.52</td><td>+1.31±0.62</td><td>+0.51±0.51</td><td>-2.31±0.62</td></tr><tr><td></td><td>Winkler</td><td>29.29±1.70</td><td>35.93±3.94</td><td>29.56±1.80</td><td>35.85±3.98</td></tr></table>",
+        "bbox": [
+            534,
+            690,
+            893,
+            810
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Component-wise ablation. Table 4 separates the roles of the two desi<sub>g</sub>n choices introd<sub>u</sub>ced in Sections 3.2 and 3.3: as<sub>y</sub>mmetric resid-<sub>ua</sub>l <sub>sca</sub>li<sub>ng</sub> <sub>an</sub>d <sub>con</sub>f<sub>orma</sub>l <sub>correc</sub>ti<sub>on.</sub> Fi<sub>rs</sub>t<sub>,</sub> <sub>con</sub>f<sub>orma</sub>l <sub>correc</sub>ti<sub>on</sub> mainl<sub>y</sub> controls covera<sub>g</sub>e. Removin<sub>g</sub> it worsens ΔCov and leads to undercovera<sub>g</sub>e in most settin<sub>g</sub>s<sub>,</sub> since locall<sub>y</sub> retrieved residuals <sub>nee</sub>d <sub>no</sub>t <sub>ma</sub>t<sub>c</sub>h th<sub>e</sub> t<sub>es</sub>t<sub>-</sub>ti<sub>me norma</sub>li<sub>ze</sub>d <sub>error</sub> di<sub>s</sub>t<sub>r</sub>ib<sub>u</sub>ti<sub>on.</sub> S<sub>econ</sub>d<sub>,</sub> as<sub>y</sub>mmetric residual scalin<sub>g</sub> mainl<sub>y</sub> controls eficienc<sub>y</sub>. Removin<sub>g</sub> it kee<sub>p</sub>s covera<sub>g</sub>e closer to the tar<sub>g</sub>et but increases Winkler scores<sub>,</sub> because a s<sub>y</sub>mmetric interval cannot ada<sub>p</sub>t to directional error i<sub>m</sub>b<sub>a</sub>l<sub>ance.</sub> O<sub>ne-s</sub>id<sub>e</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s</sub> <sub>avo</sub>id thi<sub>s</sub> <sub>was</sub>t<sub>e</sub> b<sub>y</sub> <sub>s</sub>h<sub>ap</sub>i<sub>ng</sub> th<sub>e</sub> <sub>up-</sub> per an<sup>d l</sup>ower wi<sup>d</sup>t<sup>h</sup>s separate<sup>l</sup>y. T<sup>h</sup>ere<sup>f</sup>ore, t<sup>h</sup>e resu<sup>l</sup>ts justi<sup>f</sup>y t<sup>h</sup>e f<sub>u</sub>ll d<sub>es</sub>i<sub>gn: correc</sub>ti<sub>on ensures re</sub>li<sub>a</sub>bl<sub>e coverage, w</sub>hil<sub>e asymme</sub>t<sub>ry</sub> im<sub>p</sub>roves interval eficienc<sub>y</sub>.",
+        "bbox": [
+            511,
+            827,
+            916,
+            897
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "header",
+        "text": "Retrieval–Corrected Conformal Prediction for Time Series",
+        "bbox": [
+            83,
+            75,
+            361,
+            87
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "header",
+        "text": "CIKM ’26, November 7–11, 2026, Rome, Italy",
+        "bbox": [
+            699,
+            75,
+            913,
+            87
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "chart",
+        "img_path": "images/72571eeffa66ebb61f14baff408cb62bab17cc39a9642d0867d6675f4cc3ddb5.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            84,
+            118,
+            223,
+            215
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "chart",
+        "img_path": "images/b62998daba3f3761982563cfbdb0f844efa6febffef0d0363b58eadaed34e5ca.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Air"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            225,
+            117,
+            357,
+            217
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "chart",
+        "img_path": "images/c11bf686b44d64bb4d9306692bd072d350942d222f994d0e2c2b63f7ae2daf0b.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            357,
+            106,
+            501,
+            215
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "chart",
+        "img_path": "images/a1bb4f963ce9b8bd3d4c0bde61baa5322957e27ec85a651b4655e4dae9349947.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            503,
+            106,
+            643,
+            215
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "chart",
+        "img_path": "images/dba0fb7e405b635612e74d773bfce801a3e04089082dad393e515f9613c4ba26.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Solar"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            647,
+            119,
+            777,
+            217
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "chart",
+        "img_path": "images/90889b7c7d96cf0c932b1cee250257902df3d5c77e7aa188095b2266cb997cb6.jpg",
+        "content": "",
+        "chart_caption": [
+            "Figure 5: Coverage, interval width, and Winkler score for direct retrieval and corrected intervals across target miscoverage levels. The dotted line marks target coverage, showing how correction afects calibration and interval eficiency as � varies."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            781,
+            119,
+            911,
+            215
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            81,
+            282,
+            485,
+            395
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Correction across target levels. The correction factor is evaluated across multi<sub>p</sub>le tar<sub>g</sub>et miscovera<sub>g</sub>e levels. This com<sub>p</sub>arison tests <sub>w</sub>h<sub>e</sub>th<sub>er re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>nee</sub>d<sub>s ca</sub>lib<sub>ra</sub>ti<sub>on a</sub>ft<sub>er</sub> it h<sub>as pro</sub>d<sub>uce</sub>d <sub>a</sub> l<sub>oca</sub>ll<sub>y</sub> ada<sub>p</sub>tive interval. Fi<sub>g</sub>ure 5 com<sub>p</sub>ares direct retrieval<sub>,</sub> which fixes b� = <sup>1</sup>, w<sup>ith th</sup>e correc<sup>t</sup>e<sup>d RCCP i</sup>n<sup>t</sup>erva<sup>l</sup> a<sup>t</sup> � <sup>∈</sup> {<sup>0</sup>.<sup>05</sup>, <sup>0</sup>.<sup>10</sup>, <sup>0</sup>.<sup>15</sup>}. Across tar<sub>g</sub>et levels<sub>,</sub> correction moves em<sub>p</sub>irical covera<sub>g</sub>e toward th<sub>e</sub> d<sub>es</sub>i<sub>re</sub>d l<sub>eve</sub>l <sub>w</sub>ith <sub>on</sub>l<sub>y mo</sub>d<sub>es</sub>t <sub>c</sub>h<sub>anges</sub> i<sub>n</sub> i<sub>n</sub>t<sub>erva</sub>l <sub>w</sub>idth <sub>an</sub>d Winkl<sub>e</sub>r <sub>sco</sub>r<sub>e.</sub> Thi<sub>s</sub> indi<sub>ca</sub>t<sub>es</sub> th<sub>a</sub>t th<sub>e co</sub>rr<sub>ec</sub>ti<sub>o</sub>n r<sub>epa</sub>ir<sub>s</sub> r<sub>es</sub>id<sub>ua</sub>l <sub>coverage error</sub> l<sub>e</sub>ft b<sub>y re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>ra</sub>th<sub>er</sub> th<sub>an s</sub>i<sub>mp</sub>l<sub>y</sub> i<sub>n</sub>fl<sub>a</sub>ti<sub>ng</sub> i<sub>n</sub>t<sub>erva</sub>l<sub>s.</sub>",
+        "bbox": [
+            81,
+            400,
+            483,
+            526
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "table",
+        "img_path": "images/fff2a37139a681ec230342397eeeffc9ccc6524cfa2bd2fde45b32021c3e41d6.jpg",
+        "table_caption": [
+            "Table 5: Retrieval key and metric ablation. The table compares embedding keys and raw-window keys across distance metrics."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Dataset Backbone</td><td></td><td>Metric</td><td>Org. RCCP</td><td>Emb.-Cos</td><td>RawTS-L2</td><td>RawTS-Cos</td></tr><tr><td rowspan=\"3\">Air</td><td>LSTM</td><td>∆Cov</td><td>+0.43±0.16</td><td>+0.37±0.18</td><td>+0.21±0.21</td><td>+0.08±0.22</td></tr><tr><td></td><td>Winkler</td><td>92.44±0.35</td><td>93.47±0.39</td><td>96.30±0.77</td><td>96.64±0.66</td></tr><tr><td>Transf.</td><td>∆Cov Winkler</td><td>+0.20±0.09 92.51±1.44</td><td>+0.31±0.15 92.62±1.30</td><td>−0.09±0.11 95.96±1.20</td><td>−0.22±0.11 97.40±1.63</td></tr><tr><td rowspan=\"3\">Solar</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td rowspan=\"2\">LSTM</td><td>∆Cov</td><td>+0.42±0.24</td><td>+0.75±0.23</td><td>−0.03±0.19 28.42±0.76</td><td>+0.27±0.09 28.75±0.71</td></tr><tr><td>Winkler</td><td>26.08±0.67</td><td>26.06±0.69</td><td></td><td></td></tr><tr><td></td><td>Transf.</td><td>∆Cov Winkler</td><td>+1.77±0.52 29.29±1.70</td><td>+1.64±0.58 29.54±1.80</td><td>+0.70±0.25 29.05±0.84</td><td>+0.89±0.26 29.49±0.81</td></tr></table>",
+        "bbox": [
+            102,
+            560,
+            462,
+            681
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Retrieval key construction and metric. Table 5 tests whether perf<sub>ormance</sub> d<sub>epen</sub>d<sub>s</sub> <sub>on</sub> <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l k<sub>ey</sub> <sub>cons</sub>t<sub>ruc</sub>ti<sub>on</sub> <sub>an</sub>d th<sub>e</sub> di<sub>s</sub>t<sub>ance</sub> metric<sub>,</sub> se<sub>p</sub>aratin<sub>g</sub> retrieval choices from the correction ste<sub>p</sub>. The main RCCP settin<sub>g</sub> is com<sub>p</sub>ared <sub>w</sub>ith embeddin<sub>g</sub> or ra<sub>w</sub>-<sub>w</sub>indo<sub>w</sub> ke<sub>y</sub>s under Euclidean distance or cosine similarit<sub>y</sub>. Covera<sub>g</sub>e remains stable across variants<sub>,</sub> su<sub>gg</sub>estin<sub>g</sub> that conformal correction i<sub>s</sub> r<sub>o</sub>b<sub>us</sub>t t<sub>o</sub> r<sub>e</sub>tri<sub>eva</sub>l <sub>c</sub>h<sub>o</sub>i<sub>ces.</sub> Winkl<sub>e</sub>r <sub>sco</sub>r<sub>es a</sub>r<sub>e</sub> m<sub>o</sub>r<sub>e se</sub>n<sub>s</sub>iti<sub>ve</sub> t<sub>o</sub> ke<sub>y</sub> construction<sub>,</sub> with embeddin<sub>g</sub> ke<sub>y</sub>s <sub>g</sub>enerall<sub>y</sub> <sub>y</sub>ieldin<sub>g</sub> shar<sub>p</sub>er <sub>correc</sub>t<sub>e</sub>d i<sub>n</sub>t<sub>erva</sub>l<sub>s.</sub>",
+        "bbox": [
+            81,
+            695,
+            485,
+            820
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Retrieval size sensitivity. The final ablation varies the neighbor h<sub>oo</sub>d <sub>s</sub>i<sub>ze</sub> � <sub>an</sub>d <sub>repor</sub>t<sub>s</sub> i<sub>n</sub>t<sub>erva</sub>l <sub>w</sub>idth<sub>, coverage, an</sub>d Wi<sub>n</sub>kl<sub>er</sub> <sub>score</sub> i<sub>n</sub> Fi<sub>gure</sub> 6<sub>.</sub> S<sub>ma</sub>ll <sub>ne</sub>i<sub>g</sub>hb<sub>or</sub>h<sub>oo</sub>d<sub>s</sub> <sub>can</sub> <sub>ma</sub>k<sub>e</sub> <sub>re</sub>t<sub>r</sub>i<sub>eve</sub>d i<sub>n</sub>t<sub>erva</sub>l<sub>s</sub> <sub>var</sub>i<sub>a</sub>bl<sub>e,</sub> <sub>w</sub>hil<sub>e</sub> <sub>very</sub> l<sub>arge</sub> <sub>ne</sub>i<sub>g</sub>hb<sub>or</sub>h<sub>oo</sub>d<sub>s</sub> dil<sub>u</sub>t<sub>e</sub> l<sub>oca</sub>l i<sub>n</sub>f<sub>orma</sub>ti<sub>on.</sub> A<sub>cross</sub> <sub>a</sub> b<sub>roa</sub>d <sub>range</sub> <sub>o</sub>f �<sub>,</sub> <sub>coverage</sub> <sub>rema</sub>i<sub>ns</sub> <sub>s</sub>t<sub>a</sub>bl<sub>e</sub> <sub>an</sub>d Wi<sub>n</sub>kl<sub>er</sub> <sub>c</sub>h<sub>anges smoo</sub>thl<sub>y, sugges</sub>ti<sub>ng</sub> th<sub>a</sub>t th<sub>e con</sub>f<sub>orma</sub>l <sub>correc</sub>ti<sub>on a</sub>b<sub>-</sub> sorbs much of the retrieval variabilit<sub>y</sub>. The default � = 64 <sub>p</sub>rovides <sub>a s</sub>t<sub>a</sub>bl<sub>e</sub> b<sub>a</sub>l<sub>ance</sub> b<sub>e</sub>t<sub>ween</sub> l<sub>oca</sub>l <sub>a</sub>d<sub>ap</sub>ti<sub>v</sub>it<sub>y an</sub>d i<sub>n</sub>t<sub>erva</sub>l <sub>qua</sub>lit<sub>y.</sub>",
+        "bbox": [
+            81,
+            825,
+            485,
+            897
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "chart",
+        "img_path": "images/f25b034f3f3cf6b7095c46249ab0c1e1ddd4882564184a3d5ef7ddf45143c683.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            516,
+            281,
+            712,
+            457
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "chart",
+        "img_path": "images/37db2c08a25b145c4b7f232002ce5bb290d31420a5efbe7daf04c52d0585c636.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Air",
+            "(b) Solar",
+            "Figure 6: Sensitivity to retrieval size �. The figure reports interval width, coverage, and Winkler score across neighborhood sizes."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            720,
+            290,
+            913,
+            457
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            513,
+            507,
+            915,
+            550
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "5 Conclusion",
+        "text_level": 2,
+        "bbox": [
+            514,
+            587,
+            640,
+            601
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "In thi<sub>s pape</sub>r <sub>we</sub> intr<sub>o</sub>d<sub>uce</sub> RCCP<sub>, a</sub> r<sub>e</sub>tri<sub>eva</sub>l–<sub>co</sub>rr<sub>ec</sub>t<sub>e</sub>d <sub>ca</sub>libr<sub>a</sub>ti<sub>o</sub>n m<sub>e</sub>th<sub>o</sub>d f<sub>o</sub>r tim<sub>e se</sub>ri<sub>es p</sub>r<sub>e</sub>di<sub>c</sub>ti<sub>o</sub>n int<sub>e</sub>r<sub>va</sub>l<sub>s.</sub> Exi<sub>s</sub>tin<sub>g</sub> tim<sub>e se</sub>ri<sub>es</sub> CP <sub>me</sub>th<sub>o</sub>d<sub>s</sub> i<sub>mprove</sub> l<sub>oca</sub>l <sub>ca</sub>lib<sub>ra</sub>ti<sub>on</sub> b<sub>y</sub> <sub>reus</sub>i<sub>ng</sub> <sub>recen</sub>t<sub>,</sub> <sub>we</sub>i<sub>g</sub>ht<sub>e</sub>d<sub>,</sub> <sub>or</sub> l<sub>oca</sub>li<sub>ze</sub>d <sub>res</sub>id<sub>ua</sub>l<sub>s,</sub> b<sub>u</sub>t b<sub>roa</sub>d <sub>we</sub>i<sub>g</sub>hti<sub>ng or a</sub>dditi<sub>ona</sub>l <sub>a</sub>d<sub>ap</sub>t<sub>a</sub>ti<sub>on</sub> <sub>proce</sub>d<sub>ures can ma</sub>k<sub>e</sub> th<sub>e</sub> i<sub>n</sub>t<sub>erva</sub>l l<sub>ess</sub> di<sub>rec</sub>t <sub>an</sub>d <sub>more cos</sub>tl<sub>y.</sub> RCCP addresses this issue b<sub>y</sub> retrievin<sub>g</sub> residuals from similar <sub>p</sub>ast <sub>p</sub>rediction contexts and usin<sub>g</sub> one-sided residuals to construct an as<sub>y</sub>mmetric local interval. Because the retrieved interval is not a covera<sub>g</sub>e <sub>gua</sub>r<sub>a</sub>nt<sub>ee o</sub>n it<sub>s ow</sub>n<sub>,</sub> RCCP <sub>ca</sub>libr<sub>a</sub>t<sub>es</sub> th<sub>e</sub> r<sub>e</sub>m<sub>a</sub>inin<sub>g</sub> n<sub>o</sub>rm<sub>a</sub>liz<sub>e</sub>d <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>error w</sub>ith <sub>a sca</sub>l<sub>ar con</sub>f<sub>orma</sub>l <sub>correc</sub>ti<sub>on.</sub> Thi<sub>s separa</sub>t<sub>es</sub> l<sub>oca</sub>l <sub>ev</sub>id<sub>ence cons</sub>t<sub>ruc</sub>ti<sub>on</sub> f<sub>rom</sub> th<sub>e</sub> fi<sub>na</sub>l <sub>coverage correc</sub>ti<sub>on.</sub> Th<sub>e</sub> th<sub>eore</sub>ti<sub>ca</sub>l <sub>ana</sub>l<sub>ys</sub>i<sub>s c</sub>h<sub>arac</sub>t<sub>er</sub>i<sub>zes</sub> thi<sub>s correc</sub>t<sub>e</sub>d i<sub>n</sub>t<sub>erva</sub>l th<sub>roug</sub>h the normalized retrieval error distribution and <sub>g</sub>ives a covera<sub>g</sub>e <sub>gap</sub> b<sub>ou</sub>nd <sub>w</sub>ith <sub>a</sub>n <sub>asy</sub>m<sub>p</sub>t<sub>o</sub>ti<sub>c</sub> <sub>cove</sub>r<sub>age</sub> r<sub>esu</sub>lt<sub>.</sub> A<sub>c</sub>r<sub>oss</sub> b<sub>e</sub>n<sub>c</sub>hm<sub>a</sub>rk d<sub>a</sub>t<sub>ase</sub>t<sub>s an</sub>d b<sub>ac</sub>kb<sub>one</sub> f<sub>orecas</sub>t<sub>ers,</sub> RCCP <sub>ma</sub>i<sub>n</sub>t<sub>a</sub>i<sub>ne</sub>d <sub>re</sub>li<sub>a</sub>bl<sub>e emp</sub>i<sub>r-</sub> ical covera<sub>g</sub>e<sub>,</sub> im<sub>p</sub>roved interval eficienc<sub>y,</sub> reduced severe misses<sub>,</sub> <sub>an</sub>d k<sub>ep</sub>t <sub>ca</sub>lib<sub>ra</sub>ti<sub>on over</sub>h<sub>ea</sub>d l<sub>ow.</sub> Abl<sub>a</sub>ti<sub>ons a</sub>l<sub>so s</sub>h<sub>owe</sub>d th<sub>a</sub>t retrieval<sub>,</sub> as<sub>y</sub>mmetr<sub>y,</sub> and correction contribute com<sub>p</sub>lementar<sub>y</sub> b<sub>ene</sub>fit<sub>s.</sub> Th<sub>ese</sub> <sub>resu</sub>lt<sub>s</sub> <sub>sugges</sub>t th<sub>a</sub>t <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l <sub>an</sub>d <sub>correc</sub>ti<sub>on</sub> <sub>prov</sub>id<sub>e</sub> <sub>a</sub> <sub>s</sub>i<sub>mp</sub>l<sub>e</sub> <sub>an</sub>d <sub>sca</sub>l<sub>a</sub>bl<sub>e</sub> <sub>rou</sub>t<sub>e</sub> t<sub>o</sub> l<sub>oca</sub>ll<sub>y</sub> i<sub>n</sub>f<sub>orma</sub>ti<sub>ve</sub> <sub>an</sub>d <sub>ca</sub>lib<sub>ra</sub>t<sub>e</sub>d <sub>u</sub>n<sub>ce</sub>rt<sub>a</sub>int<sub>y</sub> <sub>es</sub>tim<sub>a</sub>t<sub>es</sub> f<sub>o</sub>r tim<sub>e</sub> <sub>se</sub>ri<sub>es</sub> f<sub>o</sub>r<sub>ecas</sub>tin<sub>g.</sub>",
+        "bbox": [
+            511,
+            604,
+            916,
+            897
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "header",
+        "text": "CIKM ’26, November 7–11, 2026, Rome, Italy",
+        "bbox": [
+            83,
+            75,
+            299,
+            87
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "header",
+        "text": "Sangjin Jin, Kangmin Kim, Junhyeong Lee, and Yongjae Lee",
+        "bbox": [
+            629,
+            75,
+            913,
+            88
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "6 Limitations",
+        "text_level": 2,
+        "bbox": [
+            83,
+            106,
+            209,
+            119
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "A ke<sub>y</sub> limitation of RCCP is its de<sub>p</sub>endence on the <sub>qu</sub>alit<sub>y</sub> of the retrieval re<sub>p</sub>resentation. Because the retrieval ke<sub>y</sub> is derived from th<sub>e</sub> fi<sub>xe</sub>d f<sub>orecas</sub>t<sub>er</sub> <sub>an</sub>d it<sub>s</sub> <sub>represen</sub>t<sub>a</sub>ti<sub>ons,</sub> i<sub>n</sub>t<sub>erva</sub>l <sub>e</sub>fi<sub>c</sub>i<sub>ency</sub> <sub>may</sub> d<sub>egra</sub>d<sub>e</sub> <sub>w</sub>h<sub>en</sub> th<sub>e</sub> <sub>em</sub>b<sub>e</sub>ddi<sub>ng</sub> d<sub>oes</sub> <sub>no</sub>t <sub>cap</sub>t<sub>ure</sub> <sub>error-re</sub>l<sub>evan</sub>t <sub>s</sub>i<sub>m</sub>i<sub>-</sub> l<sub>ar</sub>it<sub>y.</sub> F<sub>u</sub>t<sub>ure</sub> <sub>wor</sub>k <sub>s</sub>h<sub>ou</sub>ld <sub>a</sub>l<sub>so</sub> <sub>s</sub>t<sub>u</sub>d<sub>y</sub> <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l<sub>–correc</sub>t<sub>e</sub>d <sub>ca</sub>lib<sub>ra</sub>ti<sub>on</sub> f<sub>or</sub> hi<sub>g</sub>h<sub>-</sub>di<sub>mens</sub>i<sub>ona</sub>l <sub>o</sub>b<sub>serva</sub>ti<sub>ons,</sub> <sub>mu</sub>lti<sub>var</sub>i<sub>a</sub>t<sub>e</sub> t<sub>arge</sub>t<sub>s,</sub> <sub>an</sub>d <sub>mu</sub>lti<sub>-</sub> <sub>s</sub>t<sub>ep</sub> h<sub>or</sub>i<sub>zons, w</sub>h<sub>ere res</sub>id<sub>ua</sub>l<sub>s are s</sub>t<sub>ruc</sub>t<sub>ure</sub>d <sub>an</sub>d <sub>uncer</sub>t<sub>a</sub>i<sub>n</sub>t<sub>y can</sub> var<sub>y</sub> across dimensions and horizons.",
+        "bbox": [
+            81,
+            123,
+            485,
+            236
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Generative AI Usage Disclosure",
+        "text_level": 2,
+        "bbox": [
+            83,
+            255,
+            343,
+            270
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Generative AI tools were used durin<sub>g</sub> the <sub>p</sub>re<sub>p</sub>aration of this manuscri<sub>p</sub>t for editorial assistance<sub>,</sub> literature or<sub>g</sub>anization<sub>,</sub> draftin<sub>g</sub> su<sub>pp</sub>ort<sub>,</sub> and minor code-editin<sub>g</sub> su<sub>pp</sub>ort. These tools were not <sub>use</sub>d t<sub>o</sub> <sub>genera</sub>t<sub>e</sub> d<sub>a</sub>t<sub>ase</sub>t<sub>s,</sub> <sub>pro</sub>d<sub>uce</sub> <sub>exper</sub>i<sub>men</sub>t<sub>a</sub>l <sub>resu</sub>lt<sub>s,</sub> <sub>con</sub>d<sub>uc</sub>t <sub>s</sub>t<sub>a</sub>ti<sub>s</sub>ti<sub>ca</sub>l <sub>ana</sub>l<sub>yses,</sub> <sub>or</sub> d<sub>e</sub>t<sub>erm</sub>i<sub>ne</sub> <sub>sc</sub>i<sub>en</sub>tifi<sub>c</sub> <sub>c</sub>l<sub>a</sub>i<sub>ms.</sub> All t<sub>ec</sub>h<sub>n</sub>i<sub>ca</sub>l <sub>con</sub>t<sub>en</sub>t<sub>,</sub> <sub>c</sub>it<sub>a</sub>ti<sub>ons,</sub> <sub>a</sub>l<sub>gor</sub>ith<sub>ms,</sub> <sub>co</sub>d<sub>e,</sub> <sub>exper</sub>i<sub>men</sub>t<sub>a</sub>l <sub>resu</sub>lt<sub>s,</sub> <sub>an</sub>d <sub>con-</sub> <sub>c</sub>l<sub>us</sub>i<sub>ons</sub> <sub>were</sub> <sub>rev</sub>i<sub>ewe</sub>d <sub>an</sub>d <sub>ver</sub>ifi<sub>e</sub>d b<sub>y</sub> th<sub>e</sub> <sub>au</sub>th<sub>ors,</sub> <sub>w</sub>h<sub>o</sub> t<sub>a</sub>k<sub>e</sub> f<sub>u</sub>ll <sub>respons</sub>ibilit<sub>y</sub> f<sub>or</sub> th<sub>e</sub> fi<sub>na</sub>l <sub>manuscr</sub>i<sub>p</sub>t<sub>.</sub>",
+        "bbox": [
+            81,
+            273,
+            483,
+            386
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "References",
+        "text_level": 2,
+        "bbox": [
+            83,
+            405,
+            178,
+            417
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "[1] Anastasios An<sub>g</sub>elo<sub>p</sub>oulos, Emmanuel Candes, and R<sub>y</sub>an J Tibshirani. 2023. Conformal pid control for time series prediction. Advances in neural information processing systems 36 (2023), 23047–23074.",
+            "[2] Anastasios N An<sub>g</sub>elo<sub>p</sub>oulos and Ste<sub>p</sub>hen Bates. 2023. Conformal <sub>p</sub>rediction: A gentle introduction. Foundations and Trends in Machine Learning 16, 4 (2023), 494–591.",
+            "[3] Andreas Auer, Martin Gauch, Daniel Klotz, and Se<sub>pp</sub> Hochreiter. 2023. Conformal prediction for time series with modern hopfield networks. Advances in neural information processing systems 36 (2023), 56027–56074.",
+            "[4] Rina Fo<sub>yg</sub>el Barber, Emmanuel J Candes, Aadit<sub>y</sub>a Ramdas, and R<sub>y</sub>an J Tibshirani. 2023. Conformal prediction beyond exchangeability. The Annals of Statistics 51, 2 (2023), 816–845.",
+            "[5] Konstantinos Benidis, S<sub>y</sub>ama Sundar Ran<sub>g</sub>a<sub>p</sub>uram, Valentin Flunkert, Yu<sub>y</sub>an<sub>g</sub> Wan<sub>g</sub>, Danielle Maddix, Caner Turkmen,Jan Gasthaus, Michael Bohlke-Schneider, David Salinas<sub>,</sub> Lorenzo Stella<sub>,</sub> et al. 2022. Dee<sub>p</sub> learnin<sub>g</sub> for time series forecastin<sub>g</sub>: Tutorial and literature survey. Comput. Surveys 55, 6 (2022), 1–36.",
+            "[6] Baitin<sub>g</sub> Chen, Zhimei Ren, and Lu Chen<sub>g</sub>. 2024. Conformalized time series with semantic features. Advances in Neural Information Processing Systems 37 (2024), 121449–121474.",
+            "[7] Sunil Cho<sub>p</sub>ra and Peter Meindl. 2019. Su<sub>pp</sub>l<sub>y</sub> chain mana<sub>g</sub>ement. Strate<sub>gy</sub>, <sub>p</sub>lan ning & operation. In Das Summa Summarum des Management: Die 25 wichtigsten Werke für Strategie, Führung und Veränderung. Springer, 265–275.",
+            "[8] Andrea Cini, Alexander Jenkins, Danilo Mandic, Cesare Ali<sub>pp</sub>i, and Fili<sub>pp</sub>o Maria Bi<sub>a</sub>n<sub>c</sub>hi<sub>.</sub> 2025<sub>.</sub> R<sub>e</sub>l<sub>a</sub>ti<sub>o</sub>n<sub>a</sub>l C<sub>o</sub>nf<sub>o</sub>rm<sub>a</sub>l Pr<sub>e</sub>di<sub>c</sub>ti<sub>o</sub>n f<sub>o</sub>r C<sub>o</sub>rr<sub>e</sub>l<sub>a</sub>t<sub>e</sub>d Tim<sub>e</sub> S<sub>e</sub>ri<sub>es.</sub> In International Conference on Machine Learning. PMLR, 10949–10965.",
+            "[9] Wenqi Fan, Yujuan Ding, Liangbo Ning, Shijie Wang, Hengyun Li, Dawei Yin, Tat-Seng Chua, and Qing Li. 2024. A survey on rag meeting llms: Towards retrieval-augmented large language models. In Proceedings of the 30th ACM SIGKDD conference on knowledge discovery and data mining. 6491–6501.",
+            "[10] Isaac Gibbs and Emmanuel Candes. 2021. Ada<sub>p</sub>tive conformal inference under distribution shift. Advances in Neural Information Processing Systems 34 (2021), 1660–1672.",
+            "[11] Isaac Gibbs and Emmanuel J Candès. 2024. Conformal inference for online prediction with arbitrary distribution shifts. Journal ofMachine Learning Research 25, 162 (2024), 1–36.",
+            "[12] Sun<sub>g</sub>won Han, Seun<sub>g</sub>eon Lee, Mee<sub>y</sub>oun<sub>g</sub> Cha, Sercan O Arik, and Jinsun<sub>g</sub> Yoon. 2025. Retrieval Augmented Time Series Forecasting. In International Conference on Machine Learning. PMLR, 21774–21797.",
+            "[13] Michael Harries, New South Wales, et al. 1999. S<sub>p</sub>lice-2 com<sub>p</sub>arative evaluation: Electricit<sub>y</sub> <sub>p</sub>ricin<sub>g</sub>. (1999).",
+            "[14] Bao<sub>y</sub>u Jin<sub>g</sub>, Si Zhan<sub>g</sub>, Yada Zhu, Bin Pen<sub>g</sub>, Kai<sub>y</sub>u Guan, Andrew Mar<sub>g</sub>enot, and Hanghang Tong. 2022. Retrieval based time series forecasting. arXiv preprint arXiv:2209.13525 (2022).",
+            "[15] Jongseon Kim, Hyungjoon Kim, HyunGi Kim, Dongjun Lee, and Sungroh Yoon. 2025. A com<sub>p</sub>rehensive surve<sub>y</sub> of dee<sub>p</sub> learnin<sub>g</sub> for time series forecastin<sub>g</sub>: architectural diversity and open challenges. Artificial Intelligence Review 58, 7 (2025), 216.",
+            "[16] Jon<sub>g</sub>h<sub>y</sub>eok Lee, Chen Xu, and Yao Xie. 2025. Kernel-based o<sub>p</sub>timall<sub>y</sub> wei<sub>g</sub>hted conformal time-series prediction. In The Thirteenth International Conference on Learning Representations.",
+            "[17] Jin<sub>g</sub> Lei, Max G’Sell, Alessandro Rinaldo, R<sub>y</sub>an J Tibshirani, and Larr<sub>y</sub> Wasserman. 2018. Distribution-free predictive inference for regression. J. Amer. Statist. Assoc. 113, 523 (2018), 1094–1111.",
+            "[18] Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Kar<sub>p</sub>ukhin, N<sub>a</sub>m<sub>a</sub>n G<sub>oya</sub>l<sub>,</sub> H<sub>e</sub>inri<sub>c</sub>h Küttl<sub>e</sub>r<sub>,</sub> Mik<sub>e</sub> L<sub>ew</sub>i<sub>s,</sub> W<sub>e</sub>n-t<sub>au</sub> Yih<sub>,</sub> Tim R<sub>oc</sub>ktä<sub>sc</sub>h<sub>e</sub>l<sub>,</sub> <sub>e</sub>t <sub>a</sub>l<sub>.</sub> 2020<sub>.</sub> R<sub>e</sub>t<sub>r</sub>i<sub>eva</sub>l<sub>-augmen</sub>t<sub>e</sub>d <sub>genera</sub>ti<sub>on</sub> f<sub>or</sub> k<sub>now</sub>l<sub>e</sub>d<sub>ge-</sub>i<sub>n</sub>t<sub>ens</sub>i<sub>ve</sub> <sub>n</sub>l<sub>p</sub> t<sub>as</sub>k<sub>s.</sub> Advances in neural information processing systems 33 (2020), 9459–9474.",
+            "[19] Br<sub>y</sub>an Lim, Sercan Ö Arık, Nicolas Loef, and Tomas Pfister. 2021. Tem<sub>p</sub>oral fusion transformers for interpretable multi-horizon time series forecasting. International journal offorecasting 37, 4 (2021), 1748–1764.",
+            "[20] Br<sub>y</sub>an Lim and Stefan Zohren. 2021. Time-series forecastin<sub>g</sub> with dee<sub>p</sub> learnin<sub>g</sub>: a survey. Philosophical transactions ofthe royal society a: mathematical, physical and engineering sciences 379, 2194 (2021).",
+            "[21] Zhen Lin, Shubhendu Trivedi, and Jimen<sub>g</sub> Sun. 2022. Conformal <sub>p</sub>rediction with temporal quantile adjustments. Advances in Neural Information Processing Systems 35 (2022), 31017–31030.",
+            "[22] Jin<sub>g</sub>wei Liu, Lin<sub>g</sub> Yan<sub>g</sub>, Hon<sub>gy</sub>an Li, and Shenda Hon<sub>g</sub>. 2024. Retrieval-au<sub>g</sub>mented difusion models for time series forecasting. Advances in Neural Information Processing Systems 37 (2024), 2766–2786.",
+            "[23] Roberto Ne<sub>g</sub>lia, Andrea Cini, Michael M. Bronstein, and Fili<sub>pp</sub>o Maria Bianchi. 2026<sub>.</sub> R<sub>es</sub>CP: R<sub>ese</sub>r<sub>vo</sub>ir C<sub>o</sub>nf<sub>o</sub>rm<sub>a</sub>l Pr<sub>e</sub>di<sub>c</sub>ti<sub>o</sub>n f<sub>o</sub>r Tim<sub>e</sub> S<sub>e</sub>ri<sub>es</sub> F<sub>o</sub>r<sub>ecas</sub>tin<sub>g.</sub> In The Fourteenth International Conference on Learning Representations. https: //o<sub>p</sub>enreview.net/forum?id=WG<sub>q</sub>ibe5H3W",
+            "[24] Kanghui Ning, Zijie Pan, Yu Liu, Yushan Jiang, James Zhang, Kashif Rasul, An <sup>d</sup>erson Sc<sup>h</sup>nei<sup>d</sup>er, Lintao Ma, Yuriy Nevmyva<sup>k</sup>a, an<sup>d</sup> Dongjin Song. 2026. Ts-rag: Retrieval-au<sub>g</sub>mented <sub>g</sub>eneration based time series foundation models are stron<sub>g</sub>er zero-shot forecaster. Advances in Neural Information Processing Systems 38 (2026), 163170–163199.",
+            "[25] Roberto I Oliveira, Paulo Orenstein, Thia<sub>g</sub>o Ramos, and Joao Vitor Romano. 2024. Split conformal prediction and non-exchangeable data. Journal ofMachine Learning Research 25, 225 (2024), 1–38.",
+            "[26] Ori Ram, Yoav Levine, Ita<sub>y</sub> Dalmedi<sub>g</sub>os, Dor Muhl<sub>g</sub>a<sub>y</sub>, Amnon Shashua, Kevin Le<sub>y</sub>ton-Brown<sub>,</sub> and Yoav Shoham. 2023. In-context retrieval-au<sub>g</sub>mented lan<sub>g</sub>ua<sub>g</sub>e models. Transactions ofthe Association for Computational Linguistics 11 (2023), 1316–1331.",
+            "[27] Yaniv Romano, Evan Patterson, and Emmanuel Candes. 2019. Conformalized quantile regression. Advances in neural information processing systems 32 (2019).",
+            "[28] David Salinas, Valentin Flunkert, Jan Gasthaus, and Tim Januschowski. 2020. DeepAR: Probabilistic forecasting with autoregressive recurrent networks. International journal offorecasting 36, 3 (2020), 1181–1191.",
+            "[29] Manajit Sen<sub>g</sub>u<sub>p</sub>ta, Yu Xie, Anthon<sub>y</sub> Lo<sub>p</sub>ez, Aron Habte, Galen Maclaurin, and James Shelby. 2018. The national solar radiation data base (NSRDB). Renewable and sustainable energy reviews 89 (2018), 51–60.",
+            "[30] Matteo Sesia and Emmanuel J Candès. 2020. A com<sub>p</sub>arison of some conformal quantile regression methods. Stat 9, 1 (2020), e261.",
+            "[31] Glenn Shafer and Vladimir Vovk. 2008. A tutorial on conformal <sub>p</sub>rediction. Journal ofmachine learning research 9, 3 (2008).",
+            "[32] Yihon<sub>g</sub> Tan<sub>g</sub>, Ao Qu, And<sub>y</sub> HF Chow, William HK Lam, Sze Chun Won<sub>g</sub>, and Wei Ma. 2022. Domain ad<sub>v</sub>ersarial s<sub>p</sub>atial-tem<sub>p</sub>oral net<sub>w</sub>ork: A transferable framework for short-term trafic forecasting across cities. In Proceedings ofthe 31st ACM international conference on information & knowledge management. 1905– 1915.",
+            "[33] R<sub>y</sub>an J Tibshirani, Rina Fo<sub>yg</sub>el Barber, Emmanuel Candes, and Aadit<sub>y</sub>a Ramdas. 2019. Conformal prediction under covariate shift. Advances in neural information processing systems 32 (2019).",
+            "[34] Vladimir Vovk, Alexander Gammerman, and Glenn Shafer. 2005. Algorithmic learning in a random world. S rin er.",
+            "[35] Shen<sub>g</sub> Xian<sub>g</sub>, Dawei Chen<sub>g</sub>, Chenchen<sub>g</sub> Shan<sub>g</sub>, Yin<sub>g</sub> Zhan<sub>g</sub>, and Yu<sub>q</sub>i Lian<sub>g</sub>. 2022<sub>.</sub> T<sub>empora</sub>l <sub>an</sub>d h<sub>e</sub>t<sub>erogeneous grap</sub>h <sub>neura</sub>l <sub>ne</sub>t<sub>wor</sub>k f<sub>or</sub> fi<sub>nanc</sub>i<sub>a</sub>l ti<sub>me</sub> series rediction. In Proceedings of the 31st ACM international conference on information & knowledge management. 3584–3593.",
+            "[36] Chen Xu and Yao Xie. 2021. Conformal <sub>p</sub>rediction interval for d<sub>y</sub>namic timeseries. In International Conference on Machine Learning. PMLR, 11559–11569.",
+            "[37] Chen Xu and Yao Xie. 2023. Se<sub>q</sub>uential <sub>p</sub>redictive conformal inference for time series. In International Conference on Machine Learning. PMLR, 38707–38727.",
+            "[38] Silin Yan<sub>g</sub>, Don<sub>g</sub> Wan<sub>g</sub>, Hao<sub>q</sub>i Zhen<sub>g</sub>, and Ruochun Jin. 2025. Timera<sub>g</sub>: Boostin<sub>g</sub> llm time series forecasting via retrieval-augmented generation. In ICASSP 2025- 2025 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP). IEEE, 1–5.",
+            "[39] Mar<sub>g</sub>aux Zafran, Olivier Féron, Yanni<sub>g</sub> Goude, Julie Josse, and A<sub>y</sub>meric Dieuleveut. 2022. Adaptive conformal predictions for time series. In International conference on machine learning. PMLR, 25834–25866.",
+            "[40] Shu<sub>y</sub>i Zhan<sub>g</sub>, Bin Guo, Anlan Don<sub>g</sub>, Jin<sub>g</sub> He, Zi<sub>p</sub>in<sub>g</sub> Xu, and Son<sub>g</sub> Xi Chen. 2017. Cautionary tales on air-quality improvement in Beijing. Proceedings ofthe Royal Society A: Mathematical, Physical and Engineering Sciences 473, 2205 (2017)."
+        ],
+        "bbox": [
+            89,
+            421,
+            482,
+            452
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "header",
+        "text": "Retrieval–Corrected Conformal Prediction for Time Series",
+        "bbox": [
+            83,
+            75,
+            361,
+            87
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "header",
+        "text": "CIKM ’26, November 7–11, 2026, Rome, Italy",
+        "bbox": [
+            699,
+            75,
+            913,
+            87
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "A Proof",
+        "text_level": 2,
+        "bbox": [
+            83,
+            104,
+            168,
+            119
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Lemma 1 (Score-event eqivalence). For any $c \\geq 0 ,$",
+        "bbox": [
+            96,
+            125,
+            426,
+            138
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6c95cfaea57ae8846a27e99493a0779e917f99069fdbe5a6a2268dae876e6cca.jpg",
+        "text": "$$\nY _ { t } \\in C _ { t } ( c ) \\quad \\Longleftrightarrow \\quad B _ { t } \\leq c .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            194,
+            146,
+            370,
+            161
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Proof<sub>.</sub> Fix <sub>a</sub>n<sub>y</sub> $c \\geq 0 .$ B<sub>y</sub> the definition of the as<sub>y</sub>mmetric <sub>p</sub>redi<sub>c</sub>ti<sub>o</sub>n int<sub>e</sub>r<sub>va</sub>l<sub>,</sub>",
+        "bbox": [
+            81,
+            172,
+            485,
+            200
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/2f2a7c67fb549908d276f1f53808c2c23fc5ce314a18726a221f40119b35f916.jpg",
+        "text": "$$\nY _ { t } \\in C _ { t } ( c ) \\quad \\Longleftrightarrow \\quad \\widehat { Y } _ { t } - c \\tilde { R } _ { t } ^ { - } \\leq Y _ { t } \\leq \\widehat { Y } _ { t } + c \\tilde { R } _ { t } ^ { + } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            138,
+            207,
+            424,
+            224
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "E<sub>q</sub>uivalentl<sub>y,</sub>",
+        "bbox": [
+            81,
+            232,
+            168,
+            246
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6dc9df28f6fdcc1a6c4e32413ca35dca87d1dd17754f2908fbce45ecd749c4f1.jpg",
+        "text": "$$\ne _ { t } ^ { + } \\le c \\tilde { R } _ { t } ^ { + } , \\qquad e _ { t } ^ { - } \\le c \\tilde { R } _ { t } ^ { - } ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            205,
+            247,
+            357,
+            265
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "<sub>w</sub>h<sub>ere</sub> $e _ { t } ^ { + } = ( Y _ { t } - \\widehat { Y } _ { t } ) .$ <sub>+ an</sub>d $e _ { t } ^ { - } = ( \\widehat { Y } _ { t } - Y _ { t } ) .$ <sub>+.</sub> Sin<sub>ce</sub> $\\tilde { R } _ { t } ^ { + } , \\tilde { R } _ { t } ^ { - } > 0 ;$ this is e<sub>qu</sub>i<sub>v</sub>alent to",
+        "bbox": [
+            81,
+            267,
+            450,
+            299
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/dd77b7acd1435d547e8c8b6a82c92abf582c97069281fc13c1f5e6ca2141fee3.jpg",
+        "text": "$$\n\\operatorname* { m a x } \\left\\{ \\frac { e _ { t } ^ { + } } { \\tilde { R } _ { t } ^ { + } } , \\frac { e _ { t } ^ { - } } { \\tilde { R } _ { t } ^ { - } } \\right\\} \\leq c .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            217,
+            305,
+            346,
+            343
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Th<sub>e</sub> l<sub>e</sub>ft<sub>-</sub>h<sub>an</sub>d <sub>s</sub>id<sub>e</sub> i<sub>s prec</sub>i<sub>se</sub>l<sub>y</sub> th<sub>e norma</sub>li<sub>ze</sub>d <sub>asymme</sub>t<sub>r</sub>i<sub>c score</sub> $B _ { t } .$ Th<sub>ere</sub>f<sub>ore,</sub> th<sub>e a</sub>b<sub>ove even</sub>t i<sub>s equ</sub>i<sub>va</sub>l<sub>en</sub>t t<sub>o</sub> $B _ { t } \\leq c .$ □",
+        "bbox": [
+            81,
+            348,
+            483,
+            377
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Theorem 1 (Coverage gap bound of RCCP). Suppose Assumptions 1–4 hold. Let",
+        "bbox": [
+            81,
+            404,
+            485,
+            430
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/175acfc8c248344c65bfcfce08f16541a507ef064e3f27b1c302d11e416c4fc1.jpg",
+        "text": "$$\nu _ { n } : = { \\frac { 2 ( e _ { n } + r _ { n } ) } { m } } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            227,
+            431,
+            334,
+            459
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "If $\\dot { u } _ { n } < \\delta _ { 0 }$ , then",
+        "bbox": [
+            83,
+            460,
+            179,
+            474
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e39afa9b0bd834cf25d9206cf321493157e8b607d87c451c036071fcc2df2592.jpg",
+        "text": "$$\n\\left| \\mathbb { P } _ { \\mathrm { t e s t } } \\{ Y _ { t } \\in C _ { t } ( \\widehat { c } ) \\} - q \\right| \\leq \\rho _ { n } + \\frac { 2 L } { m } ( e _ { n } + r _ { n } ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            151,
+            481,
+            411,
+            508
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Proof. For the <sub>upp</sub>er de<sub>v</sub>iation<sub>,</sub>",
+        "bbox": [
+            98,
+            518,
+            299,
+            532
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/145accdd91edabb2476e50845d49a9c118445c6eba11e0e81eb209e42a0a9a03.jpg",
+        "text": "$$\n\\begin{array} { r l } & { \\widehat { F } _ { \\mathrm { c a l } } ( c ^ { * } + u _ { n } ) \\geq F _ { \\mathrm { c a l } } ( c ^ { * } + u _ { n } ) - e _ { n } } \\\\ & { \\qquad \\geq q + m u _ { n } - e _ { n } } \\\\ & { \\qquad = q + e _ { n } + 2 r _ { n } } \\\\ & { \\qquad \\geq q _ { n } . } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            181,
+            540,
+            382,
+            608
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "H<sub>e</sub>n<sub>ce</sub> $\\widehat { c } \\leq c ^ { * } + u _ { n }$",
+        "bbox": [
+            81,
+            616,
+            199,
+            630
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "F<sub>or</sub> th<sub>e</sub> l<sub>ower</sub> d<sub>ev</sub>i<sub>a</sub>ti<sub>on,</sub> t<sub>a</sub>k<sub>e</sub> <sub>any</sub> $c < c ^ { * } - u _ { n }$ <sub>.</sub> Ch<sub>oose</sub>",
+        "bbox": [
+            81,
+            631,
+            408,
+            645
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6f0a123b13ea5df65f0108840172c6d86bf9f513f95c1441f0cfe65d49a30f5a.jpg",
+        "text": "$$\nu \\in \\left( u _ { n } , \\operatorname* { m i n } \\{ c ^ { * } - c , \\delta _ { 0 } \\} \\right] .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            202,
+            652,
+            362,
+            667
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Th<sub>en</sub> $c \\leq c ^ { * } - u ,$ <sub>an</sub>d",
+        "bbox": [
+            81,
+            675,
+            212,
+            688
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/51b3abb97f2f8ca877f0e9533601708a13f367a401ec89b5a9540168831c9e45.jpg",
+        "text": "$$\n\\begin{array} { r l } & { \\widehat { F } _ { \\mathrm { c a l } } ( c ) \\leq F _ { \\mathrm { c a l } } ( c ) + e _ { n } } \\\\ & { \\qquad \\leq F _ { \\mathrm { c a l } } ( c ^ { * } - u ) + e _ { n } } \\\\ & { \\qquad \\leq q - m u + e _ { n } } \\\\ & { \\qquad < q - m u _ { n } + e _ { n } } \\\\ & { \\qquad = q - e _ { n } - 2 r _ { n } } \\\\ & { \\qquad \\leq q _ { n } . } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            202,
+            695,
+            361,
+            799
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Th<sub>us</sub> <sub>no</sub> $c < c ^ { * } - u _ { n }$ <sub>reac</sub>h<sub>es</sub> l<sub>eve</sub>l $q _ { n } ,$ , so",
+        "bbox": [
+            81,
+            806,
+            326,
+            820
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/70d9107954f07c8eafedd005805477b23d4c66d1bef0e20b3a2e927021d8a40a.jpg",
+        "text": "$$\n{ \\widehat { c } } \\geq c ^ { * } - u _ { n } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            243,
+            828,
+            320,
+            843
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Combinin<sub>g</sub> the two ine<sub>q</sub>ualities <sub>y</sub>ields",
+        "bbox": [
+            81,
+            851,
+            318,
+            866
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/69b6ad31913bfc07274438a5536162f7cebbd6ccf0f3d9cb4a9f399c5cc4c8e8.jpg",
+        "text": "$$\n| { \\widehat { c } } - c ^ { * } | \\leq u _ { n } = { \\frac { 2 ( e _ { n } + r _ { n } ) } { m } } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            199,
+            872,
+            362,
+            900
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "B<sub>y</sub> L<sub>e</sub>mm<sub>a</sub> 1<sub>,</sub>",
+        "bbox": [
+            514,
+            107,
+            599,
+            121
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/b852032f8eca64fe56f34a21564bd4dd51072f0acc32405aed4892321d58475e.jpg",
+        "text": "$$\n\\begin{array} { r l } { \\left| \\mathbb { P } _ { \\mathrm { t e s t } } \\{ Y _ { t } \\in C _ { t } ( \\hat { c } ) \\} - q \\right| = \\left| F _ { \\mathrm { t e s t } } ( \\hat { c } ) - q \\right| } & { } \\\\ & { \\leq | F _ { \\mathrm { t e s t } } ( \\widehat { c } ) - F _ { \\mathrm { t e s t } } ( c ^ { * } ) | + | F _ { \\mathrm { t e s t } } ( c ^ { * } ) - q | } \\\\ & { \\leq L | \\widehat { c } - c ^ { * } | + \\rho _ { n } } \\\\ & { \\leq \\rho _ { n } + \\frac { 2 L } { m } ( e _ { n } + r _ { n } ) . } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            532,
+            128,
+            897,
+            209
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Corollary 1 (Asymptotic coverage of RCCP). Suppose Assumptions 1–4 hold with fixed constants � $> 0 , L < \\infty ,$ , and $\\delta _ { 0 } > 0 .$ $I f \\rho _ { n }  0 , e _ { n }  0 ;$ , and $r _ { n } \\to 0 .$ , then",
+        "bbox": [
+            513,
+            256,
+            915,
+            297
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e04b91d7d5735a433dbc7ac96e0297dcf4539fcedb8fa375d87a1a7764a4b897.jpg",
+        "text": "$$\n| \\mathbb { P } _ { \\mathrm { t e s t } } \\{ Y _ { t } \\in C _ { t } ( \\widehat { c } ) \\} - q |  0 .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            627,
+            306,
+            799,
+            321
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Proof<sub>.</sub> Si<sub>nce</sub> $e _ { n } + r _ { n } \\to 0 ;$ <sub>,</sub> f<sub>or</sub> <sub>a</sub>ll <sub>su</sub>fi<sub>c</sub>i<sub>en</sub>tl<sub>y</sub> l<sub>arge</sub> <sub>�,</sub>",
+        "bbox": [
+            529,
+            337,
+            852,
+            352
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e9700d9001e8e71b23e7d62103acd0576f43423993fbd0249b17d56a5f7865a6.jpg",
+        "text": "$$\n\\frac { 2 ( e _ { n } + r _ { n } ) } { m } < \\delta _ { 0 } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            663,
+            358,
+            766,
+            387
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Therefore<sub>,</sub> Theorem 1 a<sub>pp</sub>lies. Hence<sub>,</sub>",
+        "bbox": [
+            514,
+            393,
+            745,
+            407
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ea2fbc44150ef6f360101e8ed19bcd602ad7f6513727ffeafc5ddb15a3063023.jpg",
+        "text": "$$\n0 \\leq | \\mathbb { P } _ { \\mathrm { t e s t } } \\{ Y _ { t } \\in C _ { t } ( \\widehat { c } ) \\} - q | \\leq \\rho _ { n } + \\frac { 2 L } { m } ( e _ { n } + r _ { n } )  0 .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            555,
+            415,
+            870,
+            444
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "B Experimental Details",
+        "text_level": 2,
+        "bbox": [
+            514,
+            474,
+            722,
+            491
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "B.1 Hyperparameter Selection",
+        "text_level": 2,
+        "bbox": [
+            514,
+            494,
+            777,
+            511
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Followin<sub>g p</sub>rior time series CP benchmarks [3, 23], model selection i<sub>s per</sub>f<sub>orme</sub>d <sub>on</sub> th<sub>e va</sub>lid<sub>a</sub>ti<sub>on sp</sub>lit <sub>us</sub>i<sub>ng</sub> th<sub>e se</sub>l<sub>ec</sub>ti<sub>on see</sub>d<sub>, an</sub>d th<sub>e</sub> <sub>se</sub>l<sub>ec</sub>t<sub>e</sub>d <sub>con</sub>fi<sub>gura</sub>ti<sub>on</sub> i<sub>s reuse</sub>d f<sub>or a</sub>ll 5 <sub>eva</sub>l<sub>ua</sub>ti<sub>on see</sub>d<sub>s.</sub> T<sub>a</sub>bl<sub>e</sub> 6 <sub>summar</sub>i<sub>zes</sub> th<sub>e</sub> <sub>gr</sub>id<sub>s</sub> <sub>an</sub>d fi<sub>xe</sub>d <sub>se</sub>tti<sub>ngs.</sub>",
+        "bbox": [
+            513,
+            513,
+            915,
+            570
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "code",
+        "sub_type": "code",
+        "code_caption": [
+            "Table 6: Hyperparameter grids and detailed settings for baselines."
+        ],
+        "code_footnote": [],
+        "code_body": "```latex\nM<sub>e</sub>th<sub>o</sub>d G<sub>r</sub>id <sub>or</sub> fi<sub>xe</sub>d <sub>se</sub>tti<sub>ng</sub>\nSCP No method-s<sub>p</sub>ecific h<sub>yp</sub>er<sub>p</sub>arameter\nE<sub>n</sub>bPI Past residual window � ∈ {10, 50, 100, 150, 200}\nSPCI Past residual window � = 100\nN<sub>ex</sub>CP Deca<sub>y</sub> <sub>p</sub>arameter <sub>�</sub> ∈ {0.9, 0.95, 0.99, 0.999}\nH<sub>op</sub>CPT L<sub>ea</sub>rnin<sub>g</sub> r<sub>a</sub>t<sub>e</sub> $\\eta \\in \\{ 1 0 ^ { - 2 } , 1 0 ^ { - 3 } \\}$ , dro<sub>p</sub>out � ∈ {0, 0.3}, <sub>p</sub>ositional encodin<sub>g</sub>\n∈ {none, relative}\nR<sub>es</sub>CP <sub>�</sub> ∈ {0.5, 0.75, 0.9, 0.99, 1.1, 1.5}, ℓ ∈ {0.5, 0.7, 0.8, 0.9, 0.95, 1.0}\n�<sub>in</sub> ∈ {0.1, 0.25, 0.5, 0.75, 1.0, 2.0}, � ∈ {0.01, 0.05, 0.1, 0.25, 0.5, 1.0, 2.0}\n� ∈ {250, 500, 1000, 2000, 4000, 8000, all}\nRCCP Nei<sub>g</sub>hborhood size � ∈ {32, 64, 128} and retrieval tem<sub>p</sub>erature $\\tau \\in$\n{0.75, 1.0, 1.25}\n```",
+        "bbox": [
+            519,
+            593,
+            906,
+            719
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "F<sub>or mos</sub>t <sub>con</sub>f<sub>orma</sub>l <sub>pre</sub>di<sub>c</sub>ti<sub>on</sub> b<sub>ase</sub>li<sub>nes,</sub> th<sub>e ca</sub>lib<sub>ra</sub>ti<sub>on per</sub>i<sub>o</sub>d i<sub>s sp</sub>lit <sub>even</sub>l<sub>y, w</sub>ith <sub>one</sub> h<sub>a</sub>lf <sub>use</sub>d f<sub>or</sub> h<sub>yperparame</sub>t<sub>er se</sub>l<sub>ec</sub>ti<sub>on an</sub>d th<sub>e o</sub>th<sub>er</sub> h<sub>a</sub>lf <sub>use</sub>d t<sub>o cons</sub>t<sub>ruc</sub>t i<sub>n</sub>t<sub>erva</sub>l<sub>s</sub> d<sub>ur</sub>i<sub>ng se</sub>l<sub>ec</sub>ti<sub>on.</sub> R<sub>es</sub>CP f<sub>o</sub>ll<sub>ows</sub> it<sub>s or</sub>i<sub>g</sub>i<sub>na</sub>l <sub>va</sub>lid<sub>a</sub>ti<sub>on pro</sub>t<sub>oco</sub>l <sub>an</sub>d <sub>uses</sub> 10% <sub>o</sub>f th<sub>e ca</sub>li<sub>-</sub> bration <sub>p</sub>eriod for validation. For SPCI<sub>,</sub> fittin<sub>g</sub> a <sub>qu</sub>antile random forest at each time ste<sub>p</sub> is com<sub>p</sub>utationall<sub>y</sub> limitin<sub>g</sub> at our bench-<sub>mar</sub>k <sub>sca</sub>l<sub>e.</sub> W<sub>e</sub> th<sub>ere</sub>f<sub>ore</sub> <sub>use</sub> th<sub>e</sub> i<sub>mp</sub>l<sub>emen</sub>t<sub>a</sub>ti<sub>on</sub> <sub>a</sub>d<sub>op</sub>t<sub>e</sub>d i<sub>n</sub> <sub>pr</sub>i<sub>or</sub> benchmarks <sub>w</sub>ith a <sub>p</sub>ast resid<sub>u</sub>al <sub>w</sub>indo<sub>w</sub> of 100. Ho<sub>p</sub>CPT is trained <sub>w</sub>ith Ad<sub>am</sub>W f<sub>or</sub> <sub>up</sub> t<sub>o</sub> 3<sub>,</sub>000 <sub>epoc</sub>h<sub>s</sub> <sub>an</sub>d <sub>va</sub>lid<sub>a</sub>t<sub>e</sub>d <sub>every</sub> 5 <sub>epoc</sub>h<sub>s.</sub> To kee<sub>p</sub> runtime bounded<sub>,</sub> earl<sub>y</sub> sto<sub>pp</sub>in<sub>g</sub> with <sub>p</sub>atience 100 is used. F<sub>o</sub>r Air <sub>a</sub>nd S<sub>o</sub>l<sub>a</sub>r<sub>,</sub> R<sub>es</sub>CP <sub>uses</sub> th<sub>e</sub> r<sub>eco</sub>mm<sub>e</sub>nd<sub>e</sub>d <sub>se</sub>ttin<sub>gs</sub> fr<sub>o</sub>m th<sub>e</sub> ori<sub>g</sub>inal im<sub>p</sub>lementation.",
+        "bbox": [
+            513,
+            729,
+            916,
+            897
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "header",
+        "text": "CIKM ’26, November 7–11, 2026, Rome, Italy",
+        "bbox": [
+            83,
+            75,
+            299,
+            88
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "header",
+        "text": "Sangjin Jin, Kangmin Kim, Junhyeong Lee, and Yongjae Lee",
+        "bbox": [
+            629,
+            75,
+            913,
+            88
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "table",
+        "img_path": "images/8595865474482a5f5a21831b08fe3de19e3b52281cd0c63ca52bc80505d751eb.jpg",
+        "table_caption": [
+            "Table 7: Performance comparison across datasets and significance levels for the LSTM forecaster. Values are mean ± standard deviation over random seeds. For ΔCov, values closer to zero are better; lower is better for PI-Width, Winkler, and Time. Shaded Winkler cells mark the lowest value, underlined Winkler values mark the second-lowest value, and shaded $\\Delta _ { \\mathrm { C o v } }$ cells indicate severe undercoverage cases with $\\Delta _ { \\mathrm { C o v } } < - 2 \\% .$"
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>α</td><td>Dataset</td><td>Metric</td><td>SCP</td><td>EnbPI</td><td>SPCI</td><td>NexCP</td><td>HopCPT</td><td>ResCP</td><td>RCCP (Ours)</td></tr><tr><td rowspan=\"10\">000 = 05</td><td rowspan=\"3\">Air</td><td>∆Cov PI-Width</td><td> $0 . 1 2 \\pm 0 . 0 2$   $8 9 . 9 9 \\pm 0 . 4 6$ </td><td> $- 5 . 4 5 \\pm 0 . 0 8$   $7 0 . 5 9 \\pm 0 . 4 6$ </td><td> $- 0 . 9 4 \\pm 0 . 5 0$ </td><td> $- 1 . 0 9 \\pm 0 . 0 3$ </td><td> $- 0 . 1 8 \\pm 0 . 0 8$ </td><td> $- 0 . 3 5 \\pm 0 . 1 1$ </td><td> $0 . 1 8 \\pm 0 . 0 6$ </td></tr><tr><td></td><td></td><td></td><td> $8 6 . 7 2 \\pm 3 . 1 2$ </td><td> $8 7 . 7 9 \\pm 0 . 2 1$ </td><td> $8 9 . 1 9 \\pm 1 . 0 6$ </td><td> $8 4 . 2 3 \\pm 0 . 9 8$ </td><td> $8 0 . 5 7 \\pm 0 . 6 1$ </td></tr><tr><td>Winkler Time</td><td> $1 5 2 . 0 0 \\pm 0 . 5 9$   $3 6 . 4 1 \\pm 0 . 7 3$ </td><td> $1 4 9 . 7 6 \\pm 0 . 3 5$ </td><td> $1 4 5 . 7 5 \\pm 0 . 9 2$ </td><td> $1 3 4 . 6 2 \\pm 0 . 2 3$   $3 5 . 4 7 \\pm 0 . 4 5$ </td><td> $1 4 9 . 6 0 \\pm 1 . 3 1$   $2 6 4 . 8 4 \\pm 2 . 2 2$ </td><td> $\\underline { { 1 3 4 . 2 5 } } \\pm 0 . 5 8$   $1 0 0 . 7 8 \\pm 1 . 8 0$ </td><td>一  ${ \\bf 1 1 7 . 4 0 \\pm 0 . 3 6 }$   $7 1 . 0 8 \\pm 0 . 4 3$ </td></tr><tr><td rowspan=\"5\"></td><td></td><td></td><td> $1 4 5 . 1 7 \\pm 2 . 5 6$ </td><td> $6 6 4 . 2 7 \\pm 1 . 2 3$ </td><td></td><td></td><td></td><td></td></tr><tr><td>∆Cov</td><td> $0 . 7 1 \\pm 0 . 0 7$ </td><td> $- 1 . 8 0 \\pm 0 . 0 2$ </td><td> $- 0 . 2 2 \\pm 0 . 3 3$ </td><td> $- 0 . 9 0 \\pm 0 . 0 3$ </td><td> $0 . 6 1 \\pm 0 . 9 1$ </td><td> $0 . 5 4 \\pm 0 . 0 4$ </td><td> $0 . 3 3 \\pm 0 . 1 0$ </td></tr><tr><td>PI-Width</td><td> $5 7 . 7 2 \\pm 1 . 9 6$ </td><td> $3 7 . 9 1 \\pm 1 . 2 9$ </td><td> $4 4 . 1 1 \\pm 2 . 7 2$ </td><td> $4 1 . 2 2 \\pm 1 . 1 8$ </td><td> $3 9 . 1 6 \\pm 1 0 . 2 1$ </td><td> $3 0 . 6 5 \\pm 1 . 5 2$ </td><td> $2 5 . 0 8 \\pm 0 . 3 0$  </td></tr><tr><td>Winkler</td><td> $8 8 . 4 9 \\pm 2 . 2 8 $ </td><td> $7 8 . 7 3 \\pm 2 . 1 1$ </td><td> $7 7 . 8 9 \\pm 1 . 2 7$ </td><td> $7 0 . 4 3 \\pm 1 . 8 2$ </td><td> ${ \\underline { { 5 0 . 2 6 } } } \\pm 9 . 5 6 $ </td><td> $5 3 . 3 2 \\pm 1 . 4 9$ </td><td> $3 2 . 6 5 \\pm 0 . 5 4$ </td></tr><tr><td>Time</td><td> $9 0 . 2 2 \\pm 1 . 2 9$ </td><td> $4 5 0 . 5 5 \\pm 3 . 7 1$ </td><td> $1 9 6 4 . 1 2 \\pm 2 2 . 3 3$ </td><td> $9 8 . 8 7 \\pm 1 . 7 5$ </td><td> $8 6 9 . 4 7 \\pm 1 3 7 . 8 5$ </td><td> $3 1 8 . 5 3 \\pm 5 . 1 2$ </td><td> $1 6 7 . 6 4 \\pm 0 . 9 3$ </td></tr><tr><td rowspan=\"4\">Wind</td><td>∆Cov</td><td> $0 . 2 5 \\pm 0 . 2 9$ </td><td> $- 1 . 6 8 \\pm 0 . 1 5$ </td><td> $- 2 . 6 6 \\pm 2 . 1 4$ </td><td> $- 0 . 1 6 \\pm 0 . 1 1$ </td><td> $1 . 2 9 \\pm 0 . 3 0$ </td><td> $0 . 7 5 \\pm 0 . 1 1$ </td><td> $0 . 2 7 \\pm 0 . 1 8$ </td></tr><tr><td>PI-Width Winkler</td><td> $8 6 . 2 6 \\pm 1 . 7 2$ </td><td> $7 8 . 2 5 \\pm 0 . 2 5$ </td><td> $7 5 . 7 5 \\pm 1 0 . 8 7$ </td><td> $8 3 . 6 1 \\pm 0 . 2 1$ </td><td> $9 9 . 2 0 \\pm 5 . 5 1$ </td><td> $8 5 . 3 9 \\pm 0 . 5 0$ </td><td> $7 6 . 9 7 \\pm 1 . 2 2$ </td></tr><tr><td>Time</td><td> $1 2 0 . 4 7 \\pm 0 . 4 2$   $0 . 7 3 \\pm 0 . 0 3$ </td><td> $1 2 2 . 7 6 \\pm 0 . 6 9$ </td><td> $1 3 1 . 0 0 \\pm 5 . 9 8$ </td><td> $1 1 8 . 6 7 \\pm 0 . 5 1 $ </td><td> $1 2 5 . 3 4 \\pm 3 . 4 3$ </td><td> $\\underline { { 1 1 1 . 0 3 } } \\pm 0 . 4 5$ </td><td> $1 0 2 . 6 6 \\pm 0 . 4 1$ </td></tr><tr><td></td><td></td><td> $4 . 6 6 \\pm 0 . 1 2$ </td><td> $1 9 . 3 2 \\pm 0 . 3 4$ </td><td> $0 . 8 7 \\pm 0 . 0 3$ </td><td> $1 0 . 1 6 \\pm 1 . 9 2$ </td><td> $4 . 2 3 \\pm 0 . 2 8$ </td><td> $1 . 5 1 \\pm 0 . 0 1$ </td></tr><tr><td rowspan=\"4\">Electricity</td><td>∆Cov</td><td> $3 . 3 3 \\pm 0 . 2 2$ </td><td> $- 2 . 2 8 \\pm 0 . 1 9$ </td><td> $2 . 4 3 \\pm 0 . 9 6$ </td><td> $0 . 5 8 \\pm 0 . 2 2$ </td><td> $2 . 8 6 \\pm 0 . 5 4$ </td><td> $0 . 8 0 \\pm 0 . 2 7$ </td><td> $- 0 . 3 6 \\pm 0 . 7 9$ </td></tr><tr><td>PI-Width</td><td> $0 . 3 0 \\pm 0 . 0 2$ </td><td> $0 . 1 8 \\pm 0 . 0 1$ </td><td> $0 . 2 7 \\pm 0 . 0 3$ </td><td> $0 . 2 1 \\pm 0 . 0 1$ </td><td> $0 . 2 8 \\pm 0 . 0 2$ </td><td> $0 . 2 2 \\pm 0 . 0 1$ </td><td> $0 . 2 1 \\pm 0 . 0 1$ </td></tr><tr><td>Winkler</td><td> $0 . 3 2 \\pm 0 . 0 2$ </td><td> $\\underline { { 0 . 2 9 \\pm 0 . 0 2 } }$ </td><td> $0 . 3 1 \\pm 0 . 0 2$ </td><td> $\\mathbf { 0 . 2 8 \\pm 0 . 0 2 }$ </td><td> $0 . 3 2 \\pm 0 . 0 2$ </td><td> $\\underline { { 0 . 2 9 \\pm 0 . 0 2 } }$ </td><td> $\\underline { { 0 . 2 9 \\pm 0 . 0 2 } }$ </td></tr><tr><td>Time</td><td> $0 . 2 1 \\pm 0 . 0 1$ </td><td> $1 . 3 6 \\pm 0 . 0 6$ </td><td> $4 . 4 0 \\pm 0 . 0 7$ </td><td> $0 . 2 5 \\pm 0 . 0 0$ </td><td> $4 . 3 6 \\pm 0 . 2 3$ </td><td> $1 . 9 0 \\pm 0 . 4 3$ </td><td> $0 . 2 3 \\pm 0 . 0 0$ </td></tr><tr><td rowspan=\"10\">a0 5</td><td rowspan=\"4\">Air</td><td>∆Cov</td><td> $0 . 0 7 \\pm 0 . 2 0$ </td><td> $- 6 . 6 8 \\pm 0 . 1 2$ </td><td> $- 0 . 8 9 \\pm 1 . 0 0$ </td><td> $- 0 . 8 8 \\pm 0 . 1 1$ </td><td> $- 0 . 2 5 \\pm 0 . 2 0$ </td><td> $- 0 . 0 0 \\pm 0 . 2 8$ </td><td> $0 . 5 6 \\pm 0 . 2 1$ </td></tr><tr><td>PI-Width</td><td> $4 9 . 4 9 \\pm 0 . 3 9$ </td><td> $4 3 . 8 3 \\pm 0 . 3 5$ </td><td> $4 9 . 9 7 \\pm 1 . 8 8$ </td><td> $5 1 . 5 1 \\pm 0 . 2 8$ </td><td> $4 9 . 4 6 \\pm 0 . 6 3$ </td><td> $4 9 . 4 3 \\pm 0 . 4 6$ </td><td> $4 9 . 3 2 \\pm 0 . 4 5$ </td></tr><tr><td>Winkler</td><td> $9 3 . 4 2 \\pm 0 . 4 9$ </td><td> $9 1 . 8 7 \\pm 0 . 4 9$ </td><td> $9 1 . 1 6 \\pm 0 . 2 5$ </td><td> $8 7 . 6 0 \\pm 0 . 2 3$ </td><td> $9 2 . 8 9 \\pm 0 . 5 7$ </td><td> $\\underline { { 8 5 . 4 3 } } \\pm 0 . 3 8$ </td><td> $7 9 . 4 9 \\pm 0 . 2 2$ </td></tr><tr><td>Time</td><td> $3 7 . 9 7 \\pm 1 . 2 8 $ </td><td> $1 4 6 . 4 3 \\pm 2 . 8 9$ </td><td> $6 6 7 . 9 9 \\pm 8 . 9 1$ </td><td> $3 5 . 6 9 \\pm 0 . 4 4$ </td><td> $2 6 5 . 4 7 \\pm 1 . 6 6$ </td><td> $9 9 . 5 4 \\pm 2 . 3 4$ </td><td> $7 0 . 8 9 \\pm 0 . 1 3$ </td></tr><tr><td rowspan=\"5\">Solar</td><td>∆Cov</td><td> $2 . 0 2 \\pm 0 . 0 8$ </td><td> $- 1 . 6 6 \\pm 0 . 1 0$ </td><td> $1 . 4 3 \\pm 0 . 6 4$ </td><td> $- 0 . 6 2 \\pm 0 . 1 0$ </td><td> $1 . 6 0 \\pm 3 . 2 1$ </td><td> $1 . 5 3 \\pm 0 . 1 9$ </td><td> $1 . 1 5 \\pm 0 . 2 1$ </td></tr><tr><td>PI-Width</td><td> $2 3 . 0 1 \\pm 0 . 4 2$ </td><td> $1 4 . 8 3 \\pm 0 . 6 6$ </td><td> $1 8 . 3 1 \\pm 1 . 7 3$ </td><td> $1 8 . 5 0 \\pm 0 . 6 0$ </td><td> $2 3 . 9 7 \\pm 6 . 1 3$ </td><td> $1 5 . 0 6 \\pm 0 . 8 7$ </td><td> $1 5 . 1 8 \\pm 0 . 3 2$ </td></tr><tr><td>Winkler</td><td> $4 8 . 6 9 \\pm 1 . 1 1 $ </td><td> $4 2 . 8 7 \\pm 1 . 3 6$ </td><td> $4 2 . 7 2 \\pm 1 . 1 5$ </td><td> $4 1 . 0 3 \\pm 1 . 1 2$ </td><td> $3 2 . 9 7 \\pm 5 . 2 5$ </td><td> ${ \\underline { { 3 1 . 7 3 } } } \\pm 1 . 0 8$ </td><td> $2 2 . 7 4 \\pm 0 . 5 9$ </td></tr><tr><td>Time</td><td> $9 0 . 8 8 \\pm 1 . 4 4$ </td><td> $4 5 0 . 1 1 \\pm 5 . 8 8$ </td><td> $1 9 8 0 . 3 3 \\pm 1 5 . 9 3$ </td><td> $9 8 . 4 2 \\pm 1 . 3 2 $ </td><td> $8 3 5 . 5 7 \\pm 7 2 . 3 0$ </td><td> $3 2 1 . 5 0 \\pm 3 . 8 3 $ </td><td> $1 6 8 . 7 2 \\pm 0 . 7 7$ </td></tr><tr><td>∆Cov</td><td> $0 . 1 6 \\pm 0 . 2 0$ </td><td> $- 2 . 1 7 \\pm 0 . 3 0$ </td><td> $- 0 . 6 5 \\pm 2 . 0 5$ </td><td> $0 . 1 4 \\pm 0 . 1 7$ </td><td> $3 . 3 8 \\pm 2 . 5 6$ </td><td> $2 . 0 5 \\pm 0 . 2 5$ </td><td> $0 . 9 0 \\pm 0 . 2 3$ </td></tr><tr><td rowspan=\"5\">Wind</td><td>PI-Width</td><td> $5 1 . 1 3 \\pm 0 . 7 3$ </td><td> $4 8 . 6 2 \\pm 0 . 4 4$ </td><td> $4 8 . 7 1 \\pm 4 . 7 6$ </td><td> $5 0 . 9 0 \\pm 0 . 5 1$ </td><td> $5 7 . 8 7 \\pm 6 . 3 7$ </td><td> $5 0 . 8 6 \\pm 0 . 5 2$ </td><td> $4 8 . 5 7 \\pm 0 . 7 4$ </td></tr><tr><td>Winkler</td><td> $8 3 . 0 4 \\pm 0 . 1 3$ </td><td> $8 3 . 6 7 \\pm 0 . 2 5$ </td><td> $8 4 . 3 2 \\pm 0 . 6 5$ </td><td> $8 1 . 5 0 \\pm 0 . 1 7$ </td><td> $8 3 . 0 2 \\pm 2 . 3 9$ </td><td> ${ \\underline { { 7 8 . 5 8 } } } \\pm 0 . 2 7$ </td><td>_  $7 3 . 0 3 \\pm 0 . 2 2$ </td></tr><tr><td>Time</td><td>0.72 ± 0.01</td><td>4.54 ± 0.01</td><td> $1 9 . 2 0 \\pm 0 . 0 4$ </td><td> $0 . 8 6 \\pm 0 . 0 1$ </td><td> $9 . 0 2 \\pm 0 . 2 3$ </td><td> $4 . 0 1 \\pm 0 . 2 3$ </td><td>1.51 ± 0.01</td></tr><tr><td> $\\Delta \\mathrm { C o v }$ </td><td> $5 . 8 3 \\pm 1 . 6 0$ </td><td> $- 2 . 5 4 \\pm 0 . 7 0$ </td><td> $4 . 1 3 \\pm 1 . 3 2$ </td><td> $1 . 7 4 \\pm 0 . 4 3$ </td><td> $5 . 0 0 \\pm 1 . 0 9$ </td><td> $0 . 6 9 \\pm 0 . 6 3$ </td><td> $0 . 2 2 \\pm 1 . 0 5$ </td></tr><tr><td>PI-Width</td><td> $0 . 1 7 \\pm 0 . 0 1$ </td><td> $0 . 1 3 \\pm 0 . 0 1$ </td><td> $0 . 1 5 \\pm 0 . 0 1$ </td><td> $0 . 1 4 \\pm 0 . 0 1$ </td><td> $0 . 1 6 \\pm 0 . 0 1$ </td><td> $0 . 1 4 \\pm 0 . 0 1$ </td><td> $0 . 1 3 \\pm 0 . 0 1$ </td></tr><tr><td rowspan=\"4\">Electricity</td><td>Winkler</td><td> $0 . 2 1 \\pm 0 . 0 1$ </td><td> $0 . 2 1 \\pm 0 . 0 2$ </td><td> $0 . 2 0 \\pm 0 . 0 1$ </td><td> $0 . 2 0 \\pm 0 . 0 1$ </td><td> $0 . 2 1 \\pm 0 . 0 2$ </td><td> $\\underline { { 0 . 2 0 \\pm 0 . 0 1 } }$ </td><td>²  $\\mathbf { 0 . 1 9 \\pm 0 . 0 1 }$ </td></tr><tr><td>Time</td><td> $0 . 1 9 \\pm 0 . 0 0$ </td><td> $1 . 2 1 \\pm 0 . 0 6$ </td><td> $4 . 5 3 \\pm 0 . 1 3$ </td><td> $0 . 2 4 \\pm 0 . 0 1$ </td><td> $4 . 0 0 \\pm 0 . 3 8$ </td><td> $1 . 5 8 \\pm 0 . 0 5$ </td><td> $0 . 2 3 \\pm 0 . 0 1$ </td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></table>",
+        "bbox": [
+            93,
+            142,
+            908,
+            602
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "C Additional Results",
+        "text_level": 2,
+        "bbox": [
+            81,
+            618,
+            271,
+            633
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "C.1 Additional Miscoverage Levels",
+        "text_level": 2,
+        "bbox": [
+            81,
+            638,
+            380,
+            655
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "T<sub>a</sub>bl<sub>e</sub> 7 <sub>repor</sub>t<sub>s resu</sub>lt<sub>s a</sub>t $\\alpha = 0 . 0 5$ <sub>an</sub>d $\\alpha = 0 . 1 5$ <sub>us</sub>i<sub>ng</sub> th<sub>e g</sub>l<sub>o</sub>b<sub>a</sub>l LSTM f<sub>orecas</sub>t<sub>er.</sub> Thi<sub>s eva</sub>l<sub>ua</sub>ti<sub>on c</sub>h<sub>ec</sub>k<sub>s w</sub>h<sub>e</sub>th<sub>er</sub> th<sub>e correc</sub>ti<sub>on</sub> <sub>rema</sub>i<sub>ns re</sub>li<sub>a</sub>bl<sub>e</sub> b<sub>e on</sub>d th<sub>e ma</sub>i<sub>n</sub> $\\alpha = 0 . 1$ <sub>se</sub>ttin<sub>g.</sub> RCCP <sub>ac</sub>hi<sub>eves</sub> th<sub>e</sub> b<sub>es</sub>t Wi<sub>n</sub>kl<sub>er score on</sub> th<sub>e mos</sub>t d<sub>a</sub>t<sub>ase</sub>t<sub>s a</sub>t b<sub>o</sub>th t<sub>arge</sub>t l<sub>eve</sub>l<sub>s</sub> <sub>an</sub>d k<sub>eeps coverage gaps c</sub>l<sub>ose</sub> t<sub>o</sub> th<sub>e nom</sub>i<sub>na</sub>l l<sub>eve</sub>l<sub>, w</sub>ith <sub>gaps</sub> th<sub>a</sub>t <sub>are</sub> <sub>o</sub>ft<sub>en</sub> <sub>sma</sub>ll<sub>er</sub> th<sub>an</sub> th<sub>ose</sub> i<sub>n</sub> th<sub>e</sub> <sub>ma</sub>i<sub>n</sub> <sub>se</sub>tti<sub>ng.</sub>",
+        "bbox": [
+            80,
+            657,
+            483,
+            741
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/1a623bf1dfe77e4e78c485d23685247ce4c7ee16ec235924c49900fce65803c8.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            516,
+            630,
+            712,
+            750
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/7bbd5ce4df52ca2d65e0d5b1ac4d2ae780a2ba9f2ac573d850e9febf06b2e1aa.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            717,
+            627,
+            911,
+            750
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "The res<sub>u</sub>lts sho<sub>w</sub> that RCCP is not t<sub>u</sub>ned to a sin<sub>g</sub>le misco<sub>v</sub>era<sub>g</sub>e l<sub>eve</sub>l<sub>.</sub> A<sub>s</sub> <sub>�</sub> <sub>c</sub>h<sub>anges,</sub> b<sub>ase</sub>li<sub>ne</sub> <sub>me</sub>th<sub>o</sub>d<sub>s</sub> <sub>s</sub>h<sub>ow</sub> l<sub>arger</sub> fl<sub>uc</sub>t<sub>ua</sub>ti<sub>ons</sub> i<sub>n</sub> Wi<sub>n</sub>kl<sub>er</sub> <sub>score</sub> b<sub>ecause</sub> i<sub>n</sub>t<sub>erva</sub>l <sub>w</sub>idth <sub>an</sub>d <sub>coverage</sub> <sub>v</sub>i<sub>o</sub>l<sub>a</sub>ti<sub>ons</sub> <sub>move</sub> to<sub>g</sub>ether. RCCP remains stable across tar<sub>g</sub>et levels<sub>,</sub> maintainin<sub>g</sub> calibrated covera<sub>g</sub>e while <sub>p</sub>roducin<sub>g</sub> intervals with com<sub>p</sub>etitive <sub>w</sub>idth<sub>.</sub>",
+        "bbox": [
+            80,
+            741,
+            485,
+            824
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "(a) |Δ<sub>Cov</sub> | and Winkler",
+        "bbox": [
+            552,
+            755,
+            676,
+            767
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "(b) Calibration Time and Winkler",
+        "bbox": [
+            723,
+            755,
+            908,
+            767
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c1c4cf94a133f72107a7b64480caf3f31a115106bd817a31faa728d87d6e909a.jpg",
+        "text": "$$\n\\left| \\Delta _ { \\mathrm { C o v } } \\right|\n$$",
+        "text_format": "latex",
+        "bbox": [
+            687,
+            781,
+            723,
+            794
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Time. Met<sup>h</sup>o<sup>d</sup>s near t<sup>h</sup>e <sup>l</sup>ower-<sup>l</sup>e<sup>f</sup>t region ac<sup>h</sup>ieve stronger joint <sub>p</sub>erformance across interval <sub>q</sub>ualit<sub>y,</sub> covera<sub>g</sub>e<sub>,</sub> and com<sub>p</sub>utation.",
+        "bbox": [
+            511,
+            800,
+            915,
+            829
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "C.2 Coverage and Eficiency Tradeof",
+        "text_level": 2,
+        "bbox": [
+            81,
+            848,
+            401,
+            864
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Fi<sub>gu</sub>r<sub>e</sub> 7 <sub>su</sub>mm<sub>a</sub>riz<sub>es</sub> th<sub>e</sub> m<sub>a</sub>in $\\alpha = 0 . 1$ <sub>resu</sub>lt<sub>s</sub> <sub>average</sub>d <sub>over</sub> th<sub>e</sub> f<sub>our</sub> datasets b<sub>y p</sub>lottin<sub>g</sub> Winkler score a<sub>g</sub>ainst $| \\Delta _ { \\mathrm { C o v } } |$ <sub>an</sub>d C<sub>a</sub>lib<sub>ra</sub>ti<sub>on</sub>",
+        "bbox": [
+            81,
+            867,
+            485,
+            897
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "This frontier view hi<sub>g</sub>hli<sub>g</sub>hts the <sub>p</sub>ractical value of RCCP<sub>,</sub> showi<sub>ng</sub> th<sub>a</sub>t <sub>re</sub>t<sub>r</sub>i<sub>eva</sub>l<sub>-correc</sub>t<sub>e</sub>d <sub>ca</sub>lib<sub>ra</sub>ti<sub>on reso</sub>l<sub>ves</sub> th<sub>e cen</sub>t<sub>ra</sub>l t<sub>ra</sub>d<sub>eo</sub>f b<sub>y</sub> <sub>pro</sub>d<sub>uc</sub>i<sub>ng</sub> <sub>s</sub>h<sub>arper</sub> <sub>ca</sub>lib<sub>ra</sub>t<sub>e</sub>d i<sub>n</sub>t<sub>erva</sub>l<sub>s</sub> <sub>w</sub>ith<sub>ou</sub>t th<sub>e</sub> <sub>compu</sub>t<sub>a-</sub> ti<sub>ona</sub>l b<sub>ur</sub>d<sub>en o</sub>f h<sub>eav</sub>i<sub>er a</sub>d<sub>ap</sub>ti<sub>ve</sub> b<sub>ase</sub>li<sub>nes.</sub>",
+        "bbox": [
+            511,
+            828,
+            916,
+            885
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "header",
+        "text": "Retrieval–Corrected Conformal Prediction for Time Series",
+        "bbox": [
+            83,
+            74,
+            362,
+            88
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "header",
+        "text": "CIKM ’26, November 7–11, 2026, Rome, Italy",
+        "bbox": [
+            697,
+            75,
+            913,
+            88
+        ],
+        "page_idx": 10
+    }
+]

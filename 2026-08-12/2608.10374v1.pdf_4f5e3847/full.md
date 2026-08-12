@@ -1,0 +1,550 @@
+# Fisher8: Stabilizing Neural Heteroscedastic Regression via Output-Layer Fisher Geometry
+
+Sumedh Vemuganti<sup>1</sup>
+
+Nickvash Kani<sup>1</sup>
+
+<sup>1</sup>Electrical and Computer Engineering Department, University of Illinois at Urbana-Champaign
+
+## Abstract
+
+Training neural networks to jointly predict mean and uncertainty estimates from noisy observations can be unstable, prompting a series of independent stabilization efforts. We argue that these interventions highlight a common underlying issue where gradient steps are poorly aligned with the geometry of the loss landscape. To better align updates with local curvature, we derive Fisher8, an output-layer gradient correction that reorients and rescales updates using Fisher geometry rather than Euclidean geometry. Unlike past stabilizers, Fisher8 introduces no data-dependent hyperparameters beyond learning rate and admits an approximate KL trust radius between successive predictive distributions. We show that prior stabilizers converge on overlapping components of this geometric correction. Across multidimensional regression and representation-learning tasks, Fisher8 obtains superior likelihood–error tradeoffs, predicts calibrated uncertainty estimates, and learns rich uncertainty-aware feature spaces.
+
+## 1 INTRODUCTION
+
+Deep learning models that output reliable uncertainty estimates can signal when their predictions should not be trusted (Appendix E). In these settings, models must output both predictions and calibrated uncertainty estimates, without seeing uncertainty labels during training [Nix and Weigend, 1994].
+
+A straightforward approach is to train a neural network to jointly predict a mean and variance using the Gaussian negative log-likelihood (NLL) loss (Eq. 2). Despite its conceptual simplicity, this procedure suffers from recurring instabilities in which mean estimates degrade relative to unit-variance baselines [Stirn et al., 2023], models inflate $\sigma ^ { 2 }$ to reduce loss without improving fit [Seitzer et al., 2022], and training exhibits sharp phase transitions under varying regularization strengths [Wong-Toi et al., 2024]. These failures have motivated selective stop-gradients paired with Newton steps, gradient reweighting, and careful regularization tuning, respectively. While often effective, these stabilizers are largely prescriptive: a pathology is observed, and a targeted remedy is engineered.
+
+Ifa diverse set ofstabilizers is repeatedly required during training, perhaps these interventions are notfixing an unstable loss, but instead correcting a misdirected and mis-scaled traversal of the loss landscape.
+
+Fisher8 redirects and rescales output-layer gradients so that updates to the predicted parameters are measured by the approximate KL divergences between the distributions they induce, rather than their Euclidean displacement. We evaluate Fisher8 on regression, parameter prediction, and representation-learning tasks, observing rapid likelihood ascent, reduced regularization dependence, and improved downstream feature space utility.
+
+We advance uncertainty regression in neural networks by:
+
+1. Introducing local KL variance as a diagnostic metric to assess when feature-space activity fails to induce distributional change.
+
+2. Deriving Fisher8, an output-layer natural-gradient correction with approximate trust-region control and no dataset-dependent hyperparameters beyond learning rate.
+
+3. Providing a unifying lens that relates independently proposed stabilizers to overlapping components of our geometrically motivated update rule.
+
+## 2 THE TRAINING PROBLEM
+
+Consider a data generating process in which an input $x _ { i } \in$ $\mathbb { R } ^ { d }$ produces a noisy observation $y _ { i } \in \mathbb { R }$
+
+$$
+y _ { i } = \mu ( x _ { i } ) + \varepsilon _ { i } , \quad \varepsilon _ { i } \sim \mathcal { N } \big ( 0 , \sigma ^ { 2 } ( x _ { i } ) \big )\tag{1}
+$$
+
+![](images/3e072bdd935443a5343d94e524950e02499331c348de2d28eb704ba06769142d.jpg)  
+Figure 1: Conceptual summary of four approaches to uncertainty estimation in neural networks. Col 1: Joint mean–variance prediction with Gaussian NLL [Nix and Weigend, 1994]. Col 2: Variance-reweighted gradients via Beta-NLL [Seitzer et al., 2022]. Col 3: Faithful mean estimation using a separate MSE head without backpropagation through the shared trunk [Stirn et al., 2023]. Col 4: Over-parameterization with distinct regularization for mean and variance heads [Wong-Toi et al., 2024].
+
+$\mu ( x )$ and $\sigma ( x )$ are never directly observed while collecting training data, and are unavailable during testing. Given training data lacking uncertainty labels, $\bar { \mathcal { D } } _ { \mathrm { t r a i n } } ^ { \mathrm { ~ ~ } } = \bar { \{ }  ( x _ { i } , y _ { i } ) \} _ { i = 1 } ^ { N } ,$ train a neural network $f _ { \Theta } ^ { \mathrm { N N } }$ with per-point loss
+
+$$
+\begin{array} { r } { \ell _ { i } = \frac { 1 } { 2 } \hat { \sigma } ^ { - 2 } ( x _ { i } ) ( y _ { i } - \hat { \mu } ( x _ { i } ) ) ^ { 2 } + \frac { 1 } { 2 } \ln \hat { \sigma } ^ { 2 } ( x _ { i } ) , } \end{array}\tag{2}
+$$
+
+that, for each test input $x _ { \mathrm { { t e s t } } }$ , outputs a predicted conditional mean and uncertainty $( \hat { \mu } ( x _ { \mathrm { t e s t } } ) , \hat { \sigma } ^ { 2 } ( x _ { \mathrm { t e s t } } ) )$ .
+
+## 2.1 PRIOR TRAINING CORRECTIONS
+
+Observed Pathology: Seitzer et al. [2022] show that when trained under Eq. 2, the gradient contribution of point $x _ { i }$ is inversely modulated by $\bar { \hat { \sigma } } ( x _ { i } ) . \nabla _ { \hat { \mu } } \ell \sim \hat { \sigma } ^ { - 2 }$ $\bar { \nabla _ { \hat { \sigma } } \ell } \sim \hat { \sigma } ^ { - 3 }$ Points where the model is already certain (small $\hat { \sigma } ( x _ { i } ) )$ contribute large gradient signals while uncertain regions (large $\hat { \sigma } ( x _ { i } ) )$ are starved of updates.
+
+Prescribedfix (Fig. 1, Col 2): Rescale the per-point gradient updates by $\hat { \sigma } ^ { 2 \beta } ( \bar { x _ { i } } )$ , with β tuned per dataset to dampen the starvation. When $\beta = 0 . 5$ , the inverse modulation is relaxed: $\nabla _ { \hat { \mu } } \ell : \hat { \sigma } ^ { - 2 } \to \hat { \sigma } ^ { - 1 } , \quad \nabla _ { \hat { \sigma } } \ell : \hat { \sigma } ^ { - 3 } \to \hat { \sigma } ^ { - 2 }$
+
+Observed Pathology: Stirn et al. [2023] show that networks trained to jointly predict mean and variance can yield worse mean estimates compared to those trained to predict the mean alone with fixed unit variance.
+
+Prescribedfix (Fig. 1, Col 3): Decouple the network into a shared trunk with separate mean and variance heads. Block variance gradients from updating the shared trunk. Update the mean head via Newton steps instead of standard firstorder gradients.
+
+Observed Pathology: Wong-Toi et al. [2024] use field theory to abstract network architecture specifics and analyze instability at the function level. They characterize failure regimes where variance absorbs error while the mean is poorly fit, and the data is memorized with no uncertainty predicted.
+
+Prescribedfix (Fig. 1, Col 4): Augment the objective with one regularizer that balances the likelihood term against the networks’ parameters, and another that balances the parameters of the mean and variance networks against each other. Search for regularization coefficients along their derived stability corridor to find a non-degenerate solution.
+
+## 2.2 PERSPECTIVE SHIFT
+
+If reaching a desirable weight configuration requires manual algorithmic interventions (mean warm-up schedules, dataset-specific gradient weighting knobs, design choices about how much output heads share versus separate) and if training only succeeds within a narrow band of carefully tuned hyperparameters, then perhaps the bottleneck is not the specific network architecture or loss function itself, but rather the path we take through the loss landscape. What these interventions show is that the same network can reach a good solution once the training dynamics are heavily modified, so the selected model classes are clearly expressive enough. Moreover, once the networks do reach a good solution, the loss is minimized, so the objective function itself is not fundamentally ill-posed, but rather underconstrained. The deeper question is whether our updates are meaningfully aligned with and constrained by the geometry of the loss surface, or simply steps in Euclidean space.
+
+## 3 METHODOLOGY
+
+## 3.1 PER-POINT UPDATE RULE
+
+Consider an observation $( x , y )$ generated from Eq. 1. Let $f _ { \Theta } ^ { \mathrm { N N } } : \mathbb { R } ^ { d }  \mathbb { R } ^ { 2 }$ be a neural network with parameters Θ that maps an input x to predicted Gaussian distributional parameters $\boldsymbol \theta = [ \mu , s ] ^ { \top }$ with $s = \ln \sigma ^ { 2 }$ . The negative logprobability of observing y yields the loss function
+
+$$
+\ell _ { \theta } ( y ) = - \ln p _ { \theta } ( y ) + C\tag{3a}
+$$
+
+$$
+\begin{array} { r } { = \frac { 1 } { 2 } s + \frac { 1 } { 2 } e ^ { - s } ( y - \mu ) ^ { 2 } , } \end{array}\tag{3b}
+$$
+
+![](images/ab062bc599bec42585ef0b19e21a2c1cd7b7052498e97a72888dd9ec355de790.jpg)
+
+![](images/8e25101b5a73c52959c854a93f84f6b2971003d75760c019ad5f7ea1dafd67ba.jpg)
+
+![](images/01750ceeab1f75705e1204c63b47f0b58ec813ed9eddb2b50a3c7db186b4620e.jpg)
+
+![](images/04092b01d2ca9fa69b2d224d893b6cbab80cb4b7fa0ebb5340d27c8197cdfee9.jpg)  
+Figure 2: Col 1: Parameter space showing Euclidean circle (solid) and Fisher ellipse (dashed) with 8 sampled directions. Col 2: Gaussian PDFs resulting from Euclidean perturbations from the black reference $\mathcal { N } ( 0 , 0 . 3 ^ { 2 } )$ . Col 3: Gaussian PDFs resulting from Fisher perturbations. Col 4: KL divergence from base distribution for each direction under both metrics.
+
+with partial derivatives:
+
+$$
+\nabla _ { \mu } \ell = - e ^ { - s } ( y - \mu ) ,\tag{4a}
+$$
+
+$$
+\begin{array} { r } { \nabla _ { s } \ell = \frac { 1 } { 2 } - \frac { 1 } { 2 } e ^ { - s } ( y - \mu ) ^ { 2 } , } \end{array}\tag{4b}
+$$
+
+$$
+\nabla _ { \boldsymbol { \theta } } \boldsymbol { \ell } = [ \nabla _ { \boldsymbol { \mu } } \boldsymbol { \ell } , \nabla _ { s } \boldsymbol { \ell } ] ^ { \top } .\tag{4c}
+$$
+
+The objective for the steepest descent problem that searches for the direction of the parameter updates $\delta \boldsymbol { \theta } = [ \delta \mu , \delta s ] ^ { \top }$ providing the largest reduction in loss $\ell _ { \theta } ( y ) , \mathrm { a s } \varepsilon \to 0 .$ , is:
+
+$$
+\arg \operatorname* { m i n } _ { \delta \theta } \ell _ { \theta + \delta \theta } \quad \mathrm { s . t . } \quad \| \delta \theta \| _ { 2 } \leq \varepsilon .\tag{5}
+$$
+
+Linearizing the loss as $\ell _ { \theta + \delta \theta } \approx \ell _ { \theta } + \nabla _ { \theta } \ell _ { \theta } ^ { \top } \delta \theta$ and taking a step of size R (set by learning rate η) in the direction of steepest descent, we obtain the gradient descent objective.
+
+$$
+\arg \operatorname* { m i n } _ { \delta \theta } \ \ell _ { \theta } + \delta \theta ^ { \top } \nabla _ { \theta } \ell _ { \theta } \quad \mathrm { s . t . } \quad \| \delta \theta \| _ { 2 } \leq R\tag{6a}
+$$
+
+$$
+\begin{array} { r } { \implies \delta \theta ^ { * } = - \eta \nabla _ { \theta } \ell _ { \theta } , \quad R = \eta \| \nabla _ { \theta } \ell _ { \theta } \| _ { 2 } } \end{array}\tag{6b}
+$$
+
+A close inspection of Eq. 6a reveals an implicit Euclidean constraint, forcing parameter perturbations $\delta \theta = ( \delta \mu , \delta s )$ to lie on a Euclidean ball $( \delta \dot { \mu } ) ^ { 2 } + ( \delta s ) ^ { 2 } = R ^ { 2 }$ , such as the solid black circle in Fig. 2, Col 1. Each colored point corresponds to a candidate perturbation from $\mathcal { N } ( 0 , 0 . 3 ^ { \bar { 2 } } )$ , at the center of the circle, to a new induced distribution $\mathcal { N } ( 0 +$ $\delta \mu , 0 . 3 ^ { 2 } e ^ { \delta s } )$ in Fig. 2, Col 2. These distributions exhibit volatile shifts, relative to the black reference normal. The corresponding translucent bars in Fig. 2, Col 4 show that the KL divergences of the corresponding perturbed Gaussians have a large spread. Perturbations in µ and s along the same, small, fixed Euclidean radius can induce erratic differences in the information separating their Gaussians.
+
+We now reinterpret $( \mu , s )$ as coordinates on a manifold M,
+
+$$
+\mathcal { M } : = \big \{ \theta = ( \mu , s ) \in \mathbb { R } \times \mathbb { R } \big | p _ { \theta } = \mathcal { N } ( \mu , e ^ { s } ) \big \} ,\tag{7}
+$$
+
+where distance between coordinates θ and $\theta + \delta \theta$ is no longer Euclidean, and instead locally quantifies the difference between the probability distributions they induce via
+
+$\mathrm { K L } ( p _ { \boldsymbol { \theta } } \parallel p _ { \boldsymbol { \theta } + \boldsymbol { \delta \theta } } ) \ ^ { 1 }$ . The steepest descent direction search problem on M as $\varepsilon \to 0$ is
+
+$$
+\arg \operatorname* { m i n } _ { \delta \theta } \ell _ { \theta + \delta \theta } \quad \mathrm { s . t . } \quad \mathrm { K L } ( p _ { \theta } \| p _ { \theta + \delta \theta } ) \leq \varepsilon .\tag{8}
+$$
+
+A second-order Maclaurin<sup>2</sup> series expansion of the constraint from Eq. 8 [Amari, 1998] is
+
+$$
+\begin{array} { r l } & { \mathrm { K L } ( p _ { \theta } \| p _ { \theta + \delta \theta } ) = \mathbb { E } _ { p _ { \theta } } [ \ln p _ { \theta } ( y ) - \ln p _ { \theta + \delta \theta } ( y ) ] } \\ & { \quad \approx \underline { { \mathrm { K L } ( p _ { \theta } \| \mathcal { P } \theta ) } } - \delta \theta ^ { \top } \underline { { \mathbb { E } _ { p _ { \theta } } [ \nabla _ { \theta } \mathrm { l a } \mathcal { P } \theta ^ { ( \mathcal { Y } ) } ] } } } \\ & { \qquad - \frac { 1 } { 2 } \delta \theta ^ { \top } \mathbb { E } _ { p _ { \theta } } \left[ \nabla _ { \theta } ^ { 2 } \ln p _ { \theta } ( y ) \right] \delta \theta } \\ & { \quad = \frac { 1 } { 2 } \delta \theta ^ { \top } \mathcal { F } ( \theta ) \delta \theta } \\ & { \quad = \frac { 1 } { 2 } \| \mathcal { F } ^ { 1 / 2 } ( \theta ) \delta \theta \| _ { 2 } ^ { 2 } , } \end{array}\tag{9}
+$$
+
+where $\mathcal { F } ( \theta ) = - \mathbb { E } _ { p _ { \theta } } [ \nabla _ { \theta } ^ { 2 } \ln p _ { \theta } ( y ) ]$ is the Fisher information matrix (FIM), quantifying the sensitivity of the likelihood to infinitesimal parameter perturbations. Under our parameterization $\theta = ( \mu , s ) , { \mathcal { F } } ( \theta )$ is given as follows:
+
+$$
+\begin{array} { r } { \mathcal { F } ( \theta ) = \mathrm { d i a g } \big ( e ^ { - s } , ~ \frac { 1 } { 2 } \big ) , } \end{array}\tag{10a}
+$$
+
+$$
+\mathcal { F } ( \boldsymbol { \theta } ) ^ { - 1 } = \mathrm { d i a g } \big ( e ^ { s } , 2 \big ) .\tag{10b}
+$$
+
+The KL constraint from Eq. 8 can be approximated with its second-order expansion in Eq. 9, and FIM from Eq. 10a:
+
+$$
+\begin{array} { r } { \frac { 1 } { 2 } \delta \theta ^ { \top } \mathcal { F } _ { \theta } \delta \theta \approx \frac { ( \delta \mu ) ^ { 2 } } { 2 e ^ { s } } + \frac { ( \delta s ) ^ { 2 } } { 4 } } \end{array}\tag{11}
+$$
+
+This places the set of feasible parameter perturbations onto a Fisher ellipse, such as the dashed one depicted in Fig. 2,
+
+Col 1. For each colored point, the corresponding perturbed distribution in Fig. 2, Col 3 undergoes controlled movement. The matching solid, colored bars in Fig. 2, Col 4 show that the resulting change in Gaussian information is roughly equal across every perturbation.
+
+With first-order loss and second-order KL approximations, the natural gradient descent problem on M is:
+
+$$
+\arg \operatorname* { m i n } _ { \delta \theta } \ell _ { \theta } ( y ) + \delta \theta ^ { \top } \nabla _ { \theta } \ell _ { \theta } \mathrm { ~ s . t . ~ } \Big \| \mathcal { F } ( \theta ) ^ { 1 / 2 } \delta \theta \Big \| _ { 2 } \leq P\tag{12a}
+$$
+
+$$
+\begin{array} { r } { \implies \delta { \boldsymbol { \theta } } ^ { * } = - \eta \mathcal { F } ( { \boldsymbol { \theta } } ) ^ { - 1 } \nabla _ { { \boldsymbol { \theta } } } \ell _ { \boldsymbol { \theta } } = : - \eta \nabla _ { { \boldsymbol { \theta } } } ^ { \mathrm { n a t } } \ell _ { \boldsymbol { \theta } } } \end{array}\tag{12b}
+$$
+
+$$
+P = \eta \left. { \mathcal { F } } ( \theta ) ^ { - 1 / 2 } \nabla _ { \theta } \ell _ { \theta } \right. _ { 2 } .\tag{12c}
+$$
+
+The output layer natural gradients are:
+
+$$
+\nabla _ { \theta } ^ { \mathrm { n a t } } \ell _ { \theta } : = \mathcal { F } ( \theta ) ^ { - 1 } \nabla _ { \theta } \ell _ { \theta } = [ \nabla _ { \mu } ^ { \mathrm { n a t } } \ell _ { \theta } , \nabla _ { s } ^ { \mathrm { n a t } } \ell _ { \theta } ] ^ { \top }\tag{13a}
+$$
+
+$$
+\nabla _ { \mu } ^ { \mathrm { n a t } } \ell _ { \theta } = e ^ { s } \nabla _ { \mu } \ell _ { \theta }\tag{13b}
+$$
+
+$$
+\begin{array} { r } { \nabla _ { s } ^ { \mathrm { n a t } } \ell _ { \theta } = 2 \nabla _ { s } \ell _ { \theta } . } \end{array}\tag{13c}
+$$
+
+The per-point update rule back-propagates the output layer Fisher pre-conditioned gradients through the network’s weights.
+
+$$
+\Theta \gets \Theta - \eta \left( \nabla _ { \theta } ^ { \mathrm { n a t } } \ell _ { \theta } \right) ^ { \top } \frac { \partial \theta } { \partial \Theta }\tag{14a}
+$$
+
+$$
+\begin{array} { r } { \Theta  \Theta - \eta \Big ( e ^ { s } \nabla _ { \mu } \ell _ { \theta } \frac { \partial \mu } { \partial \Theta } + 2 \nabla _ { s } \ell _ { \theta } \frac { \partial s } { \partial \Theta } \Big ) } \end{array}\tag{14b}
+$$
+
+## 3.2 BATCHED UPDATE RULE
+
+In practice, however, updates are performed in batches $\{ ( x _ { i } , y _ { i } ) \} _ { i = 1 } ^ { B }$ , where point $x _ { i }$ has its own predicted parameters $f _ { \Theta } ^ { N N } ( x _ { i } ) = \theta _ { i } = ( \mu _ { i } , s _ { i } )$ and its own local Fisher geometry $\mathcal { F } ( \theta _ { i } )$ . Under a shared batch learning rate, the distributional distance that each point travels (Eq. 12a) ${ \textstyle \frac { 1 } { 2 } } P _ { i } ^ { 2 }$ depends on its local Fisher geometry, and is therefore highly variable: $P _ { i } ^ { 2 } \neq P _ { j } ^ { 2 }$ in general. Using a single learning rate would then attempt to control B different radii with a single knob, misdirecting traversal.
+
+On the flip side, normalizing each point’s natural gradient by its own local Fisher geometry forces every point in the batch to move the same distributional distance. Different points inherently require different amounts of movement to reach an optimum, so uniform movement mis-scales traversal.
+
+An effective batch update rule must therefore allow the natural variation in intra-batch distributional mobility requirements to persist, while also admitting a reasonable bound on the batch-level trust radius.
+
+We define the batch loss $\begin{array} { r } { \mathcal { L } _ { \pmb { \theta } } = \frac { 1 } { B } \sum _ { i = 1 } ^ { B } \ell _ { \theta _ { i } } ( y _ { i } ) } \end{array}$ . We stack per-point quantities over the batch into bold vectors, where $\mu , s , \nabla _ { \pmb { \mu } } , \overset { \cdot } { \nabla } _ { \mathbf { s } } \in \mathbb { R } ^ { B } , \pmb { \theta } \in \mathbb { R } ^ { B \times 2 }$ , and subscript i indexes the i-th batch sample. The hat operator $\hat { \pmb { v } } = \pmb { v } / \| \pmb { v } \| _ { 2 }$ normalizes vectors to their unit $L _ { 2 }$ norm and ⊙ represents element-wise multiplication. The batch update rule computes the per-point Fisher preconditioned output layer gradients, normalizes them to unit $L _ { 2 }$ norm, and back-propagates this augmented signal through the network’s weights.
+
+$$
+\nabla _ { \mathbf { s } } ^ { \mathrm { n a t } } = 2 \nabla _ { \mathbf { s } } \in \mathbb { R } ^ { B }\tag{15a}
+$$
+
+$$
+\nabla _ { \mu } ^ { \mathrm { n a t } } = e ^ { \mathbf { s } } \odot \nabla _ { \mu } \in \mathbb { R } ^ { B }\tag{15b}
+$$
+
+$$
+\Theta  \Theta - \eta ( \widehat { \nabla _ { \mu } ^ { \mathrm { n a t } } } ^ { \top } \frac { \partial \pmb { \mu } } { \partial \Theta } + \widehat { \nabla _ { \mathbf { s } } ^ { \mathrm { n a t } } } ^ { \top } \frac { \partial \mathbf { s } } { \partial \Theta } )\tag{15c}
+$$
+
+## 3.3 APPROXIMATE TRUST RADIUS
+
+The unit normalization in Eq. 15c guarantees $\| \delta { \pmb \mu } \| _ { 2 } =$ $\| \delta \mathbf { s } \| _ { 2 } = \eta$ . Under nested (1) output-layer-only and (2) independent conditional-likelihood approximations, a secondorder estimate of the batch KL divergence can be measured between the pre- and post-update product distributions.
+
+$$
+\begin{array} { r l } & { \mathrm { K L } \Big ( \prod _ { i = 1 } ^ { B } p _ { \theta _ { i } } \Big \Vert \prod _ { i = 1 } ^ { B } p _ { \theta _ { i } + \delta \theta _ { i } } \Big ) } \\ & { \quad = \sum _ { i = 1 } ^ { B } \mathrm { K L } \Big ( p _ { \theta _ { i } } \Vert p _ { \theta _ { i } + \delta \theta _ { i } } \Big ) } \\ & { \quad \approx \frac { 1 } { 2 } \sum _ { i = 1 } ^ { B } e ^ { - s _ { i } } ( \delta \mu _ { i } ) ^ { 2 } + \frac { 1 } { 4 } \sum _ { i = 1 } ^ { B } ( \delta s _ { i } ) ^ { 2 } } \\ & { \quad \le \underbrace { \frac { 1 } { 2 } e ^ { - \operatorname* { m i n } ( \mathbf { s } ) } \eta ^ { 2 } } _ { \mathrm { K L } \mathrm { f r o m } \delta \mu } + \underbrace { \frac { 1 } { 4 } \eta ^ { 2 } } _ { \mathrm { K L } \mathrm { f r o m } \delta \mathbf { s } } } \end{array}\tag{16}
+$$
+
+Note that this is not a constraint on the batch optimization problem itself, but rather a post hoc readout of how far the joint output distribution has moved after the update has been applied.
+
+If prior to the update the network was overconfident (its uncertainties s were small despite the mean error being large), then the distributional contribution from changing the mean (Eq. 16, left under-brace) was large, implying that a substantial mean correction was applied.
+
+Suppose that prior to the update, the network had inflated its variance estimates to excuse a large mean error. The KL contribution of further inflating s (Eq. 16, right underbrace) is upper bounded, agnostic of the mean error. With an appropriately set learning rate, the network has limited incentive to continue to inflate its uncertainty to mask poor mean fits.
+
+## 3.4 COMPARISON TO PAST STABILIZERS
+
+As seen in Table 1, Col 2, gradient reweighting that previously required dataset-specific hyperparameter tuning and Newton steps is now directly revealed by the geometry of the loss surface itself. Three independently motivated methods converge on a single MSE update.
+
+While β-NLL and Fisher8 both scale the log-variance gradients (Col 3), Faithful leaves the scale gradient unaltered, but explicitly decouples its backpropagation into the shared trunk representation as a mechanism for controlling training stability. This procedure is depicted in Fig. 1, Col 3. While this restores unit-variance performance, Immer et al. [2023] document the inadvertent effect of this gradient severing on representation learning. We show in Section 4.4 that Fisher8 avoids gradient severing, restores performance, and preserves downstream feature-space utility.
+
+<table><tr><td></td><td>Method Mean Update</td><td>Scale Update</td><td>Update Motivation</td><td>KL Control?</td><td>Backward Operator</td><td>Extra Hyperparam?</td></tr><tr><td>β-NLL</td><td> $e ^ { \beta s } \nabla _ { \mu } \ell$ </td><td> $e ^ { \beta s } \nabla _ { s } \ell$ </td><td>Reweight by scale to reduce under-sampling</td><td>X</td><td>stop gradients + reweighting</td><td> $\beta$ </td></tr><tr><td>Faithful</td><td> $e ^ { s } \nabla _ { \mu } \ell$ </td><td>∇sl, severed trunk</td><td>Restore unit-variance RMSE performance</td><td>X</td><td>stop gradients + severing</td><td>X</td></tr><tr><td>Fisher8</td><td> $e ^ { s } \nabla _ { \mu } \ell$ </td><td> $2 \nabla _ { s } \ell$ </td><td>Change traversal to match loss curvature</td><td>√</td><td>Fisher precondition + norm</td><td>×</td></tr></table>
+
+Table 1: Comparison of stabilization mechanisms: update rules, backward-pass operator, and additional hyperparameters.
+
+Wong-Toi et al. [2024] abstract neural networks with nonparametric twice-differentiable functions. Let $\Theta _ { \mu } , \Theta _ { \sigma }$ denote the weights of the mean and variance sub-networks and $\hat { \mu } , \hat { \Lambda }$ denote their counterparts in the overparameterized limit. As a network grows infinitely flexible, its parameters become an ill-posed handle for control. Network-norm constraints are no longer enforceable, and are replaced with penalties on the output-function gradients.
+
+weight regularization
+
+$$
+f _ { \mathrm { N N } } ^ { \Theta } \colon \ \rho \mathcal { L } _ { \mathrm { N L L } } \ + \ \overbrace { \bar { \rho } \big ( \gamma \| \Theta _ { \mu } \| ^ { 2 } + \bar { \gamma } \| \Theta _ { \sigma } \| ^ { 2 } \big ) } ^ { }\tag{17a}
+$$
+
+$$
+\widehat { \mu } , \widehat { \Lambda } \colon \rho \mathcal { L } _ { \mathrm { N L L } } + \underbrace { \bar { \rho } ( \gamma \| \nabla \widehat { \mu } \| ^ { 2 } + \bar { \gamma } \| \nabla \widehat { \Lambda } \| ^ { 2 } ) } _ { \mathrm { g r a d i e n t m a g n i t u d e c o n s t r a i n t s } }\tag{17b}
+$$
+
+Analogously, Fisher8 replaces weight-space penalties with a simple $L _ { 2 }$ norm constraint on batch gradient magnitudes, motivated by the need to control distributional mobility, rather than weight magnitudes. We show in Section 4.4 that Fisher8 remains performant without excessive reliance on tuned weight-space regularization terms.
+
+## 4 EXPERIMENTS
+
+## 4.1 1D HIGH-FREQUENCY SINUSOID
+
+Fisher8 corrects the documented training failure on a canonical 1D high-frequency sinusoid with constant noise [Seitzer et al., 2022]. We extend this benchmark to include inputdependent noise and introduce local KL variance as a diagnostic that reveals when feature-space gradient activity fails to produce distributional movement in the output.
+
+## 4.1.1 Experimental Setup
+
+We train two networks (150×150 hidden, tanh, SGD, batch size 32, $\mathrm { l r } { = } 1 0 ^ { - 3 }$ , 700k steps) under Baseline-NLL and Fisher8 on $y = 0 . 4 \sin ( 2 \pi x ) + \varepsilon .$ , under two separate noise regimes: $\tau ( x _ { i } ) = 0 . 0 1 \forall x _ { i } ,$ , and $\sigma ( x _ { i } ) = 0 . 0 2 + 0 . 0 1 x _ { i }$
+
+For each model we plot the predicted $\mu$ and $\pm 2 \sigma$ against ground truth (Fig. 3, Row 1), the $\log _ { 1 0 }$ local Jacobian variance [Seitzer et al., 2022], measuring how much the Jacobian $J _ { f }$ of the learned features varies within a radius-r $L _ { 2 } .$ -ball as a proxyforfeature expressivity/richness (Fig. 3, Row 2)
+
+$$
+V _ { J } ( x ) = \frac { 1 } { | \mathcal { B } _ { x } | } \sum _ { x ^ { \prime } \in \mathcal { B } _ { x } } \Big \Vert J _ { f } ( x ^ { \prime } ) - \frac { 1 } { | \mathcal { B } _ { x } | } \sum _ { x ^ { \prime \prime } \in \mathcal { B } _ { x } } J _ { f } ( x ^ { \prime \prime } ) \Big \Vert ^ { 2 } ,\tag{18}
+$$
+
+$$
+B _ { x } = \{ x ^ { \prime } \in \mathcal { D } : \| x - x ^ { \prime } \| _ { 2 } \leq r \} ,\tag{19}
+$$
+
+and the $\log _ { 1 0 }$ local KL-variance of the induced output distribution, as a proxy for the network’s ability to support the required distributional mobility (Fig. 3, Row 3):
+
+$$
+\begin{array} { r } { { V } _ { \mathrm { K L } } ( x ) = { \mathrm { V a r } } _ { x ^ { \prime } \in { \mathcal { B } } _ { \mathcal { X } } } \Bigl [ \mathrm { K L } \bigl ( p _ { \theta ( x ) } \| p _ { \theta ( x ^ { \prime } ) } \bigr ) \Bigr ] . } \end{array}\tag{20}
+$$
+
+## 4.1.2 Results and Analysis
+
+Plotting conventions referenced in this section are defined in the caption of Fig. 3.
+
+Columns A and B in Fig. 3 compare Baseline-NLL and Fisher8 under input-independent noise. Baseline-NLL (A.1) reproduces the documented pathology in which the predicted mean degrades and the variance inflates to absorb residual error. Fisher8 (B.1) converges to the ground-truth mean with calibrated uncertainty bands within 100k updates, while Baseline-NLL remains stalled for the entirety of the training budget. For Fisher8, Jacobian variance (B.2) and KL-variance (B.3) both develop rich, spatially coupled structure early in training, suggesting that the geometric correction promotes parameter updates that improve both feature-space richness and the KL mobility of the induced output distribution.
+
+Under input-dependent noise, Baseline-NLL (C.1) again fails, with the fit degrading most visibly for $x \gtrsim 7$ where the noise is largest. Fisher8 (D.1) substantially improves mean tracking and produces variance estimates that follow the linear noise profile, though a gap relative to the Oracle (E.1) persists at the right end of the domain where Fisher8’s noise estimates slightly overshoot at the bottom end of the sinusoid.
+
+Where does this remaining error live? While Jacobian variance (D.2) is uniformly high across the input domain, the
+
+![](images/33fa06f148d1343b385611740a15659eb1f7115fa69d99a4c7f538713fa17538.jpg)  
+Figure 3: Row 1: predicted fits under input-independent noise (left) and input-dependent noise (right), with the Oracle shown in the rightmost column. Solid red/green lines are the mean predictions of Baseline-NLL/Fisher8; black is the ground-truth mean. Shaded regions show predicted ±2σ; dotted lines show ground-truth ±2σ. Row 2: $\log _ { 1 0 }$ Jacobian variance of the learned feature space within a 0.5-radius neighborhood over training updates. Row 3: $\log _ { 1 0 }$ local KLvariance of $\theta = \left( \mu , s \right)$ within the same neighborhood over training. The Oracle has high Jacobian variance and displays KL-variance from the ground-truth noise generating functions. We use $r = 0 . 5$ for both diagnostics.
+
+KL-variance diagnostic (D.3) retains visible jaggedness between the vertical green bands relative to the Oracle (E.3), surfacing local imperfections in the predicted distribution that are not captured byfeature-space richness alone.
+
+In contrast to local jaggedness, global failure modes in the heatmaps present themselves as stalling, in which a region remains uniformly dark across training iterations (A.3), and churning, where values are nonzero and visibly fluctuate between iterations (C.2). In the linear noise regime, Baseline-NLL’s feature space (C.2) is churning, with visible “activity” as training progresses, yet KL-variance stalls. Why doesn’t the feature space become richer as training progresses despite gradient activity persisting?
+
+Precisely because activity in the last-layer feature space does not guarantee that the induced output parameters $( \mu , s )$ can vary commensurately across the input domain. While the Jacobian variance (C.2) shows incremental sustained feature-space activity throughout training, the KL-variance (C.3) remains dark; the mapping from features to output parameters compresses incremental gains in richness into near-constant predictions.
+
+We therefore offer an addendum to Seitzer et al.’s hypothesis: they argue that early feature-space flatness creates systematic under-sampling and insufficient representational capacity. We add that incremental gains in feature-space expressivity improve predictive quality only if they also produce sufficient mobility in the distributions induced by the predicted parameters $\theta = \left( \mu , s \right)$
+
+## 4.2 MULTIDIMENSIONAL REGRESSION
+
+Having evaluated qualitatively on 1D benchmarks, we shift to a quantitative evaluation of multidimensional UCI [Dua and Graff, 2017] regression data. Many methods already perform well on these datasets, so we use them not to claim “state-of-the-art” performance, but to test whether Fisher8 behaves like a curvature-aware method in practice, despite only being an output-layer intervention. We constrain optimizer settings so that the performance differences are attributed to different methods’ gradient interventions, and test whether Fisher8 exhibits empirical fingerprints of secondorder methods.
+
+## 4.2.1 Experimental Setup
+
+We use a shared-trunk MLP with 2 hidden layers of 50 units, ELU activations, 2 output heads and train using SGD with batch size 32 for 100 gradient steps.
+
+The choice of SGD is deliberate. Adam applies perparameter rescaling that changes both the direction and effective step size of the update, introducing optimizer-level preconditioning. Fisher8 also alters the update direction via an explicit geometry-aware correction at the output layer. Using Adam would therefore superimpose two distinct sources of preconditioning, making it impossible to attribute performance differences specifically to Fisher8.
+
+Table 2: UCI benchmark results with SGD (lr=0.005, batch size=32) for 100 steps. Results report mean ± standard deviation over 20 folds. Bold marks the best (lowest) value per dataset and metric.
+<table><tr><td></td><td colspan="3">Baseline-NLL</td><td colspan="3">β-NLL (0.5)</td><td colspan="3">Faithful</td><td colspan="3">Fisher8</td></tr><tr><td>Dataset</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td></tr><tr><td>Yacht</td><td>10.09±2.72</td><td>2.50±0.20</td><td>0.072±0.009</td><td>10.57±2.54</td><td>2.85±0.15</td><td>0.096±0.017</td><td>11.03±2.51</td><td>2.78±0.18</td><td>0.098±0.019</td><td>8.02±1.34</td><td>2.44±0.12</td><td>0.053±0.010</td></tr><tr><td>Concrete</td><td>11.96±0.67</td><td>2.97±0.05</td><td>0.024±0.006</td><td>12.67±0.70</td><td>3.05±0.05</td><td>0.028±0.007</td><td>13.04±0.73</td><td>3.06±0.06</td><td>0.024±0.006</td><td>10.06±0.54</td><td>2.76±0.06</td><td>0.026±0.006</td></tr><tr><td>Energy</td><td>3.74±0.51</td><td>1.86±0.09</td><td>0.065±0.010</td><td>4.41±0.61</td><td>2.23±0.05</td><td>0.075±0.012</td><td>4.74±0.66</td><td>2.12±0.09</td><td>0.060±0.011</td><td>2.99±0.30</td><td>1.37±0.13</td><td>0.035±0.009</td></tr><tr><td>Boston</td><td>5.58±1.16</td><td>2.16±0.11</td><td>0.051±0.012</td><td>6.00±1.23</td><td>2.34±0.11</td><td>0.062±0.014</td><td>6.26±1.27</td><td>2.31±0.13</td><td>0.054±0.015</td><td>4.44±1.00</td><td>1.93±0.28</td><td>0.035±0.009</td></tr><tr><td>Kin8nm</td><td>0.22±0.01</td><td>-1.03±0.04</td><td>0.013±0.003</td><td>0.23±0.01</td><td>-0.99±0.04</td><td>0.011±0.003</td><td>0.23±0.01</td><td>-0.97±0.04</td><td>0.014±0.004</td><td>0.20±0.00</td><td>-1.12±0.02</td><td>0.017±0.003</td></tr><tr><td>Naval</td><td>0.01±0.00</td><td>-4.39±0.02</td><td>0.030±0.004</td><td>0.01±0.00</td><td>-4.38±0.02</td><td>0.033±0.004</td><td>0.01±0.00</td><td>-4.37±0.02</td><td>0.034±0.004</td><td>0.01±0.00</td><td>-4.40±0.02</td><td>0.022±0.004</td></tr><tr><td>Power</td><td>5.47±0.34</td><td>2.29±0.08</td><td>0.038±0.007</td><td>6.11±0.43</td><td>2.68±0.04</td><td>0.071±0.006</td><td>6.43±0.53</td><td>2.52±0.07</td><td>0.049±0.007</td><td>4.54±0.14</td><td>2.02±0.04</td><td>0.015±0.004</td></tr><tr><td>Wine</td><td>0.70±0.04</td><td>0.13±0.06</td><td>0.033±0.008</td><td>0.72±0.04</td><td>0.16±0.06</td><td>0.043±0.012</td><td>0.73±0.04</td><td>0.18±0.07</td><td>0.050±0.011</td><td>0.66±0.04</td><td>0.09±0.11</td><td>0.025±0.006</td></tr></table>
+
+![](images/afbbce41297e16727a176d2a58c904135fbf0bbfdfc3b59a629b7f6bac27568d.jpg)  
+Figure 4: Pareto diagrams comparing four heteroscedastic regression methods across eight UCI benchmark datasets at six learning rates (0.001–0.1). Each panel shows normalized RMSE vs. normalized NLL, with normalization performed per-dataset using z-scores. Individual dataset results shown as small markers; method means shown as stars with 1-σ covariance ellipses; RMSE vs ECE is provided in Fig. 5. All per-learning-rate tables are provided in Appendix A.2.
+
+While models predict mean and uncertainty estimates, the ground-truth mean and variance functions are unavailable to compare against directly (Section 2). At the same time, models may report artificially high data likelihoods despite having uncalibrated uncertainty estimates and poor mean fits. Robust evaluation therefore requires quantifying quality of mean fit (RMSE), observational likelihood (NLL), and calibration of uncertainty estimates (ECE), where one model’s performance is strictly better than another’s if it improves on all three statistics. These competing objectives induce a 3-dimensional trade-off space, which we project onto 2D Pareto frontiers in Fig. 4.
+
+As a diagnostic for performance at a conservative learning rate, we report statistics for all methods at lr=0.005 in Table 2. We then sweep the learning rate across the values in Fig. 4 and track movement across the Pareto frontier.
+
+## 4.2.2 Results and Analysis
+
+To test whether Fisher8 updates are geometric in practice, not just in derivation, we assess whether Fisher8 exhibits two documented fingerprints of second-order methods [Martens, 2020]: (Fingerprint 1) making “more progress per step” at conservative learning rates, and (Fingerprint 2) increased sensitivity to learning-rate misspecification when the local approximation is no longer accurate and curvature preconditioning amplifies instability instead of helping.
+
+At learning rate 0.005 with a budget of only 100 gradient steps (Table 2), Fisher8 achieves the best RMSE, NLL, and ECE on nearly every benchmark, extracting more progress from each gradient step relative to baselines. The first three columns of Fig. 4 show that Fisher8 dominates the Pareto frontier at all conservative learning rates, consistent with Fingerprint 1.
+
+As the step size exceeds the radius in which the local secondorder approximation holds, we observe a performance reversal of Fisher8 relative to baselines. Fig. 4 shows an asymmetric degradation of Fisher8’s Pareto ellipses away from the origin as learning rate increases, while baselines move towards the optimum; large step sizes magnify instability, consistent with Fingerprint 2.
+
+This sweep provides both positive and negative evidence for a geometric explanation of Fisher8’s success. If this high-learning-rate degradation were absent, the geometric account would be undermined, and the gains would more likely reflect an artifact other than curvature awareness.
+
+Table 3: Weak-lensing benchmark. Results report mean ± standard deviation over 5 initialization seeds. Bold marks the best value per metric (coverage closest to the nominal 0.68 target).
+<table><tr><td>Method</td><td>Score ↑</td><td> $\mathbf { R M S E } _ { \Omega } \downarrow$ </td><td> $\mathbf { R M S E } _ { S _ { 8 } } \downarrow$ </td><td> $\mathbf { N L L } _ { \Omega } \downarrow$ </td><td> $\mathbf { N L L } _ { S _ { 8 } } \downarrow$ </td><td> $\mathbf { C o v } _ { \Omega } ^ { 6 8 }$ </td><td> $\mathbf { C o v } _ { S _ { 8 } } ^ { 6 8 }$ </td></tr><tr><td>Baseline-NLL</td><td> $7 . 6 8 3 \pm 0 . 2 6 1$ </td><td> $0 . 0 4 6 2 \pm 0 . 0 0 0 5$ </td><td> $0 . 0 3 2 3 \pm 0 . 0 0 0 7$ </td><td> $- 1 . 6 5 1 \pm 0 . 0 4 6$ </td><td> $- 1 . 9 4 0 \pm 0 . 0 7 5$ </td><td> $0 . 6 0 2 \pm 0 . 0 5 4$ </td><td> $0 . 5 6 3 \pm 0 . 0 4 5$ </td></tr><tr><td>β-NLL (0.5)</td><td> $6 . 9 5 2 \pm 0 . 4 7 8$ </td><td> $0 . 0 4 9 7 \pm 0 . 0 0 2 1$ </td><td> $0 . 0 3 3 2 \pm 0 . 0 0 0 5$ </td><td> $- 1 . 5 3 1 \pm 0 . 1 1 9$ </td><td> $- 1 . 8 9 7 \pm 0 . 0 7 1$ </td><td> $0 . 5 6 4 \pm 0 . 0 4 6$ </td><td> $0 . 5 5 9 \pm 0 . 0 5 4$ </td></tr><tr><td>Faithful</td><td> $6 . 4 6 3 \pm 0 . 1 3 1$ </td><td>0.0539 ± 0.0013</td><td> $0 . 0 3 3 5 \pm 0 . 0 0 0 5$ </td><td> $- 1 . 4 8 2 \pm 0 . 0 2 4$ </td><td> $- 1 . 9 2 7 \pm 0 . 0 2 5$ </td><td> $0 . 5 8 6 \pm 0 . 0 3 8$ </td><td> $\mathbf { 0 . 5 8 4 \pm 0 . 0 3 2 }$ </td></tr><tr><td>Fisher8</td><td> $\mathbf { 8 . 5 2 8 \pm 0 . 1 6 5 }$ </td><td> $\mathbf { 0 . 0 4 1 8 \pm 0 . 0 0 0 7 }$ </td><td> $\mathbf { 0 . 0 3 0 7 \pm 0 . 0 0 0 4 }$ </td><td> $\mathbf { - 1 . 7 7 2 \pm 0 . 0 2 6 }$ </td><td> $\mathbf { - 2 . 0 0 1 \pm 0 . 0 6 7 }$ </td><td> $\mathbf { 0 . 6 1 0 \pm 0 . 0 3 5 }$ </td><td> $0 . 5 7 6 \pm 0 . 0 6 4$ </td></tr></table>
+
+Limitation: While powerful in its ability to rapidly improve performance, Fisher8 inherits, and is not immune to, the high sensitivity of second-order approaches to the choice of learning rate. It trades the quadratic/cubic hyperparameter search space of baselines (learning rate × method-specific parameter × prior regularization) for a finer-resolution search along a single learning-rate axis.
+
+## 4.3 WEAK LENSING COSMOLOGY
+
+Weak gravitational lensing refers to the phenomenon where the path of light from a distant galaxy is altered by the gravity of the mass it passes on the way to the telescope, slightly distorting the observed image. These distortions can be converted into an image known as a convergence map $\kappa ,$ whose structure reflects how much matter the universe holds $( \Omega _ { m } )$ and how strongly it has clustered $( S _ { 8 } )$ . Fig. 6 shows that convergence maps governed by the same underlying parameters can vary widely in appearance. Given convergence maps $\kappa \in \mathbb { R } ^ { 1 \dot { 4 } 2 4 \times 1 7 6 }$ , we wish to infer $( \Omega _ { m } , S _ { 8 } )$ and uncertainty estimates $( \hat { \sigma } _ { \Omega m } , \hat { \sigma } _ { S _ { 8 } } )$
+
+## 4.3.1 Experimental Setup
+
+The dataset provided by FAIR Universe Collaboration [2025] consists of 101 simulated cosmologies, each observed under 256 noise regimes. We withhold 30% of realizations across all cosmologies for testing, so models are exposed to all possible cosmological parameters during training, but are evaluated on entirely unseen noise configurations. This provides an extremely conservative estimate of performance, and allows us to assess generalizability.
+
+## 4.3.2 Results and Analysis
+
+As seen in Table 3, Fisher8 achieves the highest score (Eq. 22), lowest RMSE, and best NLL on both parameters, while coverage remains below nominal for all methods. Surprisingly, β-NLL and Faithful perform worse than Baseline-NLL. In synthetic benchmarks, uncertainty $\sigma ^ { 2 } ( x )$ reflects well-defined observation noise. In addition to Gaussian shape noise, convergence maps carry systematics (baryonic feedback and photometric redshift uncertainty): $\sigma ^ { 2 } ( x ) =$ $\sigma _ { \mathrm { n o i s e } } ^ { 2 } ( x ) + \sigma _ { \mathrm { s y s } } ^ { 2 ^ { \bullet } } ( x )$ . We hypothesize that dataset-dependent gradient reweighting/severing may interact unintentionally with this noise composition, distorting systematics that may, in principle, be learnable through direct training.
+
+## 4.4 UNCERTAINTY-AWARE REPRESENTATIONS
+
+## 4.4.1 Experimental Setup
+
+We evaluate the quality of Fisher8’s feature space on a downstream task that requires uncertainty-aware representations, and demonstrate the reduced need for weight-space regularization. We adopt the experimental setup of Immer et al. [2023].
+
+Each MNIST handwritten-digit image $D _ { i }$ of class $c _ { i } \in$ $\{ 0 , \ldots , 9 \}$ is rotated by an angle rot to produce the network input $x _ { i }$ . The regression target $y _ { i }$ is a noisy observation of $\operatorname { r o t } _ { i }$ . We run two variants where the label noise depends on (Eq. 21a) and does not depend on (Eq. 21b) the digit class:
+
+$$
+\mathrm { r o t _ { i } } \sim \mathrm { U n i f o r m } ( - 9 0 ^ { \circ } , 9 0 ^ { \circ } ) , \quad \varepsilon _ { i } \sim \mathcal { N } ( 0 , 1 ) ,
+$$
+
+$$
+y _ { i } = \mathrm { r o t _ { i } } + \left( 1 1 c _ { i } + 1 \right) \varepsilon _ { i } ,\tag{21a}
+$$
+
+$$
+y _ { i } = \mathrm { r o t _ { i } } + 1 0 \varepsilon _ { i } .\tag{21b}
+$$
+
+As a primary representation learning task, a neural network is trained to predict the rotation angle and its associated uncertainty. As a secondary downstream task, the learned feature representations from the penultimate layer are used to train a logistic classifier to predict the original MNIST digit class. If the classifier succeeds, the learned representations are rich enough to capture both digit identity and rotation uncertainty, despite the primary training objective being to predict the rotation angle. See Table 4.
+
+## 4.4.2 Results and Analysis
+
+All methods perform grid search over prior precision λ for weight regularization during cross-validation. Baselines select $\lambda = 1 0 0$ or 1000 via cross-validation, while Fisher8 selects $\lambda = 0 . 1$ , a reduction of at least 1000× in regularization. Further, completely disabling this regularization (last row) creates negligible changes in Fisher8’s performance. This gap suggests that much of the burden of hyperparameter search over weight-space regularization can be alleviated through constraints on output layer gradient magnitudes.
+
+While Faithful attains reasonable errors and likelihoods in the input-dependent case, its downstream accuracy collapses to 54.2%. We suspect that blocking the gradients originating at the variance headfrom flowing into the common backbone $\left( \Theta _ { \mathrm { t r u n k } } \right.$ in Fig. 1, Col 3) may be severing critical information flow into the shared representation, inhibiting utility ofthe learnedfeature space on downstream tasks.
+
+Table 4: Rotated MNIST under heteroscedastic and homoscedastic noise. RMSE (rot): rotation angle prediction error; NLL: negative log-likelihood; ECE: expected calibration error; Feature acc: downstream digit classification accuracy from learned features. Results report mean ± standard deviation over 5 initialization seeds. NaturalNLL + KFAC [Immer et al., 2023] is shown as a reference. Bold marks the best value per metric. λ: prior precision for weight regularization. Additional baselines with method-specific search spaces are reported in Appendix C.2.
+<table><tr><td></td><td colspan="4">Input Dependent Noise</td><td colspan="4">Input Independent Noise</td></tr><tr><td>Method</td><td>RMSE°↓</td><td>NLL↓</td><td>ECE↓</td><td>Feat acc ↑</td><td>RMSE°↓</td><td> $\mathbf { N L L } \downarrow$ </td><td>ECE↓</td><td>Feat acc ↑</td></tr><tr><td> $\mathrm { N a t u r a l N L L + K F A C }$ </td><td> $\mathbf { 1 9 . 4 9 2 \pm 1 . 0 8 2 }$ </td><td> ${ \bf 5 . 3 0 3 \pm 0 . 0 1 8 }$ </td><td> $0 . 0 0 9 \pm 0 . 0 0 3$ </td><td> $7 6 . 5 0 0 \pm 0 . 4 4 3$ </td><td> $\mathbf { 1 2 . 0 1 0 \pm 0 . 4 7 9 }$ </td><td> $\mathbf { 4 . 0 8 5 \pm 0 . 0 2 0 }$ </td><td> $0 . 0 0 9 \pm 0 . 0 0 4$ </td><td> $5 0 . 3 6 0 \pm 2 . 3 6 6$ </td></tr><tr><td> $\beta { \mathrm { - N L L } } ( 0 . 5 )$ </td><td> $2 1 . 4 8 8 \pm 2 . 0 3 2$ </td><td> ${ \bf 5 . 3 6 3 \pm 0 . 0 1 9 }$ </td><td> $0 . 0 1 4 \pm 0 . 0 0 6$ </td><td> $7 0 . 9 8 0 \pm 1 . 7 1 4$ </td><td> $1 4 . 8 6 9 \pm 1 . 9 2 1$ </td><td> $4 . 2 5 6 \pm 0 . 0 8 4$ </td><td> $0 . 0 2 8 \pm 0 . 0 1 2$ </td><td> $5 1 . 8 0 0 \pm 4 . 7 1 3$ </td></tr><tr><td> $\beta { \mathrm { - N L L } } \left( 1 . 0 \right)$ </td><td> $2 2 . 1 3 8 \pm 2 . 9 3 5$ </td><td> $5 . 3 9 8 \pm 0 . 0 4 8$ </td><td> $0 . 0 1 5 \pm 0 . 0 1 1$ </td><td> $6 7 . 4 4 0 \pm 2 . 0 1 0$ </td><td> $\mathbf { 1 3 . 9 8 0 \pm 1 . 5 0 0 }$ </td><td> $\mathbf { 4 . 2 4 4 \pm 0 . 0 8 3 }$ </td><td> $0 . 0 1 9 \pm 0 . 0 1 6$ </td><td> $3 5 . 4 4 0 \pm 3 . 2 2 0$ </td></tr><tr><td>Faithful</td><td> $2 1 . 9 2 5 \pm 1 . 1 7 1$ </td><td> $5 . 5 5 5 \pm 0 . 0 1 3$ </td><td> $0 . 0 2 4 \pm 0 . 0 0 1$ </td><td> $5 4 . 2 2 0 \pm 0 . 9 5 2$ </td><td> $1 4 . 5 0 7 \pm 0 . 6 9 5$ </td><td> $4 . 2 9 3 \pm 0 . 0 4 7$ </td><td> $0 . 0 1 6 \pm 0 . 0 1 0$ </td><td> $3 7 . 3 6 0 \pm 1 . 6 2 8$ </td></tr><tr><td>Fisher8  $( \lambda = 0 . 1 )$ </td><td> ${ \bf 2 0 . 9 3 4 \pm 0 . 3 3 9 }$ </td><td> $5 . 3 8 7 \pm 0 . 0 1 1$ </td><td> $\mathbf { 0 . 0 0 5 \pm 0 . 0 0 1 }$ </td><td> $\mathbf { 8 2 . 1 2 0 \pm 0 . 3 8 2 }$ </td><td> $1 4 . 7 0 8 \pm 0 . 2 4 6$ </td><td> $4 . 2 5 2 \pm 0 . 0 1 3$ </td><td> $\mathbf { 0 . 0 0 6 \pm 0 . 0 0 1 }$ </td><td> $8 0 . 9 4 0 \pm 0 . 3 2 0$ </td></tr><tr><td>Fisher8  $( \lambda = 0 )$ </td><td> ${ \bf 2 0 . 9 3 4 \pm 0 . 3 3 9 }$ </td><td> $5 . 3 8 7 \pm 0 . 0 1 1$ </td><td> $\mathbf { 0 . 0 0 5 \pm 0 . 0 0 1 }$ </td><td> $8 2 . 0 8 0 \pm 0 . 3 1 9$ </td><td> $1 4 . 7 0 9 \pm 0 . 2 4 6$ </td><td> $4 . 2 5 2 \pm 0 . 0 1 3$ </td><td> $\mathbf { 0 . 0 0 6 \pm 0 . 0 0 1 }$ </td><td> $\mathbf { 8 0 . 9 8 0 \pm 0 . 3 3 7 }$ </td></tr></table>
+
+Most strikingly, Fisher8 obtains a classifier accuracy of 80% in the input-independent noise regime, while other methods collapse to 35–52% (Table 4, Col 8). Recall that the primary objective is simply to predict the rotation angle. With class-independent noise there is no need to learn a feature space that also encodes digit identity, yet Fisher8 learns digit-aware features by default. The definition ofdistance in Fisher8’s updates is rooted in the amount ofinformation separating the current and candidate probability distributions that explain the data.
+
+## 5 RELATION TO PRIOR WORKS
+
+Class 1: Single Pass Direct Mean–Variance Prediction. These works were discussed extensively in Section 2.1. We place Fisher8 here and reinterpret how these stabilizers overlap with curvature awareness.
+
+Class 2: Ensembles. MC Dropout [Gal and Ghahramani, 2016] estimates uncertainty from stochastic forward passes with dropout active at test time. While framed as Bayesian, it is often viewed as an implicit ensemble of subnetworks. Lakshminarayanan et al. [2017] train independently initialized networks and decompose model uncertainty from signal noise. Fisher8 is a drop-in training modification compatible with either approach.
+
+Class 3: Bayesian Neural Networks. BNNs infer a posterior over weights, either over the full network or only the last layer [Watson et al., 2021, Kristiadi et al., 2020], and evaluate $p ( \boldsymbol { y } \mid \boldsymbol { x } , \mathcal { D } )$ via variational inference [Graves, 2011, Blundell et al., 2015] or Laplace approximations [Daxberger et al., 2021]. Fisher8 does not introduce new methods for posterior inference or test-time sampling.
+
+Class 4: Natural Parameters. Scaling natural gradients to deep networks requires weight-space Fisher approximations such as KFAC [Martens and Grosse, 2015]. Megerle et al. [2023] instead obtain natural gradients of the predictive Gaussian via local parameterizations with per-input trust-region projections, and Immer et al. [2023] use natural parameters for a better-conditioned objective. Fisher8 avoids loss surface reparameterization and weight-space curvature entirely, applying the exact $2 \times 2$ inverse Fisher information matrix only to the output layer gradients.
+
+## 6 CONCLUSION
+
+We have examined several stabilizers commonly used in neural uncertainty regression and argue that their repeated necessity reflects a misdirected loss surface traversal. We derived an output-layer update rule that measures progress by KL divergence and showed when prior prescriptions mimic components of a Fisher-corrected and distributionally controlled output-layer step. Empirically, Fisher8 exhibits the learning-rate sensitivity signature of natural-gradient methods and learns stronger uncertainty-aware features while requiring less weight-space regularization. Taken together, these results suggest that many independently proposed stabilizers may address overlapping facets of the same underlying geometric issue. Making this connection explicit should enable simpler training of heteroscedastic neural networks.
+
+## 7 FUTURE WORK
+
+Future work includes the extension of Fisher8 to other likelihood classes, a detailed comparison of our output layer intervention to methods that incorporate the shared network curvature, a deeper analysis of the interaction between Adam’s preconditioning and Fisher8’s gradient reorientation, and expansion from single- or dual-parameter prediction to dense prediction tasks, such as depth estimation, where per-pixel distances and uncertainties are needed.
+
+## References
+
+Shun-ichi Amari. Natural gradient works efficiently in learning. Neural Computation, 10(2):251–276, 1998. doi: 10.1162/089976698300017746.
+
+Charles Blundell, Julien Cornebise, Koray Kavukcuoglu, and Daan Wierstra. Weight uncertainty in neural networks. In International Conference on Machine Learning, pages 1613–1622. PMLR, 2015.
+
+Mark Collier, Basil Mustafa, Efi Kokiopoulou, Rodolphe Jenatton, and Jesse Berent. Correlated input-dependent label noise in large-scale image classification. In Proceedings ofthe IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), pages 1551–1560, 2021.
+
+Erik Daxberger, Agustinus Kristiadi, Alexander Immer, Runa Eschenhagen, Matthias Bauer, and Philipp Hennig. Laplace redux–effortless bayesian deep learning. In Advances in Neural Information Processing Systems, volume 34, pages 20089–20103, 2021.
+
+Dheeru Dua and Casey Graff. UCI machine learning repository, 2017. URL http://archive.ics.uci. edu/ml.
+
+FAIR Universe Collaboration. NeurIPS 2025 weak lensing uncertainty challenge. https://github.com/ FAIR-Universe/Cosmology\_Challenge, 2025. NeurIPS 2025 competition.
+
+Yarin Gal and Zoubin Ghahramani. Dropout as a Bayesian approximation: Representing model uncertainty in deep learning. In Maria Florina Balcan and Kilian Q. Weinberger, editors, Proceedings of the 33rd International Conference on Machine Learning, volume 48 of Proceedings of Machine Learning Research, pages 1050–1059. PMLR, 2016.
+
+Alex Graves. Practical variational inference for neural networks. In Advances in Neural Information Processing Systems, volume 24, 2011.
+
+José Miguel Hernández-Lobato and Ryan P Adams. Probabilistic backpropagation for scalable learning of bayesian neural networks. In International Conference on Machine Learning, pages 1861–1869, 2015.
+
+Dongseong Hwang. FAdam: Adam is a natural gradient optimizer using diagonal empirical Fisher information. arXiv preprint arXiv:2405.12807, 2024.
+
+Alexander Immer, Emanuele Palumbo, Alexander Marx, and Julia E. Vogt. Effective bayesian heteroscedastic regression with deep neural networks. In Advances in Neural Information Processing Systems (NeurIPS), 2023.
+
+Diederik P. Kingma and Jimmy Ba. Adam: A method for stochastic optimization. In International Conference on Learning Representations (ICLR), 2015.
+
+Agustinus Kristiadi, Matthias Hein, and Philipp Hennig. Being bayesian, even just a bit, fixes overconfidence in relu networks. In International Conference on Machine Learning, pages 5436–5446. PMLR, 2020.
+
+Frederik Kunstner, Philipp Hennig, and Lukas Balles. Limitations of the empirical Fisher approximation for natural gradient descent. In Advances in Neural Information Processing Systems, volume 32, 2019.
+
+Balaji Lakshminarayanan, Alexander Pritzel, and Charles Blundell. Simple and scalable predictive uncertainty estimation using deep ensembles. In Advances in Neural Information Processing Systems, pages 6402–6413, 2017.
+
+James Martens. New insights and perspectives on the natural gradient method. Journal ofMachine Learning Research, 21(146):1–76, 2020.
+
+James Martens and Roger Grosse. Optimizing neural networks with kronecker-factored approximate curvature. In International Conference on Machine Learning, pages 2408–2417. PMLR, 2015.
+
+Denis Megerle, Fabian Otto, Michael Volpp, and Gerhard Neumann. Stable optimization of Gaussian likelihoods. OpenReview preprint, 2023. URL https: //openreview.net/forum?id=hmuLHC5MrG.
+
+David A. Nix and Andreas S. Weigend. Estimating the mean and variance of the target probability distribution. In Proceedings ofthe 1994 IEEE International Conference on Neural Networks, volume 1, pages 55–60. IEEE, 1994.
+
+Maximilian Seitzer, Arash Tavakoli, Dimitrije Antic, and Georg Martius. On the pitfalls of heteroscedastic uncertainty estimation with probabilistic neural networks. In International Conference on Learning Representations (ICLR), 2022.
+
+Andrew Stirn, Hans-Hermann Wessels, Megan Schertzer, Laura Pereira, Neville E. Sanjana, and David A. Knowles. Faithful heteroscedastic regression with neural networks. In Proceedings ofthe 26th International Conference on Artificial Intelligence and Statistics. PMLR, 2023.
+
+Joe Watson, Jihao Andreas Lin, Pascal Klink, Joni Pajarinen, and Jan Peters. Latent derivative bayesian last layer networks. In Proceedings of the 24th International Conference on Artificial Intelligence and Statistics, pages 1198–1206. PMLR, 2021.
+
+Eliot Wong-Toi, Alex Boyd, Vincent Fortuin, and Stephan Mandt. Understanding pathologies of deep heteroskedastic regression. In Proceedings ofthe 40th Conference on Uncertainty in Artificial Intelligence (UAI). PMLR, 2024.
+
+# Fisher8: Stabilizing Neural Heteroscedastic Regression via Output-Layer Fisher Geometry (Supplemental Material)
+
+Sumedh Vemuganti<sup>1</sup>
+
+Nickvash Kani<sup>1</sup>
+
+<sup>1</sup>Electrical and Computer Engineering Department, University of Illinois at Urbana-Champaign
+
+## A UCI EXPERIMENT DETAILS
+
+## A.1 ADDITIONAL TRAINING DETAILS
+
+Each network was trained and evaluated using the predefined splits of Hernández-Lobato and Adams [2015]. Experiments have a fixed budget of 100 updates, no early stopping, no further guard rails such as σ clamping, and batch size of 32, with 0.5 log 2π omitted from all reported likelihoods.
+
+## A.2 COMPLETE LEARNING RATE SWEEP
+
+Table 5: UCI benchmark results with SGD (lr=0.001, batch size=32) for 100 steps. Results report mean ± standard deviation over 20 folds. Bold marks the best (lowest) value per dataset and metric.
+<table><tr><td></td><td colspan="3">Unit Variance</td><td colspan="3">Baseline-NLL</td><td colspan="3">β-NLL (0.5)</td><td colspan="3">Faithful</td><td colspan="3">Fisher8</td></tr><tr><td>Dataset</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td></tr><tr><td>Yacht</td><td>13.95±2.81</td><td>3.17±0.17</td><td>0.100±0.020</td><td>13.14±2.97</td><td>3.03±0.24</td><td>0.087±0.020</td><td>13.76±2.83</td><td>3.14±0.22</td><td>0.091±0.019</td><td>13.95±2.81</td><td>3.17±0.26</td><td>0.087±0.018</td><td>9.95±2.46</td><td>2.49±0.20</td><td>0.070±0.017</td></tr><tr><td>Concrete</td><td>15.48±0.93</td><td>3.25±0.05</td><td>0.024±0.006</td><td>14.85±0.91</td><td>3.21±0.08</td><td>0.030±0.005</td><td>15.33±0.92</td><td>3.24±0.07</td><td>0.026±0.006</td><td>15.48±0.93</td><td>3.29±0.10</td><td>0.034±0.007</td><td>12.43±0.75</td><td>3.00±0.06</td><td>0.023±0.005</td></tr><tr><td>Energy</td><td>8.00±0.92</td><td>2.63±0.07</td><td>0.046±0.009</td><td>6.76±0.94</td><td>2.42±0.12</td><td>0.047±0.008</td><td>7.71±0.91</td><td>2.56±0.10</td><td>0.046±0.009</td><td>8.00±0.92</td><td>2.60±0.14</td><td>0.048±0.011</td><td>3.70±0.53</td><td>1.63±0.14</td><td>0.045±0.014</td></tr><tr><td>Boston</td><td>8.42±1.20</td><td>2.65±0.12</td><td>0.049±0.014</td><td>7.72±1.14</td><td>2.54±0.17</td><td>0.045±0.012</td><td>8.24±1.18</td><td>2.64±0.17</td><td>0.046±0.012</td><td>8.42±1.20</td><td>2.70±0.24</td><td>0.045±0.010</td><td>5.71±1.24</td><td>2.18±0.18</td><td>0.047±0.013</td></tr><tr><td>Kin8nm</td><td>0.26±0.01</td><td>-0.86±0.04</td><td>0.010±0.003</td><td>0.25±0.01</td><td>-0.84±0.06</td><td>0.028±0.005</td><td>0.26±0.01</td><td>-0.84±0.05</td><td>0.021±0.005</td><td>0.26±0.01</td><td>-0.78±0.07</td><td>0.032±0.006</td><td>0.23±0.01</td><td>-1.00±0.04</td><td>0.013±0.003</td></tr><tr><td>Naval</td><td>0.01±0.00</td><td>-4.39±0.02</td><td>0.023±0.003</td><td>0.01±0.00</td><td>-4.31±0.05</td><td>0.045±0.006</td><td>0.01±0.00</td><td>-4.35±0.03</td><td>0.037±0.005</td><td>0.01±0.00</td><td>-4.28±0.06</td><td>0.048±0.006</td><td>0.01±0.00</td><td>-4.39±0.02</td><td>0.026±0.004</td></tr><tr><td>Power</td><td>12.97±1.02</td><td>3.13±0.05</td><td>0.035±0.004</td><td>10.19±1.24</td><td>2.85±0.11</td><td>0.031±0.005</td><td>12.28±1.04</td><td>3.03±0.07</td><td>0.030±0.005</td><td>12.97±1.02</td><td>3.07±0.09</td><td>0.030±0.007</td><td>5.44±0.32</td><td>2.18±0.06</td><td>0.011±0.002</td></tr><tr><td>Wine</td><td>0.80±0.04</td><td>0.28±0.05</td><td>0.087±0.012</td><td>0.78±0.04</td><td>0.31±0.09</td><td>0.077±0.017</td><td>0.79±0.04</td><td>0.30±0.08</td><td>0.084±0.015</td><td>0.80±0.04</td><td>0.39±0.11</td><td>0.088±0.015</td><td>0.71±0.04</td><td>0.15±0.06</td><td>0.042±0.010</td></tr></table>
+
+Table 6: UCI benchmark results with SGD (lr=0.003, batch size=32) for 100 steps. Results report mean ± standard deviation over 20 folds. Bold marks the best (lowest) value per dataset and metric.
+<table><tr><td></td><td colspan="3">Unit Variance</td><td colspan="3">Baseline-NLL</td><td colspan="3">β-NLL (0.5)</td><td colspan="3">Faithful</td><td colspan="3">Fisher8</td></tr><tr><td>Dataset</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td></tr><tr><td>Yacht</td><td>12.27±2.67</td><td>3.07±0.14</td><td>0.109±0.022</td><td>11.04±2.98</td><td>2.72±0.22</td><td>0.089±0.016</td><td>11.88±2.72</td><td>2.96±0.18</td><td>0.106±0.023</td><td>12.27±2.67</td><td>2.93±0.20</td><td>0.097±0.019</td><td>8.52±1.41</td><td>2.51±0.11</td><td>0.057±0.014</td></tr><tr><td>Concrete</td><td>14.09±0.82</td><td>3.17±0.04</td><td>0.028±0.007</td><td>13.07±0.81</td><td>3.05±0.06</td><td>0.023±0.006</td><td>13.78±0.81</td><td>3.12±0.06</td><td>0.023±0.006</td><td>14.09±0.82</td><td>3.14±0.07</td><td>0.024±0.005</td><td>10.49±0.54</td><td>2.80±0.05</td><td>0.026±0.008</td></tr><tr><td>Energy</td><td>5.80±0.80</td><td>2.48±0.04</td><td>0.064±0.013</td><td>4.45±0.67</td><td>2.08±0.09</td><td>0.062±0.010</td><td>5.39±0.76</td><td>2.33±0.06</td><td>0.064±0.012</td><td>5.80±0.80</td><td>2.29±0.10</td><td>0.051±0.010</td><td>3.13±0.35</td><td>1.44±0.12</td><td>0.034±0.005</td></tr><tr><td>Boston</td><td>7.04±1.25</td><td>2.52±0.10</td><td>0.062±0.015</td><td>6.24±1.18</td><td>2.28±0.12</td><td>0.053±0.013</td><td>6.78±1.22</td><td>2.43±0.13</td><td>0.057±0.015</td><td>7.04±1.25</td><td>2.43±0.15</td><td>0.050±0.014</td><td>4.62±1.04</td><td>1.95±0.23</td><td>0.038±0.010</td></tr><tr><td>Kin8nm</td><td>0.24±0.01</td><td>-0.91±0.04</td><td>0.011±0.003</td><td>0.23±0.01</td><td>-0.97±0.05</td><td>0.015±0.004</td><td>0.24±0.01</td><td>-0.93±0.05</td><td>0.015±0.004</td><td>0.24±0.01</td><td>-0.90±0.05</td><td>0.020±0.005</td><td>0.20±0.00</td><td>-1.11±0.03</td><td>0.017±0.003</td></tr><tr><td>Naval</td><td>0.01±0.00</td><td>-4.39±0.01</td><td>0.023±0.003</td><td>0.01±0.00</td><td>-4.37±0.03</td><td>0.035±0.004</td><td>0.01±0.00</td><td>-4.37±0.03</td><td>0.035±0.005</td><td>0.01±0.00</td><td>-4.35±0.03</td><td>0.039±0.005</td><td>0.01±0.00</td><td>-4.40±0.01</td><td>0.023±0.004</td></tr><tr><td>Power</td><td>7.98±0.85</td><td>2.95±0.02</td><td>0.070±0.009</td><td>6.13±0.46</td><td>2.49±0.08</td><td>0.052±0.006</td><td>7.30±0.73</td><td>2.76±0.05</td><td>0.062±0.008</td><td>7.98±0.85</td><td>2.69±0.08</td><td>0.043±0.008</td><td>4.67±0.17</td><td>2.04±0.04</td><td>0.013±0.003</td></tr><tr><td>Wine</td><td>0.76±0.04</td><td>0.23±0.05</td><td>0.073±0.015</td><td>0.73±0.04</td><td>0.18±0.07</td><td>0.051±0.013</td><td>0.75±0.04</td><td>0.22±0.07</td><td>0.062±0.011</td><td>0.76±0.04</td><td>0.24±0.08</td><td>0.066±0.011</td><td>0.66±0.04</td><td>0.09±0.10</td><td>0.025±0.007</td></tr></table>
+
+Table 7: UCI benchmark results with SGD (lr=0.01, batch size=32) for 100 steps. Results report mean ± standard deviation over 20 folds. Bold marks the best (lowest) value per dataset and metric.
+<table><tr><td></td><td colspan="3">Unit Variance</td><td colspan="3">Baseline-NLL</td><td colspan="3">β-NLL (0.5)</td><td colspan="3">Faithful</td><td colspan="3">Fisher8</td></tr><tr><td>Dataset</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td></tr><tr><td>Yacht</td><td>9.37±1.97</td><td>2.92±0.07</td><td>0.083±0.014</td><td>10.38+2.98</td><td>2.18±0.23</td><td>0.064±0.013</td><td>9.14±1.92</td><td>2.70±0.11</td><td>0.064±0.012</td><td>9.37±1.97</td><td>2.53±0.15</td><td>0.064±0.013</td><td>6.25±1.32</td><td>2.06±0.22</td><td>0.046±0.012</td></tr><tr><td>Concrete</td><td>11.49±0.52</td><td>3.05±0.02</td><td>0.040±0.006</td><td>10.71±0.54</td><td>2.85±0.04</td><td>0.025±0.007</td><td>11.19±0.51</td><td>2.94±0.03</td><td>0.030±0.005</td><td>11.49±0.52</td><td>2.94±0.04</td><td>0.025±0.007</td><td>9.25±0.56</td><td>2.68±0.07</td><td>0.023±0.007</td></tr><tr><td>Energy</td><td>3.78±0.50</td><td>2.38±0.02</td><td>0.105±0.017</td><td>3.47±0.47</td><td>1.60±0.18</td><td>0.047±0.011</td><td>3.60±0.46</td><td>2.09±0.04</td><td>0.084±0.011</td><td>3.78±0.50</td><td>1.81±0.10</td><td>0.058±0.011</td><td>3.06±0.29</td><td>1.43±0.19</td><td>0.040±0.010</td></tr><tr><td>Boston</td><td>5.36±1.18</td><td>2.40±0.07</td><td>0.077±0.018</td><td>4.98±1.07</td><td>1.98±0.13</td><td>0.045±0.010</td><td>5.15±1.13</td><td>2.22±0.09</td><td>0.064±0.013</td><td>5.36±1.18</td><td>2.15±0.13</td><td>0.055±0.014</td><td>4.18±0.97</td><td>1.87±0.31</td><td>0.036±0.009</td></tr><tr><td>Kin8nm</td><td>0.21±0.01</td><td>-1.00±0.02</td><td>0.020±0.005</td><td>0.21±0.01</td><td>-1.09±0.03</td><td>0.016±0.003</td><td>0.21±0.01</td><td>-1.06±0.03</td><td>0.013±0.003</td><td>0.21±0.01</td><td>-1.05±0.03</td><td>0.013±0.003</td><td>0.20±0.00</td><td>-1.13±0.02</td><td>0.017±0.003</td></tr><tr><td>Naval</td><td>0.01±0.00</td><td>-4.40±0.01</td><td>0.022±0.003</td><td>0.01±0.00</td><td>-4.39±0.02</td><td>0.025±0.004</td><td>0.01±0.00</td><td>-4.39±0.02</td><td>0.030±0.004</td><td>0.01±0.00</td><td>-4.39±0.02</td><td>0.028±0.004</td><td>0.01±0.00</td><td>-4.39±0.02</td><td>0.023±0.004</td></tr><tr><td>Power</td><td>5.64±0.32</td><td>2.89±0.01</td><td>0.100±0.005</td><td>4.79±0.23</td><td>2.06±0.04</td><td>0.016±0.005</td><td>5.44±0.29</td><td>2.53±0.05</td><td>0.068±0.004</td><td>5.64±0.32</td><td>2.28±0.05</td><td>0.028±0.005</td><td>4.57±0.17</td><td>2.04±0.05</td><td>0.019±0.007</td></tr><tr><td>Wine</td><td>0.68±0.04</td><td>0.15±0.04</td><td>0.035±0.007</td><td>0.67±0.04</td><td>0.09±0.07</td><td>0.027±0.006</td><td>0.68±0.04</td><td>0.10±0.06</td><td>0.029±0.007</td><td>0.68±0.04</td><td>0.11±0.06</td><td>0.029±0.008</td><td>0.66±0.04</td><td>0.09±0.12</td><td>0.026±0.006</td></tr></table>
+
+Table 8: UCI benchmark results with SGD (lr=0.03, batch size=32) for 100 steps. Results report mean ± standard deviation over 20 folds. Bold marks the best (lowest) value per dataset and metric.
+<table><tr><td></td><td colspan="3">Unit Variance</td><td colspan="3">Baseline-NLL</td><td colspan="3">β-NLL (0.5)</td><td colspan="3">Faithful</td><td colspan="3">Fisher8</td></tr><tr><td>Dataset</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td></tr><tr><td>Yacht</td><td>8.68±1.36</td><td>2.89±0.04</td><td>0.071±0.012</td><td>9.24±2.85</td><td>2.26±0.35</td><td>0.063±0.015</td><td>8.43±1.75</td><td>2.43±0.12</td><td>0.053±0.011</td><td>8.68±1.36</td><td>2.55±0.10</td><td>0.056±0.013</td><td>5.56±1.72</td><td>1.84±0.40</td><td>0.072±0.027</td></tr><tr><td>Concrete</td><td>10.31±0.54</td><td>3.01±0.02</td><td>0.049±0.005</td><td>9.92±0.67</td><td>2.70±0.07</td><td>0.025±0.006</td><td>10.14±0.54</td><td>2.80±0.04</td><td>0.027±0.006</td><td>10.31±0.54</td><td>2.79±0.05</td><td>0.024±0.007</td><td>8.52±0.69</td><td>2.61±0.08</td><td>0.031±0.008</td></tr><tr><td>Energy</td><td>3.26±0.37</td><td>2.36±0.01</td><td>0.116±0.014</td><td>3.35±0.50</td><td>1.70±0.25</td><td>0.056±0.014</td><td>3.16±0.35</td><td>1.67±0.07</td><td>0.055±0.010</td><td>3.26±0.37</td><td>1.51±0.11</td><td>0.033±0.007</td><td>3.54±0.66</td><td>2.43±3.39</td><td>0.047±0.018</td></tr><tr><td>Boston</td><td>4.63±1.03</td><td>2.35±0.05</td><td>0.083±0.014</td><td>4.60±1.07</td><td>1.95±0.52</td><td>0.046±0.015</td><td>4.55±1.01</td><td>1.99±0.10</td><td>0.052±0.012</td><td>4.63±1.03</td><td>1.95±0.17</td><td>0.043±0.011</td><td>4.18±1.12</td><td>1.87±0.26</td><td>0.044±0.011</td></tr><tr><td>Kin8nm</td><td>0.20±0.00</td><td>-1.04±0.01</td><td>0.029±0.003</td><td>0.20±0.00</td><td>-1.13±0.02</td><td>0.017±0.003</td><td>0.20±0.00</td><td>-1.12±0.02</td><td>0.018±0.003</td><td>0.20±0.00</td><td>-1.12±0.02</td><td>0.017±0.003</td><td>0.19±0.01</td><td>-1.20±0.06</td><td>0.015±0.004</td></tr><tr><td>Naval</td><td>0.01±0.00</td><td>-4.40±0.02</td><td>0.022±0.003</td><td>0.01±0.00</td><td>-4.40±0.01</td><td>0.022±0.004</td><td>0.01±0.00</td><td>-4.40±0.02</td><td>0.025±0.003</td><td>0.01±0.00</td><td>-4.40±0.02</td><td>0.022±0.004</td><td>0.01±0.00</td><td>-4.40±0.02</td><td>0.024±0.005</td></tr><tr><td>Power</td><td>4.92±0.22</td><td>2.88±0.00</td><td>0.110±0.003</td><td>4.81±0.38</td><td>2.09±0.07</td><td>0.022±0.010</td><td>4.69±0.18</td><td>2.10±0.04</td><td>0.029±0.006</td><td>4.92±0.22</td><td>2.08±0.04</td><td>0.010±0.002</td><td>5.16±0.77</td><td>2.18±0.16</td><td>0.031±0.013</td></tr><tr><td>Wine</td><td>0.66±0.04</td><td>0.12±0.04</td><td>0.037±0.007</td><td>0.66±0.04</td><td>0.08±0.11</td><td>0.026±0.007</td><td>0.66±0.04</td><td>0.07±0.06</td><td>0.027±0.006</td><td>0.66±0.04</td><td>0.08±0.07</td><td>0.026±0.006</td><td>0.66±0.04</td><td>0.10±0.15</td><td>0.027±0.007</td></tr></table>
+
+Table 9: UCI benchmark results with SGD (lr=0.1, batch size=32) for 100 steps. Results report mean ± standard deviation over 20 folds. Bold marks the best (lowest) value per dataset and metric. --- denotes a metric that diverged.
+<table><tr><td></td><td colspan="3">Unit Variance</td><td colspan="3">Baseline-NLL</td><td colspan="3">β-NLL (0.5)</td><td colspan="3">Faithful</td><td colspan="3">Fisher8</td></tr><tr><td>Dataset</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td></tr><tr><td>Yacht</td><td>7.44±1.33</td><td>2.85±0.04</td><td>0.080±0.018</td><td></td><td></td><td>0.093±0.192</td><td>6.28±2.73</td><td>2.37±1.28</td><td>0.078±0.030</td><td>7.44±1.33</td><td>2.34±0.14</td><td>0.050±0.015</td><td>10.80±5.09</td><td>30.45±108.52</td><td>0.094±0.033</td></tr><tr><td>Concrete</td><td>9.01±0.56</td><td>2.96±0.02</td><td>0.060±0.007</td><td>8.80±1.07</td><td>2.64±0.12</td><td>0.031±0.009</td><td>8.73±0.63</td><td>2.63±0.07</td><td>0.025±0.006</td><td>9.01±0.56</td><td>2.66±0.07</td><td>0.025±0.006</td><td>11.53±2.03</td><td>3.06±0.36</td><td>0.047±0.014</td></tr><tr><td>Energy</td><td>2.98±0.30</td><td>2.35±0.01</td><td>0.118±0.015</td><td></td><td></td><td>0.040±0.033</td><td>3.03±0.38</td><td>1.52±0.13</td><td>0.051±0.010</td><td>2.98±0.30</td><td>1.37±0.10</td><td>0.033±0.007</td><td>7.77±2.59</td><td>4.48±4.87</td><td>0.085±0.034</td></tr><tr><td>Boston</td><td>4.25±0.94</td><td>2.33±0.05</td><td>0.087±0.011</td><td></td><td></td><td>0.056±0.018</td><td>4.24±0.95</td><td>1.88±0.34</td><td>0.043±0.017</td><td>4.25±0.94</td><td>1.89±0.24</td><td>0.039±0.009</td><td>6.99±1.56</td><td>3.52±1.80</td><td>0.060±0.014</td></tr><tr><td>Kin8nm</td><td>0.20±0.01</td><td>-1.06±0.01</td><td>0.031±0.003</td><td>0.19±0.01</td><td>-1.17±0.04</td><td>0.016±0.003</td><td>0.20±0.01</td><td>-1.15±0.03</td><td>0.017±0.002</td><td>0.20±0.01</td><td>-1.14±0.03</td><td>0.017±0.003</td><td>0.20±0.02</td><td>-1.07±0.13</td><td>0.024±0.012</td></tr><tr><td>Naval</td><td>0.01±0.00</td><td>-4.40±0.02</td><td>0.022±0.003</td><td>0.01±0.00</td><td>-4.40±0.02</td><td>0.022±0.004</td><td>0.01±0.00</td><td>-4.40±0.02</td><td>0.022±0.003</td><td>0.01±0.00</td><td>-4.40±0.02</td><td>0.022±0.003</td><td></td><td></td><td>0.025±0.010</td></tr><tr><td>Power</td><td>4.52±0.13</td><td>2.87±0.00</td><td>0.115±0.002</td><td></td><td></td><td>0.069±0.192</td><td>4.78±0.58</td><td>2.09±0.11</td><td>0.029±0.010</td><td>4.52±0.13</td><td></td><td>0.014±0.009</td><td>9.41±2.73</td><td>3.75±3.36</td><td>0.065±0.021</td></tr><tr><td>Wine</td><td>0.66±0.04</td><td>0.12±0.04</td><td>0.035±0.006</td><td>0.66±0.04</td><td>0.09±0.13</td><td>0.027±0.007</td><td>0.66±0.04</td><td>0.09±0.11</td><td>0.027±0.006</td><td>0.66±0.04</td><td>0.10±0.15</td><td>0.026±0.005</td><td>0.70±0.05</td><td>0.18±0.13</td><td>0.037±0.011</td></tr></table>
+
+## A.3 ECE-RMSE PARETO FRONTIER FOR UCI ACROSS LEARNING RATES
+
+Errors, likelihoods, and calibration metrics induce a 3D tradeoff space. Two projections are visualized in Section 4.2. The missing projection follows the same trend and is provided here for completeness.
+
+![](images/af6bd2f57f07bf0c796d52435f75d011b993fd6e55ad509a4b839c535c3a3ef5.jpg)  
+Figure 5: Pareto diagrams comparing four heteroscedastic regression methods across eight UCI benchmark datasets at six learning rates (0.001–0.1). Each panel shows normalized ECE vs. normalized RMSE, per-dataset. Individual dataset results shown as small markers; method means shown as stars with 1-σ covariance ellipses.
+
+## A.4 ADAM INSTEAD OF SGD
+
+The relationship between Adam and natural gradients is nuanced, beyond the Gaussian regression setting. Some sources characterize Adam as employing a diagonal empirical Fisher preconditioner [Kingma and Ba, 2015, Hwang, 2024], with the latter arguing this grounding holds primarily for discrete distributions, while Kunstner et al. [2019] show that the empirical Fisher does not capture second-order curvature in general. This is why we originally scoped our comparison to SGD. The main experiments use SGD to isolate Fisher8’s output-layer correction from the per-parameter preconditioning that Adam introduces. Here we retrain all methods with Adam for 100 epochs at batch size 32 at lr=0.001, lr=0.01, and lr=0.1.
+
+Table 10: UCI benchmark results with Adam, epoch mode (100 epochs) (lr=0.001, batch size=32). Results report mean ± standard deviation over 20 folds.
+<table><tr><td></td><td colspan="3">Unit Variance</td><td colspan="3">Baseline-NLL</td><td colspan="3">β-NLL (0.5)</td><td colspan="3">Faithful</td><td colspan="3">Fisher8</td></tr><tr><td>Dataset</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td></tr><tr><td>Yacht</td><td>1.52±0.35</td><td>2.72±0.02</td><td>0.291±0.068</td><td>8.85±2.76</td><td>0.02±0.47</td><td>0.059±0.014</td><td>0.79±0.29</td><td>-0.31±0.26</td><td>0.049±0.014</td><td>1.52±0.36</td><td>0.63±0.15</td><td>0.046±0.011</td><td>1.51±0.43</td><td>0.84±0.30</td><td>0.050±0.014</td></tr><tr><td>Concrete</td><td>5.73±0.53</td><td>2.88±0.01</td><td>0.098±0.009</td><td>5.87±0.58</td><td>2.21±0.23</td><td>0.026±0.008</td><td>5.73±0.54</td><td>2.20±0.19</td><td>0.029±0.007</td><td>5.72±0.53</td><td>2.21±0.15</td><td>0.026±0.007</td><td>5.81±0.50</td><td>2.24±0.20</td><td>0.030±0.008</td></tr><tr><td>Energy</td><td>1.60±0.19</td><td>2.32±0.01</td><td>0.196±0.013</td><td>2.58±0.29</td><td>0.84±0.24</td><td>0.032±0.009</td><td>1.73±0.27</td><td>0.51±0.24</td><td>0.040±0.007</td><td>1.60±0.19</td><td>0.70±0.21</td><td>0.033±0.009</td><td>1.85±0.22</td><td>0.84±0.14</td><td>0.043±0.012</td></tr><tr><td>Boston</td><td>3.12±0.74</td><td>2.28±0.03</td><td>0.109±0.016</td><td>3.47±1.15</td><td>1.60±0.35</td><td>0.039±0.011</td><td>3.26±0.91</td><td>1.56±0.29</td><td>0.037±0.009</td><td>3.22±0.70</td><td>1.59±0.22</td><td>0.035±0.009</td><td>3.21±0.81</td><td>1.59±0.30</td><td>0.039±0.008</td></tr><tr><td>Kin8nm</td><td>0.07±0.00</td><td>-1.30±0.00</td><td>0.110±0.003</td><td>0.07±0.00</td><td>-2.20±0.03</td><td>0.012±0.003</td><td>0.07±0.00</td><td>-2.20±0.05</td><td>0.013±0.003</td><td>0.07±0.00</td><td>-2.15±0.05</td><td>0.012±0.003</td><td>0.07±0.00</td><td>-2.17±0.04</td><td>0.014±0.004</td></tr><tr><td>Naval</td><td>0.00±0.00</td><td>-4.89±0.00</td><td>0.285±0.041</td><td>0.00±0.00</td><td>-6.55±0.33</td><td>0.051±0.014</td><td>0.00±0.00</td><td>-7.14±0.28</td><td>0.055±0.023</td><td>0.00±0.00</td><td>-6.71±0.98</td><td>0.055±0.027</td><td>0.00±0.00</td><td>-5.99±1.52</td><td>0.068±0.037</td></tr><tr><td>Power</td><td>4.16±0.15</td><td>2.87±0.00</td><td>0.118±0.002</td><td>4.13±0.15</td><td>1.91±0.04</td><td>0.012±0.003</td><td>4.14±0.14</td><td>1.91±0.04</td><td>0.014±0.004</td><td>4.16±0.15</td><td>1.91±0.03</td><td>0.010±0.003</td><td>4.13±0.15</td><td>1.92±0.06</td><td>0.013±0.004</td></tr><tr><td>Wine</td><td>0.64±0.04</td><td>0.10±0.04</td><td>0.036±0.007</td><td>0.63±0.04</td><td>2.09±8.04</td><td>0.025±0.006</td><td>0.64±0.04</td><td>0.25±0.49</td><td>0.024±0.004</td><td>0.65±0.04</td><td>0.07±0.10</td><td>0.023±0.004</td><td>0.64±0.04</td><td>0.99±3.47</td><td>0.026±0.004</td></tr></table>
+
+![](images/be55c5b22583cabb0990154a87b716d0561675c366669735f84844c4fcbd952f.jpg)
+
+Table 11: UCI benchmark results with Adam, epoch mode (100 epochs) (lr=0.01, batch size=32). Results report mean ± standard deviation over 20 folds. -- denotes a metric that diverged (non-finite on ≥1 fold).
+<table><tr><td></td><td colspan="3">Unit Variance</td><td colspan="3">Baseline-NLL</td><td colspan="3">β-NLL (0.5)</td><td colspan="3">Faithful</td><td colspan="3">Fisher8</td></tr><tr><td>Dataset</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td></tr><tr><td>Yacht</td><td>0.88±0.31</td><td>2.72±0.02</td><td>0.402±0.130</td><td>2.92±1.65</td><td>1.47±1.66</td><td>0.086±0.036</td><td>0.99±0.39</td><td>-0.21±0.31</td><td>0.065±0.028</td><td>0.95±0.35</td><td>0.17±0.59</td><td>0.063±0.030</td><td>1.45±0.45</td><td>0.60±0.39</td><td>0.057±0.024</td></tr><tr><td>Concrete</td><td>5.49±0.59</td><td>2.87±0.01</td><td>0.106±0.009</td><td>5.55±0.61</td><td>2.31±0.44</td><td>0.028±0.009</td><td>5.31±0.59</td><td>2.35±0.40</td><td>0.027±0.007</td><td>5.46±0.48</td><td>2.30±0.26</td><td>0.032±0.010</td><td>5.60±0.48</td><td>2.26±0.23</td><td>0.033±0.008</td></tr><tr><td>Energy</td><td>0.71±0.12</td><td>2.31±0.01</td><td>0.367±0.050</td><td>3.24±9.17</td><td>0.83±1.10</td><td>0.060±0.024</td><td>0.69±0.10</td><td>0.15±0.21</td><td>0.041±0.011</td><td>0.68±0.13</td><td>0.14±0.25</td><td>0.038±0.011</td><td>0.96±0.15</td><td>0.50±0.34</td><td>0.048±0.020</td></tr><tr><td>Boston</td><td>2.91±0.63</td><td>2.27±0.02</td><td>0.116±0.018</td><td>3.30±1.09</td><td>1.78±0.37</td><td>0.044±0.009</td><td>2.85±0.57</td><td>1.73±0.33</td><td>0.047±0.013</td><td>2.91±0.62</td><td>1.75±0.40</td><td>0.040±0.010</td><td>2.88±0.64</td><td>1.73±0.46</td><td>0.040±0.013</td></tr><tr><td>Kin8nm</td><td>0.08±0.01</td><td>-1.29±0.01</td><td>0.109±0.004</td><td>0.08±0.00</td><td>-2.06±0.08</td><td>0.021±0.013</td><td>0.08±0.00</td><td>-2.09±0.07</td><td>0.018±0.008</td><td>0.08±0.00</td><td>-2.05±0.08</td><td>0.020±0.011</td><td>0.08±0.00</td><td>-2.04±0.06</td><td>0.021±0.009</td></tr><tr><td>Naval</td><td>0.00±0.00</td><td>-4.87±0.01</td><td>0.163±0.028</td><td></td><td></td><td>0.095±0.096</td><td>0.00±0.00</td><td>-6.29±0.43</td><td>0.055±0.020</td><td>0.00±0.00</td><td>-6.09±0.57</td><td>0.049±0.020</td><td>0.00±0.00</td><td>-6.21±0.45</td><td>0.045±0.013</td></tr><tr><td>Power</td><td>4.30±0.20</td><td>2.87±0.00</td><td>0.118±0.004</td><td>4.31±0.19</td><td>1.96±0.05</td><td>0.017±0.005</td><td>4.32±0.22</td><td>1.96±0.05</td><td>0.017±0.007</td><td>4.30±0.24</td><td>1.97±0.07</td><td>0.016±0.007</td><td>4.25±0.19</td><td>1.95±0.06</td><td>0.016±0.007</td></tr><tr><td>Wine</td><td>0.67±0.04</td><td>0.13±0.04</td><td>0.036±0.007</td><td></td><td></td><td>0.044±0.036</td><td>0.67±0.05</td><td>0.71±0.72</td><td>0.029±0.007</td><td>0.69±0.04</td><td>0.29±0.17</td><td>0.031±0.008</td><td>0.67±0.04</td><td>0.47±0.34</td><td>0.028±0.006</td></tr></table>
+
+Table 12: UCI benchmark results with Adam, epoch mode (100 epochs) (lr=0.1, batch size=32). Results report mean ± standard deviation over 20 folds. -- denotes a metric that diverged (non-finite on ≥1 fold).
+<table><tr><td></td><td colspan="3">Unit Variance</td><td colspan="3">Baseline-NLL</td><td colspan="3">β-NLL (0.5)</td><td colspan="3">Faithful</td><td colspan="3">Fisher8</td></tr><tr><td>Dataset</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td><td>RMSE↓</td><td>NLL↓</td><td>ECE↓</td></tr><tr><td>Yacht</td><td>5.88±13.74</td><td>3.22±2.08</td><td>0.285±0.080</td><td></td><td></td><td>0.113±0.118</td><td></td><td></td><td>0.007±0.021</td><td>4.50±4.44</td><td></td><td>0.376±0.265</td><td>6.84±3.03</td><td>5.75±7.44</td><td>0.173±0.087</td></tr><tr><td>Concrete</td><td>27.60±49.21</td><td>8.55±22.89</td><td>0.037±0.020</td><td></td><td></td><td>0.057±0.061</td><td></td><td></td><td>0.011±0.027</td><td>22.30±26.02</td><td></td><td>0.000±0.000</td><td>12.12±4.37</td><td>3.58±1.83</td><td>0.069±0.051</td></tr><tr><td>Energy</td><td>7.95±7.18</td><td>2.88±1.18</td><td>0.146±0.115</td><td></td><td></td><td>0.135±0.081</td><td></td><td></td><td>0.000±0.000</td><td>6.53±4.66</td><td></td><td>0.187±0.192</td><td>5.65±3.35</td><td>2.74±1.09</td><td>0.096±0.044</td></tr><tr><td>Boston</td><td>5.11±3.99</td><td>2.47±0.47</td><td>0.110±0.029</td><td></td><td></td><td>0.104±0.117</td><td></td><td></td><td>0.045±0.037</td><td>4.88±2.12</td><td></td><td>0.145±0.163</td><td>8.39±1.97</td><td>4.74±5.45</td><td>0.069±0.026</td></tr><tr><td>Kin8nm</td><td>0.33±0.13</td><td>0.42±1.09</td><td>0.040±0.022</td><td></td><td></td><td>0.016±0.028</td><td></td><td></td><td>0.000±0.000</td><td>0.29±0.03</td><td></td><td>0.000±0.000</td><td>0.24±0.05</td><td>-0.52±0.94</td><td>0.061±0.030</td></tr><tr><td>Naval</td><td>0.01±0.00</td><td>-4.28±0.14</td><td>0.038±0.012</td><td></td><td></td><td>0.158±0.206</td><td></td><td></td><td>0.008±0.033</td><td>0.01±0.00</td><td></td><td>0.028±0.088</td><td>0.01±0.00</td><td>-4.01±0.87</td><td>0.047±0.020</td></tr><tr><td>Power</td><td>21.13±4.64</td><td>3.64±0.40</td><td>0.055±0.027</td><td></td><td></td><td>0.063±0.139</td><td></td><td></td><td>0.000±0.000</td><td>21.79±3.95</td><td></td><td>0.000±0.000</td><td>13.52±6.58</td><td>6.17±8.15</td><td>0.105±0.046</td></tr><tr><td>Wine</td><td>0.98±0.39</td><td>0.64±0.89</td><td>0.183±0.026</td><td></td><td></td><td>0.044±0.071</td><td></td><td></td><td>0.008±0.020</td><td>0.88±0.07</td><td></td><td>0.000±0.000</td><td>0.89±0.11</td><td>0.52±0.28</td><td>0.181±0.029</td></tr></table>
+
+## B WEAK LENSING EXPERIMENT DETAILS
+
+## B.1 SAMPLE ZOOMED CONVERGENCE MAP
+
+![](images/6cd740db138e841210570a80f59e973128a01822ccd081b10199fc0b2dec5b97.jpg)
+
+![](images/f495164970107e086bde82ab24532fbc89a5746ba2353b5f2bc3d582b5267e7e.jpg)  
+Figure 6: Zoomed convergence maps governed by the same cosmological parameters with different noise/realization conditions; fine-scale structure in boxes A and B varies even when the underlying parameters are identical.
+
+## B.2 ADDITIONAL TRAINING DETAILS
+
+All methods use the data normalization, preprocessing, evaluation and CNN backbone provided in the starting kit [FAIR Universe Collaboration, 2025], with final output head parameterizations and gradient interventions modified per method. Realizations are split 56/14/30 (%) into train, validation, and test. This is an extremely conservative estimate of model performance. Almost half of the labeled data is unused during training. This, combined with the fact that (to our knowledge) at the time of writing this paper, the competition test set has not been made fully public, means that comparison with the public leaderboard is meaningless. All methods were trained with vanilla SGD, at batch size 32 for up to 100 epochs, with ReduceLROnPlateau on the validation score (starting $\mathrm { { l r } = \mathrm { { 1 0 } ^ { - 3 } } }$ , factor 0.5, patience 12, minimum $\mathrm { l r } { = } 1 0 ^ { - 7 } )$ and early stopping at patience 40. The best validation checkpoint was used for final evaluation. For Fisher8, norms are applied per predicted output parameter.
+
+## B.3 SCORE FORMULA
+
+Model performance is ranked by the challenge score
+
+$$
+\begin{array} { c } { \displaystyle \mathrm { s c o r e } = - \frac { 1 } { N } \sum _ { i } ^ { N } \Biggl \{ \frac { \left( \hat { \Omega } _ { m , i } - \Omega _ { m , i } \right) ^ { 2 } } { \hat { \sigma } _ { \Omega _ { m , i } } ^ { 2 } } + \frac { \left( \hat { S } _ { 8 , i } - S _ { 8 , i } \right) ^ { 2 } } { \hat { \sigma } _ { S _ { 8 } , i } ^ { 2 } } } \\ { \displaystyle + \log \hat { \sigma } _ { \Omega _ { m , i } } ^ { 2 } + \log \hat { \sigma } _ { S _ { 8 } , i } ^ { 2 } } \\ { \displaystyle + \lambda \Bigl [ \left( \hat { \Omega } _ { m , i } - \Omega _ { m , i } \right) ^ { 2 } + \left( \hat { S } _ { 8 , i } - S _ { 8 , i } \right) ^ { 2 } \Bigr ] \Biggr \} , } \end{array}\tag{22}
+$$
+
+where hatted quantities are predictions, unhatted quantities are ground truth, N is the number of test maps, and $\lambda = 1 0 ^ { 3 }$
+
+## C ROTATED MNIST
+
+## C.1 ADDITIONAL TRAINING DETAILS
+
+Baseline methods follow the exact training paradigm recommended by Immer et al. [2023] in their Appendix D.1.3, by directly running the authors’ script. For Fisher8, the learning rate is cosine annealed from $5 \times 1 0 ^ { - 6 } t o 5 \times 1 0 ^ { - 9 }$ . The initial rate was selected by grid search over $\{ 5 { \times } 1 0 ^ { - 7 } , 5 { \times } 1 0 ^ { - 6 } , 5 { \times } 1 0 ^ { - 5 } , 5 { \times } 1 0 ^ { - 4 } \}$ , with the terminal rate fixed at a 1000× decay to match the baselines’ decay factor. Fisher8 is run twice, once with prior precision search enabled $( \lambda = 0 . 1 )$ and once with the prior disabled $( \lambda = 0 )$ , with both runs reported in Table 4 of the main paper.
+
+## C.2 ADDITIONAL BASELINES
+
+For Collier et al. [2021], we adapt the latent-variable layer to scalar regression, replacing the final layer with a rank-1- plus-diagonal latent Gaussian and a temperature-parameterized observation kernel of width τ, estimated over S=1000 MC samples $( \tau { = } 0$ is exact). We sweep $\tau \in \{ 0 , 0 . 0 5 , 0 . 1 , 0 . 2 , 0 . 3 , 0 . 5 \}$ , learning rate $\in \{ 1 0 ^ { - 4 } , 3 { \times } 1 0 ^ { - 4 } , 1 0 ^ { - 3 } , 1 0 ^ { - 2 } \}$ , and prior precision $\in \{ 0 , 1 0 0 \}$ , selecting the lowest-NLL configuration per regime and retraining on five seeds. The total search space complexity is $O ( | \dot { \tau | } \cdot | \eta | \cdot | \lambda | )$
+
+For Megerle et al. [2023], we implement the scalar form of Trustable, training the network to regress onto per-sample naturalgradient target distributions projected onto a $W _ { 2 }$ trust region. We sweep the NG step size $\alpha \in \{ 0 . 0 5 , 0 . 1 , 0 . 1 5 , 0 . 2 , 0 . 3 \}$ learning rate $\in \{ 1 0 ^ { - 1 } , 1 0 ^ { - 2 } , 1 \bar { 0 } ^ { - 3 } \}$ , and trust-region bounds $( \epsilon _ { \mu } , \epsilon _ { \Sigma } ) \in \{ ( 1 . 0 , 1 . 0 ) , ( 0 . 1 , 0 . 0 1 ) \}$ , selecting per regime as above, for a total search space complexity of $O ( | \alpha | \cdot | \eta | \cdot | \epsilon | )$
+
+Table 13: Rotated MNIST under heteroscedastic and homoscedastic noise. RMSE (rot): rotation angle prediction error; NLL: negative log-likelihood; ECE: expected calibration error; Feature acc: downstream digit classification accuracy from learned features. Results report mean ± standard deviation over 5 seeds. Bold marks the best value per metric.
+<table><tr><td></td><td colspan="4">Input Dependent Noise</td><td colspan="4">Input Independent Noise</td></tr><tr><td>Method</td><td>RMSE° ↓</td><td>NLL↓</td><td>ECE↓</td><td>Feat acc ↑</td><td>RMSE°↓</td><td>NLL↓</td><td>ECE↓</td><td>Feat acc ↑</td></tr><tr><td>Collier et al. [2021]</td><td> $\mathbf { 1 9 . 7 2 2 \pm 0 . 3 8 4 }$ </td><td>5.369 ± 0.012</td><td>0.006 ± 0.000</td><td> $\mathbf { 8 3 . 0 8 0 \pm 0 . 2 9 3 }$ </td><td>14.180 ± 0.116</td><td>4.281 ± 0.009</td><td>0.003 ± 0.001</td><td> $7 9 . 4 6 0 \pm 0 . 6 3 4$ </td></tr><tr><td>Megerle et al. [2023]</td><td> $2 0 . 3 0 2 \pm 0 . 3 3 2$ </td><td>5.523 ± 0.009</td><td>0.023 ± 0.001</td><td> $7 9 . 6 0 0 \pm 0 . 3 9 0$ </td><td>14.502 ± 0.218</td><td> $4 . 2 9 9 \pm 0 . 0 1 6$ </td><td>0.006 ± 0.000</td><td> $\mathbf { 8 0 . 9 6 0 \pm 0 . 2 4 2 }$ </td></tr></table>
+
+## D WHY THE “8” IN FISHER8?
+
+Three reasons why. First, it took eight attempts to implement the algorithm correctly. Second, “Fisher8” reads aloud as “Fisher ate,” and in current slang to say something “ate” is to say it was done well. We believe we in fact ate. While a further extension of this slang is “ate and left no crumbs,” peer reviewers have thoroughly enlightened us as to why this wasn’t the case. Third, the modification can be implemented in fewer than eight lines of code.
+
+![](images/fbb7af6d5151d5e207802947c0751c657d5eb04b0ec267e36c00d677e05ea353.jpg)  
+Figure 7: AI-generated image of a fictitious scenario in which a forager consults an AI chatbot about berry edibility.

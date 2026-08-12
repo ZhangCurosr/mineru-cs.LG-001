@@ -1,0 +1,590 @@
+# TIDERL: Boosting Agentic RL Goodput with Readiness-Aware Scheduling
+
+Yanyu Ren<sup>1∗†</sup>, Xizheng Wang<sup>3∗</sup>, Xiao Liu<sup>1,2∗</sup>, Bowen Lv<sup>1†</sup>, Hanchen Zhang<sup>1†</sup>, Shudan Zhang<sup>1†</sup>, Hanyu Lai<sup>1†</sup>, Shuai Wang<sup>3</sup>, Li Chen<sup>3</sup>, Dan Li<sup>1</sup>, Jie Tang<sup>1</sup> <sup>1</sup>Tsinghua University <sup>2</sup>Z.AI <sup>3</sup>Zhongguancun Laboratory
+
+## Abstract
+
+Reinforcement learning (RL) for large language models is moving toward multi-turn agentic workloads, where rollout tasks repeatedly pause for external environments, resume with growing contexts, and finish at highly variable times. In this setting, RL training goodput, measured by training through put, matters more than raw GPU occupancy: GPU waiting and repeated prefill recomputation are pure overhead. We present TIDERL, a readiness-aware elastic RL system with Contin uous Task Batching, Resource-Aware Ref-Actor Pipelining, and Elastic Resource Scaling. CTB preserves useful rollout state, RA<sup>2</sup>P selects between decoupled streaming and colocated aggregation from the ready backlog and arrival interval, and ERS moves ranks between rollout and training using the same readiness signals. Across text-only and multi-modal agentic workloads, TIDERL improves RL training goodput by up to 5.6× over synchronous baselines and over 33% over asynchronous baselines, while reaching similar task performance. It also improves KV cache hit rate by 1.58×, reduces per-step training time by up to 44.3%, and cuts total waiting time by up to 77.6%.
+
+## 1 Introduction
+
+Large Language Models (LLMs) are rapidly evolving from static text generators into autonomous agents capable of solving complex, real-world problems. In these agentic workloads, models do not merely produce a single-turn answer; instead, they iteratively interact with external, distributed environments, such as web browsers, smartphones, or computer OSes [39, 41, 51]. This introduces a multi-turn execution flow. An agent generates an action, transmits it over the network to the environment, waits for the execution results, and resumes generation based on the newly returned observations. Because LLM outputs are non-deterministic, execution trajectories of the same task may differ drastically in turn count, context length, and wall-clock duration, producing workloads with extreme variance across both spatial and temporal dimensions.
+
+![](images/ceeef5199e71c6bb1fe377e0d749714a439c6d7899159efceb194c877523022c.jpg)  
+(c) Task workflow for asynchronized RL  
+Figure 1: The dataflow and workflow of different RL strategies on agentic tasks.
+
+To enhance these autonomous capabilities, researchers turn to reinforcement learning (RL). While RL has shown immense success in single-turn reasoning tasks [11, 27, 28], applying it to multi-turn agentic scenarios requires orchestrating massive, networked machine learning clusters. A typical RL workflow goes through four phases. In the rollout phase, a batch of agentic tasks runs concurrently, requesting actions from rollout workers and observations from environment workers to generate interactive trajectories in multiple turns. Later, the RL system evaluates these trajectories in the reward and reference phase. Finally, the system uses the output from the reward and the reference to update the model weights in the actor phase.
+
+However, a small number of long-tail tasks in the rollout phase may block the pipeline and leave expensive GPU resources underutilized. For agentic RL, the right objective is goodput, which we measure through training throughput: the rollout’d tokens that reach the Trainer and advance an update counts. GPU waiting and repeated prefill recomputation are pure overhead. To maximize goodput, asynchronous systems [5, 49] separate these components onto different GPUs, unlike synchronous systems like VeRL [30] that force rollouttrain barriers. On a subset of GPUs, rollout worker groups perform continuous generation as producers. On the remaining GPUs, trainer worker groups, which colocate the reference and actor models, pull data from the global buffer to compute weight updates, as consumers. This decoupling theoretically allows generation and training to proceed concurrently, so that the rollout phase of long-tail tasks can take place simultaneously with the training phase of shorter tasks.
+
+While effective for single-turn tasks, current asynchronous architectures exhibit severe systemic inefficiencies when processing multi-turn agentic workloads characterized by high concurrency and variable context lengths. We identify three critical challenges:
+
+• KV cache preemption during intermittent interactions. Standard inference engines rely on request-level continuous batching, assuming each request is selfcontained. However, multi-turn tasks proceed as a sequence of dependent requests separated by idle periods while waiting for external feedback. During these pauses, the engine greedily evicts its KV cache (the memory footprint of historical tokens) to serve requests from other concurrent tasks. Upon resumption, the system suffers a catastrophic cache miss as Figure 2 shows, forcing redundant and computationally expensive recomputation (prefill) for an increasingly long historical context.
+
+• Stalls and thrashing in reference inference. Existing systems share GPU resources between actor and reference workers within the trainer, enforcing strict stage dependencies. To avoid memory exhaustion, they either wait for large global batches to arrive before initiating updates, or frequently alternate between reference and actor models (which share the same architecture but have different weights) on the same GPUs for each micro-batch. The former creates massive computation bubbles that leave GPUs idle for up to 81% of the step time, while the latter introduces severe model-swapping thrashing overhead.
+
+• Rigidity of resource allocation under shifting bottlenecks. Agentic RL operates as a producer-consumer pipeline. Because task complexity varies drastically, the system bottleneck dynamically shifts. A batch of complex tasks stalls the trainer as it waits for slow rollout data, while simple tasks create a large ready backlog at the beginning of a training step and then keep feeding new micro-batches rapidly. Relying on static resource partitioning between rollout and trainer worker groups, existing systems cannot react to either the initial ready backlog or the steady ready interval, structurally capping global throughput during these macroscopic workload shifts, as shown in Figure 4.
+
+These intertwined challenges expose architectural flaws of existing systems, raising a critical research question: How can we build a unified, elastic training architecture that maximizes RL goodput, as measured by training throughput, under multi-turn agentic execution? The key is not to optimize rollout, training, and resource allocation as isolated modules. Multi-turn RL needs a shared readiness view: Rollout must preserve the task state that will become useful soon, Trainer must choose a ref-actor execution mode that matches how ready data arrives, and the cluster scheduler must move GPUs toward the side that removes the current goodput loss. Answering this requires co-designing the multi-turn memory management, distributed execution pipeline, and dynamic cluster resource allocation.
+
+To this end, we identify two architectural blind spots in existing frameworks. First, systems such as AReaL and StreamRL expose asynchrony, but still treat the rollout-trainer split as a mostly fixed operating point; they cannot use the current ready backlog and arrival pace to jointly choose the ref-actor execution strategy and the GPU split. Second, standard inference engines allocate memory at the request level. Memory management must be elevated to the task level to gain global visibility over the multi-turn lifecycle, actively coordinating context pinning across distributed rollout ranks. Together, these changes make individual data parallel (DP) ranks schedulable resources rather than static members of a worker group.
+
+Motivated by these insights, we present TIDERL, an elastic and asynchronous distributed system tailored for multi-turn agentic RL goodput. TIDERL solves these challenges through three co-designed components:
+
+• Continuous Task Batching (CTB) replaces request-level continuous batching on each rollout rank with task-level admission, preemption, and resumption. CTB tracks perrank token footprints in real time and applies a semanticaware priority hierarchy—prioritizing evaluation boundaries, near-complete GRPO groups, active trajectories, and long contexts. This keeps useful rollout state resident until it can feed the global buffer, providing the stable producer side that RA<sup>2</sup>P and ERS rely on.
+
+• Resource-Aware Ref-Actor Pipelining (RA<sup>2</sup>P) resolves the stall-thrashing dilemma through two complementary execution modes selected by two data-readiness signals: Ready-at-Start (RAS), the amount of micro-batch work already present when a training step begins, and Time Per Ready Micro-batch (TPRM), the interval at which additional micro-batches become available. In decoupled mode, Ref and Actor run on separate GPUs in a streaming micro-batch pipeline; a restructured computation graph defers loss computation into the backward pass, enabling Ref forward, Actor forward, and Actor backward to overlap with zero swap overhead. In colocated mode, RA<sup>2</sup>P uses ready-batch aggregation and zero-copy shared-memory transfer to amortize unavoidable swapping across ready bursts. Together, RA<sup>2</sup>P turns readiness into goodput under both startup backlog pressure and steady per-micro-batch arrival pressure.
+
+• Elastic Resource Scaling (ERS) exploits $\mathrm { R A } ^ { 2 } \mathrm { P } ^ { \prime } \mathrm { s }$ dualmode structure to migrate individual ranks between rollout and training on the fly. ERS reads RAS and TPRM from the global buffer: a small RAS with slow TPRM indicates rollout starvation and triggers colocated R $\mathsf { A } ^ { 2 } \mathsf { P }$ plus more Rollout ranks, whereas a large RAS or fast TPRM indicates trainer-side pressure and triggers decoupled $\mathtt { R A } ^ { 2 } \mathrm { P }$ plus more Trainer capacity. Crucially, ERS piggybacks weight migration onto the natural cache-flush boundary that on-policy RL already mandates at every sync, achieving zero-overhead elasticity: no pipeline suspension, no NCCL group rebuild, no wasted KV cache.
+
+We implement TIDERL with a highly modular architecture, ensuring seamless compatibility with diverse multi-modal and text-only tasks, and easy integration with mainstream serving and training backends. We deploy the system on a 4-node cluster with 32 NVIDIA H100 GPUs and evaluate models with different architectures. Our evaluations demonstrate large performance gains over existing RL frameworks. End-to-end, TIDERL raises RL training goodput, measured by training throughput, by 1.8–7.0× on text-only tasks (reducing time-to-convergence by 51.1%) and improves multi-modal goodput by over 33%, reducing training time by 62.2% with similar performance. Component studies close the loop from motivation to design: CTB improves generation goodput by preserving task state, $\mathtt { R A } ^ { 2 } \mathrm { P }$ reduces per-step training time by up to 44.3% under different readiness patterns, and ERS cuts total idle waiting time by 87.4% by scheduling $\mathtt { R A } ^ { 2 } \mathrm { P }$ modes and GPU ranks from the same readiness signals.
+
+## 2 Background and Motivation
+
+We first summarize the agentic RL workflow and then motivate the three system bottlenecks that TIDERL targets.
+
+## 2.1 Agentic Reinforcement Learning
+
+Agentic RL workloads in this paper follow Group Relative Policy Optimization (GRPO) [28], whose execution alternates between trajectory generation and model update.
+
+The Agentic RL Pipeline. Unlike traditional single-turn chat optimization, agentic RL requires models to interact with environments iteratively. As depicted in Figure 1(b), a standard agentic GRPO pipeline consists of four sequential stages to train a new model A from the original model O:
+
+• Rollout Generation: Rollout<sup>1</sup> hosts A to generate actions. Crucially, this involves multi-turn interactions: the model generates an action, pauses to wait for environment execution, receives the observation, and generates the next action. For a given task, a group of G distinct multi-turn trajectories is sampled. Each trajectory may comprise different turns and lengths of messages.
+
+![](images/fdad275580bb7f43911c521456545987e24843df2a275e64bb054d1cf86d8e44.jpg)  
+Figure 2: Multi-turn agentic tasks experience severe cache misses in one WebShop training step. The data is collected on one NVIDIA H100 GPU running Qwen2.5-7B [24].
+
+• Reward Calculation: Once the trajectories in a group are completed, the environment evaluates them. GRPO determines the advantage A<sub>i</sub> by standardizing the rewards $r _ { i }$ strictly based on the performance of other trajectories within the same group: $A _ { i } { = } ( r _ { i } { - } \mathrm { m e a n } ( \mathbf { r } ) ) / \mathrm { s t d } ( \mathbf { r } )$
+
+• Reference Calculation: Ref computes the base logprobabilities on O of generated trajectories. This provides a Kullback-Leibler (KL) divergence penalty to prevent the policy from over-optimizing the reward.
+
+• Actor Update: Actor executes the forward and backward passes on A to update its weights (i.e., update the policy). Once updated, the latest weights are synchronized back to Rollout for the next iteration.
+
+The Trainer comprises Ref, Actor and the reward calculation, and consumes the trajectories from Rollout.
+
+Asynchronous RL. Traditional synchronous architectures enforce a strict alternation between the rollout and training stages. This coupling causes severe GPU idling, as the training must wait for the long-tail task to complete [11, 50]. To break this resource coupling, modern systems typically adopt an asynchronous execution paradigm [5, 49]. As depicted in Figure 1(c), they decouple generation and training into physically independent workers. This allows Rollout to continuously generate new groups of responses while Trainer consumes historical data in the background, significantly boosting hardware throughput. However, this asynchrony introduces policy staleness, as Rollout generates data using older model weights. Since algorithms like GRPO are fundamentally onpolicy, excessive off-policy data severely degrade training stability. Consequently, asynchronous systems must strictly bound this staleness gap, requiring timely weight synchronization to prevent performance degradation.
+
+## 2.2 Key Challenges in Asynchronous Agentic RL
+
+Although asynchronous RL frameworks overlap generation and training, their execution traces under multi-turn agentic workloads reveal three ways the system loses RL goodput.
+
+C1: Catastrophic KV Cache Preemption in Rollouts. Observation: Shifting our focus to the Rollout phase, we monitored the KV cache hit rate and generation throughput during a single training step. Figure 2 exhibits a typical three-phase fluctuation rather than stable cache utilization. At the beginning of the step, the hit rate increases as a large influx of new short sequences is initially cached. However, the hit rate subsequently plummets and remains at only ∼12%, dragging the throughput down to ∼650 tokens/s·instance. A spike in the hit rate occurs at the very end of the training step.
+
+![](images/a0fc2d4cc153177de6183b0b72781c796800a575d87d9b8f286d71024a5dc10a.jpg)  
+(c) Optimized colocated RA²P mitigates both  
+Figure 3: Trainer experiences significant stalls and thrashing due to long-tail tasks. Even without CPU offloading, model alternation still incurs non-negligible GPU context-switching overhead, as shown in §6.5.
+
+![](images/49e4e906e57d8bf2f8c5d172d89e52c106d25730989eb36306c8decef98c2bbe.jpg)  
+Figure 4: Rollout Wait Time (RWT) and Training Wait Time (TWT) during the first 100 steps under varying fraction of GPUs assigned to Rollout. These waits expose the two readiness signals that drive $\mathtt { R A } ^ { 2 } \mathrm { P }$ and ERS. The experiment is carried out on one node with 8 NVIDIA H100 GPUs, running the WebShop [42] agents.
+
+Root Cause: The fundamental flaw lies in the mismatch between request-level scheduling and multi-turn semantics. While recent scheduling optimizations target single-turn reasoning tasks, they fall short in multi-turn agentic workloads. For instance, Seer’s [23] chunk-level scheduling yields minimal benefits because agentic outputs per request are typically short, and StreamRL’s [49] length-probing mechanism fails to capture the intermittent nature of environment interactions [15, 26]. When waiting for environment feedback, the underlying inference engine, driven by standard continuous batching to maximize concurrency, schedules new requests, thereby preempting the tasks’ KV caches. The engine suffers massive cache misses as the observation returns, and must recompute the rapidly growing historical context. The late recovery in hit rate is merely an artifact of dropping concurrency: as the global batch nears completion, no new tasks are admitted, allowing the few straggling tasks to safely retain their cache without preemption.
+
+C2: Stalls and Thrashing in Training. Observation: We examined the Trainer’s execution trace, and observed a dilemma between computation stalls and I/O thrashing. In Figure 3(a), standard execution forces the Trainer to stall significantly while waiting for a full global batch to complete, a delay severely exacerbated by long-tail tasks. Conversely, if we attempt to mitigate this idle time by streaming micro-batches, the system falls into another trap: massive I/O thrashing that degrades training GPU goodput, as illustrated in Figure 3(b). Root Cause: This dilemma is structurally rooted in the memory-intensive nature of on-policy algorithms like GRPO. The Trainer must execute reference calculations and actor updates sequentially using two distinct models. Under standard execution, the system waits for all rollout tasks in a global batch to finish, making the Trainer’s idle time bottlenecked by the slowest long-tail samples. To avoid these macroscopic stalls, the system could adopt a streaming mode to process micro-batches as soon as they arrive. However, existing systems (e.g., VeRL [30] and AsyncFlow [10]) cannot run both models on the same GPUs simultaneously due to the runtime memory consumed by training activations. Consequently, streaming micro-batches forces the system to frequently load and offload model weights between the CPU and GPU over PCIe, replacing the stall with a model-swapping bottleneck.
+
+## C3: Shifting Bottlenecks Invalidating Static Allocation.
+
+Observation: To investigate whether global resource tuning could improve agentic RL goodput, we tracked the Rollout Wait Time (RWT) and Training Wait Time (TWT) across 100 steps under various static Rollout GPU ratios. Since TIDERL measures goodput through training throughput, these waits matter because they directly consume time without advancing useful training. Fundamentally, RWT measures the idle duration Rollout workers stall upon reaching off-policy staleness limits and waiting for new weights, whereas TWT quantifies the Trainer’s starvation period awaiting sufficient trajectory accumulation. These two waits correspond to the Trainer’s data-readiness state: high TWT means the step begins with too few ready micro-batches and receives later ones slowly, while high RWT means Rollout has produced a backlog that the Trainer cannot consume quickly enough. As illustrated in Figure 4, the system bottleneck oscillates wildly. A lower roll out ratio (0.125) consistently starves the Trainer (high TWT), while a higher ratio (0.5) generates data too fast, causing Rollout to stall (high RWT). Most crucially, even within a single optimal fixed ratio (e.g., 0.25), RWT and TWT frequently cross paths.
+
+Root Cause: This invalidation of static partitioning stems from the extreme variance in agentic trajectory execution times, further compounded by the unpredictable load of intermediate evaluation tasks. Unlike single-turn chat, multi-turn environments cause the computational bottleneck to dynamically flip between generation and training, so a static GPU quota cannot preserve goodput across steps. It cannot react to either the micro-batch backlog already ready at a training boundary or the per-micro-batch ready interval after the step starts. These two signals determine whether the trainer should spend GPUs on a decoupled Ref-Actor pipeline or release them to Rollout through colocated execution. Although StreamRL [49] attempts to address this by dynamically increasing the size of Rollout, it lacks real-time reaction due to high initialization overheads. Furthermore, this scaling approach is incompatible with the fixed-resource environments prevalent in large-scale production clusters, such as those operated by Alibaba and Microsoft [7, 22, 38]. As a result, the cluster is left severely underutilized throughout the training lifecycle, with goodput lost to both data starvation and off-policy throttling.
+
+Summary. The paradigm shift toward multi-turn agentic RL exposes fundamental architectural mismatches. Request-level scheduling leads to severe cache preemption (C1), rigid stage dependencies create computation bubbles (C2), and static partitioning fails to adapt to shifting bottlenecks (C3), all of which reduce training throughput and therefore goodput. Addressing these inefficiencies necessitates a holistic system redesign, spanning from computation graph execution to physical resource allocation and memory management.
+
+## 3 TIDERL Overview
+
+To address these challenges, we propose TIDERL, an elastic asynchronous RL system tailored for multi-turn agentic workloads. TIDERL coordinates three decisions that existing systems handle separately: which tasks stay resident in Rollout, how ready trajectories are consumed by the Trainer, and how GPUs move between the two sides.
+
+## 3.1 Design Rationale
+
+The design follows the dataflow of agentic RL. CTB keeps Rollout productive without losing task context; $\mathtt { R A } ^ { 2 } \mathrm { P }$ consumes ready micro-batches without waiting for a full global batch or thrashing between Ref and Actor; ERS adjusts resources so the selected $\mathtt { R A } ^ { 2 } \mathrm { P }$ strategy matches the current readiness pattern. The three components are intentionally coupled by one feedback loop: CTB controls when trajectories become ready, $\mathtt { R A } ^ { 2 } \mathrm { P }$ exposes how expensive it is to consume the current ready stream, and ERS moves ranks to reduce the dominant wait revealed by that stream.
+
+Continuous Task Batching (CTB). To resolve KV cache preemption in multi-turn interactions (C1), TIDERL elevates Rollout scheduling from requests to tasks. CTB tracks each task’s token footprint, admits tasks only when a rank has enough KV cache headroom, pauses tasks according to $\mathrm { R L } -$ aware priorities, and resumes them with worker affinity. This preserves useful context while maintaining high concurrency. Resource-Aware Ref-Actor Pipelining $( \mathbf { R A } ^ { 2 } \mathbf { P } )$ . To address Trainer stalls and model alternation thrashing (C2), TIDERL streams generated trajectories directly to the Trainer. $\mathtt { R A } ^ { 2 } \mathtt { P }$ then chooses between two Ref-Actor execution strategies.
+
+![](images/36038147d041fef06607415e7c47b21e2acbe8d28857ac1d242028ecda8642b5.jpg)
+
+Figure 5: The overall architecture and workflow of TIDERL. Environments and reward computations are disaggregated to an external CPU cluster. The system features a continuous data flow orchestrated by CTB on Rollout ranks, $\mathtt { R A } ^ { 2 } \mathrm { P }$ on Trainer nodes, and an overarching ERS scheduler.
+
+When ready micro-batches are abundant or arrive quickly, $\mathtt { R A } ^ { 2 } \mathrm { P }$ decouples Ref and Actor onto different GPUs to overlap reference computation with policy updates. When ready micro-batches are scarce, $\mathtt { R A } ^ { 2 } \mathrm { P }$ colocates Ref and Actor, uses ready-batch aggregation and zero-copy transfer to amortize model alternation, and leaves more GPUs available for Rollout.
+
+Elastic Resource Scaling (ERS). To absorb shifting bottlenecks (C3), TIDERL abandons static resource partitioning. ERS acts as the runtime scheduler for the two $\mathtt { R A } ^ { 2 } \mathrm { P }$ strategies: it provisions more Rollout ranks and selects colocated $\mathtt { R A } ^ { 2 } \mathrm { P }$ when the Trainer is data-starved to reduce TWT, and it switches to decoupled $\mathtt { R A } ^ { 2 } \mathrm { P }$ with additional Trainer capacity when ready data accumulates to reduce RWT. This keeps Ref-Actor execution aligned with the current producer-consumer imbalance.
+
+## 3.2 System Architecture and Workflow
+
+Inspired by AgentRL [44], TIDERL adopts a disaggregated architecture where environment maintenance and reward computation are offloaded to an external CPU cluster. As illustrated in Figure 5, this isolates GPU instances purely for rollout and training. We trace the continuous lifecycle of a task and its trajectory to illustrate TIDERL’s workflow.
+
+A task’s lifecycle begins in the background, where CTB manages the admission of new agentic tasks based on Actor KV cache availability and strictly bounds off-policy staleness. Once dispatched to a Rollout rank, the Actor and Env engage in multi-turn interactions. During this highly concurrent multitask generation, CTB monitors the real-time token footprint, pausing or resuming tasks to achieve higher throughput and prevent memory exhaustion.
+
+Upon completing all interaction turns, the Env calculates group-relative rewards and pushes the group to a global rollout buffer. The Trainer pulls ready trajectories from the buffer and uses $\mathtt { R A } ^ { 2 } \mathrm { P }$ to update the policy with low or no modelswapping overhead. Once the training step completes, Trainer synchronizes the new weights to Rollout.
+
+The overarching ERS scheduler monitors the utilization and readiness state of the rollout buffer. If trajectory generation outpaces training, ERS dynamically commands a subset of Rollout ranks to safely offload their Actor weights and reconfigures these freed nodes into the trainer group; if training starves, it moves trainer-side ranks back to Rollout and lets $\mathtt { R A } ^ { 2 } \mathrm { P }$ run in the colocated mode.
+
+TIDERL also considers evaluation tasks. For the evaluation of the i-th step’s model, CTB organizes them concurrently with training data rollout in the (i+1)-th step. CTB aggregates the metrics just before the weight synchronization of the (i+1)-th step. This ensures metrics are reported accurately without interrupting the continuous trajectory flow.
+
+## 4 Continuous Task Batching
+
+CTB makes Rollout scheduling task-aware. Instead of treating every environment turn as an independent request, CTB tracks each task’s growing context, admits new tasks only when a Rollout rank has enough KV cache headroom, pauses tasks before memory is exhausted, and resumes paused tasks with cache locality whenever possible.
+
+## 4.1 Token-Aware Admission Control
+
+In highly concurrent agentic RL, dispatching tasks by raw request counts creates severe imbalance because tasks consume very different amounts of KV cache. CTB instead treats each Data Parallel (DP) rank as a token budget pool and admits tasks according to measured context size.
+
+To estimate a task’s initial footprint, CTB sends a lightweight probing task for each trajectory group and records the token usage of its first turn, following the idea of Seer [23]. During dispatch, CTB checks the current token utilization of each rank and admits a task only if the remaining headroom can accommodate the probed footprint. After admission, CTB updates the task’s actual token usage at the start of every interaction turn, so later scheduling decisions reflect the growing context rather than the initial estimate.
+
+CTB also enforces three admission constraints:
+
+• Environment concurrency: Active tasks cannot exceed the parallel capacity of the external environments.
+
+• Policy staleness: CTB throttles dispatch when Rollout is likely to generate more data than Trainer can consume within the staleness bound.
+
+• Task diversity: CTB penalizes assigning too many identical task types to the same batch, spreading environmentside stragglers across ranks.
+
+## 4.2 Semantic-Aware Pausing and Resuming
+
+As tasks progress through multiple turns, their contexts may outgrow a rank’s token budget. CTB handles this by pausing selected tasks before KV cache pressure causes uncontrolled eviction. Algorithm 1 summarizes the loop: update active footprints, pause low-priority tasks when a rank exceeds its budget, and fill recovered headroom by resuming paused tasks before admitting new ones.
+
+Algorithm 1: Semantic-Aware CTB Scheduling   
+1 Input: Active $\mathcal { T } _ { a c t }$ , Paused $\mathcal { T } _ { p a u s e } ,$ New ${ \mathcal { T } } _ { n e w } ,$ , Rank   
+budgets B   
+1: while $\mathcal { T } _ { a c t } \cup \mathcal { T } _ { p a u s e } \cup \mathcal { T } _ { n e w } \not = 0$ do   
+2: Update token footprint for $t \in \mathcal { T } _ { a c t }$ via turn probing   
+3: for each rank r do   
+4: while TokenUsage(r) ${ > } \mathcal { B } _ { r }$ do   
+5: $t _ { e { \nu } i c t } {  } \mathrm { a r g m i n } _ { t \in { \mathcal { T } } _ { a c t } ^ { r } }$ Priority(t) {Tiers 1-4}   
+6: Preempt $t _ { e \nu i c t }$ from $\mathcal { T } _ { a c t } ^ { r } : 0 \mathcal { T } _ { p a u s e }$   
+7: end while   
+8: while TokenUsage(r) ${ < } \mathcal { B } _ { r }$ do   
+9: if $\mathcal { T } _ { p a u s e } \not = 0$ and fits in $\mathcal { B } _ { r }$ then   
+10: $t _ { r e s } \{ - \mathrm { a r g m a x } _ { t \in \mathcal { T } _ { p a u s e } } \mathrm { P r i o r i t y } ( t )$   
+11: Resume $t _ { r e s }$ on r (enforcing group affinity)   
+12: else if $\mathcal { T } _ { n e w } \not = 0$ and satisfies constraints then   
+13: Admit $t _ { n e w }$ to r based on probed footprint   
+14: else   
+15: break   
+16: end if   
+17: end while   
+18: end for   
+19: end while
+
+Table 1: Taxonomy of CTB’s semantic-aware preemption hierarchy.
+<table><tr><td>Metric</td><td>Rationale</td><td>Priority</td></tr><tr><td>Task Type</td><td>Evaluation tasks require anchored weights; stalling Highest them blocks global weight synchronization.</td><td></td></tr><tr><td></td><td>Group Comp. GRPO requires full groups to calculate advantages; High fragmented groups stall gradient updates.</td><td></td></tr><tr><td>Exec. State</td><td>Preempting actively running tasks destroys in- Med. flight compute cycles and prior investments.</td><td></td></tr><tr><td></td><td>Context Len. Evicting massive historical contexts causes catas- Low trophic redundant prefill upon resumption.</td><td></td></tr></table>
+
+$P ( t ) { = } { \boldsymbol { \omega } } _ { 1 } \cdot \mathbb { I } _ { \mathrm { e v a l } } { + } { \boldsymbol { \omega } } _ { 2 } \cdot G _ { \mathrm { c o m p l e t i o n } } { + } { \boldsymbol { \omega } } _ { 3 } \cdot \mathbb { I } _ { \mathrm { a c t i v e } } { + } { \boldsymbol { \omega } } _ { 4 } \cdot { \boldsymbol { L } } _ { \mathrm { c o n t e x t } }$ Here, $\mathbb { I } _ { \mathrm { e v a l } }$ marks evaluation tasks, $G _ { \mathrm { c o m p l e t i o n } }$ is the completion ratio of the task’s GRPO group $( e . g . , N _ { \mathrm { f i n i s h e d } } / N _ { \mathrm { t o t a l } } )$ $\mathbb { I } _ { \mathrm { a c t i v e } }$ marks tasks currently executing, and $L _ { \mathrm { c o n t e x t } }$ is the current token length. Table 1 summarizes why each term matters.
+
+When capacity is restored, CTB resumes paused tasks before admitting new tasks. It also enforces worker affinity based on group IDs, placing resumed tasks on ranks that are most likely to retain their shared prefixes. This preserves useful KV cache state and avoids unnecessary prefix recomputation.
+
+## 5 Resource-Aware Ref-Actor Collaboration
+
+The Trainer must process rollout data as soon as it becomes useful, but agentic workloads make data readiness highly uneven. At some steps, many micro-batches are already waiting in the global buffer; at others, the Trainer starts almost empty and receives new micro-batches slowly.
+
+<table><tr><td rowspan=4 colspan=1>RefActor 0Actor 1Actor 2</td><td rowspan=1 colspan=1>F0</td><td rowspan=1 colspan=1>F1</td><td rowspan=1 colspan=1>F2</td><td rowspan=1 colspan=1>F3</td><td rowspan=1 colspan=1>F4</td><td rowspan=1 colspan=1>F5</td><td rowspan=1 colspan=1>F6</td><td rowspan=1 colspan=1>F7</td><td rowspan=1 colspan=1>F8</td><td rowspan=1 colspan=1>F9</td><td rowspan=1 colspan=1>F10F</td><td rowspan=1 colspan=1>11</td><td rowspan=1 colspan=1></td></tr><tr><td rowspan=1 colspan=1>F0</td><td rowspan=1 colspan=2>B0</td><td rowspan=1 colspan=1>F3</td><td rowspan=1 colspan=2>B3</td><td rowspan=1 colspan=1>F6</td><td rowspan=1 colspan=2>B6</td><td rowspan=1 colspan=1>F9</td><td rowspan=1 colspan=2>B9</td><td rowspan=1 colspan=1></td></tr><tr><td rowspan=1 colspan=1>F1</td><td rowspan=1 colspan=1></td><td rowspan=1 colspan=2>B1</td><td rowspan=1 colspan=1>F4</td><td rowspan=1 colspan=2>B4</td><td rowspan=1 colspan=1>F7</td><td rowspan=1 colspan=2>B7</td><td rowspan=1 colspan=1>F10</td><td rowspan=1 colspan=1>B10</td><td rowspan=1 colspan=1></td></tr><tr><td rowspan=1 colspan=1>F2</td><td rowspan=1 colspan=2></td><td rowspan=1 colspan=2>B2</td><td rowspan=1 colspan=1>F5</td><td rowspan=1 colspan=2>B5</td><td rowspan=1 colspan=1>F8</td><td rowspan=1 colspan=2>B8</td><td rowspan=1 colspan=1>F11</td><td rowspan=1 colspan=1>B11</td></tr></table>
+
+Figure 6: The $\mathtt { R A } ^ { 2 } \mathrm { P }$ pipeline for decoupled streaming mode. The loss computation for Actor ranks is moved from the forward pass into the backward pass.
+
+TIDERL uses RAS (startup ready backlog) and TPRM (later ready interval) in two layers. First, $\mathtt { R A } ^ { 2 } \mathrm { P }$ provides two Ref-Actor execution strategies: a decoupled streaming strategy for high RAS or short TPRM, and a colocated aggregation strategy for low RAS and long TPRM. Second, ERS schedules between these two $\mathtt { R A } ^ { 2 } \mathrm { P }$ strategies by moving ranks between Rollout and Trainer. This section first explains the two $\mathtt { R A } ^ { 2 } \mathrm { P }$ strategies and then shows how ERS selects and provisions them.
+
+## 5.1 RA<sup>2</sup>P Execution Strategies
+
+Decoupled Streaming Mode. When RAS is large or TPRM is short, the Trainer has enough ready work to keep dedicated Ref and Actor resources busy. $\mathtt { R A } ^ { 2 } \mathrm { P }$ therefore avoids modelswapping overhead by allocating the Reference (Ref) and Actor models onto distinct GPUs. Since Ref only performs forward passes, $\mathtt { R A } ^ { 2 } \mathrm { P }$ groups one Ref rank with multiple Actor ranks to form a streaming micro-batch pipeline.
+
+To maximize concurrency and avoid blocking the Actor, we restructure the computation graph. In standard implementations, the loss computation is included in the Actor’s forward pass, requiring Actor to wait for the Ref to output the reference log probabilities $( \mathtt { r e f \_ l o g \_ p r o b s } )$ before the forward pass. $\mathtt { R A } ^ { 2 } \mathrm { P }$ breaks this dependency by deferring the Actor’s loss computation (including the KL divergence penalty) to its backward pass. As shown in Figure 6, the Ref model sequentially computes ref\_log\_probs $( F _ { 0 } , F _ { 1 } , F _ { 2 } )$ , while the Actor performs its forward passes $( F _ { 0 } , F _ { 3 } , F _ { 6 } )$ independently. The Actor only consumes the ref\_log\_probs when initiating the backward passes $\left( B _ { 0 } , B _ { 3 } , B _ { 6 } \right)$ . This realignment ensures overlap between reference log prob computation and policy updates with much lower synchronization bubbles.
+
+Optimized Colocated Mode. When RAS is small and TPRM is long, a dedicated Ref rank would spend much of the step waiting for data. $\mathtt { R A } ^ { 2 } \mathrm { P }$ then colocates the Ref and Actor models on the same GPUs, releasing the extra GPUs to Rollout where they can shorten TPRM for later steps. To keep colocation efficient, $\mathtt { R A } ^ { 2 } \mathrm { P }$ introduces two optimizations, as depicted in Figure 3(c).
+
+First, we implement ready-batch aggregation. Instead of alternating between models for every single micro-batch $( e . g .$ $R _ { 1 } {  } A _ { 1 } {  } R _ { 2 } {  } A _ { 2 } )$ $\mathtt { R A } ^ { 2 } \mathtt { P }$ monitors the global rollout buffer. If multiple micro-batches are ready, it aggregates their execution. The system loads the Ref model once to process all ready batches $( R _ { 2 , 3 } )$ , and then swaps to the Actor to perform updates $( A _ { 2 , 3 } )$ . This amortizes the I/O cost of model alternation.
+
+Second, $\mathtt { R A } ^ { 2 } \mathrm { P }$ leverages zero-copy transmission. Because the Ref and Actor reside on the same physical node, the input sequences and the generated ref\_log\_probs are passed directly via GPU shared memory, bypassing network serialization and redundant memory allocations.
+
+Analytical Mode Selection. The two strategies target different bottlenecks. Decoupled mode pays a pipeline-fill cost but removes model swaps, so it is best when high RAS amortizes the fill cost or short TPRM keeps the pipeline continuously fed. Colocated mode keeps fewer Trainer GPUs active and uses ready-batch aggregation to amortize occasional swaps, so it is best when low RAS and long TPRM would otherwise leave a decoupled Ref rank idle. $\mathtt { R A } ^ { 2 } \mathrm { P }$ compares the decoupled latency cost $( C _ { d e c } )$ and colocated latency cost $( C _ { c o l } )$ under these two signals; Appendix A details the cost model.
+
+Micro-Batch Dispatching. To maximize throughput and prevent stragglers, $\bar { \mathsf { R A } } ^ { 2 } \bar { \mathsf { P } }$ jointly optimizes how a micro-batch is formed and allocated across DP ranks.
+
+$\mathtt { R A } ^ { 2 } \mathrm { P }$ employs the same micro-batching strategy for both execution modes. Early micro-batches are accumulated from the rollout buffer until they contain sufficient tokens to fully saturate the compute capacity of all DP ranks. Conversely, the last micro-batch of a global batch is deliberately kept as small as possible. This intentionally minimizes the duration of the final forward and backward passes, thereby reducing the pipeline flush bubble at the end of the training step.
+
+$\mathtt { R A } ^ { 2 } \mathrm { P }$ further applies distinct dispatching strategies to handle the heterogeneous micro-batch size:
+
+• Colocated Mode. In this mode, GPU execution is purely sequential. The primary goal is to balance the total compute load across all training ranks. $\mathtt { R A } ^ { 2 } \mathrm { P }$ utilizes a zig-zag (longest-processing-time-first) allocation strategy, sorting sequences by length and distributing them iteratively in a zig-zag pattern. This ensures that the sum of sequence lengths assigned to each rank remains nearly identical.
+
+• Decoupled Mode. In the decoupled mode, the overall completion time is bottlenecked by the execution time of the final micro-batch. Building upon our small-final-batch sizing strategy, $\mathtt { R A } ^ { 2 } \mathrm { P }$ sorts and allocates the sequences such that the last sequence fed into the pipeline is the absolute smallest. This minimizes the tail latency, allowing the last active rank to finish its backward pass at the earliest possible time.
+
+## 5.2 ERS Scheduling of $\mathbf { R A } ^ { 2 } \mathbf { P }$ Strategies
+
+ERS closes the loop between $\mathrm { R A } ^ { 2 } \mathrm { P } ^ { \prime } \mathrm { s }$ mode choice and the producer-consumer imbalance. It reallocates GPUs on the fly so that Rollout can generate data fast enough and Trainer can consume ready micro-batches with the right $\mathtt { R A } ^ { 2 } \mathrm { P }$ strategy.
+
+Readiness-Aware Plan Generation. To accommodate volatile generation rates, TIDERL adapts the elastic batching strategy, where the Trainer consumes any accumulated batch size falling within an interval $\left[ B _ { m i n } , B _ { i d e a l } \right]$ . Here, $B _ { m i n }$ is the minimum batch size required for an effective training step,
+
+![](images/f4f20ec77a2acf5a8fc847b0b5b463fa632a14fd5fdf1ac6a1c26be2354ebeda.jpg)  
+(b) Scale-Down Rollout for Consumption Deficit
+
+Figure 7: The ERS architecture. The ERS coordinator dynamically reallocates GPU resources between functional roles. while $B _ { i d e a l }$ represents the full utilization of GPU HBM and computing resources. ERS generates scaling plans immediately after the Trainer finishes an Actor update, before the new weights are broadcast (sync\_params).
+
+Despite CTB and $\mathrm { R A } ^ { 2 } \mathrm { P } ,$ , static resource allocation cannot perfectly align the generation and consumption throughputs. The mismatch appears as TWT when the Trainer starves for ready trajectories, and as RWT when Rollout is throttled by stale weights or an overfilled buffer. ERS monitors the global buffer to estimate the RAS and TPRM signals introduced above, and converts them into two complementary actions: scaling Rollout up to reduce TWT, and scaling Trainer up to reduce RWT.
+
+Directly using instantaneous arrivals yields a noisy signal skewed by trajectory variance even within one step. To avoid reactive thrashing, the ERS coordinator (Figure 7) estimates these trends through two queue metrics: the generation and consumption deficits.
+
+When Rollout resources are insufficient, generation slows. The next training step begins with a small RAS and observes a long TPRM, so the Trainer is starved both at startup and during the step, increasing TWT. ERS detects this via the generation deficit metric (the global batch volume ${ < } B _ { i d e a l } )$ It then selects colocated $\mathtt { R A } ^ { 2 } \mathrm { P }$ and reallocates the GPUs previously used by decoupled Ref ranks to Rollout. This gives generation more capacity, directly reducing TWT, while the Trainer avoids wasting dedicated Ref GPUs on an empty stream.
+
+Conversely, when Rollout is over-provisioned, ready data accumulates. The next training step starts with a large RAS, and continued fast generation shortens TPRM. If the Trainer cannot drain this data fast enough, Rollout eventually waits for buffer clearance and fresh weights, increasing RWT. ERS detects this consumption deficit through the Head-of-Line (HoL) latency of the oldest micro-batch in the global buffer, together with the current ready volume. If the HoL latency exceeds a threshold $( \tau \times T _ { s t e p } ,$ , where $T _ { s t e p }$ is the average step duration) or RAS exceeds the decoupled-mode break-even point, ERS selects decoupled $\mathtt { R A } ^ { 2 } \mathrm { P }$ and reclaims a Rollout rank to provision a dedicated Ref rank. The Trainer can then drain the backlog without repeated model swaps, directly reducing RWT.
+
+Beyond standard training, TIDERL handles boundary conditions via preemptive generation allocation. During cold starts or evaluation phases, generation dominates. Rather than waiting for RAS to remain low and TPRM to become long, the coordinator preemptively maximizes the Rollout group size, allocating maximum hardware to bootstrap the buffer quickly.
+
+TIDERL adopts adaptive data retention to prevent starvation cycles following a Rollout scale-down. If a scaled-down Rollout cannot sustain the Trainer’s consumption, the Trainer adaptively reduces its fetch size toward $B _ { m i n }$ . By pacing consumption and retaining a micro-batch reservoir, ERS extends the step duration, granting Rollout time to accumulate a larger batch for the next iteration.
+
+Seamless Scaling Operations. Traditional elastic frameworks suspend training to migrate model weights across nodes. TIDERL eliminates this latency by exploiting the mathematical properties of on-policy RL.
+
+Cache-Free Task Migration via CTB Coordination. Iterative model weight updates render historical KV caches mathematically incompatible with the new policy. Thus, caches across Rollout ranks must be flushed at the post-update boundary. Piggybacking on this invalidation cycle, task migration becomes cache-free. TIDERL bypasses physical KV cache transfers. When ERS closes a Rollout rank, the CTB scheduler automatically reassigns the active tasks on it to the remaining active ranks. Upon resumption, these tasks perform a fresh prefill using the synchronized new version of weights on their new Rollout ranks.
+
+Latency-Hiding Role Switching. To ensure dynamic resource reallocation does not block the training loop, TIDERL overlaps PCIe weight-swapping operations with the sync\_params broadcast. When scaling down a Reference rank (to reassign it to Rollout), ERS offloads the reference model to the CPU while waiting for the Actor backward pass to complete. The reactivated Rollout rank then joins the sync\_params broadcast to load the Actor. Conversely, when scaling down a Rollout rank, it discards the stale Rollout model and skips the weight download. Instead, it utilizes the synchronization time window to load the Reference model concurrently with the other ranks’ broadcast. Through this operational alignment, TIDERL adjusts its functional GPU distribution without adding latency to the critical path.
+
+## 6 Evaluation
+
+We implement TIDERL with ∼16000 lines of Python code, supporting mainstream training (e.g., Megatron [20], PyTorch FSDP [46]) and serving (vLLM [14], SGLang [47]) frameworks. We disclose the implementation details in Appendix B.
+
+In this section, we use vLLM as the rollout backend and Megatron as the training backend.
+
+We evaluate TIDERL across text-only and multi-modal tasks, model sizes, and readiness regimes. Our key findings are:
+
+• TIDERL achieves over 5.6× RL training throughput on text-only tasks and reduces training time by 51.1% to reach similar task performance.
+
+• For multi-modal tasks, TIDERL improves RL throughput by over 33% and reduces training time by 62.2% for similar task performance.
+
+• CTB improves KV cache hit rate by 1.58× and generation throughput by 1.15× by mitigating C1.
+
+• RA<sup>2</sup>P reduces per-step training time by up to 44.3% by selecting the proper ref-actor execution mode for different readiness patterns (C2).
+
+• ERS uses readiness signals to reallocate GPUs between rollout and training, reducing total waiting time by up to 77.6% (C3).
+
+## 6.1 Methodology
+
+Testbed Configuration. We evaluate TIDERL on a physically disaggregated cluster that completely separates the RL training backend from the environment simulation frontend. The training testbed consists of four compute nodes. Each node is equipped with 8× NVIDIA H100 GPUs interconnected via NVLink, a 64-core Intel Xeon CPU, and 1.5 TB of RAM memory. To support high-throughput distributed checkpointing and rapid parameter synchronization, a shared JuiceFS-backed NFS is deployed across the training cluster.
+
+Workloads and Tasks. To comprehensively evaluate TIDERL across diverse agentic scenarios, we select a mixture of standard text-based and complex multimodal tasks. All the tasks simulate varying lengths of trajectories, and are widely adopted by researchers [17, 18]. For text-based workloads, we employ a hybrid task suite comprising WebShop [42] and AlfWorld [31]. For multi-modal workloads, we utilize OS-World [39] and ScienceBoard [33]. They require the agent to process high-resolution screenshots and interact with graphical user interfaces (GUIs), heavily stressing the prefill and context-carriage capacities of Rollout. In the meantime, multimodal tasks allow a larger allowed turns of interactions. We disclose the different behaviors of these workloads in Table 4 of Appendix C. We conduct an evaluation every 20 training steps to evaluate the training performance.
+
+Disaggregated Environment. We utilize a dedicated baremetal Kubernetes cluster provisioned with 1024 CPU cores to run environments. This cluster exposes APIs to orchestrate environment lifecycles, enabling the Rollout workers to start, interact with, and close external simulation instances without blocking the model execution threads.
+
+Models. We evaluate the system using a wide spectrum of state-of-the-art open-weights models to demonstrate its architectural generality. For text-only tasks, we employ the
+
+Qwen-2.5 series (7B and 14B, [24]). For multimodal tasks, we utilize advanced multi-modal language models, Qwen-3-VL (4B, [1]), Qwen-3.5 (9B, [25]). These models have diverse architectures. Qwen-3.5 also employs linear attention and multi-token prediction [8]. This diverse selection of model scales and architectures allows us to analyze the system’s performance and memory management efficiency across different compute-to-memory-bandwidth regimes.
+
+Baselines. To evaluate TIDERL against the relevant design points, we compare it with three RL training frameworks:
+
+• VeRL [30]: A highly optimized synchronous RL framework that enforces strict phase barriers between generation and training. It serves as our primary synchronous baseline to demonstrate the massive idle overheads inherent in coupled architectures.
+
+• AReaL [5]: A foundational asynchronous RL framework that physically decouples the Rollout and Trainer workers. It explicitly utilizes the active partial rollout mechanism introduced by APRIL [52] to manage off-policy staleness and improve concurrency, representing standard requestlevel asynchronous scheduling.
+
+• StreamRL [49]: An advanced asynchronous framework featuring stream generation support. By streaming trajectories directly to the Trainer without waiting for the entire global batch, it overlaps pipeline execution and represents the current state-of-the-art in asynchronous RL scheduling. For fair comparison, StreamRL always utilize the maximum-allowed GPUs.
+
+All frameworks use the same GPU budget, task stream, model checkpoints, staleness bound, global batch configuration, and rollout/training backends whenever the framework supports them. For fixed-partition asynchronous baselines, we sweep the rollout GPU ratio over the same candidate set used in Figure 4 and report the best-performing setting for each workload. TIDERL starts from the same candidate ratio, but ERS may reassign ranks during execution. We choose not to include Seer [23] as a baseline because its synchronous architecture is represented by VeRL, and its suffix decoding optimization increases rollout time on our multi-turn workloads due to draft-verification overheads, as discussed in §7. Metrics. We use training throughput as the primary system metric: the number of generated tokens that are eventually consumed by the Trainer per second. This excludes stale or discarded rollout tokens and therefore measures useful progress for on-policy RL. We also report task performance, KV cache hit rate, generation throughput, RWT, and TWT to explain where the end-to-end gains come from. In other words, training throughput is our operational measure of RL training goodput.
+
+## 6.2 End-to-End Performance on Text-Only Models
+
+We run TIDERL and the baselines for 100 training steps. Unless otherwise stated, fixed-partition asynchronous systems use the best static rollout ratio from our sweep; on this work-
+
+![](images/e35c0b9f425cf8bb474950e77face7c22db077655fea64c71888be0874bbbea4.jpg)  
+Figure 8: TIDERL achieves the highest throughput for different models on text-only tasks across four frameworks.
+
+load, that ratio is 0.25.
+
+Throughput. Figure 8 reports training throughput across models and frameworks.
+
+Compared with the synchronous VeRL baseline, TIDERL achieves a 5.6× speedup. VeRL is bottlenecked by the slowest trajectories in each global batch: a wrong action can require extra environment turns and substantially extend rollout time. Its colocated synchronous execution also repeatedly swaps Rollout and Trainer states at every step, further reducing useful training throughput.
+
+AReaL improves over VeRL by decoupling generation from training, but its best fixed partition is still a single compromise across different readiness regimes. When evaluation or long-tail tasks make readiness sparse, Trainer stalls; when simple tasks make readiness dense, Rollout stalls behind the Trainer. TIDERL reacts to these regimes through ERS and the two $\mathtt { R A } ^ { 2 } \mathtt { P }$ modes, achieving a 1.8× throughput improvement over AReaL. §6.5 breaks down this effect in the RAS/TPRM plane.
+
+StreamRL reduces global-batch waiting by streaming micro-batches, but on text workloads each DP rank can receive more than 16 micro-batches per step. This bursty stream triggers frequent Ref-Actor model alternation and dominates the saved stall time; the 14B run does not complete within six hours. TIDERL keeps the streaming benefit while avoiding model thrashing with $\mathrm { R A } ^ { 2 } \mathrm { P } .$ , yielding over 7× speedup in this setting.
+
+Training Performance. We further exhibit the Best-of-N (BoN, [32]) reward and the pass rate after the 100-th training step in Figure 9. The strictly synchronized VeRL has all the training data perfectly on policy with zero staleness. As expected, it exhibits the best training performance.
+
+Among the asynchronous RL frameworks, TIDERL achieves the best task performance and remains close to VeRL, with a BoN reward deficit of 0.01 and a pass-rate deficit of 0.5%. It reaches this performance using only 48.9% of VeRL’s wall-clock time.
+
+Compared with StreamRL and AReaL, TIDERL generates and consumes useful trajectories faster, so more of its training data is consumed within the zero-staleness window.
+
+![](images/fd77ebe3b59130ab6c425e1966e2dc6cbe89c0264fc4857ad411dd930e54b2cc.jpg)  
+Figure 9: The BoN reward and pass rate for different models on text-only tasks.
+
+![](images/2bb0fa4906ee3fd982c268f3f75d319528c6523b0964e59f69406b5a146dd195.jpg)  
+Figure 10: TIDERL achieves the highest training throughput on multi-modal tasks across four RL frameworks.
+
+The other asynchronous baselines more often fall back to one-step-stale data, which explains why TIDERL is closer to the synchronous learning curve while retaining much higher throughput.
+
+## 6.3 End-to-End Performance on Multi-Modal Models
+
+We run TIDERL and the baselines on multi-modal tasks and evaluate both throughput and task performance. Compared with text-only workloads, multi-modal trajectories have longer environment interactions, larger observations, and more variable rollout/training balance, as detailed in Ap pendix C.
+
+Throughput. Figure 10 shows that TIDERL achieves the highest training throughput on multi-modal tasks.
+
+VeRL suffers more severely in this setting because long GUI interactions and high-variance observations amplify global-batch tail latency.
+
+All asynchronous frameworks improve over VeRL because sparse micro-batch arrivals make overlap more valuable. This regime also reduces StreamRL’s model-swapping pressure compared with text tasks. Even after tuning AReaL’s fixed ratio to provide sufficient Trainer capacity, TIDERL achieves 6.02× throughput over VeRL and more than 1.33× over the asynchronous baselines. The gain is smaller than in text-only tasks because larger Trainer ranks reduce the number of ranks that ERS can migrate, but readiness-aware scheduling still avoids the worst fixed-partition stalls.
+
+![](images/13656a2bd794945d49914433c2363cf7e39ba927681fb7d2ecc82b792b68d4ab.jpg)  
+Figure 11: The BoN reward and pass rate for different models on multi-modal tasks.
+
+Table 2: Throughput improvement breakdown on OSWorld with Qwen-3-VL 4B.
+<table><tr><td>Method</td><td>Throughput (k token/s)</td><td>Improvement</td></tr><tr><td>Baseline</td><td>20.2</td><td></td></tr><tr><td> $+ \mathrm { R A } ^ { 2 } \mathrm { P }$ </td><td>23.1</td><td>10.4%</td></tr><tr><td>+ERS</td><td>31.8</td><td>35.7%</td></tr><tr><td>+CTB</td><td>33.3</td><td>4.8%</td></tr></table>
+
+Training Performance. Figure 11 reports the BoN reward and pass rate after 40 training steps, where TIDERL consistently outperforms the three asynchronous baselines. However, due to the high variance in training workloads, ERS generates deliberately conservative scaling plans. Because Trainer scale-up operations are bounded to one rank per step, the Trainer eventually emerges as the long-term pipeline bottleneck, causing the system to naturally gravitate toward a one-step off-policy staleness. While this staleness introduces a slight performance degradation compared to the fully synchronous VeRL, TIDERL completes the 40 steps in only 37.8% of the wall-clock time, justifying the trade-off between algorithmic equivalence and training throughput.
+
+## 6.4 Improvement Breakdown
+
+To quantify the contribution of each TIDERL component, Table 2 presents an ablation study on OSWorld with Qwen-3- VL 4B. We use StreamRL as the baseline because it already streams rollout data to the Trainer, then add $\mathtt { R A } ^ { 2 } \mathtt { P } .$ , ERS, and CTB cumulatively. The table reports average throughput over the first 10 steps, including the initial evaluation step used to verify model correctness.
+
+StreamRL’s main bottleneck is frequent model swapping across many micro-batches. $\mathtt { R A } ^ { 2 } \mathrm { P }$ removes PCIe transfers and GPU context-switching overhead from this path, improving Trainer throughput. ERS further adjusts GPU allocation: after the first step, it scales Rollout down and Trainer up, adding 35.7% improvement on top of $\mathtt { R A } ^ { 2 } \mathtt { P }$ by reducing both RWT and TWT. CTB improves the Rollout side by limiting harmful concurrency and reducing prefix recomputation, especially in the first step where many evaluation tasks run together. This yields a 54.8% first-step throughput improvement and a 4.8% overall improvement.
+
+![](images/46fe6363c2da7a3f48068383d3aaaaf1b4aef659bc12027b8f3cc89a5e18bc4c.jpg)
+
+![](images/4b3bb61c40f4065895e84599273cc9dba34deb4b7fc350d2829a4c3f4fff5351.jpg)  
+beats F10 and F9 on both metrics.  
+Figure 13: CTB achieves higher throughput and hit rate, in comparison with Figure 2.
+
+![](images/1ae7e3efe5c5afa30f099b8002a207b9cba27d9ffa396849963214dbcfdd00db.jpg)  
+Figure 14: $\mathtt { R A } ^ { 2 } \mathrm { P }$ (CM, DM) has higher throughput under ready micro-batch execution.
+
+![](images/8c5abc95fb87551a3026564e7c2c5ee97ccf5b270f94657dd88c8372d7393f09.jpg)  
+Figure 15: ERS relieves RWT and TWT by reacting to readiness imbalance.
+
+6.5 Extended Evaluation and Micro-Benchmarks We next isolate how each component addresses the bottlenecks in §2.2.
+
+CTB improves KV cache hit rate and rollout throughput. We perform a step of 1,312 WebShop tasks on one H100. Figure 12 compares CTB with fixed concurrency settings of 1024 (maximum allowed, F10) and 512 (F9). Figure 13 shows that CTB improves cache hit rate by 1.58× and generation throughput by 1.15×, reducing step duration by 15.6%. The vanilla scheduler’s frequent preemption drives the cache hit rate as low as 0.9%, while CTB keeps it above 6.0%, close to the ideal upper limit. Although hierarchical caching such as SGLang HiCache [40] can expand cache capacity, CTB remains necessary because it avoids excessive PCIe transfers and prefix recomputation. We omit HiCache in our deployment due to initialization overhead and host-memory contention, since the global trajectory buffer and offloaded Trainer model already exhaust the available CPU RAM.
+
+$\mathbf { R A } ^ { 2 } \mathbf { P }$ reduces stall and thrashing. Figure 14 shows the overhead for processing eight ready micro-batches on four H100 GPUs with data parallelism only. Each micro-batch has 8,192 tokens. This setup isolates the high-RAS regime where the Trainer begins with enough work to expose model alternation overhead. We compare $\mathrm { R A } ^ { 2 } \mathrm { P } ^ { \prime } \mathrm { s }$ colocated mode (CM) and decoupled mode (DM) against vanilla streaming with (VSO) and without (VS) model offloading. PCIe transfers and GPU context switching introduce significant overhead in the vanilla designs, while $\mathtt { R A } ^ { 2 } \mathrm { P }$ reduces overhead by up to 44.3%. All four methods avoid full-global-batch stalls because they process ready micro-batches immediately.
+
+ERS relieves both Rollout and Trainer waiting. Figure 15 reports the sum of RWT and TWT in the first 100 WebShop steps on one 8×NVIDIA H100 node, compared with the fixed rollout ratios in Figure 4. Among fixed settings, a rollout ratio of 0.25 gives the best throughput, but it still suffers high RWT in normal steps and high TWT during intermediate evaluation. These phases correspond to alternating large-RAS/short-TPRM and small-RAS/long-TPRM regimes. ERS moves GPUs between Rollout and Trainer and selects the matching RA<sup>2</sup>P mode, reducing total TWT and RWT by 68.6– 77.6%.
+
+Table 3: Single-instance rollout for Qwen-2.5-7B profiling on WebShop. One step comprises 32 train groups with 8 samples each and 200 eval groups with 4 samples each.
+<table><tr><td>Configuration</td><td>Time (s)</td><td>Acc. Rate</td><td>Acc. Len</td><td>Overhead</td></tr><tr><td>CTB Off (w/o SD)</td><td>548.5</td><td>=</td><td>=</td><td></td></tr><tr><td>CTB Off (w/ SD)</td><td>575.4</td><td>40.1%</td><td>2.47</td><td>+4.9%</td></tr><tr><td>CTB On (w/o SD)</td><td>460.4</td><td>=</td><td>1</td><td>=</td></tr><tr><td>CTB On (w/ SD)</td><td>495.4</td><td>43.7%</td><td>2.83</td><td>+7.6%</td></tr></table>
+
+## 7 Discussion
+
+Incompatibility of Suffix Decoding. While suffix decoding (SD, [21]) effectively accelerates single-turn inference [23], our profiling shows that it is detrimental to highly variable multi-turn agentic workloads under our model scale. As demonstrated in Table 3, enabling SD increases total rollout time regardless of CTB status. Complex environmental interactions yield low acceptance rates (∼40%) and short acceptance lengths (∼2.8 tokens), so draft-verification overhead outweighs speculative gains. Consequently, SD is excluded from our implementation, though future SD mechanisms could be integrated into TIDERL when they are beneficial for a workload.
+
+Fault Tolerance and Recovery. In large-scale agentic RL, node failures are inevitable. TIDERL provides robust fault tolerance without requiring global pipeline restarts. If a Rollout rank fails, the CTB scheduler immediately quarantines the node by halting new task dispatches, while the Trainer seamlessly excludes it from the asynchronous sync\_params broadcast. Furthermore, TIDERL leverages asynchronous distributed checkpointing [34, 36] to periodically persist policy weights, ensuring rapid state recovery and minimal interruption to the global training loop.
+
+Algorithmic Effectiveness. In TIDERL, tokens within a single multi-turn trajectory might be generated by slightly different policy versions as weights update mid-rollout. Consistent with findings in asynchronous RL literature (e.g., APRIL [52] and AReaL [5]), this does not degrade algorithmic convergence. The KL penalty natively regularizes the policy against such version drifts. As demonstrated in §6, TIDERL achieves highly competitive reward growth and learning efficiency compared to strict synchronous baselines.
+
+Limitations and Future Work. While TIDERL’s algorithm design tolerates policy version drift during asynchronous training, evaluation tasks demand an anchored, static model version to ensure metric consistency. Currently, enforcing this strict version synchronization for evaluation can temporarily disrupt the asynchronous pipeline momentum. Future work could address this by integrating a relay weight synchronization mechanism (e.g., Laminar [29]). This would allow the system to maintain decoupled, frozen model snapshots specifically for evaluation tasks without blocking the trainer, provided that the multi-version footprint in host memory can be carefully optimized to be kept with the reference model and large image files in trajectories simultaneously.
+
+## 8 Related Work
+
+Distributed RL Systems for LLMs. RL systems for LLMs have primarily optimized GPU utilization under coupled or partially decoupled execution. Synchronous frameworks such as VeRL and RLHFuse [30, 50] colocate generation and training and therefore inherit strict phase barriers. Production frameworks such as SLIME [54] and OpenRLHF [11] integrate distributed training backends with high-throughput inference engines, but still rely on fixed execution roles during a training job. Recent asynchronous systems overlap rollout and training and reduce long-tail stalls [10,29,49]; AReaL further bounds policy staleness with active partial rollouts [5, 52]. These systems expose asynchrony, but they do not jointly decide the ref-actor execution mode and the rollout-trainer GPU split from data-readiness signals. TIDERL targets this missing control loop: CTB shapes ready-data production, RA<sup>2</sup>P provides two consumption strategies, and ERS schedules both ranks and $\mathtt { R A } ^ { 2 } \mathtt { P }$ modes as readiness shifts. Speculative decoding [3, 23], memory sampling [37], and hardware-specific dataflows [4] are orthogonal optimizations that can be integrated when they are beneficial for the workload.
+
+LLM Inference for Agentic Workloads. Foundational inference engines optimize throughput via continuous batching [14, 43], RadixAttention-based prefix sharing [6, 47], and prefill-decode disaggregation [48, 53]. Agent-centric serving systems model multi-turn sessions explicitly, adding sessionaware scheduling [26, 35], KV-cache pinning [15], and congestion control [2] to reduce cache evictions during toolexecution pauses. These techniques improve serving throughput, but agentic RL adds algorithmic dependencies absent in serving: GRPO groups must complete before advantages are valid, evaluation tasks must preserve an anchored model version, and rollout staleness must be bounded by training progress. CTB incorporates these dependencies into task admission, pausing, and resumption, so cache residency decisions serve the training loop rather than only request through put.
+
+Distributed Training Architectures. Standard large-scale training relies on 3D parallelism for weight updates [12,16,19, 20]. DistTrain [45] disaggregates the visual encoder from the language backbone for multi-modal training. General-purpose elastic frameworks [9, 13, 22] reallocate resources through co-adaptive batch sizes and throughput modeling, but their scaling operations usually suspend jobs, migrate large model states, or rebuild communication groups. Those costs are too high for agentic RL, where the bottleneck can change across adjacent steps. TIDERL builds on existing training backends but aligns role switching with the natural post-update synchronization point: stale rollout KV caches are invalidated anyway, and weight movement can be hidden under sync\_params. This makes rank-level elasticity practical inside a fixed-size cluster allocation.
+
+## 9 Conclusion
+
+We present TIDERL, an asynchronous system for multi-turn agentic RL. TIDERL keeps Rollout efficient with task-level CTB, consumes ready trajectories with the two RA<sup>2</sup>P Ref-Actor strategies, and uses ERS to move GPUs between Rollout and Trainer as bottlenecks shift. On real testbeds, it improves training throughput by over 1.8× on text-only tasks and over 33% on multi-modal tasks compared with existing asynchronous systems.
+
+## References
+
+[1] Shuai Bai, Yuxuan Cai, Ruizhe Chen, Keqin Chen, Xionghui Chen, Zesen Cheng, Lianghao Deng, Wei Ding, Chang Gao, Chunjiang Ge, Wenbin Ge, Zhifang Guo, Qidong Huang, Jie Huang, Fei Huang, Binyuan Hui, Shutong Jiang, Zhaohai Li, Mingsheng Li, Mei Li, Kaixin Li, Zicheng Lin, Junyang Lin, Xuejing Liu, Jiawei Liu, Chenglong Liu, Yang Liu, Dayiheng Liu, Shixuan Liu, Dunjie Lu, Ruilin Luo, Chenxu Lv, Rui Men, Lingchen Meng, Xuancheng Ren, Xingzhang Ren, Sibo Song, Yuchong Sun, Jun Tang, Jianhong Tu, Jianqiang Wan, Peng Wang, Pengfei Wang, Qiuyue Wang, Yuxuan Wang, Tianbao Xie, Yiheng Xu, Haiyang Xu, Jin Xu, Zhibo Yang, Mingkun Yang, Jianxin Yang, An Yang, Bowen Yu, Fei Zhang, Hang Zhang, Xi Zhang, Bo Zheng, Humen Zhong, Jingren Zhou, Fan Zhou, Jing Zhou, Yuanzhi Zhu, and Ke Zhu. Qwen3-vl technical report. arXiv preprint arXiv:2511.21631, 2025.
+
+[2] Qiaoling Chen, Zhisheng Ye, Tian Tang, Peng Sun, Boyu Tian, Guoteng Wang, Shenggui Li, Yonggang Wen, Zhenhua Han, and Tianwei Zhang. Concur: High-throughput agentic batch inference of llm via congestion-based concurrency control. arXiv preprint arXiv:2601.22705, 2026.
+
+[3] Rongxin Cheng, Kai Zhou, Xingda Wei, Siyuan Liu, Mingcong Han, Mingjing Ai, Yeju Zhou, Baoquan Zhong, Wencong Xiao, Rong Chen, and Haibo Chen. Fast llm post-training via decoupled and fastest-of-n speculation. arXiv preprint arXiv:2511.16193, 2025.
+
+[4] Laingjun Feng, Chenyi Pan, Xinjie Guo, Fei Mei, Benzhe Ning, Jianxiang Zhang, Xinyang Liu, Beirong Zhou, Zeng Shu, Chang Liu, Guang Yang, Zhenyu Han, Jiangben Wang, and Bo Wang. Mindspeed rl: Distributed dataflow for scalable and efficient rl training on ascend npu cluster. arXiv preprint arXiv:2507.19017, 2025.
+
+[5] Wei Fu, Jiaxuan Gao, Xujie Shen, Chen Zhu, Zhiyu Mei, Chuyi He, Shusheng Xu, Guo Wei, Jun Mei, WANG JIASHU, Tongkai Yang, Binhang Yuan, and Yi Wu. AREAL: A large-scale asynchronous reinforcement learning system for language reasoning. In The Thirtyninth Annual Conference on Neural Information Processing Systems, 2025.
+
+[6] Bin Gao, Zhuomin He, Puru Sharma, Qingxuan Kang, Djordje Jevdjic, Junbo Deng, Xingkun Yang, Zhou Yu, and Pengfei Zuo. Cost-Efficient large language model serving for multi-turn conversations with CachedAtten tion. In 2024 USENIX Annual Technical Conference (USENIX ATC 24), pages 111–126, Santa Clara, CA, July 2024. USENIX Association.
+
+[7] Yanjie Gao, Yichen He, Xinze Li, Bo Zhao, Haoxiang Lin, Yoyo Liang, Jing Zhong, Hongyu Zhang, Jingzhou Wang, Yonghua Zeng, Keli Gui, Jie Tong, and Mao Yang. An empirical study on low gpu utilization of deep learning jobs. In Proceedings ofthe IEEE/ACM 46th International Conference on Software Engineering, ICSE ’24, New York, NY, USA, 2024. Association for Computing Machinery.
+
+[8] Fabian Gloeckle, Badr Youbi Idrissi, Baptiste Rozière, David Lopez-Paz, and Gabriel Synnaeve. Better & faster large language models via multi-token prediction. arXiv preprint arXiv:2404.19737, 2024.
+
+[9] Diandian Gu, Yihao Zhao, Yinmin Zhong, Yifan Xiong, Zhenhua Han, Peng Cheng, Fan Yang, Gang Huang, Xin Jin, and Xuanzhe Liu. Elasticflow: An elastic serverless training platform for distributed deep learning. In Proceedings of the 28th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 2, ASPLOS 2023, page 266–280, New York, NY, USA, 2023. Association for Computing Machinery.
+
+[10] Zhenyu Han, Ansheng You, Haibo Wang, Kui Luo, Guang Yang, Wenqi Shi, Menglong Chen, Sicheng Zhang, Zeshun Lan, Chunshi Deng, Huazhong Ji, Wenjie Liu, Yu Huang, Yixiang Zhang, Chenyi Pan, Jing Wang, Xin Huang, Chunsheng Li, and Jianping Wu. Asyncflow: An asynchronous streaming rl framework for efficient llm post-training. arXiv preprint arXiv:2507.01663, 2025.
+
+[11] Jian Hu, Xibin Wu, Wei Shen, Jason Klein Liu, Weixun Wang, Songlin Jiang, Haoran Wang, Hao Chen, Bin Chen, Wenkai Fang, Xianyu, Yu Cao, Haotian Xu, and Yiming Liu. OpenRLHF: A ray-based easy-to-use, scalable and high-performance RLHF framework. In Ivan Habernal, Peter Schulam, and Jörg Tiedemann, editors, Proceedings ofthe 2025 Conference on Empirical Methods in Natural Language Processing: System Demonstrations, pages 656–666, Suzhou, China, November 2025. Association for Computational Linguistics.
+
+[12] Yanping Huang, Youlong Cheng, Ankur Bapna, Orhan Firat, Dehao Chen, Mia Chen, HyoukJoong Lee, Jiquan Ngiam, Quoc V Le, Yonghui Wu, and zhifeng Chen. Gpipe: Efficient training of giant neural networks using pipeline parallelism. In H. Wallach, H. Larochelle, A. Beygelzimer, F. d'Alché-Buc, E. Fox, and R. Garnett, editors, Advances in Neural Information Processing Sys tems, volume 32. Curran Associates, Inc., 2019.
+
+[13] Changho Hwang, Taehyun Kim, Sunghyun Kim, Jinwoo Shin, and KyoungSoo Park. Elastic resource sharing for distributed deep learning. In 18th USENIX Symposium on Networked Systems Design and Implementation (NSDI 21), pages 721–739. USENIX Association, April 2021.
+
+[14] Woosuk Kwon, Zhuohan Li, Siyuan Zhuang, Ying Sheng, Lianmin Zheng, Cody Hao Yu, Joseph Gonzalez, Hao Zhang, and Ion Stoica. Efficient memory management for large language model serving with pagedattention. In Proceedings of the 29th Symposium on Operating Systems Principles, SOSP ’23, page 611–626, New York, NY, USA, 2023. Association for Computing Machinery.
+
+[15] Hanchen Li, Qiuyang Mang, Runyuan He, Qizheng Zhang, Huanzhi Mao, Xiaokun Chen, Hangrui Zhou, Alvin Cheung, Joseph Gonzalez, and Ion Stoica. Continuum: Efficient and robust multi-turn llm agent scheduling with kv cache time-to-live. arXiv preprint arXiv:2511.02230, 2026.
+
+[16] Shigang Li and Torsten Hoefler. Chimera: efficiently training large-scale neural networks with bidirectional pipelines. In Proceedings of the International Conferencefor High Performance Computing, Networking, Storage and Analysis, SC ’21, New York, NY, USA, 2021. Association for Computing Machinery.
+
+[17] Xiao Liu, Hao Yu, Hanchen Zhang, Yifan Xu, Xuanyu Lei, Hanyu Lai, Yu Gu, Hangliang Ding, Kaiwen Men, Kejuan Yang, Shudan Zhang, Xiang Deng, Aohan Zeng, Zhengxiao Du, Chenhui Zhang, Sheng Shen, Tianjun Zhang, Yu Su, Huan Sun, Minlie Huang, Yuxiao Dong, and Jie Tang. Agentbench: Evaluating LLMs as agents.
+
+In The Twelfth International Conference on Learning Representations, 2024.
+
+[18] Xiao Liu, Tianjie Zhang, Yu Gu, Iat Long Iong, Song XiXuan, Yifan Xu, Shudan Zhang, Hanyu Lai, Jiadai Sun, Xinyue Yang, Yu Yang, Zehan Qi, Shuntian Yao, Xueqiao Sun, Siyi Cheng, Qinkai Zheng, Hao Yu, Hanchen Zhang, Wenyi Hong, Ming Ding, Lihang Pan, Xiaotao Gu, Aohan Zeng, Zhengxiao Du, Chan Hee Song, Yu Su, Yuxiao Dong, and Jie Tang. Visualagentbench: Towards large multimodal models as visual foundation agents. In The Thirteenth International Conference on Learning Representations, 2025.
+
+[19] Deepak Narayanan, Aaron Harlap, Amar Phanishayee, Vivek Seshadri, Nikhil R. Devanur, Gregory R. Ganger, Phillip B. Gibbons, and Matei Zaharia. Pipedream: generalized pipeline parallelism for dnn training. In Proceedings of the 27th ACM Symposium on Operating Systems Principles, SOSP ’19, page 1–15, New York, NY, USA, 2019. Association for Computing Machinery.
+
+[20] Deepak Narayanan, Mohammad Shoeybi, Jared Casper, Patrick LeGresley, Mostofa Patwary, Vijay Korthikanti, Dmitri Vainbrand, Prethvi Kashinkunti, Julie Bernauer, Bryan Catanzaro, Amar Phanishayee, and Matei Zaharia. Efficient large-scale language model training on gpu clusters using megatron-lm. In Proceedings ofthe International Conferencefor High Performance Computing, Networking, Storage and Analysis, SC ’21, New York, NY, USA, 2021. Association for Computing Machinery.
+
+[21] Gabriele Oliaro, Zhihao Jia, Daniel F Campos, and Aurick Qiao. Suffixdecoding: Extreme speculative decoding for emerging AI applications. In The Thirty-ninth Annual Conference on Neural Information Processing Systems, 2025.
+
+[22] Aurick Qiao, Sang Keun Choe, Suhas Jayaram Subramanya, Willie Neiswanger, Qirong Ho, Hao Zhang, Gregory R. Ganger, and Eric P. Xing. Pollux: Co-adaptive cluster scheduling for goodput-optimized deep learning. In 15th USENIX Symposium on Operating Systems Design and Implementation (OSDI 21), pages 1–18. USENIX Association, July 2021.
+
+[23] Ruoyu Qin, Weiran He, Weixiao Huang, Yangkun Zhang, Yikai Zhao, Bo Pang, Xinran Xu, Yingdi Shan, Yongwei Wu, and Mingxing Zhang. Seer: Online context learning for fast synchronous llm reinforcement learning. arXiv preprint arXiv:2511.14617, 2025.
+
+[24] Qwen, :, An Yang, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu, Chengyuan Li, Dayiheng Liu, Fei Huang, Haoran Wei, Huan Lin, Jian Yang, Jianhong Tu, Jianwei Zhang, Jianxin Yang, Jiaxi Yang,
+
+Jingren Zhou, Junyang Lin, Kai Dang, Keming Lu, Keqin Bao, Kexin Yang, Le Yu, Mei Li, Mingfeng Xue, Pei Zhang, Qin Zhu, Rui Men, Runji Lin, Tianhao Li, Tianyi Tang, Tingyu Xia, Xingzhang Ren, Xuancheng Ren, Yang Fan, Yang Su, Yichang Zhang, Yu Wan, Yuqiong Liu, Zeyu Cui, Zhenru Zhang, and Zihan Qiu. Qwen2.5 technical report. arXiv preprint arXiv:2412.15115, 2025.
+
+[25] Qwen Team. Qwen3.5: Towards native multimodal agents. https://qwen.ai/blog?id=qwen3.5, February 2026.
+
+[26] Yanyu Ren, Li Chen, Dan Li, Xizheng Wang, Zhiyuan Wu, Yukai Miao, and Yu Bai. Transcending cost-quality tradeoff in agent serving via session-awareness. In The Thirty-ninth Annual Conference on Neural Information Processing Systems, 2025.
+
+[27] John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov. Proximal policy optimization algorithms. arXiv preprint arXiv:1707.06347, 2017.
+
+[28] Zhihong Shao, Peiyi Wang, Qihao Zhu, Runxin Xu, Junxiao Song, Xiao Bi, Haowei Zhang, Mingchuan Zhang, Y. K. Li, Y. Wu, and Daya Guo. Deepseekmath: Pushing the limits of mathematical reasoning in open language models. arXiv preprint arXiv:2402.03300, 2024.
+
+[29] Guangming Sheng, Yuxuan Tong, Borui Wan, Wang Zhang, Chaobo Jia, Xibin Wu, Yuqi Wu, Xiang Li, Chi Zhang, Yanghua Peng, Haibin Lin, Xin Liu, and Chuan Wu. Laminar: A scalable asynchronous rl post-training framework. arXiv preprint arXiv:2510.12633, 2025.
+
+[30] Guangming Sheng, Chi Zhang, Zilingfeng Ye, Xibin Wu, Wang Zhang, Ru Zhang, Yanghua Peng, Haibin Lin, and Chuan Wu. Hybridflow: A flexible and efficient rlhf framework. In Proceedings of the Twentieth European Conference on Computer Systems, EuroSys ’25, page 1279–1297, New York, NY, USA, 2025. Association for Computing Machinery.
+
+[31] Mohit Shridhar, Xingdi Yuan, Marc-Alexandre Côté, Yonatan Bisk, Adam Trischler, and Matthew Hausknecht. ALFWorld: Aligning Text and Embodied Environments for Interactive Learning. In Proceed ings of the International Conference on Learning Representations (ICLR), 2021.
+
+[32] Nisan Stiennon, Long Ouyang, Jeffrey Wu, Daniel Ziegler, Ryan Lowe, Chelsea Voss, Alec Radford, Dario Amodei, and Paul F Christiano. Learning to summarize with human feedback. In H. Larochelle, M. Ranzato, R. Hadsell, M.F. Balcan, and H. Lin, editors, Advances in Neural Information Processing Systems, volume 33, pages 3008–3021. Curran Associates, Inc., 2020.
+
+[33] Qiushi Sun, Zhoumianze Liu, Chang Ma, Zichen Ding, Fangzhi Xu, Zhangyue Yin, Haiteng Zhao, Zhenyu Wu, Kanzhi Cheng, Zhaoyang Liu, Jianing Wang, Qintong Li, Xiangru Tang, Tianbao Xie, Xiachong Feng, Xiang Li, Ben Kao, Wenhai Wang, Biqing Qi, Lingpeng Kong, and Zhiyong Wu. Scienceboard: Evaluating multimodal autonomous agents in realistic scientific workflows. arXiv preprint arXiv:2505.19897, 2026.
+
+[34] Megatron Team. dist\_checkpointing package. https://docs.nvidia.com/megatron-core/ developer-guide/latest/api-guide/core/ dist\_checkpointing.html. [Accessed 13-04-2026].
+
+[35] Noppanat Wadlom, Junyi Shen, and Yao Lu. Efficient llm serving for agentic workflows: A data systems perspective. arXiv preprint arXiv:2603.16104, 2026.
+
+[36] Borui Wan, Mingji Han, Yiyao Sheng, Yanghua Peng, Haibin Lin, Mofan Zhang, Zhichao Lai, Menghan Yu, Junda Zhang, Zuquan Song, Xin Liu, and Chuan Wu. ByteCheckpoint: A unified checkpointing system for large foundation model development. In 22nd USENIX Symposium on Networked Systems Design and Implementation (NSDI 25), pages 559–578, Philadelphia, PA, April 2025. USENIX Association.
+
+[37] Liangyu Wang, Huanyi Xie, Xinhai Wang, Tianjin Huang, Mengdi Li, and Di Wang. Infinite sampling: Efficient and stable grouped rl training for large language models. arXiv preprint arXiv:2506.22950, 2025.
+
+[38] Wencong Xiao, Shiru Ren, Yong Li, Yang Zhang, Pengyang Hou, Zhi Li, Yihui Feng, Wei Lin, and Yangqing Jia. AntMan: Dynamic scaling on GPU clusters for deep learning. In 14th USENIX Symposium on Operating Systems Design and Implementation (OSDI 20), pages 533–548. USENIX Association, November 2020.
+
+[39] Tianbao Xie, Danyang Zhang, Jixuan Chen, Xiaochuan Li, Siheng Zhao, Ruisheng Cao, Toh Jing Hua, Zhoujun Cheng, Dongchan Shin, Fangyu Lei, Yitao Liu, Yiheng Xu, Shuyan Zhou, Silvio Savarese, Caiming Xiong, Victor Zhong, and Tao Yu. OSWorld: Benchmarking multimodal agents for open-ended tasks in real computer environments. In The Thirty-eight Conference on Neural Information Processing Systems Datasets and Benchmarks Track, 2024.
+
+[40] Zhiqiang Xie. SGLang HiCache: Fast Hierarchical KV Caching with Your Favorite Storage Backends - LMSYS Blog — lmsys.org. https://www.lmsys.org/blog/ 2025-09-10-sglang-hicache/, 2025. [Accessed 13- 04-2026].
+
+[41] Yifan Xu, Xiao Liu, Xueqiao Sun, Siyi Cheng, Hao Yu, Hanyu Lai, Shudan Zhang, Dan Zhang, Jie Tang, and Yuxiao Dong. AndroidLab: Training and systematic benchmarking of android autonomous agents. In Wanxiang Che, Joyce Nabende, Ekaterina Shutova, and Mohammad Taher Pilehvar, editors, Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers), pages 2144–2166, Vienna, Austria, July 2025. Association for Computational Linguistics.
+
+[42] Shunyu Yao, Howard Chen, John Yang, and Karthik Narasimhan. Webshop: Towards scalable real-world web interaction with grounded language agents. In S. Koyejo, S. Mohamed, A. Agarwal, D. Belgrave, K. Cho, and A. Oh, editors, Advances in Neural Information Processing Systems, volume 35, pages 20744– 20757. Curran Associates, Inc., 2022.
+
+[43] Gyeong-In Yu, Joo Seong Jeong, Geon-Woo Kim, Soojeong Kim, and Byung-Gon Chun. Orca: A distributed serving system for Transformer-Based generative models. In 16th USENIX Symposium on Operating Systems Design and Implementation (OSDI 22), pages 521–538, Carlsbad, CA, July 2022. USENIX Association.
+
+[44] Hanchen Zhang, Xiao Liu, Bowen Lv, Xueqiao Sun, Bohao Jing, Iat Long Iong, Zhenyu Hou, Zehan Qi, Hanyu Lai, Yifan Xu, Rui Lu, Hongning Wang, Jie Tang, and Yuxiao Dong. Agentrl: Scaling agentic reinforcement learning with a multi-turn, multi-task framework. arXiv preprint arXiv:2510.04206, 2025.
+
+[45] Zili Zhang, Yinmin Zhong, Yimin Jiang, Hanpeng Hu, Jianjian Sun, Zheng Ge, Yibo Zhu, Daxin Jiang, and Xin Jin. Disttrain: Addressing model and data heterogeneity with disaggregated training for multimodal large language models. In Proceedings of the ACM SIGCOMM 2025 Conference, SIGCOMM ’25, page 24–38, New York, NY, USA, 2025. Association for Computing Machinery.
+
+[46] Yanli Zhao, Andrew Gu, Rohan Varma, Liang Luo, Chien-Chin Huang, Min Xu, Less Wright, Hamid Shojanazeri, Myle Ott, Sam Shleifer, Alban Desmaison, Can Balioglu, Pritam Damania, Bernard Nguyen, Geeta Chauhan, Yuchen Hao, Ajit Mathews, and Shen Li. Py torch fsdp: Experiences on scaling fully sharded data parallel. arXiv preprint arXiv:2304.11277, 2023.
+
+[47] Lianmin Zheng, Liangsheng Yin, Zhiqiang Xie, Chuyue Sun, Jeff Huang, Cody Hao Yu, Shiyi Cao, Christos Kozyrakis, Ion Stoica, Joseph E. Gonzalez, Clark Barrett, and Ying Sheng. Sglang: Efficient execution of structured language model programs. In A. Globerson, L. Mackey, D. Belgrave, A. Fan, U. Paquet, J. Tomczak,
+
+and C. Zhang, editors, Advances in Neural Information Processing Systems, volume 37, pages 62557–62583. Curran Associates, Inc., 2024.
+
+[48] Yinmin Zhong, Shengyu Liu, Junda Chen, Jianbo Hu, Yibo Zhu, Xuanzhe Liu, Xin Jin, and Hao Zhang. Dist-Serve: Disaggregating prefill and decoding for goodputoptimized large language model serving. In 18th USENIX Symposium on Operating Systems Design and Implementation (OSDI 24), pages 193–210, Santa Clara, CA, July 2024. USENIX Association.
+
+[49] Yinmin Zhong, Zili Zhang, Xiaoniu Song, Hanpeng Hu, Chao Jin, Bingyang Wu, Nuo Chen, Yukun Chen, Yu Zhou, Changyi Wan, Hongyu Zhou, Yimin Jiang, Yibo Zhu, and Daxin Jiang. Streamrl: Scalable, heterogeneous, and elastic rl for llms with disaggregated stream generation. arXiv preprint arXiv:2504.15930, 2025.
+
+[50] Yinmin Zhong, Zili Zhang, Bingyang Wu, Shengyu Liu, Yukun Chen, Changyi Wan, Hanpeng Hu, Lei Xia, Ranchen Ming, Yibo Zhu, and Xin Jin. Optimizing RLHF training for large language models with stage fusion. In 22nd USENIX Symposium on Networked Systems Design and Implementation (NSDI 25), pages 489–503, Philadelphia, PA, April 2025. USENIX Association.
+
+[51] Shuyan Zhou, Frank Xu, Hao Zhu, Xuhui Zhou, Robert Lo, Abishek Sridhar, Xianyi Cheng, Tianyue Ou, Yonatan Bisk, Daniel Fried, Uri Alon, and Graham Neubig. Webarena: A realistic web environment for building autonomous agents. In NeurIPS 2023 Foundation Models for Decision Making Workshop, 2023.
+
+[52] Yuzhen Zhou, Jiajun Li, Yusheng Su, Gowtham Ramesh, Zilin Zhu, Xiang Long, Chenyang Zhao, Jin Pan, Xiaodong Yu, Ze Wang, Kangrui Du, Jialian Wu, Ximeng Sun, Jiang Liu, Qiaolin Yu, Hao Chen, Zicheng Liu, and Emad Barsoum. April: Active partial rollouts in reinforcement learning to tame long-tail generation. arXiv preprint arXiv:2509.18521, 2025.
+
+[53] Ruidong Zhu, Ziheng Jiang, Chao Jin, Peng Wu, Cesar A. Stuardo, Dongyang Wang, Xinlei Zhang, Huaping Zhou, Haoran Wei, Yang Cheng, Jianzhe Xiao, Xinyi Zhang, Lingjun Liu, Haibin Lin, Li-Wen Chang, Jianxi Ye, Xiao Yu, Xuanzhe Liu, Xin Jin, and Xin Liu. Megascaleinfer: Efficient mixture-of-experts model serving with disaggregated expert parallelism. In Proceedings of the ACM SIGCOMM 2025 Conference, SIGCOMM ’25, page 592–608, New York, NY, USA, 2025. Association for Computing Machinery.
+
+[54] Zilin Zhu, Chengxing Xie, Xin Lv, and slime Contributors. slime: An llm post-training framework for rl
+
+scaling. https://github.com/THUDM/slime, 2025.   
+GitHub repository. Corresponding author: Xin Lv.
+
+## Appendix
+
+## A Analytical Model for $\mathbf { R A } ^ { 2 } \mathbf { P }$ Selection
+
+To decide the optimal execution mode in $\mathrm { R A } ^ { 2 } \mathrm { P } ,$ , we use an analytical model to evaluate the total latency to process a global batch of N micro-batches. Let $t _ { r e f }$ and $t _ { a c t \_ f }$ denote the forward pass time for the Ref and Actor models respectively, and $t _ { a c t \_ b }$ denote the Actor’s backward pass time. $\operatorname { L e t } t _ { s w a p }$ be the overhead of model swapping. Given the ordered micro-batch ready times $\mathcal { T } = \{ a _ { 1 } , a _ { 2 } , . . . , a _ { N } \}$ relative to the start of the training step, RAS is $N _ { 0 } { = } | \{ i | a _ { i } { \le } 0 \}$ |, and TPRM is represented by the post-start gaps $\Delta _ { i } { = } a _ { i } { - } a _ { i - 1 }$ for $i { > } N _ { 0 } { + } 1$
+
+Cost of Decoupled Streaming Mode. In the decoupled mode, models are distributed across separate GPUs, completely eliminating $t _ { s w a p }$ . However, idle bubbles are not entirely absent; they exist as pipelinefill bubbles during the startup phase.
+
+As illustrated in the timeline (see Figure 6), multiple Actor ranks initiate their forward passes concurrently. Assuming an Actor group size of M, Actor $i ( 0 { \leq } i { < } M )$ finishes its forward pass at $t { \approx } t _ { a c t \_ f }$ . However, the single Ref model processes the reference forward passes sequentially. The $\tt r e f \_ l$ og\_probs for Actor i are only generated at $t { \approx } ( i { + } 1 ) { \cdot } t _ { r e f }$ . Consequently, Actor i must wait for a duration of $i \cdot t _ { r e f }$ (assuming $t _ { a c t \_ f } { \approx } t _ { r e f } )$ before initiating its backward pass $B _ { i }$
+
+Beyond this initial pipeline flush overhead, the steadystate throughput is governed by the maximum of each ready gap and the Actor’s computation time $( t _ { a c t \_ f } + t _ { a c t \_ b } )$ . Microbatches that are already ready at the step boundary have zero ready gap, so a large $N _ { 0 }$ immediately amortizes the pipeline fill bubble. The total latency can be approximated as:
+
+$$
+C _ { d e c } \approx \underbrace { \sum _ { i = 0 } ^ { M - 1 } ( i \cdot t _ { r e f } ) } _ { \mathrm { P i p e l i n e ~ F i l l ~ B u b b l e } } + \sum _ { i = 1 } ^ { N } \operatorname* { m a x } ( \delta _ { i } , t _ { a c t \_ f } + t _ { a c t \_ b } )
+$$
+
+where $\delta _ { i } { = } 0 \mathrm { f o r } i { \le } N _ { 0 } , \ S _ { N _ { 0 } { + } 1 } { = } \mathrm { m a x } ( a _ { N _ { 0 } { + } 1 } , 0 )$ , and $\delta _ { i } = a _ { i } - a _ { i - 1 }$ otherwise.
+
+Cost of Optimized Colocated Mode. In the colocated mode, the dynamic ready-batch aggregation dictates that the aggregation size k is strictly non-deterministic and monotonically adjusts based on real-time task arrivals. Therefore, the execution latency cannot be expressed as a closed-form static formula. Instead, the total time $C _ { c o l }$ is determined algorithmically by simulating the scheduler’s progression.
+
+The scheduler maintains a global clock T, initialized to $T { = } 0$ . The evaluation proceeds as follows for the unprocessed micro-batches starting at index $j { = } 1$
+
+1. Wait for Data: If the current time $T { < } a _ { j }$ , the system idles until the next micro-batch arrives: $T \gets a _ { j }$
+
+2. Determine Aggregation (k): The scheduler counts all ready micro-batches that have arrived by time T. Let k be the number of batches such that their arrival time $a _ { j + k - 1 } { \leq } T$ , capped by the maximum memory capacity.
+
+3. Execute Ref Model: The system incurs a swap overhead, then sequentially processes k reference passes. The clock updates:
+
+$$
+T \gets T + t _ { s w a p } + k \cdot t _ { r e f }
+$$
+
+4. Execute Actor Model: The system incurs another swap, followed by the Actor’s forward and backward passes. The clock updates:
+
+$$
+T \gets T + t _ { s w a p } + k \cdot ( t _ { a c t \_ f } + t _ { a c t \_ b } )
+$$
+
+5. Advance Index: The pointer advances $( j  j { + } k )$ and the cycle repeats until $j { > } N . C _ { c o l }$ evaluates to the final clock time T.
+
+Qualitative Mode Analysis. Based on the formulated cost models, the selection between the two execution modes hinges on both $N _ { 0 }$ and the post-start ready gaps. A large $N _ { 0 }$ means the Trainer already has a startup burst to process, so the initial pipeline fill bubbles in $C _ { d e c }$ are rapidly amortized. Short poststart ready gaps then keep the decoupled pipeline saturated. The decoupled mode provides superior throughput in these regimes by strictly eliminating the $t _ { s w a p }$ overhead, making it the optimal choice when maximizing processing speed is the priority and GPU resources are sufficient.
+
+Conversely, when $N _ { 0 }$ is small and post-start ready gaps are long, data readiness dominates the overall latency. Under these conditions, the colocated mode naturally absorbs the model-swapping penalty within the physical generation delays (Step 1 of the colocated algorithm). Consequently, the colocated mode maintains comparable end-to-end latency to the decoupled pipeline while effectively halving the required GPU footprint, maximizing overall resource efficiency in bottlenecked regimes.
+
+## B Implementation Details
+
+## B.1 Environment Interfacing and Lifecycle Management
+
+TIDERL interacts with external task environments through a standardized set of lightweight RESTful-like APIs. The three primary endpoints are, /start, /observation, and /end.
+
+In asynchronous agentic RL, tasks may enter a long pause by CTB, causing standard environments to falsely detect inactivity and terminate the session. To solve this, TIDERL introduces two critical supplementary endpoints: /pause and /resume. These APIs define a protected temporal window. Upon eviction by the CTB scheduler, the /pause signal explicitly halts the environment’s internal timeout counters, guaranteeing that long-running sessions and their associated external states $( e . g .$ , Docker containers or browser contexts) remain intact until execution resumes.
+
+## B.2 Rollout Engine and CTB Observability
+
+To execute token-aware Continuous Task Batching (CTB), the system must accurately track sequence lengths across the cluster. TIDERL implements dual-mode length awareness:
+
+• Active Reporting: The user-defined agentic loop proactively reports token consumption and trajectory metadata back to the global scheduler at each interaction turn.
+
+• Engine Hijacking: For non-intrusive tracking, TIDERL dynamically hijacks the scheduling APIs of the underlying Rollout execution engines. This extracts real-time GPU scheduling metadata directly from individual Rollout ranks, avoiding reliance on rough heuristics.
+
+Further, TIDERL natively interfaces with the Prometheus endpoints exposed by SGLang and vLLM. This integration provides granular observability into KV cache utilization, prefill latencies, and decode throughput, serving as foundational metrics for system profiling and performance tuning.
+
+## B.3 Trainer Modifications and Sequence Dispatching
+
+TIDERL executes customized data dispatching and microbatch scheduling to accommodate the asynchronous nature of agentic trajectories. We also include trainer metrics, such as loss to our Prometheus, so that users can easily monitor if it is algorithmically correct, just like SLIME [54].
+
+• Asynchronous Micro-Batching (Megatron Core): We modified Megatron Core to decouple forward and backward execution from the strict requirement of a fully assembled global batch. This permits the pipeline to initiate execution on partial micro-batches immediately upon ar rival. Notably, we retain the original 1F1B (One-Forward-One-Backward) pipeline schedule without modification. Because TIDERL does not employ Virtual Pipeline Parallelism (VPP), the absolute pipeline completion time is strictly determined by the arrival and execution of the final micro-batch; altering the schedule interleaving yields no structural latency reduction.
+
+• Logical DP Grouping (FSDP): In architectures like Py-Torch FSDP, different FSDP ranks within a same DP group mandate collective data fetching and synchronized gradient reduction. To prevent intra-group stragglers, TIDERL partitions physical DP ranks into logical DP ranks. Sequences of highly similar lengths are tightly packed and fed to logical ranks within the same DP group, ensuring symmetric processing times and eliminating synchronization barriers.
+
+## C Detailed Task Specifications
+
+To comprehensively evaluate TIDERL across diverse agentic scenarios, we detail the interaction constraints and trajectory characteristics for our workloads. These are categorized into text-only and multi-modal tasks based on the nature of their observations and interactions.
+
+## C.1 Text-Only Workloads
+
+For standard text-based tasks, we enforce a standardized upper bound of 20 interaction turns and a maximum context window of 8192 tokens per trajectory. Table 4 summarizes the specific interaction statistics for these benchmarks, integrating environment-specific data from systematic evaluations.
+
+• WebShop simulates a real-world e-commerce experience with approximately one million products. These tasks average 13 interaction turns and approximately 3000 tokens per trajectory, reflecting high-density HTML-based observations.
+
+• AlfWorld-WebShop Suite includes AlfWorld along with the WebShop dataset. AlfWorld is an embodied household agent, ordering agents to accomplish household tasks, such as finding items. We group the two types, and try to make the agent capable of different tasks.
+
+• Environmental Complexity: While our evaluation enforces a 20-turn limit for these tasks, inherent complexity varies. For example, AlfWorld and WebShop presents totally different interaction patterns. What’s more, as the training goes, we observe that the average turns and the average sequence lengths tend to decrease as the training step increases.
+
+## C.2 Multi-Modal Workloads
+
+Complex multi-modal and long-horizon tasks, such as OSWorld and ScienceBoard, are permitted up to 50 interaction turns to accommodate the increased complexity of GUI-based navigation. To balance visual fidelity with context efficiency, we enforce a sliding window strategy for visual context retention across both environments. Specifically, screenshots are appended sequentially at each turn. Once a trajectory accumulates ten images, the system preemptively prunes the historical visual context, retaining only the five most recent images. This mechanism splits the trajectory and strictly bounds the dynamic image allowance within a limit per step, avoiding overly long trajectories. Images are captured at a resolution of 1280×720. In the meantime, it also takes longer for multi-modal tasks to start an environment, which is another reason for them to have a lower throughput.
+
+• OSWorld requires agents to process high-resolution screenshots and interact with general-purpose graphical user interfaces (GUIs), such as Microsoft Office. We run the task with 5–9 image allowance.
+
+• ScienceBoard is a comprehensive benchmark designed to evaluate multimodal autonomous agents in realistic scientific workflows. These tasks demand that agents navigate specialized scientific software GUIs and process complex domain-specific visual data (e.g., molecular structures or data plots). We run the task with 8–15 image allowance.
+
+Table 4: Task Trajectory Statistics
+<table><tr><td>Workload</td><td>Avg. Rounds</td><td>Avg. Tokens</td><td>Image Allowance</td></tr><tr><td>Text-Only Tasks</td><td></td><td></td><td></td></tr><tr><td>WebShop</td><td>8→5</td><td>3400→2400</td><td>N/A</td></tr><tr><td>AlfWorld</td><td>16→11</td><td>7400</td><td>N/A</td></tr><tr><td colspan="4">Multi-Modal Tasks</td></tr><tr><td>OSWorld</td><td>35→15</td><td>12000</td><td>5–9 (Sliding)</td></tr><tr><td>SciBoard</td><td>39→29</td><td>24000→23000</td><td>8–15 (Sliding)</td></tr></table>
