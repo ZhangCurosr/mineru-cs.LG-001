@@ -1,0 +1,3747 @@
+[
+    [
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Do Judges Behave Like Algorithms?"
+                    }
+                ],
+                "level": 1
+            },
+            "bbox": [
+                313,
+                119,
+                681,
+                142
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Riya Manchanda*<sup>1</sup>, Eric Chen*<sup>1</sup>, Chloe Zhu<sup>1</sup>, Cynthia Rudin<sup>1</sup>, Brandon Garrett<sup>1</sup>, Songman Kang<sup>2</sup>"
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                155,
+                913,
+                174
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>1</sup>Duke University"
+                    }
+                ]
+            },
+            "bbox": [
+                437,
+                176,
+                560,
+                193
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>2</sup>Sungkyunkwan University"
+                    }
+                ]
+            },
+            "bbox": [
+                405,
+                191,
+                591,
+                205
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "eric.y.chen@duke.edu, riya.manchanda@duke.edu, qinyu.zhu@duke.edu, cynthia@cs.duke.edu, bgarrett@law.duke.edu, songmankang@skku.edu"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                205,
+                895,
+                234
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Abstract"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                248,
+                272,
+                315,
+                287
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "What if judges already behave like algorithms? As artificia intelligence and algorithms are deployed in many settings, including the judicial system, many have debated whether judges should be allowed to rely on them. We suggest this debate about the role of algorithms in the justice system tracks a longstanding debate regarding the comparative benefits of judges relying on rules versus standards. Rules are clear, consistent, and predictable, but may not capture individua and equitable circumstances that more flexible standards rely on. We do not claim when or whether rules or standards are preferable. Instead, we ask whether judges follow predictable, algorithmic-like rules already. If judges already follow consistent, formula-like rules based on discrete and static factors such as criminal history, age, and charge type, then judicial behavior may be improved. However, if judges rely on individualized information that cannot be identified through court data, then standards-based decision-making may be more challenging to understand or improve. This work explores these questions by studying judicial decision-making in misdemeanor bail hearings in Harris County, Texas. Us ing available court data, we investigate whether magistrate judges follow what resembles an algorithm; whether they consider the same variables in their decision-making; and whether they are consistent with themselves and with each other. To do this, we train machine learning models for each judge, measure variable importance metrics to determine important variables for each judge’s decision-making, and analyze outcomes of similar cases for judges. Our results reveal that these judges generally behave algorithmically: their decisions can be captured by small, interpretable formulas. However, in some cases, judges differ substantially, leading to surprising inconsistency and unequal treatment across similar defendants. Identifying cases where algorithms do not explain judicial decision-making can improve the justice system by focusing attention on decisions where individualized stan dards, rather than rules, better explains outcomes."
+                    }
+                ]
+            },
+            "bbox": [
+                98,
+                296,
+                465,
+                753
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Introduction"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                225,
+                775,
+                338,
+                790
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Having an impartial judge decide one’s dispute is an essential element of due process, or fair trial rights, around the world (Garrett 2025; Deeks 2019; Crootof et al. 2023). An important dimension of due process is having a judicial of ficer who makes these decisions in a reasoned and consistent manner. Yet, there has been a longstanding tension between making decisions based on rules, which can lead to consistent and predictable outcomes, and the use of more discretionary standards, which can provide more equitable outcomes based on individual, case-specific considerations (Schlag 1985). There are important questions concerning when and whether rules versus standards are desirable, and there are tradeoffs concerning the choice of which to employ in legal decision-making (Kaplow 1992). For more information about rules and standards, refer to Appendix A. In recent years, the debate about the use of algorithms and AI in the justice system has tracked many of the same concerns expressed in the longstanding debate between the comparative desirability of rules versus standards. One side argues that many algorithms are reductive and fail to account for the case-specific factors that a human judge must consider (Harcourt 2015). This concern is particularly pressing in areas where equity and a judge’s discretionary moral judgment are involved (Re and Solow-Niederman 2019). Others note that human judges are also prone to certain types of inconsistencies and biases in their decision-making (Rachlinkski and Wistrich 2017; Eaglin 2023). The type of data and the type of judicial task may also affect the choice of whether algorithms or discretionary judging are more desirable. Using AI or algorithms is more advantageous if prediction is straightforward and rule-based, while an element of human judgment will be more advantageous if omitted variables make accurate prediction more difficult (Fagan and Levmore 2019). Highly relevant to this debate is whether judges already behave like algorithms and follow rules, or rather, whether they tend to decide cases based on more casespecific standards. Let us define this question more carefully. By an “algorithm,” we refer to a simple formula, perhaps consisting of a few understandable rules. This simple formula involves only a few additions, subtractions, and multiplications. We call such formulas “interpretable” or “understandable,” because the actual factors and weights they rely upon are provided (Garrett and Rudin 2023). We are not referring to “black boxes,” i.e., complicated or proprietary mathematical formulas, since we believe those should be avoided in criminal justice decision-making, as they raise serious constitutional concerns and have not been shown to be better than interpretable models (Garrett and Rudin 2023, 2024). The question we ask here is when and whether judges act like simple formulas. Are judges consistent in their judgments the same way a simple formula (or rule) would be? If so, can we identify these formulas or rules? If instead they employ standards, can we identify them in order to shed light on how they make their decisions? These questions are central to debates on whether algorithms should be used in the justice system. If judges already follow consistent, formulalike rules based on quantifiable cues such as prior offenses, age, and charge type, then judicial behavior could be understood and even improved through interpretable models rather than being replaced by them. Conversely, if their decisions deviate widely from any learnable rule, then the challenge is to identify these more flexible standards, assess the consistency of decision-making, and, in turn, ensure that the use of those standards can be understood and even improved."
+                    }
+                ]
+            },
+            "bbox": [
+                83,
+                796,
+                480,
+                840
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                514,
+                272,
+                916,
+                885
+            ]
+        },
+        {
+            "type": "page_aside_text",
+            "content": {
+                "page_aside_text_content": [
+                    {
+                        "type": "text",
+                        "content": "arXiv:2608.10400v1 [cs.LG] 11 Aug 2026"
+                    }
+                ]
+            },
+            "bbox": [
+                29,
+                352,
+                65,
+                800
+            ]
+        },
+        {
+            "type": "page_footnote",
+            "content": {
+                "page_footnote_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>*</sup>These authors contributed equally. Copyright © 2026, Association for the Advancement of Artificial Intelligence (www.aaai.org). All rights reserved."
+                    }
+                ]
+            },
+            "bbox": [
+                83,
+                851,
+                480,
+                890
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                69,
+                482,
+                305
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We examine this question by focusing on data from the third-largest urban county in the United States, Harris County, Texas, which includes the city of Houston. Our data is from the period after the 2019 entry of the O’Donnell Consent Decree, a landmark reform in Harris County designed to eliminate wealth-based disparities in bail decisions, and gave magistrates greater discretion in their cases, particularly regarding a smaller number of more serious misdemeanor cases."
+                    }
+                ]
+            },
+            "bbox": [
+                83,
+                305,
+                480,
+                430
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this work, we examine the decision-making by magistrates who are hired by the County to report to the elected judges and to make initial decisions regarding the comparatively more serious misdemeanor cases. Specifically, we focused on the cases in which the magistrates decide, after a bail hearing, during which they hear from the district attorney and public defender, whether to recommend that a person be given a personal bond and released, perhaps with supervision conditions, or whether a person should be given a secured bond with a cash bail amount that they would have to pay to be released, possibly also with supervision conditions if they are able to pay or obtain a bond for that amount. Given the size of the jurisdiction, there are tens of thousands of these bail hearings and magistrate decisions each year. Our unique dataset contains over 22,000 unique cases decided by 21 magistrates."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                430,
+                480,
+                654
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To clarify, this work does not advocate replacing judges with algorithms. An essential concern is recourse: humans are always needed, including when an algorithm is wrong, when cases raise individual or extenuating circumstances, or in cases where a rule-based decision would be appropriate, but the data about the individual is incorrect and the algorithm’s input needs to be adjusted (Garrett and Rudin 2023). Regarding the latter situation, while cases with data errors should be rare, they are not in practice, partly due to pervasive errors in administrative criminal justice data (Pepper, Petrie, and Sullivan 2010). The first type of case – where equitable discretion or standards should be used – raises a normative question about the desirability of using equitable, standards-based approaches. Without addressing that normative question, we instead ask whether judges act like algorithms generally, including whether they are consistent with each other; whether they are needed mainly to intercept unusual cases; and whether there is some category of individualized decision-making that they already engage in. Examining the potentially algorithmic nature ofjudicial reasoning – and the types of cases that judges do not view as suitable for rule-based approaches – opens a path toward improved decision making and greater accountability."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                652,
+                482,
+                891
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                516,
+                69,
+                915,
+                152
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Summary of experiments and results: To investigate our first question – “When do judges not follow any reasonable algorithm, and are there circumstances leading to these inconsistencies?” – we generated the “Rashomon set” of every possible good model of a flexible, nonparametric function class, namely, sparse decision trees. Each of these models represents a possible simple decision function that matches the judge’s decisions as accurately as possible. For each magistrate, we identified cases that were misclassified for every function in the Rashomon set; these “unexplainable cases” are judicial decisions where no good model can predict the judge’s ruling correctly."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                152,
+                915,
+                319
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Unexplainable cases amount to 2%-33% of each judge’s cases. Manual analysis of a sample of hearing records and probable cause forms revealed that 100% of the sample of these unexplainable cases arose from either: (1) data-entry or form errors, (2) information about charges outside Harris County that were not represented in the dataset, or (3) case-specific qualitative details that judges referenced but were absent from structured data. These findings suggest that even if much of judicial reasoning were algorithmic, real-world inconsistencies often stem from gaps in information and record-keeping rather than deliberate arbitrariness. These results suggest that there are systematic gaps in record-keeping that could be mitigated."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                319,
+                915,
+                500
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Our second question is “Can each judge be described by a simple algorithm?” We attempted to model each judge with a simple decision tree and reported the degree to which each magistrate’s bail decisions can be represented by such rules (disregarding the unexplainable cases, which arise from a noisy generative process rather than a deliberate one). We found that across thousands of cases, most judges could be approximated by small decision trees (depth ≤5) using features such as prior revocations, pending cases, and defendant age, achieving accuracies between 75% and 100%, where at least 85% of the explainable decisions for each judge can be algorithmically determined for 16 of the 21 judges. This indicates that a substantial portion of judicial behavior reasonably follows systematic patterns that can be summarized in a few simple conditions, although some judges behaved more algorithmically than others."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                500,
+                915,
+                723
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Digging further, we performed a variable importance analysis to answer: “Do judges consider the same variables in decision making?” Most variable importance analyses are flawed since they only consider variable importance for one model, despite the existence of the Rashomon set – the set of good models for the data – which often contains many equally accurate models that use completely different variables. Our analysis, instead, averages variable importance over good models to identify variables that are generally important. We find that there are three generally important variables across judges – age, warrantct (number of previous warrants), and pre-defined flags of specific types of crime – but the degree to which variables are important and the choice of additional important variables differ substantially between judges. Thus, even if each judge behaves algorithmically, they act like totally different algorithms."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                722,
+                916,
+                891
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                69,
+                480,
+                125
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Finally, we delve deeper into the differences between judges, asking: “Are judges consistent with each other? When do they disagree?” To do so, we test whether a model trained to predict one judge’s decisions can accurately predict another judge’s decisions. We find that it cannot: judges exhibit meaningfully distinct decision-making processes. Specifically, when we evaluated each judge-specific model on cases decided by other judges, performance deteriorated substantially, revealing pronounced heterogeneity across judge pairs. We then identified structured “disagreement rules” that characterize when particular judges diverge. For instance, Judge 9 and Judge 4 disagree in 94% of cases involving individuals aged 24 or younger, suggesting systematically different treatment of younger individuals. This indicates that the justice system’s outcomes depend heavily on who the judge is. A triplet consistency experiment, where we matched similar cases for different judges, confirmed these findings: judges were highly self-consistent, getting similar outcomes for similar cases 76% of the time, but only modestly consistent with one another, coming to the same rulings on similar cases only ∼55% of the time (close to random guessing), indicating that the justice system’s outcomes depend heavily on who the judge is."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                125,
+                480,
+                444
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Our results thus reveal a paradox. On one hand, judges do behave algorithmically a lot of the time; their decisions can be captured by small, interpretable formulas that rely on measurable variables. On the other hand, the algorithmic behavior differs from judge to judge, leading to inconsistency and unequal treatment across defendants. Identifying and comparing these implicit rule sets could enable datadriven judicial training, standardized guidelines, and mechanisms to promote interpretability and system-wide fairness."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                443,
+                480,
+                568
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "By understanding when and why judges deviate from interpretable rules, we can better identify errors in data, biases in reasoning, and opportunities for reform. Ideally, with additional data on outcomes, we can focus judges on rules that produce desirable outcomes (Loeffler and Grunwald 2015), while being a comparatively inexpensive type of intervention (Ludwig, Mullainathan, and Rambachan 2024). Ultimately, we claim the central question is not whether algorithms belong in the justice system, but whether humans within it already act like them and whether we can make both better."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                568,
+                482,
+                720
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Related Works"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                215,
+                731,
+                346,
+                747
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "A growing empirical literature studies judicial decisionmaking as a form of human judgment under uncertainty, particularly in high-volume and time-constrained settings such as pretrial bail hearings. This work consistently documents substantial variation across judges, even when they are presented with similar cases, raising concerns about consistency, equity, and arbitrariness in legal outcomes."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                750,
+                480,
+                848
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In the context of bail, several studies compare judicial decisions with algorithmic predictions. Kleinberg et al. (2018) analyze pretrial release decisions in New York City, showing that simple machine learning models can outperform judges in predicting failure to appear while simultaneously reducing incarceration and racial disparities. Other work (Arnold, Dobbie, and Hull 2022) demonstrates that judge-specific preferences contribute meaningfully to variation in bail outcomes, with some judges systematically imposing more restrictive conditions than others, even after controlling for observable case characteristics. These findings highlight the limits of unaided human judgment in repetitive, predictiondriven legal tasks."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                847,
+                480,
+                890
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                514,
+                69,
+                915,
+                209
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "These concerns are especially salient in Harris County, Texas, following the O’Donnell Consent Decree. Before the decree, misdemeanor bail decisions were governed by a rigid bail schedule that tied release to the ability to pay, resulting in widespread detention of low-income defendants. Post-decree evaluations (Heaton, Mayson, and Stevenson 2017) find that the reforms substantially reduced wealthbased detention, but did not eliminate heterogeneity in magistrate decision-making. In carve-out cases that proceed to individualized bail hearings, outcomes remain sensitive to which magistrate presides, suggesting that discretion continues to play a central role."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                210,
+                915,
+                378
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Beyond the legal literature, research in cognitive psychology provides insight into why judicial decisions may be well approximated by simple, interpretable rules. A large body of work shows that human experts frequently rely on heuristics—fast and frugal decision rules that trade optimality for cognitive efficiency. Foundational work on availability and representativeness heuristics (Tversky and Kahneman 1974) demonstrates how humans simplify probabilistic reasoning, while other works (Marewski and Gigerenzer 2012) show that in domains such as medical decision-making, heuristicbased models can rival more complex statistical approaches. These findings suggest that judicial reasoning, particularly under time pressure and informational constraints, may naturally take a rule-like or algorithmic form."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                381,
+                915,
+                578
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Consistent with this perspective, prior studies have found that expert decisions in high-stakes domains can often be captured by compact decision rules. Models of bail decisions in the United Kingdom using fast-and-frugal trees and find that judges rely on a small number of cues applied in a consistent order (Dhami and Ayton 2001). Similar results have been observed in other expert domains, including military and medical decision-making, where simple decision trees achieve accuracy comparable to more complex models while remaining interpretable."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                579,
+                915,
+                719
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Again, we do not ask whether algorithms should replace judges or whether algorithmic predictions outperform those of human decision-makers. Instead, we ask whether judges themselves already behave like algorithms: whether simple, interpretable rules can capture their decisions; whether those rules are consistent over time; and when no reasonable algorithm explains a judge’s behavior. By shifting the focus from human-versus-algorithm comparisons to the internal structure of judicial decision-making, our work connects normative debates about rules and standards with empirical evidence on human judgment, offering a new lens on accountability and consistency in the justice system."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                722,
+                916,
+                891
+            ]
+        }
+    ],
+    [
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Data and Processing"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                192,
+                66,
+                370,
+                84
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In Harris County, the Consent Decree gives the public access to certain data concerning misdemeanor pretrial release and detention decisions, including defendant characteristics (such as race, sex, and age), case characteristics (such as charges filed, booking and release dates), which magistrates and judges are assigned to cases, decisions made at bail hearings, and bail outcomes in cases from 2009 to the present. We focused on misdemeanor and felony cases from 2020 to 2025, a time period during which the Consent Decree rules had been adopted and were being used consistently. The dataset contained 531,921 unique cases, out of which we filtered out carve-out cases (cases that were not given a General Order Bond), duplicate cases, and off-docket cases (pre-screened cases where pretrial services had determined the defendant was eligible for release on a personal bond and where the magistrate agrees, granting the personal bond without a bail hearing). Using this data, we combined the crime case details and bond analytics information from the felony dataset and misdemeanor datasets for individual defendants to compute the features in Table 5 in Appendix B.2. These features mostly pertain to that defendant’s criminal history: one for past misdemeanors and one for past felonies (with the ‘ f‘ suffix). Felony crime information is included because we discovered that magistrates sometimes grant personal bonds despite pending felony charges, reasoning that the ongoing case would ensure punishment if a reoffense occurred, making it important for modeling their decisions. A full description of the dataset and processing is in Appendix B."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                89,
+                482,
+                492
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "After feature engineering, we excluded cases with any existing holds and deferred adjudications, since magistrates appeared to view these existing constraints as sufficient safeguards when granting personal bonds, as well as cases with null values for any of the features, leading to a total of 22,361 usable cases in our dataset. Out of these, 18,456 cases (82.5%) had personal bond not granted (class 0) and 3,905 cases (17.5%) had personal bond granted (class 1). Figure 1 shows our data processing workflow. After processing, we decided to use 21 of the 24 judges, excluding those who adjudicated too few cases to support reliable analysis. We assigned each included judge an anonymous identifier."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                492,
+                480,
+                661
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Experiments and Results"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                174,
+                674,
+                388,
+                691
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We structure our experiments around our four guiding research questions."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                696,
+                478,
+                727
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "When do judges not follow any reasonable algorithm?"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                83,
+                739,
+                411,
+                772
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Here, we find decisions that are not consistent with any reasonable algorithm characterizing the decision-making process of the judge, based on the available court data. We call these “unexplainable cases” since these decisions are seemingly incompatible with the judge’s usual way of reasoning. Such cases could arise from a variety of situations: evidence not in the database (missing data), incorrect data, personal bias of the judge, corruption, or randomness in decisions."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                777,
+                480,
+                890
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/4ad5bd3e22c21f5964dc3a538726efd4290da50fdec1607c13197afbf7c9f2e2.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 1: Data Processing Workflow. The flowchart outlines steps for merging and cleaning judicial case records."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                527,
+                70,
+                900,
+                417
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To find such cases, we used the TreeFARMS algorithm (Xin et al. 2022) to obtain a Rashomon set of interpretable trees for each judge. A Rashomon set is the collection of models from a given function class (here, simple decision trees) that are the most performant on the dataset. Whereas standard machine learning methods provide one “best” model, we do not, because there can be many models that perform about equally well, and those models differ from each other (Semenova, Rudin, and Parr 2022; Semenova et al. 2023; Fisher, Rudin, and Dominici 2019; Rudin et al. 2024). TreeFARMS is designed to efficiently enumerate and represent the Rashomon set of sparse decision trees (Xin et al. 2022) for a given dataset. Using TreeFARMS allows us to study variation across equally good models, examine which features consistently appear as important, and highlight areas of uncertainty or flexibility in decisionmaking. Details about generating the Rashomon sets are in Appendix D. Table 1 shows the results of the Rashomon set generation, including the number of trees for each judge and best model accuracies, ranging from 60% to 99%."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                496,
+                915,
+                775
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We examine some trees drawn from the Rashomon sets generated by TreeFARMS. Figure 2 shows an example tree for Judge 17. More examples from the Rashomon set of Judge 17 can be found in Appendix F. One notable pattern that we observe for these judges is that they seem to grant personal bonds to individuals with ICE holds. After reviewing the PC forms, we realized that when a higher authority places a hold, the judge typically anticipates that this authority will handle the defendant’s outcome. As a result, the judge often releases the defendant on a personal bond. We show trees from other judges later in this manuscript and in Appendix E."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                777,
+                915,
+                891
+            ]
+        }
+    ],
+    [
+        {
+            "type": "table",
+            "content": {
+                "image_source": {
+                    "path": "images/aefc50395321e5b69e0c76854f04a7bf109f62699745045b7e22147e69705ca7.jpg"
+                },
+                "table_caption": [
+                    {
+                        "type": "text",
+                        "content": "Table 1: Summary of Rashomon set size and representative model accuracy across judges."
+                    }
+                ],
+                "table_footnote": [],
+                "html": "<table><tr><td>Judge</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td><td>21</td></tr><tr><td>Rashomon Set Size</td><td>1188</td><td>612</td><td>682</td><td>40</td><td>272</td><td>354</td><td>76</td><td>24</td><td>7</td><td>16</td><td>852</td><td>210</td><td>1164</td><td>976</td><td>62</td><td>338</td><td>117</td><td>513</td><td>388</td><td>28</td><td>1088</td></tr><tr><td>Best Model Accuracy</td><td>78%</td><td>70%</td><td>73%</td><td>66%</td><td>73%</td><td>79%</td><td>66%</td><td>84%</td><td>85%</td><td>99%</td><td>61%</td><td>83%</td><td>78%</td><td>69%</td><td>98%</td><td>83%</td><td>65%</td><td>78%</td><td>83%</td><td>85%</td><td>80%</td></tr></table>",
+                "table_type": "simple_table",
+                "table_nest_level": 1
+            },
+            "bbox": [
+                114,
+                66,
+                882,
+                118
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/51114deebc984bf2ff2303334454fa093c8e7a9bf670426cf2bcd9790b0104ab.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 2: Sample decision tree from the Rashomon set for Judge 17."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                102,
+                159,
+                475,
+                372
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                446,
+                480,
+                505
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/5a81a8e40bed3ba97eec3b22b22ec6f4027d02278bf3b244f0d7f6570b31fe43.jpg"
+                },
+                "image_caption": [],
+                "image_footnote": []
+            },
+            "bbox": [
+                88,
+                523,
+                475,
+                741
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/24864b7614e222a492a844505ff34f9cebccf1cea65b8facf5a755d2c7f4b6ba.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 3: Sample PC form for a case where there seems to be a discrepancy in marking the correct bond type."
+                    },
+                    {
+                        "type": "text",
+                        "content": "Figure 4: Sample PC form for case where judge had information outside of our dataset influencing their decision."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                88,
+                797,
+                477,
+                847
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/e3eb761d17d99c95a1e28179146b7b686339eaab31260e5281f0305826ac1aa3.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 6: Sample PC forms for cases in which crimes share similar features but result in different outcomes due to differences in crime intensity, a feature we do not have."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                516,
+                159,
+                913,
+                512
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Next, we used our Rashomon sets to generate subsets of each judge’s cases that could not be explained (i.e., predicted correctly) by any model in the Rashomon set. These cases, about 18% of all cases, are “unexplainable.” We investigated a sample of these cases (100) manually and found that all of them were unexplainable due to noise."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                583,
+                915,
+                667
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We read the judges’ justifications and discovered that such cases fell into three main categories: (a) Dataset errors (form errors); (b) Missing information about other crimes (outside of Harris County) that are not in our database; (c) Details about the case that are not in the database but are available to the judge."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                666,
+                915,
+                751
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Figure 3 shows a form error. Our dataset indicates that a personal bond was granted; however, the judge’s comments suggested against granting a personal bond. When checking the form, we discovered that multiple boxes had been checked for the type of bail order, which must be an error since one cannot receive both a personal and a secured bond in the same hearing. The second category includes cases where the judge has information outside of Harris County, which is logistically difficult for us to obtain. Figure 4 shows an example where the judge knew that the defendant had been in custody in another jurisdiction, which influenced their decision to grant a personal bond; this information was not available to us in the court data. The last category includes cases where the judge makes decisions using details not in our structured data (usually information presented during the hearing but not previously available). Figure 6 shows a pair of such cases, where both crimes are Class A misdemeanors of family assault; however, the judge states that they granted a personal bond in the first case and not in the second due to the intensity of the crimes."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                750,
+                915,
+                891
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                69,
+                480,
+                208
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "All three categories lead to flaws in the data that will not help us understand judges. Ideally, we use data for building models that is identical to the data the judges use. Form errors simply provide incorrect information. Missing information from other counties results in incorrect features in our dataset. E.g., if someone commits a crime in a different county, our criminal history features would not record it, creating an error in our data."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                207,
+                480,
+                319
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The final category is case-specific missing information, such as the severity of the crime, which is not recorded as part of the penal code and crime type (e.g., “family assault”); this could be remedied if it were consistently mentioned, for instance. Including these three classes of cases would require our models to predict decisions using an incomplete representation of the judge’s information. This may cause models to attribute the effects of these unobserved factors to the available features, leading to biased estimates of feature importance and poorer generalization. Excluding these noisy cases allows models to be trained on observations where the recorded features mainly reflect the available information during a judicial decision and avoids diluting results with noise."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                318,
+                482,
+                513
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/6e8c6df4f90bb0e40b902bd38c9c5c0642b6644dac898c9f49674f8546090700.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 7: Per-judge distribution of unexplainable vs kept cases."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                84,
+                523,
+                472,
+                660
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The number of unexplainable cases compared to total cases is shown in Figure 7, and the class distribution before and after filtering is illustrated in Figure 21 in Appendix G. In what follows, we will remove all the unexplainable cases and only use the remaining cases."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                718,
+                480,
+                790
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Can each judge be described by an algorithm?"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                83,
+                799,
+                442,
+                815
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "If a judge follows a systematic method – an algorithm – to determine whether to grant a personal bond, we should be able to figure out what that algorithm is. Examining this question allows us to evaluate judicial decision making, including whether the rules judges follow in practice are desirable. Again, we are not arguing for replacing judges with algorithms, but rather seeking to identify when and whether judges already behave like algorithms."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                819,
+                482,
+                890
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/ffe12376ddb5259a8415c92f38dcae733b92e39f634b4a5f74ea51f520fdfcb9.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 8: Balanced accuracy for the GOSDT models trained for each judge."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                517,
+                65,
+                911,
+                204
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                514,
+                271,
+                913,
+                316
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/1e98e0d2b2578273322966f762b062113735d02cb5423a5a3e66166db967d8bd.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 9: Decision tree for Judge 1 trained using GOSDT."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                531,
+                333,
+                906,
+                550
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To answer this question, we trained representative models using GOSDT (Lin et al. 2020) on the filtered subset of cases per judge, producing globally optimal sparse decision trees. As discussed, decision trees are a powerful, nonparametric function class whose models are understandable. Each magistrate’s model was fitted with a tree depth budget of 5, regularization set to 0.001 (a small value, to allow for higher accuracy), and class balancing enabled. This yielded concise, interpretable rules that mimic each judge’s decision style. We report the balanced accuracy in Figure 8 and show visualizations of some of the resulting decision trees with per-node class counts to interpret the logic of each model."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                597,
+                915,
+                763
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We discovered that most of the judges could indeed be explained reasonably well by simple algorithms. Figure 25 in Appendix J shows the model for Judge 4 with an accuracy of 91.79% and a balanced accuracy of 92.88%. That is, about 92% of Judge 4’s cases agree with this decision tree, and it is accurate in explaining decisions for both personal bonds and secured bonds. For 17 of the 21 judges, the models capture at least 85% of the judge’s decisions. Another example of a good model is presented in Figure 9 for Judge 1, with an accuracy of 84.37% and a balanced accuracy of 82.44%. Figure 26 in Appendix J shows a model that explains Judge 16 well, with an accuracy of 92.46% and a balanced accuracy of 93.06%."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                763,
+                915,
+                891
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                69,
+                480,
+                125
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "There are several judges whose decision making we cannot explain as well. Appendix K shows an example of a tree for Judge 2 that has clearly been overfit (with fewer than 20 cases per leaf) and yet has an accuracy of 77.48% and a balanced accuracy of 75.41%. Even after overfitting to the data, 23% of the cases have no simple rule characterizing them."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                125,
+                480,
+                208
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "For judges that can be explained, we next examine which factors they seem to consider when making bail decisions."
+                    }
+                ]
+            },
+            "bbox": [
+                83,
+                207,
+                478,
+                237
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Do judges consider the same variables?"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                83,
+                246,
+                388,
+                262
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this section, we will show that judges generally consider similar types of variables but differ in the importance of specific variables."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                265,
+                480,
+                306
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "For each judge, we used a bootstrapped feature selection algorithm. For each bootstrap, we balanced the data by oversampling the minority class. Then, we used the Threshold Guessing Binarizer (which uses a boosted tree classifier) described in McTavish et al. (2022), using 50 estimators and a max depth of 3, to transform the variables into binary indicators. Features that did not appear from the Binarizer are unimportant to boosted trees and were removed. Then, we used a boosted tree classifier again on the remaining features. We used this classifier to obtain variable importance scores for each original variable "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "x _ { j } ."
+                    },
+                    {
+                        "type": "text",
+                        "content": ", whose importance is denoted by "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "I _ { j }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". We assigned "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "I _ { j } = \\check { 0 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "for all unselected features."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                306,
+                480,
+                487
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Across bootstrap resamples, the selection frequency of feature "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "j"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "F _ { j } { \\bar { \\mathbf { \\Lambda } } } = \\mathbb { P } ( I _ { j } { \\mathbf { \\bar { \\mathbf { \\Lambda } } } } > \\mathbf { \\Lambda } 0 )"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", the proportion of bootstraps in which feature "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "j"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is used. The final feature score is "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\dot { S } _ { j } = I _ { j } \\cdot F _ { j }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", and we select the top 50 features by "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "S _ { j }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "in descending order. From these 50 features, we computed the following average variable importance metrics over 100 bootstraps: permutation importance, conditional model reliance (CMR), and leave one covariate out (LOCO). We also computed the accuracy of a model that uses these top 50 features, and we repeated this for each bootstrap and averaged the result over bootstraps. The result is in Figure 10."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                487,
+                480,
+                641
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/579f6065522df291bb0692b989fb11041b956f919cf451d16d07342a9872d17f.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "VI Model Accuracies"
+                    },
+                    {
+                        "type": "text",
+                        "content": "Figure 10: Model accuracy, built from top 50 features, averaged over bootstraps, for each judge. Standard deviations are also shown."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                94,
+                669,
+                467,
+                799
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "As we have reduced the noise by filtering out unexplainable cases, we intentionally overfitted the models to the data to ensure that the variables are meaningfully important to the data we have. We see in Figure 10 that the average accuracy for most judges is extremely high. Reviewing the variables among all judges in Table 2, we see that age is extremely important, being important for every single judge. Meanwhile, most judges use warrant count and “rule” variables, which we define as flags for specific crimes that are algorithmic in nature for bond trials, indicating that many judges are using them correctly. Furthermore, we can see that race is only important to some judges, allowing us to uncover potential biases that different judges may have. Furthermore, the collection of variables is not consistent among judges, suggesting that judges generally have quite different values when making pretrial decisions. For example, when we compare the top 10 variables for Judges 4 and 6 in Table 3, we see a trend where they share many common variables, such as age, warrant count, and “rule” variables, but also have unique variables that each weighs heavily. Judge 6 weighs family assault and criminal history more heavily than Judge 4. In terms of demographics, both judges consider age and citizenship status, but Judge 6 appears to weigh gender and homelessness much more than Judge 4, showing how we can use this framework to see the differences in what different judges value."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                873,
+                478,
+                890
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                514,
+                69,
+                915,
+                417
+            ]
+        },
+        {
+            "type": "table",
+            "content": {
+                "image_source": {
+                    "path": "images/daf4061fe64d2676c4787062ab0346abfdb998ae0f98a79a931ec9d52f1486cc.jpg"
+                },
+                "table_caption": [
+                    {
+                        "type": "text",
+                        "content": "Table 2: Variable importance summary across judges. Features are ordered by score, defined as proportion/mean rank, where mean rank is the average rank when the feature appears in a judge’s model and proportion is the fraction of judges for which the feature appears in the top 15."
+                    }
+                ],
+                "table_footnote": [],
+                "html": "<table><tr><td>Feature</td><td></td><td>Appear. Mean rank</td><td>Prop.</td><td>Score</td></tr><tr><td>Age</td><td>21</td><td>3.238</td><td>1.000</td><td>0.309</td></tr><tr><td>Warrant Count</td><td>19</td><td>5.263</td><td>0.905</td><td>0.172</td></tr><tr><td>Charged with a new offense while on pre- trial release? (rule)</td><td>15</td><td>4.800</td><td>0.714</td><td>0.149</td></tr><tr><td>Arrested after a bond forfeiture or revoca- tion? (rule)</td><td>13</td><td>7.359</td><td>0.619</td><td>0.084</td></tr><tr><td>Arrested while on supervision for a class B misdemeanor? (rule)</td><td>11</td><td>8.136</td><td>0.524</td><td>0.064</td></tr><tr><td>First warrant is a CAPIAS warrant?</td><td>10</td><td>8.667</td><td>0.476</td><td>0.055</td></tr><tr><td>African American?</td><td>12</td><td>11.444</td><td>0.571</td><td>0.050</td></tr><tr><td>Violation of bond conditions for penal code 25.07 (rule)</td><td>9</td><td>9.500</td><td>0.429</td><td>0.045</td></tr><tr><td>Family Assault?</td><td>9</td><td>10.519</td><td>0.429</td><td>0.041</td></tr><tr><td>How many past felonies?</td><td>9</td><td>11.037</td><td>0.429</td><td>0.039</td></tr></table>",
+                "table_type": "simple_table",
+                "table_nest_level": 1
+            },
+            "bbox": [
+                517,
+                430,
+                911,
+                631
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Could all judges be using similar algorithms? Are judges consistent with themselves and each other?"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                516,
+                756,
+                903,
+                787
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In order to ensure fairness in our justice system, we want judges to make decisions consistently. That is, presented with the same information, we want them to make the same decision. We also want different judges to make the same decisions when presented with similar information; i.e., we want all judges to follow the same algorithms. In this section, we hope to analyze the consistency of a judge’s own decisions and those of others, as well as provide a way to give feedback to current judges and judges in the future. To do this, we performed three different sets of experiments."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                791,
+                915,
+                891
+            ]
+        }
+    ],
+    [
+        {
+            "type": "table",
+            "content": {
+                "image_source": {
+                    "path": "images/1c2da19be795e8a294e57d844c316efb0c8de9d8e5407b219b606b2e3e7c7e1c.jpg"
+                },
+                "table_caption": [
+                    {
+                        "type": "text",
+                        "content": "Table 3: Variable importance ranks for Judge 4 (left) and Judge 16 (right) for the top 10 variables. The variables are ordered by mean ranking over the three importance metrics for each judge, with rank referring to permutation importance."
+                    }
+                ],
+                "table_footnote": [],
+                "html": "<table><tr><td>Feature</td><td>Rank</td><td>CMR</td><td>LOCO</td><td>Feature</td><td>Rank</td><td>CMR</td><td>LOCO</td></tr><tr><td>Age</td><td>1</td><td>1</td><td>1.0</td><td>Age</td><td>2.0</td><td>2</td><td>1.0</td></tr><tr><td>Arrested after a bond forfeiture or revocation? (rule)</td><td>4</td><td>3</td><td>3.0</td><td>Female?</td><td>1.0</td><td>1</td><td>10.0</td></tr><tr><td>Criminal Trespassing?</td><td>3</td><td>4</td><td>4.0</td><td>Harrasement with previous conviction</td><td>4.0</td><td>4</td><td>4.0</td></tr><tr><td>Assault with Bodily Injury?</td><td>5</td><td>5</td><td>2.0</td><td>Family Assault?</td><td>7.0</td><td>5</td><td>12.5</td></tr><tr><td>ICE hold</td><td>2</td><td>2</td><td>8.5</td><td>Unknown Citizenship</td><td>13.0</td><td>14</td><td>3.0</td></tr><tr><td>Unknown Citizenship</td><td>6</td><td>6</td><td>5.0</td><td>Charged with a new offense while on pretrial release? (rule)</td><td>17.0</td><td>10</td><td>5.0</td></tr><tr><td>Warrant Count</td><td>7</td><td>7</td><td>7.0</td><td>Warrant Count</td><td>15.0</td><td>19</td><td>2.0</td></tr><tr><td>Charged with a new offense while on pretrial release? (rule)</td><td>12</td><td>8</td><td>10.0</td><td>Penal Code 28.03</td><td>11.0</td><td>9</td><td>17.5</td></tr><tr><td>Violation of bond conditions for penal code 25.07 (rule)</td><td>10</td><td>12</td><td>15.0 11.0</td><td>Homeless?</td><td>3.0</td><td>3</td><td>33.0</td></tr><tr><td>First warrant is a CAPIAS warrant?</td><td>14</td><td>13</td><td></td><td>How many past felonies</td><td>9.0</td><td>17</td><td>14.0</td></tr></table>",
+                "table_type": "simple_table",
+                "table_nest_level": 1
+            },
+            "bbox": [
+                88,
+                71,
+                911,
+                190
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                258,
+                480,
+                301
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Are judges consistent with each other? Pairwise loss distribution analysis. We carried out a cross-judge evaluation to examine consistency in decision rules across judges. For each judge, we took the full Rashomon set of nearoptimal decision trees and used them as source models. Every model was evaluated not only on the judge’s own cases but also on the cases belonging to every other judge. To make this feasible, we standardized the input space by reconstructing the engineered features for all judges and aligning them by case ID. Any features expected by a source model but missing in a target judge’s dataset were added as zero columns, ensuring comparability across evaluations. Losses were computed separately for the source judge’s data and for each target judge’s data. By repeating this for all models in every Rashomon set, we obtained a full distribution of losses rather than a single point estimate. These distributions were visualized with violin plots."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                306,
+                480,
+                542
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We found that most of the judges are not consistent with one another. For example, Figure 11 shows the violin plot of the loss distribution for all the models within the Rashomon set of Judge 16 when evaluated on their own cases (source cases) versus those of Judges 1 and 8 (target judges). We see that the models perform consistently well on the source data, with the error rates clustering tightly around 6%, which indicates coherent decision logic. However, when the same models are applied to the target judges, the losses see a sharp rise, with larger ranges and more errors for the target judges. Although the model found for Judge 16 captures multiple near-optimal explanations for their own decisions, these explanations do not apply to the decisions made by Judges 1 and 8. This contrast suggests that both judges behave differently from Judge 16 in their decision-making processes."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                541,
+                482,
+                751
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "However, in some judge pairs, the difference between the source and target distributions is less pronounced, as shown in Figure 28 (left) in Appendix L. Here, the Rashomon models of Judge 2 maintain comparable performance when evaluated on Judge 3, with overlapping distributions and similar median error rates of 0.24 to 0.27. While the variance increases slightly when predicting on the target judge’s cases, the overall shape of the distributions suggests partial alignment in decision behavior between the two judges. This implies that both judges may rely on the same features and follow similar reasoning patterns when deciding cases. Figure 28 (left) also shows that Judge 2 may be internally inconsistent since their loss distribution seems to be quite spreadout. We also found several examples with partial overlap. The violin plots in Figure 28 (right) show that while the Rashomon models of Judge 6 perform reasonably well on their own decisions, their performance varies widely when applied to Judge 15. The source distribution is reasonably compact, with a median error around 0.20. In contrast, the target distribution is widest near both the lowest and highest ends of the loss scale, suggesting a bimodal pattern of generalization. Some models from the source set transfer well, achieving low errors on the target judge, while others perform poorly, reaching error rates above 0.50. This pattern could imply that the two judges share overlapping logic on certain subsets of cases but may diverge on others."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                750,
+                482,
+                891
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                514,
+                258,
+                915,
+                483
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/39d60b39a0b2cc7c468c1a3c76824e1f322282cb82b8e56bb458935b38516ffb.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 11: Rashomon model loss distributions on Judge 16 source cases. Compares the source-judge model (S16) with target-judge models (T1 and T8)."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                522,
+                500,
+                872,
+                674
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "When do judges disagree? Rule mining analysis. We then conducted rule mining to extract interpretable conditions under which specific pairs of judges’ decision rules diverged. For each ordered judge pair, we used majority-vote predictions from both Rashomon sets on the source judge’s cases to define a binary disagreement variable, which would be true if the labels did not match and false otherwise."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                750,
+                915,
+                847
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In rule mining, support measures how frequently an itemset appears in the dataset, confidence indicates how often the rule’s consequent occurs given its antecedent, and lift antecedent space is defined as the union of the engineered binary features used by both judges. We mined candidate rules of length one to three under minimum support (0.02 – meaning 2% of the data must obey the left side of the rule) and minimum confidence (0.60 – meaning at least 60% of the right side of the rule obeys it) thresholds, with the top 50 rules per length."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                847,
+                915,
+                890
+            ]
+        }
+    ],
+    [
+        {
+            "type": "table",
+            "content": {
+                "image_source": {
+                    "path": "images/c1f75a292d3071552fc81930a1068b6e44c87d699953bfada1e4b96522470463.jpg"
+                },
+                "table_caption": [
+                    {
+                        "type": "text",
+                        "content": "quantifies how much more likely the consequent is to occur with the antecedent than it would be by chance. The"
+                    },
+                    {
+                        "type": "text",
+                        "content": "Table 4: Five sample rules identified by FP-Growth that characterize situations where pairs of judges disagree."
+                    }
+                ],
+                "table_footnote": [],
+                "html": "<table><tr><td>Judge A</td><td>Judge B</td><td>Disagreement Rules</td><td>Supp.</td><td>Conf.</td><td>Lift</td><td>Cases</td></tr><tr><td>Judge 4</td><td>Judge 7</td><td>Age ≤ 24 AND assault on a family member AND ≤ 1</td><td>0.193</td><td>0.935</td><td>1.70</td><td>305/326</td></tr><tr><td>Judge 1</td><td>Judge 17</td><td>prior warrant Assault on a fam- ily member AND ≤ 1 prior felony AND new offense on super-</td><td>0.229</td><td>0.852</td><td>2.09</td><td>420/493</td></tr><tr><td>Judge 9</td><td>Judge 14</td><td>vision ≤ 1 past crime</td><td>0.623</td><td>0.750</td><td>1.43</td><td>138/184</td></tr><tr><td>Judge 2</td><td>Judge 18</td><td>Indigent AND first arrest due to non-</td><td>0.195</td><td>0.769</td><td>1.81</td><td>337/438</td></tr><tr><td>Judge 7</td><td>Judge 9</td><td>appearance AND ≤ 1 prior warrant first warrant issued for crime commit- ment</td><td>0.356</td><td>0.757</td><td>1.15</td><td>69/105</td></tr></table>",
+                "table_type": "simple_table",
+                "table_nest_level": 1
+            },
+            "bbox": [
+                84,
+                111,
+                477,
+                361
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                417,
+                480,
+                515
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We used FP-Growth (Han, Pei, and Yin 2000) to generate our set of rules for each judge pair. Each rule was then used on the underlying cases to compute canonical counts of covered cases, disagreements, and agreements, from which support, confidence, and lift were recomputed relative to the global disagreement rate. This procedure, applied in both directions for all judge pairs, yielded a set of concise, understandable rules highlighting the specific feature combinations most predictive of inter-judge disagreement."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                515,
+                480,
+                640
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We find that most judges with distinct loss distributions exhibit strong, interpretable rules that explain their disagreements. For example, the rule “age ≤ 24 → Judges 9 and 4 disagree” is highly predictive (support = 0.18, confidence = 0.94, lift = 1.67), indicating that disagreements between Judges 9 and 4 occur in nearly all cases involving defendants aged 24 or younger. Similarly, the rule “charged with family assault AND charged with new offense on pretrial release → Judges 21 and 17 disagree” identifies a substantial subset of cases: 24% satisfy both conditions, and the judges disagree in 85% of them. These patterns suggest that outcomes in such cases are driven more by individualized judicial discretion rather than by standardized risk cues. These rules can identify specific case-qualities where judges most often disagree, providing an avenue to understand when judges disagree and potential reduce inconsistencies in their decisionmaking by aligning judge’s decisions in these scenarios."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                638,
+                480,
+                876
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Additional examples are in Table 4."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                875,
+                338,
+                888
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/972b39675db5e2d551c1d4f2bb499f7b19857db1a32c722e3954c2d890c9a7b7.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 12: Triplet Example. This is an example of a triplet, where the blue points are from Judge i and the green points are from Judge j. Given an anchor point from Judge i, a triplet is then made from choosing a random nearest neighbor from Judge i and Judge j. In this example, any point within the purple circle is available to be chosen as a random nearest neighbor for the triplet."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                522,
+                70,
+                898,
+                253
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Are judges more consistent with their own decisions than with others? Triplet analysis. Even if two different judges follow different algorithms, it is still important to see whether they make similar decisions. To do this, we performed a triplet analysis that compares two judges. For each pair of judges, there is an anchor judge and a target judge. A triplet is defined by an anchor case from the anchor judge, a nearest neighbor case from the anchor judge, and a case from the target judge that is similar to the anchor case. We define similar cases to be cases with a low normalized weighted Euclidean distance, where highly important variables like offense type, rules, and age are weighted more heavily than other variables. Figure 12 shows a visualization of how these triplets are formed. In this triplet analysis, we randomly sampled ∼1000 triplets for each pair of anchor and target judge. Analyzing these triplets, we consider the following questions: When two judges disagree, does each judge predict themselves better than the other?, When two cases presented to the same judge are similar, do they make the same decision?, and Does the choice ofjudge affect the decision of a case? Let us answer these. We use the same triplets in our entire analysis so that we can directly compare our metrics."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                396,
+                915,
+                718
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "When two judges disagree, does each judge predict themselves better than the other? To evaluate this, we calculate the percentage of triplets where Judge i makes the same decision as the anchor point, meaning Judge i predicts themselves correctly, while Judge j disagrees. We define this metric as the win rate. If a judge predicts themselves better than other judges do, they have a high win rate. We see in Figure 13 that most judges have a win rate between 60% and 80%, meaning that each judge is a better predictor of themselves than other judges most of the time. While this is good, we also see that there can be improvement, as the win rates cap out at around 85%."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                722,
+                916,
+                890
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/89e8ea847ff717da05e0ab72af11330d661472c4d915020ca35d530af13e34bc.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 13: Average win rates of judges. All win rates exceed 0.5, indicating that judges predict their own outcomes better than those of other judges in the majority of cases."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                91,
+                70,
+                473,
+                164
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/5b58d1701324de1b6f566fee4d679ed561045dd30b9f27651a5cc8519643df09.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 14: Judge’s consistency in decision-making. The average percentage of triplets where a judge predicts the same outcome as the anchor case. All judges are above 50%, indicating performance better than random guessing, with most around 60–70% and some near 80%."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                91,
+                251,
+                470,
+                343
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "When two cases presented to the same judge are similar, do they make the same decision? For a fair justice system, we expect a judge to always make the same decision when given the same case. To evaluate whether this happens or not, we find the percentage of triplets (using just the anchor and the other point from the same judge) where the anchor judge makes the same decision. As we see in Figure 14, most judges have a percentage between 60% and 80% indicating that while they are generally more consistent than random, there is still a large gap between judges always being consistent with themselves. This is an important evaluation to ensure that judges are maintaining consistency."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                444,
+                482,
+                613
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Does the choice of judge affect the decision of the same case? While we cannot test giving two different judges the same case, we can use our triplets to approximate this. To evaluate whether the choice of judge matters, we find the percentage of triplets (using just the anchor from Judge i and the point from Judge j) where Judge i makes the same decision as Judge j. A higher percentage means the choice of judge does not matter, while a low percentage near 50% suggests that it does. As we see in Figure 15, the percentage is about 50%, maxing out at ∼ 60%, which is the minimum percentage for both the win rate and how consistent each judge is with themselves. This means that the choice of judge is very important in deciding whether a defendant will receive a personal bond or not."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                618,
+                482,
+                815
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Discussion"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                233,
+                827,
+                328,
+                842
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In our justice system, we expect judges to make decisions consistently. Thus, we expect judges to follow rules: decision patterns using algorithmic logic. However, some cases require the application of standards, i.e., contextual understanding and moral reasoning that computational models cannot replicate. If judges do follow rules, we can potentially improve them through better predictive modeling; improving rules is comparatively inexpensive and quite feasible (Ludwig, Mullainathan, and Rambachan 2024), and would make judicial decisions more accurate (DeMichele et al. 2021) and transparent. If judges do not follow algorithms, it is important to know why, because arbitrariness in judicial decision-making is undesirable. We have provided and used a framework that evaluated how often judges follow algorithms and how and whether their algorithms differ. We saw that judges often follow algorithms and that different judges follow different algorithms, which produce different outcomes in similar cases. This means judges could potentially be made more consistent and accurate. The framework also includes a variable importance analysis that can uncover whether judges may heavily consider features like race or other demographic characteristics to make decisions. We also found many cases where missing or erroneous data required the use of standards rather than rules. Better data collection could then lead to more consistent, rule-based decisions. Given high quality recidivism data, it is possible to extend the framework by evaluating judge’s algorithms to determine whether judges accurately predict long-term outcomes."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                845,
+                480,
+                890
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/51ec559cd9142b478e515db3c7295d541c82d43dc694ef3e7b392d0f1d2ea4fb.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 15: Consistency between judges. The average percentage of triplets where a judge predicts the same outcome as the second judge in the triplet. We see that all judges are slightly better than random guessing. This shows that agreement between judges is somewhat random."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                524,
+                70,
+                903,
+                164
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                514,
+                287,
+                916,
+                650
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Instead of viewing algorithms as replacements, they should be seen as instruments to inform and enhance human judgment. No one can accurately estimate risks from sufficiently large and complex data in their head, but ensuring human oversight remains central, especially in high-stakes cases that could determine an individual’s freedom. By making judges’ internal rules, i.e., algorithms, as well as their reliance on standards, more explicit and accountable, we can move towards a judicial system that is both transparent and self-improving."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                652,
+                916,
+                795
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Acknowledgements"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                632,
+                824,
+                799,
+                840
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We thank Arvindh Manian for his contributions to the early stages of this work."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                859,
+                913,
+                890
+            ]
+        }
+    ],
+    [
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "References"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                232,
+                66,
+                331,
+                83
+            ]
+        },
+        {
+            "type": "list",
+            "content": {
+                "list_type": "reference_list",
+                "list_items": [
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Angwin, J.; Larson, J.; Mattu, S.; and Kirchner, L. 2016. Machine Bias. Technical report, ProPublica."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Arnold, D.; Dobbie, W.; and Hull, P. 2022. Measuring Racial Discrimination in Bail Decisions. American Economic Review, 112(9): 2992–3038."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Banks, A. P.; Gamblin, D. M.; and Hutchinson, H. 2020. Training fast and frugal heuristics in military decision making. Applied Cognitive Psychology, 34(3): 699–709."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Cofone, I. 2021. AI and Judicial Decision-Making. Florian Martin-Bariteau & Teresa Scassa, eds., Artificial Intelligence and the Law in Canada (Toronto: LexisNexis Canada, 2021)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Crootof, R.; Kaminski, M. E.; Price, W.; and Nicholson, I. 2023. Humans in the Loop. Vand. L. Rev., 76: 429."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Deeks, A. S. 2019. The Judicial Demand for Explainable Artificial Intelligence. Virginia Public Law and Legal Theory Research Paper No. 2019-51."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "DeMichele, M.; Comfort, M.; Barrick, K.; and Baumgartner, P. 2021. The Intuitive-Override Model: Nudging Judges Toward Pretrial Risk Assessment Instruments. Federal Probation, 85(2)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Dhami, M. K.; and Ayton, P. 2001. Bailing and jailing the fast and frugal way. Journal of Behavioral Decision Making, 14(2): 141–168."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Eaglin, J. M. 2023. Racializing Algorithms. California Law Review, (111)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Fagan, F.; and Levmore, S. 2019. The impact of artificial intelligence on rules, standards, and judicial discretion. Southern California Law Review, (93:1)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Fisher, A.; Rudin, C.; and Dominici, F. 2019. All Models are Wrong, but Many are Useful: Learning a Variable’s Importance by Studying an Entire Class of Prediction Models Simultaneously. Journal ofMachine Learning Research, 20(177): 1–81."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Garrett, B. L. 2025. Artificial Intelligence and Procedural Due Process. Duke Law School Public Law & Legal Theory Series No. 2025-15."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Garrett, B. L.; and Rudin, C. 2023. The Right to a Glass Box: Rethinking the Use of Artificial Intelligence in Criminal Justice. Cornell Law Review, Forthcoming, Duke Law School Public Law & Legal Theory Series No. 2023-03."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Garrett, B. L.; and Rudin, C. 2024. Testing AI. Duke Law School Public Law & Legal Theory Series No. 2024-62."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Garrett, B. L.; Thompson, S. G.; Carmichael, D.; Shi, D.; and Kang, S. 2024. Liberty, Safety, and Misdemeanor Bail. Florida Law Review, 76(2): 321–404."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Han, J.; Pei, J.; and Yin, Y. 2000. Mining frequent patterns without candidate generation. SIGMOD Rec., 29(2): 1–12."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Harcourt, B. E. 2015. Risk as a Proxy for Race: The Dangers of Risk Assessment. Fed. Sent’g Rep, (27)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Heaton, P.; Mayson, S.; and Stevenson, M. 2017. The Downstream Consequences of Misdemeanor Pretrial Detention. Standfor Law Review, 69: 711."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Jung, J.; Concannon, C.; Shroff, R.; Goel, S.; and Goldstein, D. G. 2020. Simple Rules to Guide Expert Classifications. Journal of the Royal Statistical Society Series A: Statistics in Society, 183(3): 771–800."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Kaplow, L. 1992. Rules Versus Standards: An Economic Analysis. Duke Law Journal, (42): 557–629."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Kleinberg, J.; Lakkaraju, H.; Leskovec, J.; Ludwig, J.; and Mullainathan, S. 2017. Human Decisions and Machine Predictions. The Quarterly Journal ofEconomics, 133(1): 237– 293."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Kleinberg, J.; Lakkaraju, H.; Leskovec, J.; Ludwig, J.; and Mullainathan, S. 2018. Human decisions and machine predictions. The Quarterly Journal ofEconomics, 133(1): 237– 293."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Lin, J.; Zhong, C.; Hu, D.; Rudin, C.; and Seltzer, M. 2020. Generalized and Scalable Optimal Sparse Decision Trees. In International Conference on Machine Learning (ICML)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Loeffler, C. E.; and Grunwald, B. 2015. Processed as an Adult: A Regression Discontinuity Estimate of the Crime Effects of Charging Nontransfer Juveniles as Adults. Journal ofResearch in Crime and Delinquency, 52(6): 890–922."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Ludwig, J.; Mullainathan, S.; and Rambachan, A. 2024. The Unreasonable Effectiveness of Algorithms. AEA Papers and Proceedings, 114: 623–27."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Marewski, J. N.; and Gigerenzer, G. 2012. Heuristic decision making in medicine. Dialogues in Clinical Neuroscience, 14(1): 77–89. PMID: 22577307."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "McTavish, H.; Zhong, C.; Achermann, R.; Karimalis, I.; Chen, J.; Rudin, C.; and Seltzer, M. 2022. Fast sparse decision tree optimization via reference ensembles. In Proceedings of the AAAI Conference on Artificial Intelligence, volume 36, 9604–9613."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Pepper, J.; Petrie, C.; and Sullivan, S. 2010. Measurement Error in Criminal Justice Data. Handbook of Quantitative Criminology 353 (A. Piquero & D. Weisburd eds., 2010)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Rachlinkski, J. J.; and Wistrich, A. J. 2017. Judging the Judiciary by the Numbers: Empirical Research on Judges. Annual Review of Law and Social Science, (13)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Re, R. M.; and Solow-Niederman, A. 2019. Developing Artificially Intelligent Justice. Stanford Technology Law Review."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Rudin, C.; Wang, C.; and Coker, B. 2020. The Age of Secrecy and Unfairness in Recidivism Prediction. Harvard Data Science Review, 2(1)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Rudin, C.; Zhong, C.; Semenova, L.; Seltzer, M.; Parr, R.; Liu, J.; Katta, S.; Donnelly, J.; Chen, H.; and Boner, Z. 2024. Amazing Things Come From Having Many Good Models. In Proceedings of the International Conference on Machine Learning (ICML)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Sacks, M.; Sainato, V. A.; and Ackerman, A. R. 2015. Sentenced to Pretrial Detention: A Study of Bail Decisions and Outcomes. American Journal of Criminal Justice, (40): 661–681."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Schlag, P. J. 1985. Rules and Standards. UCLA Law Journal, (33): 379."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "bbox": [
+                83,
+                87,
+                478,
+                116
+            ]
+        }
+    ],
+    [
+        {
+            "type": "list",
+            "content": {
+                "list_type": "reference_list",
+                "list_items": [
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Semenova, L.; Chen, H.; Parr, R.; and Rudin, C. 2023. A Path to Simpler Models Starts With Noise. In Proceedings of Neural Information Processing Systems (NeurIPS)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Semenova, L.; Rudin, C.; and Parr, R. 2022. On the Existence of Simpler Machine Learning Models. In ACM Conference on Fairness, Accountability, and Transparency (ACM FAccT)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "State of Texas. 1965. Texas Code of Criminal Procedure."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "State of Texas. 2025. Texas Constitution."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Tversky, A.; and Kahneman, D. 1974. Judgment under Uncertainty: Heuristics and Biases. Science, 185(4157): 1124– 1131."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Wang, C.; Han, B.; Patel, B.; and Rudin, C. 2022. In Pursuit of Interpretable, Fair and Accurate Machine Learning for Criminal Recidivism Prediction. Journal ofQuantitative Criminology, 1–63."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "Xin, R.; Zhong, C.; Chen, Z.; Takagi, T.; Seltzer, M.; and Rudin, C. 2022. Exploring the Whole Rashomon Set of Sparse Decision Trees. In Neural Information Processing Systems (NeurIPS)."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "bbox": [
+                83,
+                69,
+                478,
+                112
+            ]
+        }
+    ],
+    [
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Appendix"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                236,
+                66,
+                326,
+                84
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "A Further Background and Related Works Benefits of rules and standards"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                84,
+                88,
+                472,
+                125
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Rules As discussed in the introduction, there is a broader debate about whether judges, and the judicial system, should rely more on rules versus standards. To provide an example from the misdemeanor bail system in Harris County of a rule, the O’Donnell Consent Decree imposes, and the local rule that the judges follow similarly adopts, a rule that, for non-carve-out misdemeanor offenses, a person is to be promptly released on a general order bond. It is not discretionary; the rule is applied automatically."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                126,
+                480,
+                252
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "An example of a standard is the Consent Decree’s rule, reflecting the requirements of procedural due process, that a judge must find “clear and convincing evidence” that a person poses a risk of flight or to public safety, in order to impose a secured bond in a misdemeanor case. That standard supplies a burden of persuasion and notes the relevant considerations, but it does not provide specific directions regarding how a magistrate should make decisions in particular cases. Thus, magistrates retain substantial discretion in individual cases, when deciding whether the evidence reaches the clear and convincing level, regarding the dangers of flight or public safety."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                252,
+                480,
+                419
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "One way to think about rules versus standards is that they provide for a different degree of discretion for the judge as a decision-maker. Rules and standards exist on a continuum, and a given rule may have elements that retain some flexibility or discretion, for example. However, the role of a judge is far less important, the more that a bright-line rule is relied upon. A judge does not exercise independent judgment if there is a clearly applicable rule, except to identify the predicate facts making the rule applicable. Rules limit discretion and enforce consistency. Getting rules right in advance, and avoiding the resulting over and under-inclusiveness, raises real challenges. Standards are appealing where individualized circumstances might vary and be highly relevant, and where equitable discretion, including regarding moral decisionmaking, is highly desirable."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                417,
+                480,
+                626
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Similar considerations apply to the debate regarding the desirability of algorithms in the judicial system. Let us discuss the reasons why algorithms are useful; the reasons largely track the advantages of rules as compared to standards, but with several more specific issues."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                626,
+                480,
+                695
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Algorithms are consistent: Two identical cases will be scored the same way. This cannot necessarily be said for two identical cases with different human judges, or even two identical cases presented to the same human judge. And, it may be that an algorithm has advantages that simple judicial rules do not: an algorithm can be more nuanced and take account of a large number of factors and different weights, while traditional legal rules may tend to be more under- and over-inclusive."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                694,
+                480,
+                819
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Algorithms are transparent (when they are interpretable): Algorithms for risk scoring should be simple, interpretable, public, functions, whereas judges are black boxes – we do not know their reasoning processes. Algorithms in criminal justice have been harshly criticized, mostly after the coverage of the use of a proprietary (i.e., black box) risk scoring instrument called COMPAS, the Correctional Offender Management Profiling for Alternative Sanctions (Angwin et al. 2016). That algorithm was not transparent; if it were, and judges and lawyers knew that it largely depended on a person’s age and criminal history, the debate about its fairness might not have occurred (Rudin, Wang, and Coker 2020). People might have demanded a more useful and nuanced risk assessment if they were to use one (Wang et al. 2022). However, most risk assessment tools in criminal justice are transparent, and we should be using only those tools."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                819,
+                480,
+                890
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                514,
+                69,
+                915,
+                236
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Algorithms are easier to fix. While algorithms can be biased, they are much easier to fix than judges, whose rulings may be appealed, but with typically deferential standards of review. Judges are human, as we are all biased in some respects, even when we must provide reasoned explanations for our decisions. Simple formulas do not have this problem."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                236,
+                915,
+                319
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Algorithms are easier to assess for bias. Human decision-makers may be affected by a range of cognitive biases, and in legal decision making, this is true as in any other area of decision making. Studies have examined the effects of biasing information on legal decision-makers in a range of contexts. For example, Sacks, Sainato, and Ackerman (2015) demonstrated that in the U.S., Black and Hispanic defendants were more likely than white defendants to face financial bail requirements and less likely to secure release, highlighting racial disparities in pretrial detention. Algorithms are easier to assess for harmful biases, particularly when their formulas are interpretable. There is now a huge literature on assessing algorithms for fairness, interpretability and accuracy (Wang et al. 2022) (and creating algorithms that perform well on all of these metrics simultaneously). These evaluations assess algorithms on huge datasets – such evaluations cannot be performed on individual judges because we cannot possibly know what an individual judge would decide on a huge number of cases – unless they behave like an algorithm."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                319,
+                915,
+                597
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Algorithms are more accountable. As long as the algorithms are transparent and public, there is simply a much greater level of accountability available than there is for individual judges. That is, algorithms allow us to debate about whether they are accurate and fair. The same is much more difficult to do for a judge."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                597,
+                915,
+                681
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "There is evidence that a range of experts, including judges, may act in ways that resemble interpretable algorithms. Dhami and Ayton (2001) analyzes bail decisions in the UK using the lens of fast and frugal trees (FFTs). Findings show that judges’ bail decisions can be accurately modeled using simple decision trees that rely on a small number of cues, suggesting that judicial decision-making is systematically heuristic rather than random or overly complex. Similarly, research in other high-stakes contexts has shown that experts can be well-approximated by compact decision rules. Banks, Gamblin, and Hutchinson (2020) shows how simple decision rules can be trained and applied in highstakes military contexts. Military officers trained on fast and frugal heuristics reached decisions as accurately as those trained in more complex methods."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                681,
+                915,
+                890
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "There is a separate question whether simple rules perform better than judges’ existing exercise of discretion. Recent work has focused not only on comparing human and algorithmic decision-making but on designing interpretable rules that can be applied in real-world practices. Kleinberg et al. (2017) show that machine learning models trained on bail data could reduce crime by as much as 24.7% without raising incarceration rates, or alternatively, reduce jailing by up to 41.9% without increasing crime, while simultaneously lowering racial disparities. Cofone (2021) surveys the integration of AI into judicial processes, distinguishing between judges using AI tools and AI replacing judges. Jung et al. (2020) introduce a simple “select, regress, and round” procedure for constructing scoring rules that experts can use mentally. Even with just a few features and integer weights, these rules can achieve consistency and transparency, reducing unnecessary detention without raising failure-to-appear rates."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                69,
+                482,
+                320
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Standards The alternative to relying on algorithms is to rely on judicial discretion. The longstanding rules vs. standards debate can inform these choices. If there is information that is highly relevant, including morally relevant, that is not readily available to train algorithms, then we would particularly want judges to make more individualized decisions relying on such information. If we do not think that algorithms can, for other reasons, capture factors that are informative in individual cases, then we will similarly prize discretion and individualized justice, rather than more rulebased justice."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                347,
+                482,
+                502
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We may prioritize individualized justice for moral and legitimacy reasons as well, viewing human decision making as morally superior and more legitimate, than a more rule-based or algorithmic basis for decision making. Accuracy may not be the only, or the most important, goal in a judicial system. As we noted in the introduction, due process rights entitle people to obtain review from impartial decision-makers in many circumstances when the government acts. That is why ”black box” algorithms are so troubling, since human decision-makers cannot understand, much less review, their functioning."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                506,
+                482,
+                661
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Finally, we may view rules as preferable in many or most cases, but not in all cases. We may want a human decision maker to follow a role in many or most cases, but in other cases, we may want the judge to follow a standard, and take into account additional information. We may want that standard to apply in specific types of cases, identified in advance. That said, algorithms can be designed to be complex, far more so than traditional simple legal rules, and to address these more specific situations. Or, we may also want the human decision maker to have the power to override the recommendations of the rule or algorithm when errors in data, or unusual case-specific data, mean that relying on the rule or algorithm would be unreliable. The question that we focus on here is whether judges already follow rule-like approaches, or standards, or some identifiable combination of the two."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                666,
+                482,
+                890
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "B Data and Processing"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                611,
+                66,
+                820,
+                83
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "B.1 Magistration in Harris County, Texas"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                516,
+                89,
+                852,
+                106
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In 2019, after several years of federal civil rights litigation in the case of O’Donnell v. Harris County, the County entered a Consent Decree requiring comprehensive reforms of its misdemeanor bail system. The outcomes before and after those reforms have been discussed in some detail previously, including by two of the authors, who serve on a team independently monitoring progress under that Consent Decree (Garrett et al. 2024). About 50,000 misdemeanor cases have been filed per year, in recent years, in Harris County. Those cases are handled by the Harris County Criminal Courts at Law (CCCL)."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                111,
+                915,
+                265
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Under the prior system in Harris County, magistrates did not have real discretion when assessing pretrial detention and bail. The Texas Constitution promises bail to almost all persons charged with crimes. (State of Texas 2025, Art. I, 11a-c). A bond is a promise, after arrest, to return to court in a criminal case. Such a bond can be secured by a money payment made in advance, called bail in Texas, or it can be unsecured and not require any payment up front, which is called a “personal bond,” in Texas. (State of Texas 1965, Art 17.01-2) Texas law, under Article 15.17 (State of Texas 1965, Art 15.17) of the Texas Code of Criminal Procedure, sets out that a magistrate must find probable cause, and then assess whether a person is eligible for bail. (State of Texas 1965, Art 12.17) Texas law has set out factors to be considered when setting bail amounts, including the “nature of the offense,” the “arrestee’s ability to make bail,” the “future safety of the victim,” and a state “public safety report” with information regarding a person’s criminal history and court appearance (State of Texas 1965, Art 15.17). Texas law had long permitted local courts to adopt bail “schedules,” in which local judges made predetermined decisions about setting bonds for specified offenses (although this law has since changed). That is what Harris County had in place before the Consent Decree. After arrest, if the District Attorney’s Office accepted the charges, bail would be set according to the written schedule adopted by the judges. It had a $500 base amount for misdemeanors, with additional $500 increments added based on the charges and the person’s criminal history. If a person could pay that amount, they could be released. In most cases, a person could not. They received a misdemeanor bail hearing before a magistrate, which would typically last for a minute or two, where magistrates, in the vast majority of cases adhered to the bail schedule amounts (Garrett et al. 2024, p.17)."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                263,
+                915,
+                736
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "After the ODonnell class action was filed, and relief was obtained culminating in a Consent Decree, entered in 2019, magistrates had discretion to make individualized decisions in bail hearings. Most misdemeanor arrestees are promptly released on a non-secured bond after booking; those persons do not receive or need a bail hearing. However, not all people qualify for this type of prompt administrative release, under the Consent Decree. Six categories of people arrested for misdemeanors in Harris County, who belong to “carveout” categories, instead proceed to a bail hearing before a magistrate: persons charged with protective order and bond condition violations; domestic violence cases; repeat driving while intoxicated cases; people charged with a new offense while on pretrial release; people arrested after a bond forfeiture or revocation; and persons arrested while on community supervision (Garrett et al. 2024, p.21)."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                736,
+                915,
+                891
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                69,
+                480,
+                138
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Before this bail hearing, Pretrial Services conducts interviews with arrestees, and provides magistrates with an advance report regarding the person’s financial and other circumstances, along with recommendations whether a person should be released or not on a personal bond. Some of those people are granted a personal bond by the magistrate without a need for a bail hearing, in a process termed “early presentment” (Garrett et al. 2024, p.21). The others proceed to a hearing, held at the Harris County Joint Process Center, during magistration dockets that run all day and night. All misdemeanor arrestees have access to a public defender, who represents them at the bail hearing."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                138,
+                480,
+                306
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The Consent Decree and the judge’s rule that accompanies it, require that magistrates use their discretion to decide whether there is “clear and convincing” evidence that a person poses a risk of flight or a threat to public safety, in order to order a secured bond in a misdemeanor case. They must make findings regarding their reasons for imposing any secured bond in a case, either orally on the record or in writing. Those reasoned findings are not required if they impose a personal bond. Their rulings may be reviewed, on the next business day, by a CCCL judge, who may revisit the bond conditions imposed."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                306,
+                480,
+                460
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The Consent Decree also provides that the public, and the Monitor, be provided access to certain data concerning misdemeanor pretrial release and detention decisions, including arrestee demographic information, which magistrates and judges are assigned to cases, decisions made at bail hearings, and outcomes in cases, from 2009 to the present."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                460,
+                480,
+                546
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "B.2 Data Description"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                83,
+                560,
+                263,
+                577
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this study, we focused on the years 2020 to 2025, a time period in which the Consent Decree rules had been adopted and were being used consistently. Our data contain information on virtually all criminal cases filed in Harris County between January 1, 2020, and January 8, 2025, with the exception of a small number of sealed and expunged criminal case records, which were provided by the Harris County Office of County Administration’s Research and Analysis Division (RAD). We observe defendant characteristics (such as race, sex, and age) and case characteristics (such as case filing date, charges filed, booking and release dates, and case disposition) for each misdemeanor and felony case in our data. Also available in the data is information about the bond conditions selected by the magistrate for the subset of cases that we focused on: cases that were not given a General Order Bond and were deemed to be carve-out cases according to the new Harris Local Rule 9. These are the cases that proceeded to a magistrate hearing. We have information regarding the pre-trial bond requests made by the District Attorney and by the Public Defender. We also have information regarding the magistrate’s ruling, including any written reasons that they supplied. The target that we use for this project is whether or not a personal bond was granted by the magistrate."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                583,
+                482,
+                891
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                514,
+                69,
+                913,
+                97
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The available dataset contained 531,921 unique cases, out of which we filtered out 170,757 cases to be carve-out cases, and we had bail hearing outcome information for 90,429 cases. We also discovered that there were rows with duplicate case IDs with multiple different magistrates, since a particular case may have had multiple bail hearings in the case of rearrests or bond revocations. In these cases we chose to keep the first instance of the case ID, corresponding to the very first bail decision made by a magistrate. We chose this to ensure our model reflects each magistrate’s independent assessment based solely on the original offense details and defendant circumstances at case initiation, without contamination from subsequent developments that could introduce data leakage. As a result, we had 64,803 unique cases to work with."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                97,
+                915,
+                305
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The next step was to filter a special type of cases, which are off-docket cases. We removed off-docket cases because these represent pre-screened cases where pretrial services had already determined the defendant was eligible for release on a personal bond, and where the magistrate agrees, the magistrate does so on paper, granting the personal bond without a full bail hearing. Since the outcome in these cases is influenced by both pretrial services’ initial screening decisions and the magistrate’s subsequent review, they are not completely representative of that individual magistrate’s behavior, and we decided that although such rulings are very important and interesting, since our focus is on magistrate decision making, including these off-docket cases could introduce bias. We used the ‘off docket’ as well as the ‘other comments’ features to check if a case was off docket, and we narrowed the dataset to 30,159 cases."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                305,
+                915,
+                527
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We then engineered features using the raw data. We combined the crime case details and bond analytics information from both the felony dataset and misdemeanor dataset, for individual defendants to compute the features as shown in Table 5. These features mostly pertain to that defendant’s criminal history, and each one has two versions: one for past misdemeanors and one for past felonies (with the ‘ f‘ suffix). Felony crime information is included because, after looking at some PC forms, we discovered that magistrates sometimes grant personal bonds despite pending felony charges, reasoning that the ongoing case would ensure punishment if reoffense occurred, making it important for modeling their decisions."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                526,
+                916,
+                708
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "C Case Distribution by Judge"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                581,
+                720,
+                848,
+                738
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Lastly, we also plot the distribution of bond type for each of the judges in our dataset, shown in Figure 18. As we see, the majority of the cases for each judge were granted a secured bond."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                741,
+                915,
+                797
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "D Details on Generating the Rashomon Sets"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                519,
+                811,
+                910,
+                829
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "All the features were transformed using a Threshold Guessing Binarizer, which generates binary splits of numeric features by recursively estimating thresholds via ensembles of shallow depth-1 trees. This step converts numerical columns into interpretable binary indicators such as “feature "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\leq"
+                    },
+                    {
+                        "type": "text",
+                        "content": "threshold,” which are well-suited for decision tree induction. Each observation’s caseid was preserved for traceability but excluded from modeling. TreeFARMS was then trained with regularization 0.005, a maximum depth of 5, a Rashomon bound multiplier of 0.01, and balanced training enabled. The bound multiplier (0.01) defines the tolerance for including models in the Rashomon set: trees within 1% of the optimal objective are retained. The trained sets were evaluated on the original data, and the accuracy scores were reported per judge."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                832,
+                915,
+                890
+            ]
+        }
+    ],
+    [
+        {
+            "type": "table",
+            "content": {
+                "image_source": {
+                    "path": "images/f34e6114b4348337f79cfaf841f774eeef30fcbc496e35ce2b3737f0d703135d.jpg"
+                },
+                "table_caption": [
+                    {
+                        "type": "text",
+                        "content": "Table 5: Description of engineered features used to model judicial decision-making patterns. Past felony cases are denoted with ‘ f‘ suffix, while misdemeanors have no suffix."
+                    }
+                ],
+                "table_footnote": [],
+                "html": "<table><tr><td>Features</td><td>Description</td></tr><tr><td>past_mrp, past_mrp-f</td><td>Indicator of whether defendant had past missed required probations/ap- pearances</td></tr><tr><td>past_revokes, past_revokesf</td><td>Count of prior bond revokals</td></tr><tr><td>repeat_count, peat_count_f</td><td>re- Number of times the same penal code appeared in prior cases</td></tr><tr><td>num_pending-crimes, num_pending_crimesf</td><td>Count of cases filed before judge time that were still pending</td></tr><tr><td>disp_dadj, disp_dadj f</td><td>Count of prior deferred adjudication dispositions</td></tr><tr><td> $d i s p . d a d j . d e l t a ,$   $d i s p \\_ d a d j \\_ d e l t a \\_ f$ </td><td>Count of deferred adjucation dispositions within a recent time window</td></tr><tr><td> $n u m \\_ p a s t \\_ c r i m e s ,$   $n u m \\_ p a s t \\_ c r i m e s f$ </td><td>Total number of prior criminal cases</td></tr><tr><td> $n u m \\_ p a s t \\_ c r i m e s \\_ d e l t a ,$   $n u m \\_ p a s t \\_ c r i m e s \\_ d e l t a \\_ f$ </td><td>Number of past crimes within a recent time window</td></tr><tr><td> $n u m \\_ p a s t \\_ f o r \\_ c a s e i d$ </td><td>Number of prior hearings for the same case</td></tr><tr><td>has_hold, has_hold_f</td><td>Indicator if a legal hold was active at judge time</td></tr><tr><td> $A d d r e s s f e a t u r e s$ </td><td>ZIP code indicators (top  $5 + \\mathrm { \\cdots o t h e r } ^ { \\prime \\prime } )$  , homelessness flag, invalid/miss- ing address flag</td></tr></table>",
+                "table_type": "simple_table",
+                "table_nest_level": 1
+            },
+            "bbox": [
+                151,
+                64,
+                843,
+                344
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/e5b87a7ee4350560fe1729767fd87209f64df37dc36b4902fead2c8cc7d38efd.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 16: Number of Cases for each Judge in the Final Processed Dataset."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                124,
+                407,
+                437,
+                545
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/296b82db4e917dd5ec56493478fb702674823a3417c92254dc3851e6f564b82a.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 17: Distribution of the Top 10 Most Common Of fenses for each Judge."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                542,
+                407,
+                892,
+                574
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                613,
+                482,
+                767
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "E Rashomon Set Samples for Judge 1"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                114,
+                781,
+                447,
+                799
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this section, we have more examples of of trees from the Rashomon Set for Judge 1 in Figure 19. In this figure, we see that, even though there are many trees that are a part of the Rashomon set, meaning they all are good predictive models for Judge 1, they largely use similar variables. This somewhat shows the consistency of judges, as even over multiple different trainings, they still use similar variables. Also, that they can use different variables, as known of the variables shown in Figure 19 show in the tree for Judge 17 in Figure 2. Furthermore, we see that these trees are still fairly sparse, having a small number of leaves, while averaging high accuracies, showing that judges can largely be represented by simple rules. We saw these types of shallow trees for many of the judges."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                804,
+                480,
+                890
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                514,
+                642,
+                915,
+                756
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "F Rashomon Set Samples for Judge 17"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                544,
+                770,
+                885,
+                786
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this section, we see in Figure 20, that the Rashomon set can contain trees that use different variables. Even though both of these models are good models for Judge 17, we see that the tree above uses age as a variable to split on, while the second does not and uses whether or not has a medical condition. While there are still some variables that show up in both the trees, we see that it is possible for judges to have different rules that may explain a different subset of cases. Again, we note that this behavior appears for many judges, with many trees using different variables, prompting us to do our variable importance analysis to get a better sense of what variables are generally important for each judge."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                791,
+                915,
+                890
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/86aa3eb03309eceb838a2db0342076d013551033975c48256f98027d52c1a10e.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 18: Distribution of Bond Type (Personal or Secured) Among the Cases for each Judge."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                106,
+                66,
+                459,
+                220
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/b9bd9c51ca652d738bea675d7d5639734ce82f3101e0319c00b162142315c042.jpg"
+                },
+                "image_caption": [],
+                "image_footnote": []
+            },
+            "bbox": [
+                89,
+                275,
+                470,
+                518
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                546,
+                480,
+                618
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "G Case Outcome Distribution After Rashomon Filtering"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                122,
+                631,
+                441,
+                666
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Here we show the distribution of outcomes of the cases reviewed per judge. In Figure 21, we see that after the filtering, there is still a relatively similar ratio of secured bonds and personal bonds granted, implying that no specific class was favored during the Rashomon filtering. Furthermore, that many cases are filtered out after the Rashomon filtering."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                670,
+                480,
+                770
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "H Do Judges Get Different Cases?"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                127,
+                782,
+                434,
+                800
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In our analysis, we wanted to see if judges got a similar distribution of cases, to see if our results are somewhat biased by judges getting different types of cases. First, we trained an XGBoost classifier to see if we could classify the judge that was assigned a case based on the information of the case. If it was truly random, we would expect the classifier to be random, ∼ 4.76% with 21 judges. We saw this classifier get a balanced accuracy of 12.69%, meaning that, while still very bad, there might be some difference in the distribution of cases between judges.Therefore, we did two tests, to deal with both the numerical and categorical variables in the data."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                805,
+                480,
+                890
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/17c7ef3c0a065bdd17a31f320f320b4a29664aa135488ffa8ed10edaaee57824.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 19: Sample trees from the Rashomon Set of Judge 1."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                526,
+                73,
+                906,
+                354
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                516,
+                415,
+                915,
+                498
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "First, we did a Kruskal-Wallis test for the numerical variables. We chose to do the Kruskal-Wallis test since our numerical features are integers, not normally distributed, and our judges have a very differnt number of cases. When performing this test, it saw all of these features have a p-value of less than .05, indicating signifigance. Then, we looked at effect sizes, which quantifies how much the variation of the covariate across the dataset, accounted for by which judge a case was assigned to. While some so negligent effect sizes, meaning they really aren’t that significant even though they had a low p-value, he majority did have medium to large effect sizes, as seen in Figure 22. However, in our variable importance analysis, common splits in the trees, and many of the high confidence, large support rule mining analysis, many of these variables don’t actually show up. This seems to indicate that while there may be some differences, potentially due to the large difference in amount of cases, in these variables, they might not matter as much to our analysis, as the very important variables as age and warrant count seem to be consistent between the different judges."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                500,
+                915,
+                777
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Second, we performed Chi-squared tests on the categorical variables to see if the proportion of each feature differ between the judges. After performing this test, we saw that 94 our of our 324 categorical variables saw a p-value lower than .05, which indicates a significant difference. Again, we wanted to observe the effect sizes of all of these ”signicantly different” variables, as the chi-squared test statistic is a function of both effect magnitude and sample sizesize, and calculated Cramer’s V. Cram´ er’s V is calculated by normaliz-´ ing the chi-squared statistic by both sample size and table dimensions, reflecting the strength of association between judge assignment and a given covariate. Out of our 94 categorical variables, we saw that 83 of them had negligible effect, and showed the 11 that had a medium to high score in Figure 23. From this, we that only 11 of our 394 categorical variables had non-negligible effects, meaning that the distributions were relatively similar from these variables. However, in our categorical variables, we see that things like ice holds, whether a defendant is indigent, and specific rules and offenenses are very different. This might explain why some of these are not globally important for all of the judges, through our variable important anlaysis, but also shows that while these distributions may be different, they are all relatively important variables for the judges anyways, indicating that the distributions being different may not have as big of an effect on our analysis. However, it does indicate why most of our large-confidence, high-support disagreement rules use these variables."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                777,
+                915,
+                890
+            ]
+        }
+    ],
+    [
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/7beb2eadb4051c9b9928df8cda477a5491c526cc18950c7fcfe7a36f62c4ab08.jpg"
+                },
+                "image_caption": [],
+                "image_footnote": []
+            },
+            "bbox": [
+                96,
+                68,
+                475,
+                330
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                81,
+                361,
+                480,
+                637
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "This analysis shows that the there is some difference in case distribution between judges, and may explain some results in our analysis, which is only able to be done because our methods are interpretable,"
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                637,
+                480,
+                694
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "I GOSDT Accuracies"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                181,
+                708,
+                382,
+                723
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this section, we see that the accuracies mostly follow balanced accuracy. We see that most judges can be explained by reasonable accuracies. This shows that, although the data is imbalanced, the algorithms are not overfitted to predicting the majority class, as the balanced accuracy and accuracy metrics have very similar values for each judge."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                728,
+                480,
+                814
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "J Example GOSDT trees"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                166,
+                825,
+                397,
+                843
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this section we give some more example of GOSDT trees trained on only the remaining cases after we remove the unexplainable cases. We see in Figure 25 and Figure 26, that"
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                845,
+                480,
+                890
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/55b9e1aea0c1cd9df598777d5ed2475be333fc852bb41d89d970c89a000315ad.jpg"
+                },
+                "image_caption": [],
+                "image_footnote": []
+            },
+            "bbox": [
+                550,
+                69,
+                901,
+                334
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/efccb7de0dd1eb655d48e5c34ed3236005d8a2f2dde3f4c4f74e49ca72e4c518.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 20: More sample trees from the Rashomon Set of Judge 17."
+                    },
+                    {
+                        "type": "text",
+                        "content": "Figure 21: Per-Judge Distribution of Case Outcomes Before and After Rashomon-Based Filtering."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                522,
+                390,
+                910,
+                556
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Judges 4 and 16 use very different variables, indicating that judge’s individual algorithms may be extremely different."
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                623,
+                913,
+                654
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "K Bad GOSDT Tree"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                620,
+                666,
+                810,
+                683
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Here, we have an example of a bad GOSDT tree in Figure 27. We see a full tree that uses every leaf and splits in a lot of different variables. Despite this, and the tree being intentionally overfit as it’s very deep and comnplex, we see in the leaves, there are leaves where not many cases are actually predicted correctly. The accuracy is still only about 70%."
+                    }
+                ]
+            },
+            "bbox": [
+                516,
+                686,
+                915,
+                772
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "L Pairwise Loss"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                637,
+                785,
+                792,
+                800
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "For most of our pairwise loss analysis, they follow the distributions of Figure 11, we see the source models perform consistently well on the source data, and sharp rises in and a larger range and more errors when the source models are applied to the target judges’ data. However, we also see two other types of loss distributions. In Figure 28 (left), the"
+                    }
+                ]
+            },
+            "bbox": [
+                514,
+                804,
+                915,
+                890
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/7c1ebea547ce6c43fe4af031ceec79c4092829c9c2ee5177216ac394078e9c5d.jpg"
+                },
+                "content": "",
+                "chart_caption": [],
+                "chart_footnote": []
+            },
+            "bbox": [
+                89,
+                65,
+                472,
+                268
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/af26fd671faa0861a7dc078c194012f822d42745b669eae4c107e07d3e9ad3cb.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 22: Epsilon Squared effect sizes from the Kurskal-Wallis test on the numerical features that had non-negligible effect sizes."
+                    },
+                    {
+                        "type": "text",
+                        "content": "Figure 23: Cramer’s V values for categorical features that´ had non-negligible effects"
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                86,
+                337,
+                475,
+                506
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Rashomon models of Judge 2 maintain comparable performance when evaluated on Judge 3, with overlapping distributions and similar median error rates of 0.24 to 0.27. This generally occurs when the loss for the source models for the source judge is not the best, as indicated by the loss for the source judge in Figure 28 (left) being much higher than the loss in Figure 11. In Figure 28 (right), we see another type of comparison. Some models from the source set transfer well, as we see some overlap in loss distributions. This indicates that, sometimes, judges can have subsets of cases their algorithms agree on, which may indicate some agreement across judges."
+                    }
+                ]
+            },
+            "bbox": [
+                81,
+                573,
+                482,
+                742
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/25c28b65df106320ada7b9f85b7d969a0f19e420eb9018c473a045ce5d534be5.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 24: Accuracy for the GOSDT models trained for each judge on the filtered cases."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                519,
+                71,
+                911,
+                210
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/a0fcf12ff1744353dda98057ebcf3572573c857dd766809166d8946e27ea0d39.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 25: Decision tree for Judge 4 trained using GOSDT."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                544,
+                286,
+                892,
+                594
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/8baf9ea482115a7279a67a140babf34e1ef720473bfbf8f260742d2349c65da2.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 26: Decision tree for Judge 16 trained using GOSDT."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                544,
+                642,
+                890,
+                849
+            ]
+        }
+    ],
+    [
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/0f7a452b902799380f75a0a73b38f753dbb7fe188a71d2553307484ace1f6001.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Loss Distributions: Judge 2 (source) vs Judge 3 (target"
+                    },
+                    {
+                        "type": "text",
+                        "content": "Figure 27: Decision tree learned by GOSDT."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                137,
+                74,
+                423,
+                852
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/c0c51847d2c3b3520811b63b52a38843525b73cdb194a07913c766577147b9c1.jpg"
+                },
+                "content": "",
+                "chart_caption": [],
+                "chart_footnote": []
+            },
+            "bbox": [
+                522,
+                387,
+                689,
+                507
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/140c926b5f5fab756f0a75b1ca1abd482045bfa143d9f09c5ef29c3b49f6e12e.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 28: Rashomon model loss distributions on sourcejudge cases for two additional source–target pairs. (Left.) Source Judge 2 with target Judge "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "3 . \\ : ( R i g h t . )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "Source Judge 6 with target Judge 15."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                720,
+                387,
+                883,
+                507
+            ]
+        }
+    ]
+]
