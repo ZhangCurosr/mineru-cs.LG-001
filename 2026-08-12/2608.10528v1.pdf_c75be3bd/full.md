@@ -1,0 +1,409 @@
+# When Do Anchor-Based Pointwise LLM Rerankers Help? Retriever Quality, Statistical Scope, and Anchor Design
+
+(To appear in the 35th ACM International Conference on Information and Knowledge Management (CIKM 2026))
+
+Utshab Kumar Ghosh Department of Computer Science Missouri University of Science and Technology Rolla, MO, USA u.ghosh@mst.edu
+
+## Abstract
+
+Anchor-based pointwise LLM reranking scores each candidate against a shared reference passage to recover cross-document context at pointwise cost. We study when this actually helps, using GCCP/PAGC [13] as a representative method. Our study is reproduction-first. We use reproduction as a starting point for a controlled component-level stress test of anchor-based pointwise reranking. Our initial reimplementation, based only on the paper text, achieves 0.24 nDCG@10 instead of the reported 0.66, revealing that several undocumented implementation details are necessary to reproduce the method. After identifying and recovering eight such details, we reproduce the reported results within 1.6% and use the validated implementation for controlled analysis.
+
+We find that the core contrastive scoring idea is robust under rigorous statistical correction. However, two design choices held fixed in the original paper are less reliable. First, we find that combining the contrastive score with the standard pointwise relevance score helps when the first-stage retriever is BM25, but gives little or no benefit when the first-stage retriever is a stronger dense model such as E5. Second, the paper’s more complex method for constructing the anchor is unnecessary. A much simpler anchor, built by interleaving the top-ranked sentences, matches or outperforms it across datasets. These findings are consistent across diferent LLM backbones, including a 4-bit quantized 72B model. Overall, anchor-based pointwise reranking is efective, but its gains come mainly from contrastive scoring rather than from the more complex aggregation and anchor-construction choices, and they appear under narrower conditions than the original evaluation suggests.
+
+## CCS Concepts
+
+• Information systems → Retrieval models and ranking; Test collections; • Computing methodologies → Natural language processing; • Mathematics of computing → Hypothesis testing and confidence interval computation.
+
+## Keywords
+
+LLM ranking, reproducibility, zero-shot retrieval, pointwise ranking, contrastive prompting, statistical significance, Holm-Bonferroni correction, BEIR, TREC Deep Learning
+
+Shubham Chatterjee Department of Computer Science Missouri University of Science and Technology Rolla, MO, USA shubham.chatterjee@mst.edu
+
+ACM Reference Format: Utshab Kumar Ghosh and Shubham Chatterjee. 2026. When Do Anchor-Based Pointwise LLM Rerankers Help? Retriever Quality, Statistical Scope, and Anchor Design: (To appear in the 35th ACM International Conference on Information and Knowledge Management (CIKM 2026)). In Proceedings ofthe 35th ACM International Conference on Information and Knowledge Management (CIKM ’26). ACM, New York, NY, USA, 11 pages. https://doi. org/10.1145/nnnnnnn.nnnnnnn
+
+## 1 Introduction
+
+Zero-shot LLM rerankers are usually listwise, pairwise, or pointwise. Pointwise methods are cheapest, with O(�) inferences for � candidates, but they score each document independently. Long et al. [13] propose GCCP/PAGC to address this. Their method adds a query-focused anchor passage to each pointwise prompt, a short summary of the top-� retrieved candidates, so the LLM can score each candidate against a shared reference. A standard yes/no relevance score is then averaged with this contrastive score to produce the final ranking. In their paper, this achieves listwise-competitive nDCG@10 at pointwise cost, without the $O ( n ^ { 2 } )$ overhead of pairwise methods.
+
+The original evaluation, however, holds three conditions fixed: BM25 as the first-stage retriever, a graph-partitioning algorithm (spectral MDS) for anchor construction, and per-cell �-tests without multiple-comparison correction. It remains unclear whether the reported gains persist with a stronger first-stage retriever, a simpler anchor construction, or a more conservative statistical protocol. These choices matter in practice: a practitioner adopting the method needs to know not only whether it can work, but also when it works and which components drive the gains.
+
+We answer these questions through a reproduction-first methodology. We reimplement the full pipeline from the paper text alone, validate within 1.6% mean absolute nDCG@10 on TREC DL 2019/2020 and 1.9–4.5% on eight BEIR datasets, and use that validated platform for systematic boundary-condition analysis.
+
+Our central finding is that anchor-based pointwise reranking is efective but conditional. The method has three components: a standard yes/no relevance score (RG-YN), a contrastive score that compares each candidate against the anchor (GCCP), and an aggregation of both (PAGC). Their contributions are not equal.
+
+The full system (PAGC) reliably improves over standard pointwise grading (RG-YN): Holm-significant in 12 of 22 settings, all positive. The contrastive signal alone (GCCP vs RG-YN) is directionally positive in 19 of 22 settings (� ≪ 0.001, sign test) but per-cell Holm-significant in only 3 of 22, useful but dificult to isolate at typical TREC DL query counts.
+
+Aggregation adds value over GCCP alone in only 5 of 22 settings, and is significantly harmful on one dataset. This depends strongly on the first-stage retriever. Under BM25, aggregation is consistently beneficial. Under strong dense retrieval (E5), it is statistically redundant on 7 of 8 BEIR datasets. The graph-partitioning anchor construction is also unnecessary: a simple composite of the top-� candidate sentences matches or outperforms it on every dataset we test. Our contribution is therefore not a new reranking architecture, but a controlled account of which parts of anchor-based pointwise reranking are load-bearing, which are incidental, and under what retrieval conditions the method remains useful.
+
+Concretely, we address<sup>1</sup> the following research questions:
+
+RQ1 Can GCCP/PAGC be faithfully reproduced from the paper alone, and what does the process reveal about sensitivity to operational choices?
+
+RQ2 Do the original statistical claims survive paired bootstrap testing with Holm-Bonferroni correction across multiple comparison families?
+
+RQ3 How does first-stage retrieval quality moderate the value of anchor-based reranking and score aggregation?
+
+RQ4 Is spectral MDS anchor construction necessary, or do simpler alternatives sufice?
+
+RQ5 Does the mechanism transfer across LLM backbone families, including decoder-only and quantized models?
+
+This paper makes three contributions:
+
+• A faithful reproduction of GCCP/PAGC from the paper text alone, with a catalogue of eight undocumented implementation choices including three that are make-or-break.
+
+• A controlled boundary-condition analysis showing when anchor-based pointwise reranking remains useful: its value depends strongly on first-stage retriever quality, the aggregation strategy, and anchor construction choices that the original evaluation held fixed.
+
+• A methodological demonstration that per-cell uncorrected �-tests overstate component contributions: Holm-Bonferroni correction reduces apparent aggregation significance from 8/22 to 5/22 settings, with one significant negative result.
+
+## 2 Background and Related Work
+
+We now describe GCCP/PAGC [13] in the form needed for reproduction and controlled analysis, and situate this work in the reproducibility and statistical evaluation literature. Given query � and candidate list $D { = } \{ d _ { 1 } , \ldots , d _ { n } \}$ , an anchor passage $d _ { a }$ is constructed from the top-� candidates via spectral multi-document summarization: sentences are embedded with TF-IDF, an afinity matrix is thresholded at �, the normalized graph Laplacian is decomposed, and the Fiedler vector partitions sentences into two clusters. The anchor is the larger cluster trimmed to � sentences. The paper specifies �=10 and �=10. The threshold � is not stated. It uses three scoring components.
+
+Relevance grading (RG-YN) scores each candidate by yes/no token probabilities:
+
+$$
+f _ { \mathrm { R G - Y N } } ( q , d ) = \frac { P ( \mathrm { y e s } \mid q , d ) } { P ( \mathrm { y e s } \mid q , d ) + P ( \mathsf { n o } \mid q , d ) }\tag{1}
+$$
+
+Contrastive scoring (GCCP) scores each candidate against the anchor via an A/B prompt:
+
+$$
+f _ { c } ( q , d _ { i } , d _ { a } ) = \frac { P ( \mathsf { A } \mid q , d _ { i } , d _ { a } ) } { P ( \mathsf { A } \mid q , d _ { i } , d _ { a } ) + P ( \mathsf { B } \mid q , d _ { i } , d _ { a } ) }\tag{2}
+$$
+
+Aggregation (PAGC) averages both scores after per-query min-max normalization:
+
+$$
+f _ { \mathrm { P A G C } } ( q , d ) = \frac { 1 } { 2 } \Bigl ( \tilde { f } _ { \mathrm { R G - Y N } } ( q , d ) + \tilde { f } _ { c } ( q , d , d _ { a } ) \Bigr )\tag{3}
+$$
+
+Several implementation details required to reproduce these equations are not stated in the paper. We catalogue them in Section 4.2.
+
+Reproducibility studies in IR have repeatedly shown that unreported implementation choices can dominate observed performance diferences [2, 10, 24], a concern amplified in LLM reranking pipelines where retriever, prompt template, decoder configuration, and score normalization each carry undocumented degrees of freedom. Without a validated reimplementation, observed diferences across conditions could reflect implementation artifacts rather than method properties.
+
+The paired �-test is typically applied per-cell in IR system comparisons without correction for multiple comparisons, inflating family-wise false positive rates [18]. With small query sets such as TREC DL $\scriptstyle ( n _ { q } = 4 3 - 5 4 )$ , statistical power is limited [17] and nonsignificant results indicate absence of evidence rather than evidence of absence. We use the Holm-Bonferroni procedure [7] and paired bootstrap testing [5, 17] throughout. Together, they provide a more conservative basis for our boundary-condition analysis than percell uncorrected �-tests.
+
+## 3 Experimental Setup
+
+## 3.1 Datasets
+
+We evaluate on TREC Deep Learning 2019 [4] and 2020 [3] (43 and 54 queries respectively) over MS MARCO v1 passages [1]. For out-of-domain generalization we use the eight BEIR [20] subsets evaluated by Long et al.: TREC-COVID, Touché-2020, DBPedia-Entity, SciFact, Signal1M, TREC-News, Robust04, and NFCorpus. Using the same subsets as the original paper allows direct comparison of our reproduction against their reported numbers.
+
+## 3.2 Retrieval
+
+We evaluate two primary first-stage retrievers. BM25 is run via Pyserini [11]’s prebuilt Lucene indices with parameters � =0.9, �=0.4. These values are not stated in the original paper and are one of the operational choices we identify in Section 4.2. E5 uses intfloat/e5-base-v2 [22] with top-100 retrieval via FAISS [9] IndexFlatIP. E5 is absent from the original paper. We include it to assess how first-stage retrieval quality moderates reranker value (RQ3). We additionally use BGE (BAAI/bge-base-en-v1.5 [23]) as a confirmatory dense retriever in Section 6 to verify that the DBPedia-Entity aggregation finding is not specific to E5.
+
+## 3.3 Models
+
+We use the models used in the original GCCP paper: Flan-T5-Large (780M), Flan-T5-XL (3B), and Flan-UL2 (20B), all in FP16. Additionally, we experiment with decoder-only models (Section 8.1): LLaMA-3.1-8B-Instruct, Qwen-2.5-7B-Instruct, Mistral-7B-Instruct-v0.3, and Qwen-2.5-72B-Instruct-AWQ (4- bit [12], single 48 GB GPU). Decoder-only models are prompted via tokenizer.apply\_chat\_template. Details of the assistant turn priming required for GCCP are discussed in Section 4.2. All inference is sequential (no batching), matching the original code.
+
+## 3.4 Evaluation Metrics
+
+We report nDCG@10 throughout, computed via pytrec\_eval [21], which mirrors the reference trec\_eval binary. The nDCG implementation is not a minor detail. On TREC-COVID, a hand-written nDCG routine difers from pytrec\_eval by about 2.5 points. Since several reported gains are of similar magnitude, this choice can change whether a result appears meaningful.
+
+## 3.5 Statistical Testing
+
+We apply paired bootstrap significance testing [5, 17] (10,000 resamples, seed 929) on per-query nDCG@10 deltas, with 95% confidence intervals on the mean delta. To control the family-wise error rate across multiple comparisons we apply the Holm-Bonferroni step-down correction [7] within each of three comparison families: PAGC vs RG-YN, PAGC vs GCCP-alone, and GCCP vs RG-YN. Each family covers �=22 primary settings: 14 TREC DL cells (seven backbone×retriever combinations across DL19 and DL20, visualized in Figure 1) and 8 BEIR cells (Flan-T5-XL×E5 across the eight BEIR subsets). We correct within families rather than jointly across all 66 tests because the three families test conceptually distinct hypotheses: whether contrastive anchor scoring helps at all (GCCP vs RG-YN), whether aggregation adds value beyond contrastive scoring alone (PAGC vs GCCP), and whether the full system improves over the pointwise baseline (PAGC vs RG-YN). Corrected p-values are denoted ${ \mathcal { P } } \mathrm { H o l m } \cdot$ . Significance thresholds are ∗ (<0.05), ∗∗ (<0.01), and ∗ ∗ ∗ (<0.001). Per-query scores are released so readers can recompute under alternative correction procedures.
+
+## 3.6 Reproduction Scope
+
+The original paper introduces several PAGC variants combining GCCP with diferent pointwise backbones (RG-YN, RG-S(0,4) [25], QG [16], and combinations thereof). The strongest reported variant is $\mathrm { P A G C _ { 0 S G } } = \mathrm { Q G } + \mathrm { R G } { \mathrm { - } } \mathrm { S } + \mathrm { G C C P }$ . We focus on the 2-component RG-YN + GCCP variant throughout, as it instantiates the paper’s core architectural idea with minimal confounds. We add a 3-component PAGC-RS-YN-GCCP check in Section 8.3 but do not implement QG, which requires full-sequence query log-likelihood and falls outside the scope of this study. We therefore use “PAGC” below to refer to the 2-component RG-YN+GCCP variant unless explicitly stated otherwise. Our claims about aggregation should be read as claims about this minimal, directly reproducible instantiation of the architecture, not as claims that every higher-order PAGC variant is unnecessary.
+
+Table 1: PAGC nDCG@10 on TREC DL. “Paper” values are RG-YN+GCCP rows of Table 1 in [13]; “Gap” is signed relative to “Paper.” Run-to-run jitter is ≤ ±1 pt nDCG@10 and does not flip any TREC-DL Holm decision in Section 5.
+<table><tr><td>Dataset</td><td>Model</td><td>Ours</td><td>Paper</td><td>Gap</td></tr><tr><td>DL19</td><td>Flan-T5-Large</td><td>0.6834</td><td>0.7012</td><td>-2.5%</td></tr><tr><td>DL19</td><td>Flan-T5-XL</td><td>0.7030</td><td>0.6969</td><td>+0.9%</td></tr><tr><td>DL19</td><td>Flan-UL2</td><td>0.7095</td><td>0.7206</td><td>-1.5%</td></tr><tr><td>DL20</td><td>Flan-T5-Large</td><td>0.6515</td><td>0.6281</td><td>+3.7%</td></tr><tr><td>DL20</td><td>Flan-T5-XL</td><td>0.6760</td><td>0.6810</td><td>-0.7%</td></tr><tr><td>DL20</td><td>Flan-UL2</td><td>0.7009</td><td>0.7023</td><td>-0.2%</td></tr></table>
+
+## 4 RQ1: Reproduction and Sensitivity
+
+We address RQ1 by reimplementing the full GCCP/PAGC pipeline from the paper text alone. We focus on the 2-component RG-YN+GCCP variant defined in Section 3.6. After resolving the implementation details described below, we match the reported numbers closely: our mean absolute gap is 1.6% on TREC DL and 1.9–4.5% on BEIR. This agreement gives us a faithful implementation for the controlled analyses in Sections 5–8.
+
+During reproduction, we also identify substantial sensitivity to operational choices that the original paper does not specify. We catalogue eight such choices in Section 4.2. Together, these choices explain the full nDCG@10 drop from 0.66 to 0.24 in our initial paper-only reimplementation on DL19/Flan-T5-Large. The largest single factor is the capitalization of the yes/no target tokens in the relevance prompt. Changing this choice alone raises nDCG@10 from 0.24 to 0.55.
+
+## 4.1 Reproduction Results
+
+4.1.1 Results on TREC DL 2019/2020. Table 1 compares our reproduced PAGC results with the reported TREC DL 2019 and 2020 results across three Flan-T5 model sizes. Across the six settings, our nDCG@10 scores difer from the paper by only 1.6% on average. The pipeline is deterministic within a single execution (five-seed sweep, std = 0), with sub-0.2 pt jitter across separate executions that does not flip any conclusion in Sections 5–8.
+
+The diferences are small and do not point to a systematic implementation error. We outperform the reported score in two settings (DL19/Flan-T5-XL and DL20/Flan-T5-Large), remain within 1% in two others (DL20/Flan-T5-XL and DL20/Flan-UL2), trail by 1.5% on DL19/Flan-UL2, and fall below the paper by 2.5% in the remaining setting (DL19/Flan-T5-Large). We attribute this largest remaining gap to residual preprocessing diferences, which we discuss in Section 4.2. Throughout this section, “Paper” refers to the RG-YN+GCCP row of Table 1 in [13], which matches our 2-component PAGC construction.
+
+4.1.2 Results on BEIR. Table 2 compares our reproduced PAGC nDCG@10 scores with the reported BEIR results across eight datasets and three model scales. The reproduction is closest for T5-XL, where our mean absolute gap from the paper is 1.9% and the median gap is 1.6%. The largest gap occurs for T5-Large, where the mean absolute gap is 4.5%.
+
+Table 2: BEIR PAGC nDCG@10 across three model scales.
+<table><tr><td></td><td colspan="2">Flan-T5-Large</td><td colspan="2">Flan-T5-XL</td><td colspan="2">Flan-UL2</td></tr><tr><td>Dataset</td><td>Ours</td><td>Paper</td><td>Ours</td><td>Paper</td><td>Ours</td><td>Paper</td></tr><tr><td>SciFact</td><td>0.6403</td><td>0.6145</td><td>0.6840</td><td>0.6854</td><td>0.7114</td><td>0.7295</td></tr><tr><td>NFCorpus</td><td>0.3620</td><td>0.3638</td><td>0.3728</td><td>0.3756</td><td>0.3776</td><td>0.3792</td></tr><tr><td>TREC-COVID</td><td>0.7294</td><td>0.7641</td><td>0.7552</td><td>0.7761</td><td>0.7495</td><td>0.7781</td></tr><tr><td>TREC-News</td><td>0.3820</td><td>0.4112</td><td>0.4490</td><td>0.4740</td><td>0.4563</td><td>0.4864</td></tr><tr><td>Touché-2020</td><td>0.2650</td><td>0.2928</td><td>0.3078</td><td>0.3016</td><td>0.3161</td><td>0.2930</td></tr><tr><td>DBPedia</td><td>0.3898</td><td>0.4181</td><td>0.4061</td><td>0.4149</td><td>0.4138</td><td>0.4265</td></tr><tr><td>Robust04</td><td>0.4800</td><td>0.4914</td><td>0.5279</td><td>0.5346</td><td>0.5347</td><td>0.5467</td></tr><tr><td>Signal1M</td><td>0.2983</td><td>0.3027</td><td>0.3204</td><td>0.3230</td><td>0.3164</td><td>0.3186</td></tr><tr><td>Avg. abs. gap</td><td colspan="2">4.5%</td><td colspan="2">1.9%</td><td colspan="2">3.3%</td></tr></table>
+
+The gaps vary substantially across datasets and model scales. In several cases, our reproduction outperforms the reported score, including SciFact with T5-Large and Touché-2020 with T5-XL and UL2. In most other cases, our scores are lower than the paper’s. This mixed pattern does not suggest a single systematic implementation error. Instead, it suggests that the remaining diferences likely come from dataset-specific preprocessing choices.
+
+The most likely sources are BEIR document-field handling, sentence segmentation, and minor BM25 index diferences. The original paper does not specify, for each BEIR subset, whether documents use title, body, or title plus body fields. Section 4.2 also shows that sentence segmentation can move PAGC scores, and small diferences across Pyserini prebuilt BM25 indices may further afect the candidate lists. Identifying the exact source of each residual gap would require access to the original preprocessing scripts, which are not included in the released code. We therefore release our per-query scores to support future diagnosis.
+
+Together, the TREC DL and BEIR results show that our implementation is faithful enough for controlled analysis. We reproduce the TREC DL results within a 1.6% mean absolute gap and obtain BEIR results that are close overall, with dataset-specific residual diferences that are consistent with underspecified preprocessing rather than a major implementation error. We therefore use this implementation as the basis for the boundary condition analyses that follow. Importantly, the later analyses rely primarily on withinimplementation contrasts: we compare RG-YN, GCCP, PAGC, retrievers, and anchor builders while holding preprocessing, candi date generation, prompts, scoring code, and evaluation fixed. Thus, residual paper-to-ours gaps afect exact comparability with Long et al., but they do not explain the main component-level conclusions reported in Sections 5–8.
+
+## 4.2 Sensitivity to Operational Choices
+
+Our paper-only reimplementation produced nDCG@10 ≈ 0.24 on DL19 RG-YN against the original paper’s 0.66. Consulting the authors’ released code<sup>2</sup> revealed eight operational choices not stated in the paper that together account for the entire gap. We group them by severity.
+
+Make-or-break choices. Three choices individually produce a pipeline that runs to completion but yields broken rankings.
+
+(1) Decoder input string for T5. The authors set decoder\_input\_ids to ‘<pad> ’ for RG-YN and ‘<pad> Passage ’ for GCCP. With an empty decoder input, T5 produces near-uniform token probabilities, rendering both scores uninformative.
+
+(2) Target-token case for RG-YN. The correct tokens are lowercase ‘yes’/‘no’, not ‘Yes’/‘No’. With a prompt ending in “Answer ‘yes’ or ‘no’ ” essentially all probability mass concentrates on the lowercase variant. This single choice moves nDCG@10 on DL19 RG-YN from 0.24 to 0.55 in isolation.
+
+(3) Per-query min-max normalization before aggregation. Equation 11 of [13] writes the PAGC score as a plain average. The authors’ released code (src/utils/aggregate\_utils.py) inserts a per-query, per-component min-max normalization to [0, 1] before averaging. Without it, RG-YN’s [0, 1] probabilities and GCCP’s contrastive logits live on incomparable scales, and aggregation reduces to “whichever component has larger raw magnitude.”
+
+Performance-relevant choices. Five further choices do not individually collapse the pipeline but materially afect results.
+
+(4) Target-token case for GCCP. Uppercase $\cdot _ { \mathsf { A } } \cdot _ { \mathsf { A } } \cdot _ { \mathsf { B } } \cdot _ { \mathsf { A } }$ , with the prompt ending “Output Passage A or Passage B:”. Case flips relative to RG-YN (item 2) and is not stated in the paper.
+
+(5) Spectral threshold �=0.2. Not stated. With �=0 the afinity graph is dense and the Fiedler partition becomes uninformative.
+
+(6) BM25 parameters �<sub>1</sub>=0.9, �=0.4. Not stated. Pyserini’s stock defaults $( k _ { 1 } = 0 . 8 2 ,$ , �=0.68) change the candidate pool composition.
+
+(7) Document truncation to 128 tokens. Not stated. Without it, long candidates overflow the encoder and the prompt template no longer fits.
+
+(8) nDCG implementation. The paper does not specify which nDCG routine to use. A hand-written implementation produces a ∼2.5 pt diference on TREC-COVID relative to pytrec\_eval, large enough to flip conclusions in cells where reported gains are of similar magnitude.
+
+4.2.1 Implications. The two-group structure matters for anyone attempting to reimplement this or similar pipelines: the three make-or-break choices must be recovered exactly, while the five performance-relevant choices require care but allow some variation. More broadly, each of these choices fails silently. The model produces plausible-looking probabilities, the pipeline runs to completion, and the output is wrong. This is not unique to GCCP. It reflects a known gap between published method descriptions and the implementations that produce reported results in neural ranking pipelines [2, 10, 24]. We release our full catalogue and per-query scores for independent verification.
+
+## 5 RQ2: Do the Statistical Claims Survive Correction?
+
+The original paper reports paired �-tests for “+ GCCP vs single component” only, without multiple-comparison correction or PAGC-vs-GCCP-alone tests. This leaves it unclear whether PAGC improves because of the contrastive score, the aggregation step, or both. We therefore rerun the analysis with Holm-Bonferroni correction and test each component separately.
+
+We extend this analysis in three ways. First, we use paired bootstrap tests on per-query nDCG@10 diferences. We use two-sided �-values. We choose paired bootstrap testing because it makes fewer assumptions about the distribution of per-query scores than a paired �-test, while retaining comparable power in IR evaluation [17]. Second, we test all 22 primary settings defined in Section 3. Third, we test three comparison families: GCCP vs RG-YN, PAGC vs GCCP, and PAGC vs RG-YN.
+
+Each comparison answers a diferent question. GCCP vs RG-YN tests whether contrastive anchor scoring helps on its own. PAGC vs GCCP tests whether combining the contrastive score with the pointwise score adds value beyond contrastive scoring alone. PAGC vs RG-YN tests whether the full method improves over standard pointwise grading.
+
+For each comparison family, we run 22 tests: 14 TREC DL settings (seven backbone–retriever combinations evaluated on both DL19 and DL20, as enumerated in Figure 1) and 8 BEIR settings (Flan-T5- XL with E5 retrieval across the eight BEIR subsets). Because the three families test diferent hypotheses, we apply Holm-Bonferroni correction [7] separately within each family of 22 tests, rather than jointly across all 66 tests. To make this choice auditable, our artifact includes the raw bootstrap �-values and adjusted �-values under both within-family and global Holm correction. The qualitative conclusion is unchanged: PAGC improves over RG-YN more reliably than it improves over GCCP alone.
+
+The correction changes the picture. For PAGC vs RG-YN, the number of significant results drops from 15 of 22 to 12 of 22. For PAGC vs GCCP, it drops from 8 of22 to 5 of22. For GCCP vs RG-YN, it drops from 9 of 22 to 3 of 22. Figure 1 shows the full pattern.
+
+The strongest result is for the full method. PAGC remains significantly better than RG-YN after Holm correction in 12 of 22 settings. All 12 significant diferences are positive. The significant gains appear on six of the eight BEIR datasets with E5 first-stage retrieval, and on 6 of the 14 TREC DL settings, mostly with larger LLM backbones. Thus, adding anchor-contrastive scoring to standard pointwise grading provides a real benefit, and this benefit survives correction.
+
+The aggregation step is less reliable. PAGC significantly improves over GCCP alone in only 5 of 22 settings. Four of these significant gains are positive, and all four occur with BM25. One significant result is negative: on DBPedia-Entity under E5, PAGC is worse than GCCP alone $( \Delta = - 0 . 0 1 4 4 , \ p _ { \mathrm { H o l m } } = 0 . 0 3 2 )$ . The E5 results are especially important. Under E5, aggregation is either non-significant or negative in every setting. This suggests that aggregation depends on the quality of the first-stage retriever. We examine this pattern in Section 6.
+
+The contrastive score alone shows a weaker per-setting result. GCCP alone is significantly better than RG-YN after Holm correction in only 3 of 22 settings. These are two Qwen-72B-AWQ settings and DBPedia-Entity under E5. In the other 19 settings, GCCP still improves the mean score, but the improvement is too small to survive correction within each individual setting. This is especially likely on small TREC-DL datasets, which have only 43–54 queries. A sign test over the 22 mean diferences confirms that the overall trend is positive (� ≪ 0.001).
+
+These results should be interpreted with sample size in mind. TREC DL 2019 has only $n _ { q } = 4 3$ queries whereas DL 2020 has $n _ { q } = 5 4$ queries. With so few queries, a non-significant Holm-corrected result does not necessarily mean that there is no efect. It may also mean that the test does not have enough power to detect a small efect [18]. We therefore treat non-significant results on small datasets as absence of evidence, not evidence of absence. The BEIR datasets have more queries and provide more statistical power. In these E5-based BEIR settings, we can more clearly detect the negative DBPedia-Entity result and the lack of consistent benefit from aggregation.
+
+![](images/c5da63a77a18988a91a1aff052bc00a5b1a0d9b33bbae40cdc2563aa25de05eb.jpg)  
+Figure 1: Significance of pairwise comparisons across all 22 primary settings, before and after Holm-Bonferroni correction. Each cell shows the mean nDCG@10 delta; colour indicates significance status (green: $p _ { \mathbf { H o l m } } { < } 0 . 0 5 ,$ , Δ>0; red: $\scriptstyle p _ { \mathbf { H o l m } } < 0 . 0 5 , \Delta < 0 ;$ ; grey: non-significant). Correction reduces PAGC-vs-GCCP significance from 8 to 5 settings; the single red cell (DBPedia-Entity, PAGC vs GCCP, $\Delta { = } { - } 0 . 0 1 4 )$ is the only significant negative result.
+
+## 6 RQ3: How Does First-Stage Retrieval Quality Moderate Reranker Value?
+
+We test a boundary condition for anchor-based reranking: does it still help when the first-stage retriever is already strong? The original paper evaluates GCCP/PAGC only after BM25 retrieval. This matters because anchor-based reranking may be most useful when the first-stage candidate list is noisy. If the retriever already places many relevant documents near the top, the reranker has less remaining error to correct, and the aggregation step may add less value.
+
+We test this by replacing BM25 with E5-base-v2 [22] as the firststage retriever. We retrieve the top 100 documents using FAISS [9] IndexFlatIP. We keep the reranking pipeline unchanged. This isolates the role of first-stage retrieval quality: the reranker stays the same, but the candidate list changes.
+
+The main result is that stronger first-stage retrieval sharply reduces the marginal value of reranking. With BM25 on DL20, PAGC improves over the retriever alone by +0.197 nDCG@10. With E5,
+
+![](images/8bd41a7850513f3eb88fe3b8c8561a17665e933a308117f2cf54a6752fa5f083.jpg)  
+Figure 2: nDCG@10 on eight BEIR datasets with Flan-T5-XL reranking. Under BM25 (blue), anchor-based scoring usually helps and PAGC is often strongest. Under E5 (orange), gains shrink and aggregation is less reliable; on DBPedia-Entity, GCCP alone beats PAGC.
+
+Table 3: 8-set BEIR generalization under E5 retrieval + Flan-T5-XL rerank. Bold marks the per-dataset winner. Significance markers are from paired bootstrap testing (10,000 resamples, seed 929) with Holm-Bonferroni correction $( k = 2 2$ within each comparison family): ns: $p _ { \mathrm { H o l m } } \geq 0 . 0 5 ; { ^ \star } \colon < 0 . 0 5 ; { ^ \star } { ^ \star } \colon$ $< 0 . 0 1 ; \ ^ { \star \star \star } : < 0 . 0 0 1$
+<table><tr><td>Dataset</td><td> $n _ { q }$ </td><td>RG-YN</td><td>GCCP</td><td>PAGC</td><td>Δ PAGC-GCCP</td><td>∆ PAGC-RG-YN</td></tr><tr><td>SciFact</td><td>300</td><td>0.6579</td><td>0.7026</td><td>0.7176</td><td>+0.0150 ns</td><td>+0.0597 *禽实</td></tr><tr><td>NFCorpus</td><td>323</td><td>0.3712</td><td>0.3836</td><td>0.3884</td><td>+0.0048 ns</td><td>+0.0172 古含寓</td></tr><tr><td>TREC-COVID</td><td>50</td><td>0.7117</td><td>0.7752</td><td>0.7859</td><td>+0.0107 ns</td><td>+0.0742 **</td></tr><tr><td>Touché-2020</td><td>49</td><td>0.2118</td><td>0.2538</td><td>0.2594</td><td>+0.0056 ns</td><td>+0.0477 ns</td></tr><tr><td>DBPedia-Entity</td><td>400</td><td>0.3707</td><td>0.4659</td><td>0.4515</td><td>-0.0144 *</td><td>+0.0808 ***</td></tr><tr><td>TREC-News</td><td>57</td><td>0.4346</td><td>0.4391</td><td>0.4415</td><td>+0.0024 ns</td><td>+0.0069 ns</td></tr><tr><td>Robust04</td><td>249</td><td>0.4920</td><td>0.5184</td><td>0.5255</td><td>+0.0071 ns</td><td>+0.0335 安食寓</td></tr><tr><td>Signal1M</td><td>97</td><td>0.2334</td><td>0.2638</td><td>0.2612</td><td>-0.0025 ns</td><td>+0.0279 **</td></tr><tr><td>Avg. (8 sets)</td><td></td><td>0.4354</td><td>0.4753</td><td>0.4789</td><td>+0.0036</td><td>+0.0435</td></tr></table>
+
+the same reranker improves over the retriever alone by only +0.013.   
+On SciFact, PAGC with E5 even falls below the E5 baseline (−0.010).   
+Thus, the key result is not simply that E5 is stronger than BM25.   
+The important point is that PAGC has much less residual work to do once the first-stage candidate list is already strong.
+
+The first-stage scores support this interpretation. On TREC DL, E5 improves first-stage nDCG@10 over BM25 by +20 points on DL19 and +23 points on DL20. This stronger retrieval baseline changes the comparison with more complex rerankers. At the T5- XL scale, PAGC built on E5 retrieval outperforms both the paper’s 2-component RG-YN+GCCP setup on BM25 (+2.2 points on DL19 and +3.7 points on DL20) and the paper’s 3-component PAGC-QSG setup on BM25 (+1.2 points on DL19 and +3.0 points on DL20). In these settings, improving the first-stage retriever gives larger gains than adding more reranking components after BM25. Figure 2 shows this pattern across all eight BEIR datasets at the Flan-T5-XL scale.
+
+Table 3 gives three component-level findings. First, the full PAGC method still improves over standard pointwise grading with E5 retrieval. PAGC is better than RG-YN in all 8 BEIR datasets, and the diference is Holm-significant in 6 of 8. The two non-significant cases are Touché-2020 $( n _ { q } = 4 9 )$ ) and TREC-News (Δ=+0.007). Both diferences are still positive, so the non-significance is consistent with limited power or small efect size rather than a reversal.
+
+Second, aggregation does not add reliable value under E5. PAGC does not Holm-significantly improve over GCCP alone on any ofthe 8 datasets. On DBPedia-Entity, the largest dataset $\scriptstyle ( n _ { q } = 4 0 0 )$ , PAGC is significantly worse than GCCP alone $( \Delta _ { \mathrm { P A G C - G C C P } } = - 0 . 0 1 4 4 ,$ $p _ { \mathrm { H o l m } } { = } 0 . 0 3 2 )$ . This negative result does not appear to be only a large-� efect. Robust04 is the next-largest E5 setting $( n _ { q } = 2 4 9 )$ but it shows a small positive and non-significant diference $( \Delta _ { \mathrm { P A G C - G C C P } } { = } + 0 . 0 0 7 1 )$ . This suggests that the DBPedia-Entity result is not explained by statistical power alone. One plausible factor is the entity-centric nature of the task, but identifying the exact dataset property responsible requires further analysis.
+
+Third, GCCP alone shows a positive but weaker pattern against RG-YN. GCCP is better than RG-YN in all 8 datasets, but the difference is Holm-significant in only one dataset: DBPedia-Entity $( p _ { \mathrm { H o l m } } { < } 0 . 0 0 1 )$ . This matches the broader pattern from TREC DL. The contrastive anchor usually helps, but the efect is often too small to isolate within a single dataset after correction.
+
+We next ask why aggregation stops helping under E5. One possible explanation is that RG-YN and GCCP become more similar when the first-stage retriever is stronger. To test this, we compute per-query Kendall’s � between RG-YN and GCCP scores across the 100 candidates, and then average within each setting. Mean � is 0.43 in BM25 settings and 0.47 in E5 settings. This diference is in the expected direction, but it is modest. It helps explain why aggregation gains shrink under E5, but it does not explain the DBPedia-Entity negative result. DBPedia-Entity has a mid-range agreement value (�=0.48), so score agreement alone does not identify it as unusual.
+
+The DBPedia-Entity result also holds with a diferent dense retriever. We replace E5 with BGE-base-en-v1.5 [23] and rerun the Flan-T5-XL reranking pipeline on three BEIR datasets. We treat this as a separate confirmatory analysis and apply Holm-Bonferroni correction within this family of three tests. This does not change the primary �=22 correction used in Section 5.
+
+Under BGE, PAGC is again significantly worse than GCCP alone on DBPedia-Entity. The efect is larger than under E5 (Δ<sub>PAGC-GCCP</sub>=−0.0190, �<sub>Holm</sub><0.001, compared with −0.0144 under E5). The other two datasets do not show this negative pattern. Robust04 has a small positive and non-significant diference under BGE (Δ<sub>PAGC-GCCP</sub>=+0.0014), similar to E5 (+0.0071, non-significant). NFCorpus is also positive and non-significant under BGE (+0.0055), again similar to E5 (+0.0048). As a positive control, PAGC remains significantly better than RG-YN on all three BGE datasets.
+
+The BGE and E5 first-stage scores are similar on these datasets: 0.4040 vs 0.4234 on DBPedia-Entity, 0.4383 vs 0.4391 on Robust04, and 0.3722 vs 0.3517 on NFCorpus. This does not prove that the two retrievers return the same candidate lists, but it does show that they provide first-stage rankings of similar efectiveness. The repeated DBPedia-Entity pattern therefore does not appear to be specific to E5.
+
+The practical implication is that PAGC is not uniformly worth running. With BM25, PAGC is useful: aggregation is Holm-significant in 4 of 12 BM25 settings, and the gain over the first-stage retriever is large. With the strong dense first-stage retrievers we test, the picture changes. Under E5, and in our limited BGE confirmation, GCCP alone is usually competitive with PAGC. Aggregation adds no reliable benefit and can hurt on entity-heavy datasets such as DBPedia-Entity.
+
+Table 4: Anchor-builder ablation on full DL19/DL20 with Flan-T5-Large. RG-YN is identical across rows by construction (0.6634 / 0.6121) and omitted. Spectral MDS is not the strongest anchor in our reproduction.
+<table><tr><td rowspan="2">Anchor builder</td><td colspan="2">DL19</td><td colspan="2">DL20</td></tr><tr><td>GCCP</td><td>PAGC</td><td>GCCP</td><td>PAGC</td></tr><tr><td>Random passage</td><td>0.6394</td><td>0.6945</td><td>0.6103</td><td>0.6474</td></tr><tr><td>Top-1 BM25</td><td>0.6511</td><td>0.6948</td><td>0.6131</td><td>0.6485</td></tr><tr><td>Top-3 composite</td><td>0.6410</td><td>0.6947</td><td>0.6280</td><td>0.6572</td></tr><tr><td>Spectral MDS (paper)</td><td>0.6341</td><td>0.6852</td><td>0.6137</td><td>0.6507</td></tr></table>
+
+## 7 RQ4: Is Spectral MDS Anchor Construction Necessary?
+
+This section tests whether the most engineered part of GCCP is actually responsible for its gains. GCCP builds its anchor using spectral multi-document summarization. This procedure embeds sentences with TF-IDF, constructs an afinity matrix, decomposes the normalized graph Laplacian, and partitions sentences using the Fiedler vector. This is substantially more complex than simply using ranked passages or sentences as the anchor.
+
+We therefore compare spectral MDS against three simpler anchor builders: a random candidate passage, the top-1 BM25 passage, and a top-3 sentence-interleaved composite. We find that this added complexity is not justified. Spectral MDS is never the best anchor in our TREC DL or BEIR ablations. Simpler anchors consistently match or outperform it. This suggests that GCCP does not depend on spectral anchor construction. It mainly needs a reasonable contrastive reference text.
+
+TREC DL anchor ablation. Table 4 reports GCCP and PAGC nDCG@10 on DL19 and DL20 with Flan-T5-Large. We vary only the anchor builder.
+
+On TREC DL, spectral MDS is not the strongest anchor. On DL19, the Top-1 BM25 passage beats spectral MDS by +1.7 points for GCCP and +1.0 point for PAGC. On DL20, the Top-3 sentenceinterleaved composite is best, beating spectral MDS by +1.4 points for GCCP and +0.7 points for PAGC. Averaged across DL19 and DL20, GCCP with Top-1 reaches 0.6321, compared with 0.6239 for GCCP with Spectral.
+
+This result agrees with the direction reported in the original paper. Table 5 of Long et al. [13] also shows Top slightly outperforming Spectral on TREC DL: GCCP+Top reaches 0.6099, while GCCP+Spectral reaches 0.6076. Our reproduction confirms this exception and finds a larger diference. The implication is not that spectral MDS fails catastrophically. Rather, a simple high-ranking passage already provides a strong enough anchor in these experiments, leaving little room for the more complex spectral method to show an advantage.
+
+BEIR anchor ablation. Table 5 reports GCCP nDCG@10 across all 8 BEIR datasets with Flan-T5-Large and BM25 retrieval. We vary only the anchor builder. PAGC follows the same pattern and is omitted for space.
+
+The BEIR results are clearer than the TREC DL results. Spectral MDS is not the best anchor on any of the 8 datasets. It finishes last on three datasets: TREC-COVID, Touché-2020, and Robust04. On the remaining five datasets, it finishes second or third. The aggregate ordering in our results is Top-3 > Top-1 > Spectral > Random. This difers from the aggregate ordering reported in the original paper, where Spectral is the strongest anchor.
+
+These results show that the spectral construction is not loadbearing. A simple anchor built from top-ranked sentences is at least as efective, and often better, across the datasets we test.
+
+Checking the “Top” baseline. The original paper reports a “Top” anchor baseline, but does not fully specify how this anchor is constructed. For example, it is unclear whether “Top” means the full top-ranked BM25 passage, only its title, or some other text field. This matters because a mismatch in this baseline could make our simpler-anchor comparison misleading.
+
+To rule out this possibility, we test eight variants of the “Top” and “Random” anchors (Table 6). This lets us identify which variant most closely matches the paper’s reported baseline and check whether our conclusion about Spectral MDS depends on this choice.
+
+This check does not change the conclusion. Top-1 title-only matches the paper’s reported “Top” average within 0.003 (0.4313 vs 0.4346), which makes it the most likely operationalization used in the paper. Spectral also matches the paper closely (0.4446 vs 0.4471). Thus, the negative result is not caused by a poor reproduction of the spectral anchor or by an obviously mismatched Top baseline.
+
+After this check, spectral MDS still does not finish first on any of the 8 BEIR datasets. It is also beaten on aggregate by both the Top-3 sentence-interleaved composite (0.4581) and the full-document Top-1 anchor (0.4512). The extra engineering in spectral MDS is therefore not justified by the results.
+
+For Random, our variants reduce but do not fully eliminate the gap to the paper. Random-5 averaging closes about 35% of the diference. The remaining gap likely reflects a diferent random-sentence choice that we could not identify. We contacted the corresponding author but did not receive a response before submission. This uncertainty does not afect the main conclusion, because Spectral itself matches the paper closely and still loses to simpler anchors in our ablations.
+
+Hyperparameter sensitivity. We also test whether the spectral anchor is sensitive to its hyperparameters. On DL20/T5- Large/BM25, we sweep � ∈ {5, 10, 15, 20}, � ∈ {5, 10, 15, 20}, and � ∈ {0.1, 0.2, 0.3, 0.4}. PAGC nDCG@10 varies by about ±1.5 points across � and �. This is a meaningful range, because many reported gains on these benchmarks are around two points.
+
+This sensitivity strengthens the practical concern. Spectral MDS is not only more complex than simpler anchors. It also introduces tunable hyperparameters that can materially afect performance. Practitioners should tune � and � on a held-out split rather than copying the paper’s defaults. In contrast, � is less important beyond �=10, because the encoder’s 512-token limit truncates additional anchor sentences. Thus, the paper’s choice of �=10 is reasonable, but it is not the source of the method’s gains.
+
+Overall, the anchor ablation points to a simple conclusion: GCCP benefits from having a contrastive anchor, but the spectral MDS procedure is not necessary. A much simpler anchor built from top-ranked passages or sentences gives comparable or better performance with less engineering and fewer tunable choices.
+
+Table 5: GCCP nDCG@10 across all 8 BEIR datasets with Flan-T5-Large / BM25, varying only the anchor builder. Bold marks the per-dataset winner. Top-3 composite wins 5/8, Random wins 3/8, Spectral wins 0/8. “Ours avg.” is the simple mean across 8 datasets; “Paper avg.” is the corresponding number from [13] Table 5 (paper does not include a “Top-3 composite” baseline).
+<table><tr><td>Anchor</td><td>SciFact</td><td>NFCorpus</td><td>TREC-COVID</td><td>Touché</td><td>Robust04</td><td>TREC-News</td><td>Signal1M</td><td>DBPedia</td><td>Ours avg.</td><td>Paper avg.</td></tr><tr><td>Random</td><td>0.5781</td><td>0.3213</td><td>0.7701</td><td>0.2954</td><td>0.4386</td><td>0.4384</td><td>0.2894</td><td>0.4075</td><td>0.4423</td><td>0.4253</td></tr><tr><td>Top-1 BM25</td><td>0.6659</td><td>0.3303</td><td>0.7609</td><td>0.2894</td><td>0.4423</td><td>0.4218</td><td>0.2734</td><td>0.4255</td><td>0.4512</td><td>0.4346</td></tr><tr><td>Top-3 composite</td><td>0.6692</td><td>0.3381</td><td>0.7649</td><td>0.2869</td><td>0.4505</td><td>0.4261</td><td>0.3020</td><td>0.4268</td><td>0.4581</td><td></td></tr><tr><td>Spectral (paper)</td><td>0.6195</td><td>0.3311</td><td>0.7564</td><td>0.2694</td><td>0.4380</td><td>0.4245</td><td>0.2990</td><td>0.4186</td><td>0.4446</td><td>0.4471</td></tr></table>
+
+Table 6: Anchor-operationalization sweep on all 8 BEIR sets, Flan-T5-Large/BM25 (4 representative datasets shown for the per-cell columns; full 8-cell results in the released artifact). Top-1 title-only matches the paper’s reported “Top” average (0.4313 vs 0.4346, Δ−0.003), identifying the likely operationalization the paper uses. Random-5 averaging partially explains the Random gap. Spectral matches the paper within 0.003 regardless of the other variants tested.
+<table><tr><td>Variant</td><td>Avg.</td><td>SciFact</td><td>DBPedia</td><td>Touché</td><td>Signal1M</td><td>vs paper Table 5</td></tr><tr><td>Random-1 (our default)</td><td>0.4423</td><td>0.5781</td><td>0.4075</td><td>0.2954</td><td>0.2894</td><td>paper Random 0.4253, ∆+0.017</td></tr><tr><td>Random-5 averaging</td><td>0.4364</td><td>0.5673</td><td>0.4115</td><td>0.2805</td><td>0.2825</td><td>∆+0.011 (closes ～ 35%)</td></tr><tr><td>Top-1 BM25 (full doc, default)</td><td>0.4512</td><td>0.6659</td><td>0.4255</td><td>0.2894</td><td>0.2734</td><td>paper Top 0.4346, ∆+0.017</td></tr><tr><td>Top-3 sentence composite</td><td>0.4581</td><td>0.6692</td><td>0.4268</td><td>0.2869</td><td>0.3020</td><td>not in paper</td></tr><tr><td>Top-5 sentence composite</td><td>0.4547</td><td>0.6476</td><td>0.4259</td><td>0.2888</td><td>0.3029</td><td>not in paper</td></tr><tr><td>Top-1 64-char truncation</td><td>0.4157</td><td>0.5798</td><td>0.3815</td><td>0.2653</td><td>0.2671</td><td>undershoots by ∆-0.019</td></tr><tr><td>Top-1 title-only</td><td>0.4313</td><td>0.6499</td><td>0.3776</td><td>0.2728</td><td>0.2750</td><td>∆-0.003 (matches)</td></tr><tr><td>Spectral MDS (paper builder)</td><td>0.4446</td><td>0.6195</td><td>0.4186</td><td>0.2694</td><td>0.2990</td><td>paper 0.4471, ∆-0.003</td></tr></table>
+
+## 8 RQ5: Does the Mechanism Transfer Across Backbone Families?
+
+The previous sections established when anchor-based reranking helps: under noisy first-stage retrieval, with suficient query count, and with simple anchor construction. This section asks whether those patterns hold when the backbone changes entirely. The original paper evaluates only encoder-decoder Flan models. We extend to four decoder-only instruction-tuned LLMs, including a 4-bit AWQ-quantized 72B model running on a single 48 GB GPU.
+
+## 8.1 Decoder-Only LLMs
+
+We adapt the RG-YN and GCCP prompts to chat-template format via tokenizer.apply\_chat\_template(...,add\_generation\_ prompt=True), reading next-token probabilities at the assistant turn boundary. For GCCP, the assistant turn is primed with the literal string ‘Passage ’ before reading logits, mirroring the T5 decoder\_input\_text=‘<pad> Passage ’ convention and avoiding a 4× collapse in nDCG@10 we verified on a Qwen-2.5- 0.5B smoke test. We run four models: LLaMA-3.1-8B-Instruct [6], Qwen-2.5-7B-Instruct [15], Mistral-7B-Instruct-v0.3 [8], and Qwen-2.5-72B-Instruct-AWQ (4-bit, single 48 GB GPU). Table 7 reports nDCG@10 on TREC-DL. Three findings stand out.
+
+The contrastive anchor transfers to large quantized models. Qwen-2.5-72B-AWQ is the strongest model we tested. On DL19 PAGC it reaches 0.7465, surpassing both our reproduced Flan-UL2 (0.7095) and the paper’s Flan-UL2 (0.7206) by more than 2.5 pts. A 4-bit open-weight 72B model on a single 48 GB GPU is competitive with the paper’s best dense-FP16 result. We frame this as a scaling data point spanning a ∼3.6× parameter-count gap (72B vs 20B), not a PAGC-method gain. On DL20 it matches our reproduced Flan-UL2 within 0.003 (0.6980 vs 0.7009), with PAGC and GCCP essentially tied here (0.6980 vs 0.6983), echoing Section 6: aggregation adds less value once the underlying scorer is strong. This confirms that 4-bit AWQ quantization is not a barrier to the mechanism.
+
+Table 7: nDCG@10 on TREC DL with decoder-only LLMs adapted via chat templates (novel; not in the original paper). Bold marks the strongest GCCP and PAGC cells. Comparison Flan numbers (Table 1): T5-Large 0.6834/0.6515; T5- XL 0.7030/0.6760; UL2 0.7095/0.7009; paper UL2 RG-YN+GCCP 0.7206/0.7023 (Table 1 of [13]).
+<table><tr><td>Dataset</td><td>Model</td><td>BM25</td><td>RG-YN</td><td>GCCP</td><td>PAGC</td></tr><tr><td>DL19</td><td>LLaMA-3.1-8B-Instruct</td><td>0.5058</td><td>0.6427</td><td>0.6521</td><td>0.6723</td></tr><tr><td>DL19</td><td>Qwen-2.5-7B-Instruct</td><td>0.5058</td><td>0.6527</td><td>0.7039</td><td>0.7212</td></tr><tr><td>DL19</td><td>Mistral-7B-Instr. v0.3</td><td>0.5058</td><td>0.5716</td><td>0.5617</td><td>0.6429</td></tr><tr><td>DL19</td><td>Qwen-2.5-72B-AWQ</td><td>0.5058</td><td>0.6590</td><td>0.7323</td><td>0.7465</td></tr><tr><td>DL20</td><td>LLaMA-3.1-8B-Instruct</td><td>0.4796</td><td>0.5795</td><td>0.5866</td><td>0.6166</td></tr><tr><td>DL20</td><td>Qwen-2.5-7B-Instruct</td><td>0.4796</td><td>0.6360</td><td>0.6447</td><td>0.6641</td></tr><tr><td>DL20</td><td>Mistral-7B-Instr. v0.3</td><td>0.4796</td><td>0.5360</td><td>0.5105</td><td>0.5983</td></tr><tr><td>DL20</td><td>Qwen-2.5-72B-AWQ</td><td>0.4796</td><td>0.6311</td><td>0.6983</td><td>0.6980</td></tr></table>
+
+The DBPedia-Entity negative survives backbone change. On a compute-capped subset of the first 50 queries on DBPedia-Entity (∼4 min/query at 72B, with first-� by qid order carrying the usual $n _ { q } = 5 0$ sampling variance), the negative finding from Section 6 reproduces: RG-YN(0.3667) < PAGC(0.4139) ≈ E5(0.4168)
+
+< GCCP(0.4380). A paired bootstrap (10,000 resamples) confirms PAGC<GCCP $( \Delta { = } - 0 . 0 2 4 , p _ { \mathrm { r a w } } { = } 0 . 0 4 3 )$ . PAGC and the E5 first-stage are statistically tied $( \Delta { = } { - } 0 . 0 0 3 , p _ { \mathrm { r a w } } { = } 0 . 9 3 )$ . The DBPedia-Entity negative therefore survives a complete change of backbone family (encoder-decoder → decoder-only), parameter count $( 3 \mathrm { B }  7 2 \mathrm { B } )$ and quantization regime $( \mathrm { F P 1 6 }  4 \mathrm { - b i t ~ A W Q } )$ . This strengthens the claim from Section 6 that the result reflects a property of the retrieval setting (entity-retrieval semantics under strong dense retrieval) rather than an artefact of the Flan-T5 backbone.
+
+At 7–8B, backbone family matters more than parameter count. Qwen-2.5-7B is competitive with Flan-T5-XL on DL19 PAGC (0.7212 vs 0.7030), and the diference is not statistically significant at �=43. LLaMA-3.1-8B falls below Flan-T5-Large (−1.1/−3.5 pts on DL19/DL20) despite being 10× larger by parameter count. Mistral-7B-v0.3 underperforms on GCCP specifically (A/B discrimination 0.5617/0.5105), suggesting it does not respond reliably to the contrastive prompt format. The Qwen-2.5 vs Mistral gap at DL19 PAGC (+0.078) exceeds the Flan-T5-Large vs Flan-UL2 gap (+0.026), confirming that backbone family is at least as important as parameter count in this regime. On SciFact the ordering from Section 6 reproduces cleanly at $7 2 \mathrm { B } \colon \mathrm { E } 5 ( 0 . 7 9 9 3 ) < \mathrm { R G } \mathrm { - } \mathrm { Y N } ( 0 . 8 0 7 4 ) < \mathrm { G C C P } ( 0 . 8 5 8 6 )$ < PAGC(0.8734).
+
+## 8.2 Aggregation Strategy
+
+We test whether equal-weight linear aggregation is the best way to combine RG-YN and GCCP. We compare the default $\alpha = 0 . 5$ average with an �-weighted sweep and with Borda, Condorcet, and Copeland rank voting across eight dataset–retriever–model cells. Alternative aggregation rules do not materially change the result: Borda wins in 3/8 cells, but its mean score is essentially tied with the default linear average (0.6544 vs. 0.6556).
+
+The main exception appears under E5 retrieval. In all four E5 cells, the best weighted variant is $\alpha \ : = \ : 0 . 2 5$ , which gives more weight to GCCP and less to RG-YN. This is consistent with RQ3: when the first-stage retriever is stronger, RG-YN appears to add less useful residual signal, so equal weighting can dilute the contrastive score. The gains are small, so equal-weight aggregation remains a reasonable default.
+
+The rank-voting results are also limited. With only two input rankers, Borda, Condorcet, and Copeland are equivalent in our setting, so they cannot distinguish positional aggregation strategies. The narrower conclusion is that changing the aggregation rule does not rescue aggregation under E5. The larger factor is how much independent signal RG-YN contributes beyond GCCP.
+
+## 8.3 Three-Component Aggregation
+
+We add the RG-S(0, 4) component to form a 3-component PAGC-RS-YN-GCCP variant (Table 8). QG is left for future work as it requires full-sequence query log-likelihood.
+
+The 3-component variant reproduces the paper’s Table 4 number within 0.4 points on TREC average. On DL19 it is essentially tied with 2-component PAGC (0.6856 vs 0.6852). On DL20 it loses (0.6325 vs 0.6507, −1.8 pts): RG-S alone is substantially weaker than RG-YN on DL20 (0.5204 vs 0.6121), and aggregating a weak component drags the mean rank. The value of adding RG-S is therefore nonmonotonic across datasets, a nuance hidden by the paper’s choice to report only TREC+BEIR averaged. This echoes the RQ3 finding that aggregation benefit depends on component complementarity: when a component’s errors overlap with the existing components, aggregation hurts rather than helps.
+
+Table 8: PAGC-RS-YN-GCCP (paper’s Table 4 “RG-S+RG-YN+GCCP” homogeneous variant) on Flan-T5-Large/BM25. Our TREC average (0.6856 + 0.6325)/2 = 0.6591 vs the paper’s 0.6634, a 0.4-point gap, consistent with our other reproductions.
+<table><tr><td></td><td colspan="2">Ours (T5-Large/BM25)</td><td colspan="2">Paper (Table 4 hom.)</td></tr><tr><td>Method</td><td>DL19</td><td>DL20</td><td>TREC avg</td><td>BEIR avg</td></tr><tr><td>RG-S only</td><td>0.5872</td><td>0.5204</td><td></td><td></td></tr><tr><td>RG-YN only</td><td>0.6634</td><td>0.6121</td><td></td><td></td></tr><tr><td>GCCP only</td><td>0.6341</td><td>0.6137</td><td></td><td></td></tr><tr><td> $\mathrm { P A G C } = \mathrm { R G - Y N } + \mathrm { G C C P }$ </td><td>0.6852</td><td>0.6507</td><td></td><td></td></tr><tr><td> $\mathrm { P A G C } = \mathrm { R G } { \cdot } \mathrm { S } + \mathrm { G C C P }$ </td><td>0.6547</td><td>0.6058</td><td></td><td></td></tr><tr><td> $\mathrm { P A G C - R S - Y N - G C C P }$ </td><td>0.6856</td><td>0.6325</td><td>0.6634</td><td>0.4538</td></tr></table>
+
+Table 9: Our reproduced 2-component PAGC compared with the listwise and pairwise baselines reported in Table 2 of [13]. Baseline numbers are cited from the paper and are not independently re-run.
+<table><tr><td>Method / Backbone</td><td>DL19</td><td>DL20</td></tr><tr><td>BM25 (no rerank)</td><td>0.5058</td><td>0.4796</td></tr><tr><td>Paper-reported baselines from Table 2 of [13]</td><td></td><td></td></tr><tr><td>RankGPT [19] / Flan-T5-Large</td><td>0.6690</td><td>0.6260</td></tr><tr><td>PRP-Allpair [14] / Flan-T5-Large</td><td>0.6646</td><td>0.6201</td></tr><tr><td>PRP-Heapsort [14] / Flan-T5-Large</td><td>0.6570</td><td>0.6190</td></tr><tr><td>PRP-Graph-40 [14] / Flan-T5-Large</td><td>0.6690</td><td>0.6270</td></tr><tr><td>Setwise-Heapsort [26] / Flan-T5-Large</td><td>0.6700</td><td>0.6180</td></tr><tr><td>PAGC-QSG / Flan-T5-Large (3-comp)</td><td>0.6973</td><td>0.6433</td></tr><tr><td>Our reproduced 2-component PAGC</td><td></td><td></td></tr><tr><td>PAGC / Flan-T5-Large</td><td>0.6852</td><td>0.6507</td></tr></table>
+
+## 8.4 Positioning Against Listwise and Pairwise Baselines
+
+Table 9 compares our reproduced 2-component PAGC with the listwise and pairwise baselines reported in the original paper’s Table 2. We do not re-run these baselines, so we use them only as paper-reported reference points.
+
+Our 2-component PAGC outperforms all paper-reported listwise and pairwise baselines on both DL19 and DL20. It remains below the paper’s 3-component PAGC-QSG on DL19, but exceeds it on DL20. This places the simpler 2-component version in the same performance range as the stronger reranking baselines reported by the original paper.
+
+## 8.5 Inference Cost
+
+We measure wall-clock latency on DL19 with 100 candidates per query on an NVIDIA RTX 6000 Ada. PAGC costs roughly the sum of its two scoring passes: Flan-T5-Large takes 2.08 seconds/query for RG-YN, 2.39 for GCCP, and 4.47 for PAGC. Flan-T5-XL takes 1.99, 2.65, and 4.64 seconds/query, respectively. This is expected because RG-YN and GCCP do not share LLM-side computation, although the two passes could in principle be parallelized. Flan-UL2 is substantially slower, taking about 23.3 seconds/query endto-end. Anchor construction is not the bottleneck: spectral MDS contributes less than 1% of total pipeline time. Thus, the main reason to replace spectral MDS with a top-3 sentence-interleaved composite is simplicity and efectiveness, not latency.
+
+## 9 Discussion
+
+When do anchor-based pointwise rerankers help? Our results support a more conditional view of anchor-based pointwise reranking. The core idea is useful: adding an anchor-based contrastive score to standard pointwise grading produces robust gains after statistical correction. However, the gains do not come equally from every part of the original pipeline. The contrastive score is the most reliable component. The aggregation step and the spectral MDS anchor are less stable.
+
+First-stage retrieval quality is the clearest moderator. When the candidate list comes from BM25, PAGC gives large gains and aggregation often helps. When the candidate list comes from a stronger dense retriever such as E5, the marginal gain from reranking becomes much smaller. Aggregation usually matches GCCP-alone and can even hurt on DBPedia-Entity. This suggests that anchorbased reranking is most useful when the first-stage retriever leaves enough ranking errors for the anchor comparison to correct.
+
+The anchor construction shows a similar pattern. Spectral MDS is the most engineered part of the method, but it is not load-bearing in our experiments. Simpler anchors built from top-ranked passages or interleaved top-ranked sentences match or outperform it across our ablations. Thus, the method works, but under narrower conditions than the original evaluation suggests. Its main value comes from contrastive scoring, not from the full set of design choices around aggregation and spectral anchor construction.
+
+Practical guidance. For practitioners, the main lesson is to choose the reranking setup based on the strength of the first-stage retriever. If the first stage is BM25 or another sparse retriever, 2-component PAGC is worth trying. In this regime, the candidate list is noisier, the reranker has more room to improve it, and aggregation gives reliable gains in several settings.
+
+If the first stage is a strong dense retriever such as E5 or BGE, the picture changes. In our experiments, GCCP-alone is usually competitive with PAGC. The aggregation step adds extra engineering cost but no consistent benefit, and it can hurt on entity-heavy datasets such as DBPedia-Entity. In this regime, practitioners should not assume that the full PAGC pipeline is better than the simpler contrastive scorer.
+
+The anchor choice can also be simplified. In our experiments, spectral MDS is not worth the added complexity. A top-3 sentenceinterleaved composite is simpler, faster, and stronger in aggregate on the datasets we test. Practitioners should also tune the spectral hyperparameters � and � if they use spectral MDS at all. These choices introduce about ±1.5 points of sensitivity, which is large relative to many reported state-of-the-art gains. The choice of �=10 is less fragile because longer anchors are mostly truncated by the encoder’s 512-token limit.
+
+Finally, the method is not tied to encoder-decoder models. The mechanism also transfers to decoder-only LLMs, including a 4-bit AWQ-quantized 72B model on a single 48 GB GPU. However, our results suggest that backbone family matters more than parameter count at the 7–8B scale.
+
+Implications for IR evaluation methodology. Our statistical analysis shows why component claims need conservative testing. The contrastive signal is positive in direction across 19 of22 settings, but it is Holm-significant as a per-setting efect in only 3 of 22. This does not mean the signal is useless. Rather, it shows the diference between a broad directional trend and a reliably detectable efect in an individual dataset.
+
+This distinction matters because IR papers often report many per-cell significance tests across datasets, models, and ablations. Without multiple-comparison correction, this practice can make component efects look stronger than they are. In our results, uncorrected testing suggests that PAGC improves over GCCP-alone in 8 of 22 settings. After Holm-Bonferroni correction, only 5 remain significant, including one case where PAGC is significantly worse. The lesson is not specific to GCCP/PAGC. Any paper that reports many ablations across multiple datasets without correction risks overstating which components are truly reliable.
+
+For this reason, we release per-query scores. This allows readers to repeat the analysis with other correction procedures, including Benjamini-Hochberg correction or a single joint correction across all comparison families.
+
+Implications for IR reproducibility. The reproduction process also shows how fragile modern neural ranking pipelines can be. We identify eight operational choices that separate a paper-only reimplementation from a faithful working pipeline. Several of these choices fail silently: the code runs, the outputs look plausible, but the scores are wrong. Target-token case, decoder input formatting, score normalization, sentence segmentation, and the nDCG implementation are not minor details in this setting. They can change the conclusion of an experiment.
+
+This is not a criticism of one paper alone. It reflects a broader problem in IR reproducibility. Modern reranking pipelines contain many small implementation decisions that are often not fully specified in the paper text. Released code helps, but code alone is not always enough. It still needs to be audited, interpreted, and connected back to the claims in the paper.
+
+The broader lesson is that documentation norms need to match the complexity of current neural ranking systems. Papers should specify prompt formats, target tokens, score normalization, input construction, candidate-field handling, sentence segmentation, and evaluation implementation. These choices are easy to omit, but they can be load-bearing. By releasing our catalogue of operational choices and per-query scores, we aim to make the reproduced result easier to verify, stress-test, and build on.
+
+## 10 Conclusion
+
+We studied when anchor-based pointwise LLM reranking helps, using GCCP/PAGC [13] as a representative method. Our reproduction closely matches the reported results, but also reveals that the pipeline depends on several undocumented operational choices. These choices matter: some fail silently and can change the outcome of the experiment.
+
+Our controlled analyses show that the core contrastive idea is useful, but its benefits are more conditional than the original evaluation suggests. Adding anchor-based contrastive scoring to standard pointwise grading gives robust gains after statistical correction. However, the aggregation step helps mainly with BM25 first-stage retrieval and adds no reliable benefit with stronger dense retrievers such as E5 and BGE. The spectral MDS anchor is also not necessary. Simpler anchors built from top-ranked passages or sentences match or outperform it in our ablations. These findings hold across backbone families.
+
+Overall, anchor-based pointwise reranking is efective, but not every part of the original pipeline is load-bearing. Its gains depend on first-stage retriever quality, aggregation strategy, anchor con struction, and evaluation protocol. More broadly, our study shows the value of reproduction-centered stress testing: reliable progress in IR requires knowing not only whether a method works, but when it works, why it works, and which components are actually responsible.
+
+## Acknowledgments
+
+We thank the original authors of [13] for releasing their codebase, which was essential for auditing the implementation choices catalogued in Section 4.2.
+
+## References
+
+[1] Payal Bajaj, Daniel Campos, Nick Craswell, Li Deng, Jianfeng Gao, Xiaodong Liu, Rangan Majumder, Andrew McNamara, Bhaskar Mitra, Tri Nguyen, et al. 2016. MS MARCO: A human generated machine reading comprehension dataset. arXiv preprint arXiv:1611.09268 (2016).
+
+[2] Timo Breuer, Nicola Ferro, Norbert Fuhr, Maria Maistro, Tetsuya Sakai, Philipp Schaer, and Ian Soborof. 2020. How to measure the reproducibility of systemoriented IR experiments. In Proceedings of the 43rd International ACM SIGIR Conference on Research and Development in Information Retrieval. 349–358.
+
+[3] Nick Craswell, Bhaskar Mitra, Emine Yilmaz, and Daniel Campos. 2021. Overview of the TREC 2020 Deep Learning Track. In Proceedings of the Twenty-Ninth Text REtrieval Conference (TREC).
+
+[4] Nick Craswell, Bhaskar Mitra, Emine Yilmaz, Daniel Campos, and Ellen M. Voorhees. 2020. Overview of the TREC 2019 Deep Learning Track. In Proceedings ofthe Twenty-Eighth Text REtrieval Conference (TREC).
+
+[5] Bradley Efron and Robert J. Tibshirani. 1994. An Introduction to the Bootstrap. Monographs on Statistics and Applied Probability, Vol. 57. Chapman and Hall/CRC. doi:10.1201/9780429246593
+
+[6] Aaron Grattafiori, Abhimanyu Dubey, Abhinav Jauhri, et al. 2024. The Llama 3 Herd of Models. arXiv:2407.21783 [cs.AI] https://arxiv.org/abs/2407.21783
+
+[7] Sture Holm. 1979. A simple sequentially rejective multiple test procedure. Scandinavian journal ofstatistics (1979), 65–70.
+
+[8] Albert Q. Jiang, Alexandre Sablayrolles, Arthur Mensch, Chris Bamford, De vendra Singh Chaplot, Diego de las Casas, Florian Bressand, Gianna Lengyel, Guillaume Lample, Lucile Saulnier, Lélio Renard Lavaud, Marie-Anne Lachaux, Pierre Stock, Teven Le Scao, Thibaut Lavril, Thomas Wang, Timothée Lacroix, and William El Sayed. 2023. Mistral 7B. arXiv:2310.06825 [cs.CL] https: //arxiv.org/abs/2310.06825
+
+[9] Jef Johnson, Matthijs Douze, and Hervé Jégou. 2019. Billion-scale similarity search with GPUs. IEEE transactions on big data 7, 3 (2019), 535–547.
+
+[10] Jimmy Lin. 2022. Building a culture of reproducibility in academic research. arXiv:2212.13534 [cs.IR] https://arxiv.org/abs/2212.13534
+
+[11] Jimmy Lin, Xueguang Ma, Sheng-Chieh Lin, Jheng-Hong Yang, Ronak Pradeep, and Rodrigo Nogueira. 2021. Pyserini: A Python toolkit for reproducible information retrieval research with sparse and dense representations. In Proceedings ofthe 44th international ACM SIGIR conference on research and development in information retrieval. 2356–2362.
+
+[12] Ji Lin, Jiaming Tang, Haotian Tang, Shang Yang, Guangxuan Xiao, and Song Han. 2025. AWQ: Activation-aware weight quantization for on-device LLM compression and acceleration. GetMobile: Mobile Computing and Communications 28, 4 (2025), 12–17.
+
+[13] Kehan Long, Shasha Li, Chen Xu, Jintao Tang, and Ting Wang. 2025. Precise Zero-Shot Pointwise Ranking with LLMs through Post-Aggregated Global Contex Information. In Proceedings of the 48th International ACM SIGIR Conference on Research and Development in Information Retrieval. 2384–2394.
+
+[14] Zhen Qin, RolfJagerman, Kai Hui, Honglei Zhuang, Junru Wu, Le Yan, Jiaming Shen, Tianqi Liu, Jialu Liu, Donald Metzler, et al. 2024. Large language models are efective text rankers with pairwise ranking prompting. In Findings of the Association for Computational Linguistics: NAACL 2024. 1504–1518.
+
+[15] Qwen Team, An Yang, Baosong Yang, Beichen Zhang, Binyuan Hui, Bo Zheng, Bowen Yu, Chengyuan Li, Dayiheng Liu, Fei Huang, Haoran Wei, Huan Lin, Jian Yang, Jianhong Tu, Jianwei Zhang, Jianxin Yang, Jiaxi Yang, Jingren Zhou, Jun yang Lin, Kai Dang, Keming Lu, Keqin Bao, Kexin Yang, Le Yu, Mei Li, Mingfeng Xue, Pei Zhang, Qin Zhu, Rui Men, Runji Lin, Tianhao Li, Tianyi Tang, Tingyu Xia, Xingzhang Ren, Xuancheng Ren, Yang Fan, Yang Su, Yichang Zhang, Yu Wan, Yuqiong Liu, Zeyu Cui, Zhenru Zhang, and Zihan Qiu. 2025. Qwen2.5 Technical Report. arXiv:2412.15115 [cs.CL] https://arxiv.org/abs/2412.15115
+
+[16] Devendra Sachan, Mike Lewis, Mandar Joshi, Armen Aghajanyan, Wen-tau Yih, Joelle Pineau, and Luke Zettlemoyer. 2022. Improving passage retrieval with zero-shot question generation. In Proceedings ofthe 2022 Conference on Empirical Methods in Natural Language Processing. 3781–3797.
+
+[17] Tetsuya Sakai. 2006. Evaluating evaluation metrics based on the bootstrap. In Proceedings ofthe 29th annual international ACM SIGIR conference on Research and development in information retrieval. 525–532.
+
+[18] Tetsuya Sakai. 2014. Statistical reform in information retrieval? ACM SIGIR Forum 48, 1 (2014), 3–12.
+
+[19] Weiwei Sun, Lingyong Yan, Xinyu Ma, Shuaiqiang Wang, Pengjie Ren, Zhumin Chen, Dawei Yin, and Zhaochun Ren. 2023. Is ChatGPT good at search? investigating large language models as re-ranking agents. In Proceedings of the 2023 conference on empirical methods in natural language processing. 14918–14937.
+
+[20] Nandan Thakur, Nils Reimers, Andreas Rücklé, Abhishek Srivastava, and Iryna Gurevych. 2021. BEIR: A heterogeneous benchmark for zero-shot evaluation of information retrieval models. arXiv preprint arXiv:2104.08663 (2021).
+
+[21] Christophe Van Gysel and Maarten de Rijke. 2018. Pytrec\_eval: An Extremely Fast Python Interface to trec\_eval. In The 41st International ACM SIGIR Conference on Research and Development in Information Retrieval. 873–876. doi:10.1145/3209978. 3210065
+
+[22] Liang Wang, Nan Yang, Xiaolong Huang, Binxing Jiao, Linjun Yang, Daxin Jiang, Rangan Majumder, and Furu Wei. 2022. Text embeddings by weakly-supervised contrastive pre-training. arXiv preprint arXiv:2212.03533 (2022).
+
+[23] Shitao Xiao, Zheng Liu, Peitian Zhang, and Niklas Muennighof. 2023. C-Pack: Packaged Resources To Advance General Chinese Embedding. arXiv:2309.07597 [cs.CL] https://arxiv.org/abs/2309.07597
+
+[24] Peilin Yang, Hui Fang, and Jimmy Lin. 2018. Anserini: Reproducible ranking baselines using Lucene. Journal of Data and Information Quality (JDIQ) 10, 4 (2018), 1–20.
+
+[25] Honglei Zhuang, Zhen Qin, Kai Hui, Junru Wu, Le Yan, Xuanhui Wang, and Michael Bendersky. 2024. Beyond yes and no: Improving zero-shot llm rankers via scoring fine-grained relevance labels. In Proceedings ofthe 2024 Conference ofthe North American Chapter ofthe Association for Computational Linguistics: Human Language Technologies (Volume 2: Short Papers). 358–370.
+
+[26] Shengyao Zhuang, Honglei Zhuang, Bevan Koopman, and Guido Zuccon. 2024. A setwise approach for efective and highly eficient zero-shot ranking with large language models. In Proceedings of the 47th International ACM SIGIR Conference on Research and Development in Information Retrieval. 38–47.

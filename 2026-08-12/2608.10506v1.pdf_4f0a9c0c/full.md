@@ -1,0 +1,410 @@
+# CARB: A Characterization-Guided Framework for CNN Inference Cost Prediction and Deployment Screening
+
+Linh Nguyen, Zhixin Pan
+
+Florida State University
+
+## Abstract
+
+Accurate pre-deployment estimation of CNN inference cost—energy, latency, and peak memory—is increasingly critical as models are deployed on resource-constrained GPU platforms. Existing approaches rely on FLOPs, latency measurements, or single-device profiling as energy proxies, overlooking the non-linear interactions between architectural design and hardware load. We present a workload characterization study of 13 419 CNN configurations on two GPU platforms (RTX5090 and RTX3080) under GPU telemetry, revealing that energy, latency, and memory exhibit fundamentally distinct scaling behaviors: energy and latency diverge by 3× under high computational demand, and cross-GPU transferability difers by target—energy and latency require platform-specific models while memory transfers well across the two tested platforms. Building on these characterization findings, we develop CARB, a cascade-blended ensemble that jointly predicts all three targets with $R ^ { 2 } \approx 0 . 9 9 _ { \mathrm { { i } } }$ , and a twostage deployment screening workflow that eliminates over 90% of candidates in seconds, reducing large design spaces to a Pareto-prioritized shortlist validated against real hardware.
+
+## 1. Introduction
+
+The growing deployment of convolutional neural networks (CNNs) [12] on GPU platforms has increased the need for accurate pre-deployment estimation of inference costs [4]. Energy consumption, inference latency, and peak memory each impose distinct constraints [21] on model selection and hardware provisioning, yet they exhibit funda mentally diferent scaling behaviors that existing estimation approaches fail to capture jointly.
+
+Current practice typically relies on FLOPs, latency measurements, or single-device profiling as proxies for energy. FLOPs-based estimates treat all operations as equally expensive, ignoring how architectural choices and hardware execution eficiency interact. Latency-based proxies assume energy and latency scale proportionally, an assumption that breaks down under high computational demand. Singledevice profiles assume cross-GPU transferability, overlooking that energy and latency scale diferently across hardware generations; memory, by contrast, transfers well across the two platforms we tested. Each of these shortcuts introduces systematic errors that propagate into deployment decisions.
+
+In this paper, we take a characterization-guided approach. We begin with a large-scale empirical study of 13 419 CNN configurations on two GPU platforms (RTX 5090 and RTX 3080), which reveals several findings that fundamentally challenge the use of existing proxies. Most critically, energy and latency diverge substantially under high computational demand: energy scales 35.4× across batch-size regimes while latency scales only 11.2×, making latency an unreliable energy proxy. Cross-GPU analysis further reveals that energy and latency follow non-unit transfer slopes (1.61× and 2.09×) while memory transfers with slope ≈1 across the two tested platforms—a target-level asymmetry that directly shapes the design of our prediction framework.
+
+Motivated by these findings, we propose a two-stage design-space exploration framework that uses target-aware per-GPU ensemble models to jointly predict energy, latency, and memory, reducing large configuration search spaces to Pareto-prioritized candidates before any hardware profiling. These contributions demonstrate the necessity of direct energy modeling and enable practical energy-aware CNN deployment with significantly reduced profiling cost.
+
+Our contributions are organized around three core characterization findings and their practical implications:
+
+Energy, latency, and memory are not interchangeable. Under high computational demand, energy scales 35.4× while latency scales only 11.2× across batch-size regimes. FP16 reduces memory by 1.7× but energy by only 1.1×. No single architectural knob determines cost in isolation.
+
+Cross-GPU transferability is target-dependent. Energy and latency follow non-unit transfer slopes (1.61×, 2.09×) and require platform-specific models, while memory transfers with slope ≈1 across the two tested platforms.
+
+These insights enable eficient deployment screening. CARB, a cascade ensemble guided by the above findings, supports a two-stage screening workflow that reduces a 3072-configuration space to a Pareto-prioritized shortlist before any hardware profiling, with accuracy $( R ^ { 2 } \approx 0 . 9 9 )$ suficient for reliable budget classification.
+
+## 2. Related Work
+
+A substantial body of work has addressed the prediction of CNN inference costs on hardware platforms. NeuralPower [2] uses sparse polynomial regression to predict per-layer power, runtime, and energy consumption across
+
+GPU platforms. Hardware-aware neural architecture search (NAS) algorithms [3, 24] embed latency lookup tables into architecture search, while nn-Meter [26] predicts latency on diverse edge devices. MAPLE [1] generalizes latency prediction to unseen devices with few-shot adaptation, and NeuSight [13] forecasts GPU performance across multiple platforms using operator-level predictors. While these works establish the viability of data-driven cost prediction, the NAS-oriented and device-generalization methods focus predominantly on latency, and none characterizes the divergence between energy and latency behavior at scale.
+
+The relationship between energy and latency has received some attention. Prior work on multi-GPU energy profiling finds that GPU generation can produce up to 40% energy diferences for the same CNN workload [5]. DVFSaware models [9] show that frequency scaling afects latency and energy diferently, motivating energy as an independent metric. These works characterize energy diferences across GPU generations or frequency settings, but do not quantify how energy and latency diverge under computational demand; we show this gap reaches 35.4× vs. 11.2× across batch sizes under high GPU utilization.
+
+Cross-device performance prediction has been explored primarily for latency [1, 13]. Cross-GPU energy transfer has received little attention. We show that energy and latency follow non-unit cross-GPU slopes (1.61× and 2.09×), ruling out fixed-multiplier transfer, while memory transfers with slope ≈1 across our two tested platforms—a target-level asymmetry that directly informs our model design.
+
+Most existing prediction work targets a single metric; joint prediction of energy, latency, and memory is rare. HyperPower [20] jointly optimizes power and memory during architecture search but does not provide a deployment prediction model. Latenrgy [16] predicts latency and energy but omits memory. Our work jointly predicts all three targets, treats each target’s cross-GPU transferability diferently, and addresses practical pre-deployment screening—identifying feasible configurations against a hardware budget before any profiling is run—a gap that prior work does not fill. Prior IISWC studies characterize deep learning workloads and accelerator behavior [17, 18, 22], but do not provide systematic inference-cost characterization across a broad architectural design space.
+
+## 3. Data Collection
+
+We construct a dataset by benchmarking CNN configurations under controlled hardware conditions on two GPU platforms: NVIDIA RTX 5090 and RTX 3080. The collection procedure consists of three steps: GPU environment control, configuration sampling, and unified measurement.
+
+## 3.1. Hardware and Software Setup
+
+To reduce measurement variance caused by dynamic voltage and frequency scaling (DVFS), we lock GPU clocks before each collection run (graphics clock: 1350 MHz; memory clock: 5001 MHz). cuDNN benchmark mode is disabled to avoid run-to-run kernel selection variance. Between configurations, we apply Python garbage collection, CUDA cache clearing, and device synchronization, followed by 1-second cooling interval to allow the GPU to stabilize. All experiments use the same PyTorch [15] version (v.2.8.0) across both platforms.
+
+TABLE 1: Search space used for dataset generation. Basic and bottleneck block types use disjoint depth sets due to their structural diferences.
+<table><tr><td>Factor</td><td>Values</td></tr><tr><td>Block type</td><td>{Basic, Bottleneck}</td></tr><tr><td>Depth (Basic)</td><td>{8, 14, 20, 32, 44, 56, 110, 152}</td></tr><tr><td>Depth (Bottleneck)</td><td>{50, 101, 152, 200}</td></tr><tr><td>Width multiplier</td><td>{0.1, 0.25, 0.5, 1.0, 1.5, 2.0, 3.0, 4.0}</td></tr><tr><td>Early downsampling</td><td>{True, False}</td></tr><tr><td>Input resolution</td><td>{32, 64, 96, 128}</td></tr><tr><td>Batch size</td><td>{1, 2, 4, 8, 16, 32, 64, 128, 256}</td></tr><tr><td>Precision</td><td>{FP32, FP16}</td></tr></table>
+
+## 3.2. Search Space
+
+We use a ResNet-style search space [10] that covers both basic-block and bottleneck-block variants of the archi tecture. The two block types difer structurally—basic blocks consist of two 3×3 convolutions, while bottleneck blocks use a 1×1–3×3–1×1 design with expansion factor 4—and therefore admit diferent depth configurations (Table 1). Configurations are randomly shufled before measurement to avoid systematic ordering efects on the reported metrics, while configurations exceeding GPU memory capacity are skipped and recorded as out-of-memory (OOM) entries.
+
+## 3.3. Measurement
+
+For each configuration, we instantiate the model, generate a synthetic input tensor of shape (B, 3, H, W), and run 10 warmup passes to stabilize kernel caching before recording measurements. No other GPU workloads run concurrently during collection. Latency is the mean inference time per batch over 100 runs in evaluation mode after 10 warmup iterations. Energy is recorded as the diference in the NVIDIA Management Library (NVML) cumulative energy counter before and after the inference loop, converted from millijoules to joules. Peak memory is measured via max\_memory\_allocated after calling reset\_peak\_memory\_stats before each forward pass to ensure isolation from prior operations. GPU temperature is recorded as the average of readings taken immediately before and after the inference loop. FLOPs are computed using fvcore FlopCountAnalysis [14]. Measurement variance is reduced through three complementary mechanisms: GPU clock locking (eliminating DVFS-induced fluctuations), the inter-configuration cooling interval (allowing thermal stabilization), and averaging over 100 inference runs (reducing transient noise).
+
+GPU utilization (SM and memory bandwidth utilization) is sampled using NVML over a 2-second window during a training-mode forward-backward pass, and kernel launch counts are obtained from the PyTorch profiler on a single forward pass. These runtime features support workload characterization and interpretability; the primary predictive signal comes from architectural and derived static features.
+
+TABLE 2: Collected features for prediction and analysis.
+<table><tr><td>Category</td><td>Features</td></tr><tr><td>Architectural</td><td>Depth, block type, width multiplier, precision, batch size, input size, early downsampling</td></tr><tr><td>Derived static</td><td>#Conv/BN/activation/FC layers, max chan- nel width, #downsamples, FLOPs, #params, Mparam, Mactivation,  $M _ { \mathrm { p e a k } } , A I$ </td></tr><tr><td>Runtime</td><td>SM utilization, memory utilization, GPU tem-</td></tr><tr><td>Targets</td><td>perature, kernel launches Energy (J), Latency (ms), Peak memory (MB)</td></tr></table>
+
+## 3.4. Collected Features
+
+We collect a comprehensive set of features from three categories, summarized in Table 2. Activation memory is estimated using forward hooks by summing the byte sizes of all layer outputs. We also define an arithmetic intensity proxy $\dot { A I } = \mathrm { F L } \mathrm { \hat { O } P s } / ( M _ { \mathrm { p a r a m } } + M _ { \mathrm { a c t i v a t i o n } } )$ [23], which captures the ratio of computation to memory trafic and reflects diferences in hardware utilization across architectures.
+
+## 4. Workload and Energy Characterization
+
+In this section, we conduct a systematic empirical analysis to characterize how architectural design choices afect energy, latency, and peak memory, and to establish where energy diverges from latency as a cost metric. Unless otherwise noted, all analyses in this section use the RTX 5090 dataset; the cross-GPU comparison in Section 4.5 additionally draws on the RTX 3080 dataset.
+
+## 4.1. Energy Characterization
+
+Table 3 summarizes the median energy range across each design knob, with latency and memory shown for comparison. Figure 1 visualizes the per-knob relationships, with the basic family (depths 8–152) and bottleneck family (depths 50–200) shown as separate series in every panel.
+
+Depth and batch size are the two dominant energy drivers within the basic family, spanning 13.8× and 15.9× respectively. The bottleneck family shows a narrower depth range (3.4×) because all bottleneck depths are architecturally deep and compute-intensive; batch size remains dominant at 11.3×. Both families show that batch size widens the energy-to-latency gap sharply—basic: 15.9× vs. 5.1×, bottleneck: 11.3× vs. 3.9×—pointing to bandwidth overhead that grows faster than execution time.
+
+Width multiplier shows a similar asymmetry: within the basic family, energy scales 7.3× while memory scales 14.8×; within the bottleneck family, energy scales 4.7× while memory scales 14.8×. In both cases memory grows twice as fast as energy, since wider networks allocate proportionally larger activation maps. Width multiplier is therefore the primary lever for memory-constrained deployment.
+
+The separation of families confirms that the blocktype energy diference (bottleneck family draws 1.8× more energy than basic on average) is visible within every panel, indicating that the bottleneck family draws more energy across all levels of batch size, width, and input size. Within each family, FP32 vs. FP16 produces only a 1.1× energy diference—the smallest of all knobs—while causing a 1.7× memory diference. Switching to FP16 is therefore primarily a memory optimization, not an energy one.
+
+TABLE 3: Median range and max/min ratio per design knob, separated by architectural family.
+<table><tr><td rowspan="2">Knob</td><td colspan="2">Energy (J)</td><td colspan="2">Latency (ms)</td><td colspan="2">Memory (MB)</td></tr><tr><td>Range</td><td>X</td><td>Range</td><td>X</td><td>Range</td><td>X</td></tr><tr><td colspan="7">Basic block (depths 8-152)</td></tr><tr><td>Batch Size</td><td>27.8-440.6</td><td>15.9</td><td>4.81-24.32</td><td>5.1</td><td>29.8-438.3</td><td>14.7</td></tr><tr><td>Depth</td><td>10.0-138.0</td><td>13.8</td><td>1.50-17.44</td><td>11.6</td><td>44.7-102.5</td><td>2.3</td></tr><tr><td>Width Mult.</td><td>25.5-185.6</td><td>7.3</td><td>4.31-15.64</td><td>3.6</td><td>19.7-291.8</td><td>14.8</td></tr><tr><td>Input Size</td><td>36.8-102.6</td><td>2.8</td><td>5.56-10.12</td><td>1.8</td><td>41.0-125.3</td><td>3.1</td></tr><tr><td>Early DS</td><td>51.6-72.6</td><td>1.4</td><td>6.55-7.85</td><td>1.2</td><td>64.1-82.8</td><td>1.3</td></tr><tr><td>Precision</td><td>59.4-63.0</td><td>1.1</td><td>7.01-7.21</td><td>1.0</td><td>56.2-93.2</td><td>1.7</td></tr><tr><td colspan="7">Bottleneck block (depths 50–200)</td></tr><tr><td>Batch Size</td><td>65.7-742.7</td><td>11.3</td><td>10.88-42.19</td><td>3.9</td><td>38.0-574.6</td><td>15.1</td></tr><tr><td>Depth</td><td>44.7-150.6</td><td>3.4</td><td>5.58-20.05</td><td>3.6</td><td>96.4-122.7</td><td>1.3</td></tr><tr><td>Width Mult.</td><td>64.3-299.8</td><td>4.7</td><td>10.74-21.65</td><td>2.0</td><td>24.6-363.8</td><td>14.8</td></tr><tr><td>Input Size</td><td>78.6-172.1</td><td>2.2</td><td>12.18-16.79</td><td>1.4</td><td>57.5-206.6</td><td>3.6</td></tr><tr><td>Early DS</td><td>95.9-129.4</td><td>1.3</td><td>13.51-15.18</td><td>1.1</td><td>93.2-136.2</td><td>1.5</td></tr><tr><td>Precision</td><td>105.4-111.7</td><td>1.1</td><td>13.48-15.11</td><td>1.1</td><td>87.4-147.4</td><td>1.7</td></tr></table>
+
+DS = Early Downsample; × = max/min ratio of per-knob medians.
+
+Across all panels, the wide IQR bands shown in Figure 1 indicate that the same knob setting can produce very diferent energy levels depending on other configuration choices, motivating a model that considers all design parameters jointly rather than treating each in isolation.
+
+## 4.2. Feature Correlation Analysis
+
+Table 4 shows Pearson |r| between each feature and the three targets, sorted by |r| with energy (top 10 shown). FLOPs are widely used as a compute-cost proxy [25], and correlate strongly with energy (|r| = 0.91), but are not suficient alone. Precision, which does not change the number of operations, causes up to 1.37× variation in energy eficiency (J/GFLOP) for the same architecture (Section 4.4), confirming that FLOPs-based estimation misses factors that meaningfully afect energy in practice.
+
+TABLE 4: Pearson |r| between each feature and the three prediction targets, sorted by |r| with energy (top 10).
+<table><tr><td>Feature</td><td>Energy</td><td>Latency</td><td>Memory</td></tr><tr><td>FLOPs</td><td>0.91</td><td>0.89</td><td>0.60</td></tr><tr><td>Total Activation (MB)</td><td>0.89</td><td>0.90</td><td>0.80</td></tr><tr><td>Max Activation (MB)</td><td>0.68</td><td>0.69</td><td>0.97</td></tr><tr><td>FLOPs / Param</td><td>0.44</td><td>0.44</td><td>0.54</td></tr><tr><td>Batch Size</td><td>0.38</td><td>0.37</td><td>0.46</td></tr><tr><td>SM Utilization (%)</td><td>0.37</td><td>0.36</td><td>0.46</td></tr><tr><td>GPU Temp (°C)</td><td>0.37</td><td>0.36</td><td>0.35</td></tr><tr><td>Memory Útilization (%)</td><td>0.35</td><td>0.34</td><td>0.57</td></tr><tr><td># Parameters</td><td>0.32</td><td>0.33</td><td>0.21</td></tr><tr><td>Arith. Intensity</td><td>0.32</td><td>0.30</td><td>0.24</td></tr></table>
+
+Basic family Bottleneck family IQR (energy) Median Energy (J) Median Latency (ms) Median Memory (MB)  
+![](images/36fc512bab3ed56c6995a69cf1fced79c1d7415991374e765d6eb6d7360e8d8a.jpg)
+
+![](images/6c29644ac7d924a40b8b56a4893dcc1e56ade8f1937dfedbf537ad036d98fe9e.jpg)
+
+![](images/f426d4c6505b71cc2e54de0f24e02b3f4f4e4bd236f57565aabe00f4f6f43aee.jpg)
+
+![](images/b7c39c3dfe036654eae3dac7dbb5dc23d74eb92b555c07ba2d01050c9a6dd9f3.jpg)
+
+Figure 1: Energy characterization across design knobs. Each panel shows the basic family (solid red line) and the bottleneck family (dashed orange line) separately. Primary axis (left): Energy (J); secondary axis (right, faded): Latency (ms) and Peak Memory (MB).  
+![](images/26459fceeed11266ce6163107a4cea31b895b715495c3f74561f4cbf5e7340de.jpg)
+
+![](images/1abf2be1a64b802a941dbf28a0294a2c9c1b005eb74b75842af0a0986dd8272e.jpg)
+
+![](images/8a8566886e4b2fc3d727999a015be5d9df328267b40136455965f54c2a5e685f.jpg)  
+Figure 2: Mean energy and latency across batch-size tiers and GPU SM utilization levels (measured during training). The rightmost panel shows the relative energy scaling (High-SM / Low-SM) per batch tier.
+
+Memory prediction is dominated by max activation size $( | r | = 0 . 9 7 )$ : peak memory is governed by the largest intermediate tensor in the forward pass rather than total operation count, consistent with the width-multiplier asymmetry in Section 4.1.
+
+SM utilization shows a moderate correlation with energy (|r| = 0.37), which reflects that computationally intensive configurations tend to both stress the GPU and consume more energy. This supports the characterization of hardware demand as a workload property.
+
+## 4.3. Energy–Latency Divergence
+
+Figure 2 bins configurations by batch-size tier and GPU SM utilization level, and reports mean energy and latency per bin. The rightmost panel shows the energy compounding ratio per batch tier. Among configurations in the high-SM-utilization, large-batch tier, energy scales 35.4× relative to the low-SM, small-batch baseline, while latency scales only 11.2× under the same conditions—a 3× divergence. A practitioner who profiles only latency would underestimate the true energy overhead by a factor of three or more in the regimes most relevant to deployment.
+
+The divergence is not uniform: the High-SM / Low-SM energy ratio grows monotonically from 3.29× at small batches to 35.4× at large batches, while latency shows no comparable amplification. This suggests that energy may capture overheads associated with memory bandwidth pressure and sustained hardware activity that latency alone does not reflect, and that the two metrics respond diferently even to the same intervention—confirming that latency does not fully represent energy.
+
+## 4.4. Energy Eficiency Analysis
+
+Figure 3 reports energy per GFLOP (J/GFLOP) as a normalized eficiency metric. Precision causes up to 1.37× variation in J/GFLOP for the same architecture: within the bottleneck family, depth 200 achieves 5.48J/GFLOP in FP16 vs. 7.50 in FP32, while depth 44 basic shows 3.25 vs. 3.96. Since FLOPs do not change with precision for the same architecture, this gap reflects diferences in how eficiently the hardware executes diferent numeric formats—a factor invisible to any FLOPs-based model.
+
+Batch size has an even stronger efect on compute eficiency. J/GFLOP falls from 14.81 at bs 1–4 to 2.52 at bs 17–64—a 5.9× improvement—before plateauing at 2.85 for bs 65–256, consistent with the GPU approaching full occupancy beyond bs 17. Running at very small batch sizes therefore incurs a large per-GFLOP energy penalty that is independent of the model architecture.
+
+![](images/ae6c3cbd78332ba1bb0ce36de3b75dd5cee4f8c91717040b16074c76e0086f52.jpg)
+
+![](images/8435761f0e829d68263e47780b3595d55db7d18ef6a4af65a60b3d897b32932b.jpg)
+
+![](images/56018241521c40f06a7244c59f4f7a8fa80a5e43b0a72d61b0e4faca3f63465c.jpg)  
+Figure 3: Energy per GFLOP (J/GFLOP) across three dimensions. Left: by batch-size tier (log scale). Right two panels: depth × precision heatmaps for the bottleneck family (center) and basic family (right) separately, since the two families cover diferent depth ranges and are not structurally comparable at the same depth value. Lower J/GFLOP indicates higher compute eficiency.
+
+![](images/35c3c73eea56775ce31247df9b0ce4ebc03e870a2135eb54e0c25253a5b9288c.jpg)  
+Figure 4: Per-configuration scatter: RTX 5090 (x-axis) vs. RTX 3080 (y-axis) for energy, latency, and memory. Points on the diagonal indicate identical cost. Linear fits characterize the cross-GPU scaling relationship for each target.
+
+The right two panels of Figure 3 confirm this nonlinearity per family: within the bottleneck family, J/GFLOP reverses from 5.17 (depth 152) to 7.50 (depth 200) despite increasing FLOPs; the basic family shows a U-shaped pattern with a minimum around depth 44–56. Neither pattern is predictable from FLOPs alone, motivating CARB, the datadriven ensemble model described in Section 5.
+
+## 4.5. Cross-GPU Generalizability
+
+We profile the same configurations on an RTX 3080 and compare against the primary RTX 5090 measurements.
+
+Figure 4 shows per-configuration scatter plots with linear fits for all three targets.
+
+The strong linear structure visible across all three panels confirms that architectural ranking is preserved across the two tested GPU platforms: configurations that are energy-expensive on the RTX 5090 remain expensive on the RTX 3080, and vice versa. This rank invariance makes cross-platform design-space screening feasible—a model trained on one GPU can reliably identify which candidate architectures are worth profiling on another, without rerunning the full benchmark.
+
+Energy and latency, however, do not transfer with a fixed multiplier. The energy fit $( y = 1 . 6 1 x + 5 2 . 8 ,$ , slope > 1) shows that the RTX 3080 is consistently more expensive, with the absolute gap widening as workload intensity grows. The latency fit $( y = 2 . 0 9 x - 2 . 7 )$ follows a similar pattern. A practitioner who applies a single scale factor from one GPU to another will therefore systematically mis-estimate costs at either end of the workload range, making per-GPU models necessary for accurate prediction.
+
+Memory behaves diferently from both energy and latency. The memory fit $( y = 0 . 9 2 x + 6 . 7 _ { \cdot }$ , slope ≈ 1) lies near the y = x diagonal with a tight cluster, suggesting that peak memory is primarily determined by model architecture and batch size rather than GPU hardware characteristics across our two tested platforms. A single memory model trained on either GPU therefore transfers well to the other, without requiring separate retraining. These three findings directly motivate the two-stage framework in Section 7.
+
+## 5. Prediction Framework (CARB)
+
+Building on the characterization findings in Section 4, we develop CARB (Context-Aware Regime-corrected Blended ensemble), a multi-target framework that jointly estimates peak memory, energy, and latency for a given ResNet configuration, built around three principles: physical coupling between targets, hardware-load interaction features, and regime-specific residual correction. Figure 5 provides an overview of the complete framework: the left panel shows the cascade prediction pipeline, and the right panel shows how CARB predictions drive the two-stage deployment screening described in Section 7.
+
+## 5.1. Feature Engineering
+
+To capture compounding hardware-load efects that additive features cannot represent, we construct multiplicative interaction features from architectural parameters and live GPU telemetry:
+
+• batch\_x\_sm = batch\_size × avg\_sm\_util
+
+• flops\_x\_sm = log(1 + flops) × avg\_sm\_util
+
+• act\_x\_mem = log(1+total\_act\_MB)×avg\_mem\_util
+
+• util\_product = avg\_sm\_util × avg\_mem\_util
+
+Heavy-tailed raw columns (FLOPs, parameter count, activation size) are log-transformed to compress scale and improve tree split quality. Categorical variables (block type, precision) are one-hot encoded. In total, the feature matrix combines static architectural descriptors with dynamic hard ware context, giving the model a direct handle on the joint efect of model design and hardware state. These telemetrybased interaction features are used in CARB’s full-telemetry mode; Section 6.3 demonstrates that an architecture-only configuration achieves comparable accuracy when live instrumentation is unavailable.
+
+## 5.2. Stratified Data Split
+
+The dataset is partitioned 70/15/15 into train, validation, and test sets using stratified sampling. The stratification key is a joint combination of batch size tier (small $\leq 4 .$ , medium $\leq 1 6 , \mathrm { l a r g e } \leq 1 2 8 )$ , hardware stress flag (SM or memory utilization $> 6 5 \% )$ , and depth tier (shallow, mid, deep). This ensures that edge-case configurations like high-load and small-batch regimes are proportionally represented in every partition. To verify generalization beyond interpolation, a leave-one-batch-tier-out evaluation — training on batch size $> 8$ and testing on batch size $\leq 8$ entirely withheld from training — yields $R ^ { 2 } = 0 . 9 5 6 , 0 . 9 9 1$ , and 0.968 $\left( { \mathrm { M A E } } \right. =$ 6.73 MB, 7.78 J, 1.11 ms) for memory, energy, and latency respectively, confirming that results are not an artifact of configuration leakage across the train/test boundary.
+
+## 5.3. Specialist Ensemble with Cascade Prediction
+
+The core of CARB is a blended ensemble of three structurally diverse base learners trained per target:
+
+XGBoost [6] (800 trees, depth 9) — level-wise boosting, strong on dense tabular interactions
+
+LightGBM [11] (800 trees, 127 leaves) — histogrambased leaf-wise growth, captures fine-grained feature splits eficiently
+
+ExtraTrees [8] (400 trees) — fully random split thresholds, maximally decorrelated from the boosting models
+
+Combining boosting with bagging produces a specialist in which prediction errors are less correlated than those of individual models. The three predictions are blended with validation-calibrated weights found by grid search on the validation set (Table 5). Energy is dominated by LightGBM (weight 0.5), whose leaf-wise tree growth effectively captures nonlinear interactions in the feature space. Latency is dominated by ExtraTrees (weight 0.5) — that random splits perform as well as optimized ones for latency but not energy suggests the latency surface is more regularly structured. Peak memory weights are approximately balanced, consistent with a largely linear model-size surface. Critically, the three targets are not predicted independently. The empirical dependency structure — where memory, energy, and latency exhibit correlated behavior — is captured via cascade prediction:
+
+$$
+\hat { y } _ { \mathrm { m e m } } = f _ { \mathrm { m e m } } ( \mathbf { x } )
+$$
+
+$$
+\hat { y } _ { \mathrm { { e n e r g y } } } = f _ { \mathrm { { e n e r g y } } } ( \mathbf { x } , \hat { y } _ { \mathrm { { m e m } } } )\tag{1}
+$$
+
+$$
+\hat { y } _ { \mathrm { l a t e n c y } } = f _ { \mathrm { l a t e n c y } } ( \mathbf { x } , \hat { y } _ { \mathrm { m e m } } , \hat { y } _ { \mathrm { e n e r g y } } )\tag{2}
+$$
+
+(3)
+
+Each downstream model receives upstream predictions as soft priors, exploiting inter-target dependencies that independent regression cannot capture.
+
+TABLE 5: Validation-calibrated specialist blend weights per target. Weights are (XGBoost, LightGBM, ExtraTrees).
+<table><tr><td>Target</td><td>XGBoost</td><td>LightGBM</td><td>ExtraTrees</td></tr><tr><td>peak_memory_MB</td><td>0.3</td><td>0.4</td><td>0.3</td></tr><tr><td>energy_J</td><td>0.3</td><td>0.5</td><td>0.2</td></tr><tr><td>latency_ms</td><td>0.2</td><td>0.3</td><td>0.5</td></tr></table>
+
+## 5.4. Residual Correctability Analysis
+
+Before training any corrector, we examine whether the specialist’s residuals contain learnable structure. For each target, we compute the Spearman correlation between residuals and hardware utilization features on the training set, restricted to the high-stress regime (avg\_SM\_util $> 6 5 \% )$ The results are:
+
+• peak\_memory\_MB: $\rho = 0 . 5 3$ with avg SM utilization
+
+• energy\_J: $\rho = 0 . 0 0 4$ with avg SM utilization
+
+• latency\_ms: $\rho = 0 . 0 1 7$ with avg SM utilization
+
+For energy and latency, near-zero correlation indicates a hardware-stress corrector would learn noise. Residual standard deviation analysis identifies the low-batch regime (batch size $\leq 8 )$ as the common axis of elevated, structured error across all three targets.
+
+## 5.5. Regime-Specific Residual Correctors
+
+Based on the correctability analysis, a LightGBM corrector is trained per target on the specialist’s residuals, restricted to the low-batch regime. Training on only this regime prevents the corrector from fitting noise in samples where no correctable structure exists. The corrected prediction is:
+
+$$
+\hat { y } _ { \mathrm { c o r r e c t e d } } = \hat { y } _ { \mathrm { s p e c i a l i s t } } + \lambda \cdot \hat { r }\tag{4}
+$$
+
+![](images/4fc03f85012647b590a8e5af72e66429394942afe26dcdb749b2aec5eb87297a.jpg)  
+Figure 5: CARB framework overview. Left: both architectural and optional runtime features feed into all three cascade models (memory → energy → latency). Right: CARB predictions drive two-stage screening—Stage 1 (RTX 5090 ranking) shortlists candidates; Stage 2 (RTX 3080 budget filter) extracts the Pareto-optimal configurations.
+
+where ˆr is the corrector’s predicted residual and $\lambda = 0 . 9$ is a damping factor that prevents overcorrection. The final CARB prediction pipeline is therefore:
+
+$$
+\hat { y } _ { \mathrm { C A R B } } = \hat { y } _ { \mathrm { s p e c i a l i s t } } + 0 . 9 \cdot \hat { r } _ { \mathrm { c o r r e c t o r } }\tag{5}
+$$
+
+All targets and all predictions are produced in log space (via log1p transformation) and inverse-transformed via expm1 for evaluation and reporting.
+
+To contextualize CARB’s accuracy, Table 6 compares against two baselines. A FLOPs-only linear regression achieves $R ^ { 2 } ~ < ~ 0 . 3 8$ across all targets, confirming that compute volume alone is insuficient for reliable inference cost prediction. A latency-as-energy proxy achieves high $R ^ { 2 }$ but a mean absolute error of 71.37 J — demonstrating that latency correlates with energy but cannot substitute for it in absolute terms, making it unsuitable for budgetconstrained deployment decisions. CARB reduces energy MAE to 25.98 J, a 63.6% reduction over the latency proxy.
+
+TABLE 6: Baseline comparison on the overall test set. B1: FLOPs-only linear regression. B2: latency-as-energy proxy (linear fit on measured latency; memory and latency not applicable). CARB: full pipeline.
+<table><tr><td>Model</td><td></td><td>Metric Peak Memory</td><td>Energy</td><td>Latency</td></tr><tr><td rowspan="2">B1: FLOPs-only</td><td> $R ^ { 2 }$ </td><td>0.379</td><td>0.279</td><td>0.233</td></tr><tr><td>MAE</td><td>161.11 MB</td><td>324.07J</td><td>18.32 ms</td></tr><tr><td rowspan="2">B2: Latency proxy</td><td> $R ^ { 2 }$ </td><td></td><td>0.993</td><td></td></tr><tr><td>MAE</td><td></td><td>71.37J</td><td></td></tr><tr><td rowspan="2">CARB (full)</td><td> $R ^ { 2 }$ </td><td>0.997</td><td>0.993</td><td>0.992</td></tr><tr><td>MAE</td><td>6.93 MB</td><td>25.98J</td><td>1.58 ms</td></tr></table>
+
+## 6. Explainability and Insights
+
+Beyond predictive accuracy, CARB’s internal structure yields interpretable findings that both validate its design decisions and confirm the characterization findings of Section 4.
+
+## 6.1. Feature Importance
+
+Figure 6 shows the top-10 LightGBM split-based importances per specialist model. The rankings reveal qualitatively diferent drivers per target, with interaction features, hardware telemetry, and cascade predictions varying substantially in role.
+
+Peak memory. The top six features for peak\_memory\_MB are consistently dominated by raw architectural or derived model-size quantities that directly reflect tensor and parameter scale, including max\_activation\_MB, param\_size\_MB, flops\_per\_param\_log, compute\_intensity, total\_activation\_MB, and flops. Interaction features and hardware telemetry signals such as batch\_x\_sm and avg\_sm\_util only enter from rank 8 onwards. This reflects an empirical regularity: peak memory allocation is determined by activation tensors and parameter bufers fixed by the model graph before any kernel executes.
+
+Inference energy. Energy is led by raw compute and activation volume (flops, total\_activation\_MB) followed by flops\_per\_param\_log and compute\_intensity. Interaction features (batch\_x\_sm, intensity\_x\_sm) appear at ranks 6 and 10 respectively, providing additional signal beyond the dominant architectural features. avg\_sm\_util appears within the top-10 for all three targets, but enters later for memory (rank 10) than for energy (rank 9) or latency (rank 8), confirming that hardware state plays a secondary role relative to architectural features across all targets.
+
+Inference latency. For latency, pred\_energy\_J — the upstream cascade prediction — ranks first, ahead of every raw architectural feature. total\_activation\_MB, flops, and flops\_per\_param\_log follow at ranks 2–4, with pred\_peak\_memory\_MB appearing at rank 5. Interaction features (batch\_x\_sm, temp\_x\_sm, compute\_intensity) are consistently present but secondary. The role of cascade predictions for latency is discussed further in Section 6.4.
+
+Cross-target feature overlap. Three features appear in the top six for all three targets: flops, total\_activation\_MB, and flops\_per\_param\_log. These capture total compute volume, total memory footprint, and parameter eficiency — the three dimensions that jointly determine the cost of a forward pass regardless of which specific cost metric is being predicted. Table 7 summarizes the cross-target top-5 membership.
+
+These rankings independently reproduce the principal findings of Section 4 without any direct exposure to that analysis during training. The consistent presence of batch\_x\_sm, intensity\_x\_sm, and flops\_x\_sm in the energy and latency top-10 reflects the super-linear energy compounding under SM contention observed in Section 4.3, while the near-exclusive dominance of architectural features for memory mirrors the cross-platform slope ≈1 finding of
+
+TABLE 7: Top-5 feature membership across prediction targets. ✓ indicates the feature ranks within the top 5 for that target’s LightGBM specialist. † marks interaction features; ‡ marks cascade (upstream prediction) features. Memory indicates peak memory.
+<table><tr><td>Feature</td><td>Memory</td><td>Energy</td><td>Latency</td></tr><tr><td>flops</td><td>√</td><td>√</td><td>√</td></tr><tr><td>total_activation_MB</td><td>√</td><td>√</td><td>√</td></tr><tr><td>flops_per_param_log</td><td>√</td><td>√</td><td>√</td></tr><tr><td>max_activation_MB</td><td>√</td><td></td><td></td></tr><tr><td>param_size_MB</td><td>√</td><td></td><td></td></tr><tr><td>compute_intensity</td><td>√</td><td>√</td><td></td></tr><tr><td> $\smash {  { M _ { \mathrm { B } } } ^ { \ddag } }$  pred_peak_memory.</td><td></td><td>√</td><td>√</td></tr><tr><td>pred_energy_J‡</td><td></td><td></td><td>√</td></tr></table>
+
+Section 4.5. In both cases, the model’s learned weights converge on the same physical structure the empirical characterization identifies directly.
+
+## 6.2. Memory is Architecturally Determined
+
+The near-exclusive dominance of raw architectural features for peak memory prediction has a direct practical implication: memory consumption can be reliably estimated from the model graph alone, without any live hardware observation. This is consistent with the cross-GPU empirical finding in Section 4.5, where peak memory follows a cross GPU linear fit with slope ≈ 1, confirming that memory allocation is preserved across the two tested GPU platforms.
+
+## 6.3. Runtime Feature Ablation
+
+The feature importance analysis in Section 6.2 suggests that hardware telemetry contributes little additional information for memory prediction once architectural size features are known. We test this hypothesis through a controlled feature ablation study, isolating the contribution of runtime feature groups across all three targets.
+
+Three model configurations are evaluated on identical train/validation/test splits. M1 (Full) retains the complete feature set including live GPU telemetry. M2 (No Util) removes utilization features (avg\_sm\_util, avg\_mem\_util, and derived interaction terms) to assess the predictive value of dynamic utilization metrics. M3 (Arch-only) additionally removes gpu\_temp\_C and kernel\_launches, leaving primarily static architectural and workload descriptors. All other pipeline components, including ensemble structure, cascade ordering, and blend weights, are held fixed. Table 8 reports test-set $\scriptstyle { \hat { R } } ^ { 2 }$ values across all evaluation regimes.
+
+Removing all telemetry features reduces $R ^ { 2 }$ by at most 0.0012 in the overall regime across all three targets. M3 achieves $R ^ { 2 }$ of 0.9963, 0.9892, and 0.9904 for memory, energy, and latency respectively — within noise of the full-telemetry model — confirming that hardware telemetry is not required for reliable prediction of any of the three cost targets.
+
+The per-regime breakdown reveals one notable anomaly. Low-batch peak memory and high-load energy prediction achieve marginally higher $R ^ { 2 }$ values for M2 than for M1.
+
+TABLE 8: Test-set $R ^ { 2 }$ values under three feature configurations across evaluation regimes. $\Delta$ denotes the diference in $R ^ { 2 }$ between the full-telemetry model (M1) and the architecture-only model (M3).
+<table><tr><td>Target</td><td>Regime</td><td>M1 (Full)</td><td>M2 (No Util)</td><td>M3 (Arch-only)</td><td>∆ (M1→M3)</td></tr><tr><td rowspan="3">Peak Memory</td><td>Overall</td><td>0.9967</td><td>0.9964</td><td>0.9963</td><td>-0.0004</td></tr><tr><td>High-load</td><td>0.9947</td><td>0.9939</td><td>0.9939</td><td>-0.0008</td></tr><tr><td>Low-batch</td><td>0.9986</td><td>0.9990</td><td>0.9989</td><td>+0.0003</td></tr><tr><td rowspan="3">Energy</td><td>Overall</td><td>0.9900</td><td>0.9897</td><td>0.9892</td><td>-0.0008</td></tr><tr><td>High-load</td><td>0.9893</td><td>0.9894</td><td>0.9886</td><td>-0.0007</td></tr><tr><td>Low-batch</td><td>0.9941</td><td>0.9942</td><td>0.9936</td><td>-0.0005</td></tr><tr><td rowspan="3">Latency</td><td>Overall</td><td>0.9916</td><td>0.9909</td><td>0.9904</td><td>-0.0012</td></tr><tr><td>High-load</td><td>0.9910</td><td>0.9904</td><td>0.9900</td><td>-0.0010</td></tr><tr><td>Low-batch</td><td>0.9717</td><td>0.9683</td><td>0.9672</td><td>-0.0045</td></tr></table>
+
+Bold entries indicate regimes where removing utilization features marginally improves $R ^ { 2 }$ over the full model.
+
+This suggests that utilization features may introduce mild noise in these regimes, where SM utilization is more variable and less predictive than in medium-to-large batch settings. Although small, the efect is consistent across runs.
+
+The practical implication is significant. CARB therefore supports two operational modes: a full-telemetry mode that incorporates live GPU utilization and thermal features for maximum accuracy in instrumented environments, and a telemetry-free mode that relies on static architectural parameters alone when live GPU instrumentation is unavailable. The ablation results confirm that the telemetry-free mode achieves $R ^ { 2 }$ within 0.0012 of the full-telemetry model across all three targets, making it a viable configuration for design-stage screening before hardware access is available.
+
+## 6.4. Cascade as Physically Grounded Coupling
+
+The cascade design encodes the empirical dependency structure — memory constrains energy, energy bounds latency — by passing upstream predictions as input features to downstream models [19]. The feature importance rankings provide the empirical validation of this design: pred\_peak\_memory\_MB ranks third for energy prediction, and pred\_energy\_J ranks first for latency prediction, above all raw architectural features in the dataset.
+
+The latency result in particular is non-trivial. It shows that once the model has an estimate of how much energy a configuration will consume, that single signal is more predictive of latency than flops, total\_activation\_MB, or any interaction term. Energy integrates compute volume, memory trafic, SM utilization, and precision simultaneously — suggesting it acts as a compressed summary of execution time determinants. The cascade propagates this signal directly, reducing the burden on the downstream model to reconstruct it from lower-level features.
+
+## 6.5. Low-Batch Residual Structure
+
+A non-obvious finding from CARB’s residual analysis is that the hardest prediction regime across all three targets is not the high-hardware-load regime (saturated SM or memory utilization) but the low-batch regime (bs ≤ 8).
+
+Residual correlation reveals a sharp asymmetry: peakmemory residuals correlate with SM utilization at $\rho = 0 . 5 3$ in the high-load regime, indicating learnable structure that a hardware-stress corrector can reduce. Energy and latency residuals, however, correlate at $\rho = 0 . 0 0 4$ and $\rho = 0 . 0 1 \dot { 7 }$ respectively — efectively zero — so applying a hardwarestress corrector would learn noise rather than signal. Instead, residual standard deviation analysis identifies the low-batch regime as the shared axis of elevated, structured prediction error across all three targets, motivating the per-target low-batch correctors described in Section 5.5.
+
+![](images/81bbf3a8f0922140328dbea9867bc5bca9f389acd94edac39710ed80fa2cd5f4.jpg)  
+Feature Importance by Target (red = interaction features)
+
+![](images/ec4453ebedd0462c0ec455135c314682e008aa9f37fb6bb26c24855700fc30e7.jpg)
+
+![](images/9cc8144058ccffe0217a9e2e61ab36f1b63649e188eedb0cfe28397df2f4c425.jpg)  
+Figure 6: Top-10 LightGBM feature importances (split count) per prediction target. Interaction features $( f _ { \mathrm { a r c h } } \times f _ { \mathrm { h w } } )$ are highlighted in red. Peak memory is dominated by raw architectural size features; interaction features only enter from rank 8. Energy and latency additionally show strong contributions from cascade predictions (pred\_peak\_memory\_MB, pred\_energy\_J), with pred\_energy\_J ranking first for latency.
+
+This result is counterintuitive because low-batch configurations are computationally the simplest: small activations, minimal memory pressure, low GPU occupancy. The explanation is that the specialist ensemble optimizes across the full batch distribution, implicitly weighting the majority medium-to-large-batch regime. At very small batch sizes, kernel launch overhead, thermal transients, and driver scheduling latency constitute a larger fraction of total cost — sources of variance that neither architectural features nor utilization telemetry can fully represent.
+
+## 7. Design-Space Exploration Framework
+
+During architecture design, identifying energy-eficient configurations requires evaluating a large space of candidates across depth, width, precision, and batch size—a process that, if done through hardware profiling alone, scales poorly and demands hours of GPU time before any deployment decision can be made. CARB addresses this by serving as a pre-screening step: the full candidate grid is scored through the CARB pipeline in seconds, configurations predicted to exceed the deployment budget are eliminated, and hardware profiling is reserved for only the Pareto-optimal candidates that are worth measuring.
+
+Both GPU-specific models achieve $R ^ { 2 } \approx 0 . 9 9 :$ RTX 5090 scores 0.993 / 0.992 / 0.997 and RTX 3080 scores 0.995 / 0.995 / 0.998 for energy, latency, and memory respectively, establishing the prediction quality on which the screening decisions rest.
+
+As illustrated in Figure 5 (right), Stage 1 (Rankingbased screening) uses a single GPU’s CARB model to rank all candidates and narrow the pool, exploiting the rank-preservation property to eliminate configurations that are unlikely to be feasible on any target hardware without running any target-device inference. Stage 2 (GPU-specific prediction) re-scores only the shortlisted candidates with the target GPU’s model, applying device-specific energy and latency constraints to produce the final Pareto frontier. Memory predictions are shared across both stages, as memory transfers well across the two tested platforms (cross-GPU slope ≈1, Section 4.5).
+
+## 7.1. Screening Workflow
+
+The screening process proceeds in four stages, forming the implementation of Stage 2 once a shortlist has been produced by the ranking-based Stage 1.
+
+1) Enumerate. A grid of candidate configurations is constructed from the architectural design space of interest, covering depth, width, block type, precision, and batch size. Runtime telemetry features (SM utilization, memory utilization, GPU temperature) are fixed to training-set medians stratified by batch-size tier, reflecting realistic hardware conditions without requiring any GPU runs.
+
+2) Score. All candidates are passed through the full CARB pipeline, producing predicted energy, peak memory, and latency for every configuration in under one second. This is the core practical value of CARB: exhaustive design-space scoring at negligible cost compared to brute-force hardware profiling.
+
+3) Screen. Candidates are filtered against the deployment budget and ranked by energy eficiency. The Pareto-optimal frontier [7] is extracted, identifying configurations that are not dominated on both energy and memory. This directly surfaces the configurations worth deploying.
+
+TABLE 9: Per-configuration screening validation results. CARB is evaluated on real held-out test feature vectors for each unique Pareto-feasible candidate. The budget threshold is 75J; ✓ indicates a correct budget classification.
+<table><tr><td>Block</td><td>Depth</td><td>Width</td><td>Prec.</td><td>BS</td><td>Pred. (J)</td><td>Actual (J)</td><td>Abs. Err. (J)</td><td>Pred. Mem. (MB)</td><td>Pred. Lat. (ms)</td><td>Decision</td></tr><tr><td>basic</td><td>14</td><td>1.0</td><td>fp32</td><td>1</td><td>11.72</td><td>15.69</td><td>3.96</td><td>53.02</td><td>7.91</td><td>√</td></tr><tr><td>basic</td><td>14</td><td>2.0</td><td>fp32</td><td>1</td><td>18.05</td><td>16.42</td><td>1.63</td><td>53.61</td><td>7.93</td><td>√</td></tr><tr><td>basic</td><td>14</td><td>0.5</td><td>fp32</td><td>1</td><td>12.86</td><td>14.73</td><td>1.87</td><td>52.98</td><td>7.91</td><td>√</td></tr><tr><td>Mean</td><td></td><td></td><td></td><td></td><td></td><td></td><td>2.49</td><td></td><td></td><td>3/3</td></tr></table>
+
+4) Prioritize. Borderline configurations—those falling within one test-set MAE of the budget boundary— are flagged for hardware profiling rather than accepted or rejected outright, guiding practitioners toward measuring exactly the cases where prediction uncertainty matters most.
+
+## 7.2. Example: RTX 3080 Deployment Scenario
+
+We demonstrate the two-stage workflow targeting the NVIDIA RTX 3080. A deployment budget of 75 J energy and 500 MB peak memory is set. The candidate grid spans 4 depth values, 4 width multipliers, 4 block types, 3 precision formats, and 4 batch sizes, yielding 3,072 total configurations. Stage 1 (RTX 5090 model, Ranking-based). All 3072 candidates are scored by the RTX 5090 CARB model and ranked by predicted energy. The top-100 configurations (shortlist energy range 38.2–42.6J on the RTX 5090) are retained. CARB predictions on the full 3072-point candidate grid yield a Spearman rank correlation of $\rho { = } 0 . 9 5$ between the two GPU models’ energy rankings, confirming that configurations eliminated at Stage 1 are highly unlikely to be feasible on the RTX 3080.
+
+Stage 2 (RTX 3080 model, GPU-specific). The 100 shortlisted configurations are re-scored by the RTX 3080 model, accounting for GPU-specific energy and latency characteristics. 100% pass the 75J / 500 MB budget. After Pareto extraction, 3072 candidates are reduced to seven priority configurations—a 99.8% reduction in profiling load. These span three unique architecture signatures across input resolution and early downsampling variants.
+
+The three feasible configurations are shown in Table 9. All share basic-block depth 14, batch size 1, and fp32 precision, difering in width multiplier. All achieve latency between 7.8–7.9 ms with peak memory ranging from 52.98 to 53.61 MB, representing energy-memory trade-of within the feasible region. A practitioner would select among these based on memory and throughput requirements.
+
+Using the RTX 5090 energy values directly to assess the 75J RTX 3080 budget (38–43J at Stage 1) would incorrectly classify all shortlisted configurations as comfortably within budget, potentially accepting configurations that are borderline or infeasible on the actual deployment device. Stage 2 is therefore essential for final budget decisions, even when Stage 1 reliably narrows the candidate pool.
+
+## 7.3. Screening Validation
+
+To confirm that CARB’s screening decisions are reliable, each Pareto-feasible configuration is matched against real held-out test measurements from the RTX 3080. CARB is re-run on actual feature vectors—not the synthetic architectural approximations used during screening—and predicted energy is compared against measured values.
+
+All matched configurations are correctly classified against the deployment budget (3/3 correct budget decisions), with a mean absolute error of 2.49 J and an RMSE of 2.70J. The largest absolute error is 3.96J against a 75J ceiling, a diference that would not afect any deployment decision. The results confirm that CARB reliably supports design-stage screening where budget classification accuracy is the relevant metric.
+
+To assess classification reliability across the broader test set, we evaluate CARB’s budget decisions on all 1,828 RTX 3080 test configurations against the 75 J threshold. CARB achieves 95.8% budget classification accuracy, with 2.1% false accepts and 2.1% false rejects. The symmetric error distribution indicates no systematic bias toward overor under-prediction at the budget boundary. False accepts — configurations predicted feasible but actually exceeding the budget — represent the operationally critical error type; at 2.1%, this rate is suficiently low to support reliable pre-screening before hardware profiling is committed to.
+
+## 8. Conclusion
+
+We presented a characterization-guided framework for CNN inference-cost prediction and deployment screening across 13 419 configurations and two GPU platforms. The study demonstrates that common deployment proxies such as FLOPs or latency are insuficient for reliable energyaware optimization, particularly under high computational demand where energy and latency decouple substantially. Results further indicate that transferability depends strongly on the prediction target: memory behavior generalizes across the two tested platforms more readily than energy or latency, motivating platform-specific modeling for accurate deployment estimation.
+
+Building on these findings, CARB achieves $R ^ { 2 } \approx 0 . 9 9$ across all three targets while enabling rapid Pareto-guided pre-deployment filtering through a two-stage screening workflow. Together, the results demonstrate the importance of direct energy modeling for practical resource-aware CNN deployment.
+
+## References
+
+[1] Saad Abbasi, Alexander Wong, and Mohammad Javad Shafiee. Maple: Microprocessor a priori for latency estimation. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition, pages 2747–2756, 2022.
+
+[2] Ermao Cai, Da-Cheng Juan, Dimitrios Stamoulis, and Diana Marculescu. Neuralpower: Predict and deploy energy-eficient convolutional neural networks. In Asian Conference on Machine Learning, pages 622–637. PMLR, 2017.
+
+[3] Han Cai, Ligeng Zhu, and Song Han. Proxylessnas: Direct neural architecture search on target task and hardware. arXiv preprint arXiv:1812.00332, 2018.
+
+[4] Alfredo Canziani, Adam Paszke, and Eugenio Culurciello. An analysis of deep neural network models for practical applications. arXiv preprint arXiv:1605.07678, 2016.
+
+[5] Francisco M Castro, Nicolás Guil, Manuel J Marín-Jiménez, Jesús Pérez-Serrano, and Manuel Ujaldón. Energy-based tuning of convolu tional neural networks on multi-gpus. Concurrency and Computation: Practice and Experience, 31(21):e4786, 2019.
+
+[6] Tianqi Chen and Carlos Guestrin. Xgboost: A scalable tree boosting system. In Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, KDD ’16, page 785–794, New York, NY, USA, 2016. Association for Computing Machinery.
+
+[7] K. Deb, A. Pratap, S. Agarwal, and T. Meyarivan. A fast and elitist multiobjective genetic algorithm: Nsga-ii. IEEE Transactions on Evolutionary Computation, 6(2):182–197, 2002.
+
+[8] Pierre Geurts, Damien Ernst, and Louis Wehenkel. Extremely randomized trees. Machine Learning, 63(1):3–42, Mar 2006.
+
+[9] Yunchu Han, Zhaojun Nan, Sheng Zhou, and Zhisheng Niu. Dvfsaware dnn inference on gpus: Latency modeling and performance analysis. In ICC 2025-IEEE International Conference on Communications, pages 1274–1279. IEEE, 2025.
+
+[10] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. Deep residual learning for image recognition. In Proceedings of the IEEE conference on computer vision and pattern recognition, pages 770–778, 2016.
+
+[11] Guolin Ke, Qi Meng, Thomas Finley, Taifeng Wang, Wei Chen, Weidong Ma, Qiwei Ye, and Tie-Yan Liu. Lightgbm: A highly eficient gradient boosting decision tree. In I. Guyon, U. Von Luxburg, S. Bengio, H. Wallach, R. Fergus, S. Vishwanathan, and R. Garnett, editors, Advances in Neural Information Processing Systems, volume 30. Curran Associates, Inc., 2017.
+
+[12] Alex Krizhevsky, Ilya Sutskever, and Geofrey E Hinton. Imagenet classification with deep convolutional neural networks. Advances in neural information processing systems, 25, 2012.
+
+[13] Seonho Lee, Amar Phanishayee, and Divya Mahajan. Forecasting gpu performance for deep learning training and inference. In Proceedings of the 30th ACM International Conference on Architectural Support for Programming Languages and Operating Systems, Volume 1, pages 493–508, 2025.
+
+[14] Meta AI Research. fvcore: Facebook’s core library for computer vision research, 2020.
+
+[15] Adam Paszke, Sam Gross, Francisco Massa, Adam Lerer, James Bradbury, Gregory Chanan, Trevor Killeen, Zeming Lin, Natalia Gimelshein, Luca Antiga, et al. Pytorch: An imperative style, highperformance deep learning library. Advances in neural information processing systems, 32, 2019.
+
+[16] Jason M Pittman. Latenrgy: Model agnostic latency and energy consumption prediction for binary classifiers. arXiv preprint arXiv:2412.19241, 2024.
+
+[17] Crefeda Faviola Rodrigues, Graham Riley, and Mikel Luján. Finegrained energy profiling for deep convolutional neural networks on the jetson tx1. In 2017 IEEE International Symposium on Workload Characterization (IISWC), pages 114–115. IEEE, 2017.
+
+[18] Kevin Siu, Dylan Malone Stuart, Mostafa Mahmoud, and Andreas Moshovos. Memory requirements for convolutional neural network hardware accelerators. In 2018 IEEE International Symposium on Workload Characterization (IISWC), pages 111–121. IEEE, 2018.
+
+[19] Eleftherios Spyromitros-Xioufis, Grigorios Tsoumakas, William Groves, and Ioannis Vlahavas. Multi-target regression via input space expansion: treating targets as inputs. Machine Learning, 104(1):55–98, Feb 2016.
+
+[20] Dimitrios Stamoulis, Ermao Cai, Da-Cheng Juan, and Diana Marculescu. Hyperpower: Power-and memory-constrained hyperparameter optimization for neural networks. In 2018 Design, Automation & Test in Europe Conference & Exhibition (DATE), pages 19–24. IEEE, 2018.
+
+[21] Emma Strubell, Ananya Ganesh, and Andrew McCallum. Energy and policy considerations for deep learning in nlp. In Proceedings of the 57th annual meeting of the association for computational linguistics, pages 3645–3650, 2019.
+
+[22] Mengdi Wang, Chen Meng, Guoping Long, Chuan Wu, Jun Yang, Wei Lin, and Yangqing Jia. Characterizing deep learning training workloads on alibaba-pai. In 2019 IEEE international symposium on workload characterization (IISWC), pages 189–202. IEEE, 2019.
+
+[23] Samuel Williams, Andrew Waterman, and David Patterson. Roofline: an insightful visual performance model for multicore architectures. Communications of the ACM, 52(4):65–76, 2009.
+
+[24] Bichen Wu, Xiaoliang Dai, Peizhao Zhang, Yanghan Wang, Fei Sun, Yiming Wu, Yuandong Tian, Peter Vajda, Yangqing Jia, and Kurt Keutzer. Fbnet: Hardware-aware eficient convnet design via diferentiable neural architecture search. In Proceedings of the IEEE/CVF conference on computer vision and pattern recognition, pages 10734–10742, 2019.
+
+[25] Tien-Ju Yang, Yu-Hsin Chen, and Vivienne Sze. Designing energyeficient convolutional neural networks using energy-aware pruning. In Proceedings of the IEEE conference on computer vision and pattern recognition, pages 5687–5695, 2017.
+
+[26] Li Lyna Zhang, Shihao Han, Jianyu Wei, Ningxin Zheng, Ting Cao, Yuqing Yang, and Yunxin Liu. Nn-meter: Towards accurate latency prediction of deep-learning model inference on diverse edge devices. In Proceedings of the 19th Annual International Conference on Mobile Systems, Applications, and Services, pages 81–93, 2021.
