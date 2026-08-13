@@ -1,0 +1,4104 @@
+[
+    {
+        "type": "text",
+        "text": "Robust Ambiguity Detection (RAD) From Model- and Feature-Space Consistency",
+        "text_level": 1,
+        "bbox": [
+            225,
+            122,
+            771,
+            172
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Manya SinghMark T. KeaneArjun Pakrashi",
+        "bbox": [
+            308,
+            226,
+            692,
+            241
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "School of Computer Science, University College Dublin, Dublin, Ireland",
+        "bbox": [
+            401,
+            239,
+            596,
+            281
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "manya.singh@ucdconnect.ie, {mark.keane, arjun.pakrashi}@ucd.ie",
+        "bbox": [
+            230,
+            281,
+            764,
+            296
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Abstract",
+        "text_level": 2,
+        "bbox": [
+            460,
+            332,
+            537,
+            347
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Machine learning models should be robust, in the sense of remaining predictively consistent under permissible variations. A model's predictions should ideally remain unchanged when it is replaced by a functionally equivalent one, or when its inputs are subject to minor, admissible perturbations. If such changes alter a prediction significantly, then the prediction is “ambiguous\" with respect to the model. Models should abstain from making such ambiguous predictions and/or should flag them for human inspection, especially in high-stakes decision-making scenarios. However, in practice, such ambiguity is not easy to identify once a model is deployed. Here, the Robust Ambiguity Detection (RAD) framework is advanced for quantifying predictive ambiguity using two complementary metrics: Model-Space Consistency and Feature-Space Consistency. These two scores, the RAD Score-Pair, visualised through the RAD Plot, provide an interpretable characterisation of the sources of ambiguity and the actions a user may consider in response. RAD is evaluated on synthetic datasets with systematically controlled overlap, as well as several real-world datasets where the level of ambiguity cannot be directly inspected. Finally, we demonstrate a downstream application of RAD where samples are ranked by their RAD Pareto-Rank and the most ambiguous are abstained from prediction, achieving performance comparable to existing rejectionbased approaches.",
+        "bbox": [
+            230,
+            366,
+            767,
+            631
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Keywords: Ambiguity, Robustness, Predictive Multiplicity, Abstention",
+        "bbox": [
+            171,
+            657,
+            637,
+            672
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "1 Introduction",
+        "text_level": 2,
+        "bbox": [
+            173,
+            696,
+            312,
+            713
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Ambiguity occurs when an item has more than one plausible interpretation Klir [1987], Frisch and Baron [1988]. In machine learning (ML), ambiguity occurs when a given instance leads to different predictive outcomes across multiple models with nearly identical predictive performance (the so-called Rashomon set Breiman [2001]). Several different efforts have been made to measure this predictive multiplicity Black et al. [2022], Marx et al. [2020], Ganesh et al. [2025], casting it as Rashomon capacity Hsu and Calmon [2022], Discrepancy Watson-Daniels et al. [2023], Ambiguity Watson-Daniels et al. [2024] or Arbitrariness Cooper et al. [2024]. All these approaches measure predictive multiplicity by analysing disagreements among equally accurate models on the same input instance. We build directly on this formulation, but extend the analysis to the local neighbourhood of an instance, asking whether this disagreement persists under small, permissible variations in the feature instance. In this sense, our contribution is not a redefinition of predictive multiplicity, but an investigation of its interaction with local robustness Zhong et al. [2021].",
+        "bbox": [
+            169,
+            731,
+            826,
+            898
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "aside_text",
+        "text": "r2:112 1:0.26",
+        "bbox": [
+            29,
+            352,
+            65,
+            799
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "footer",
+        "text": "Preprint.",
+        "bbox": [
+            171,
+            924,
+            222,
+            936
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Consider a concrete example where a university admissions system deploys a set of 10 equally well-performing ML models. For one applicant, Alice, and all 10 models predict “accept\". All the models for Alice would still have kept agreeing on “accept\" even if the GPA was 0.01 higher or lower. For another applicant, Mike, 5 models predict “accept\" while the remaining 5 predict “reject\", making this instance ambiguous due to disagreement across equivalent models. Model agreements for Mike wouldn't change even if the GPA were a bit higher or lower. Now consider another applicant, Mary, whose credentials differ from Mike's only by a minimally higher GPA score of 0.01. For Mary, all 10 models predict “accept\". Although the two applicants are nearly identical, the collective prediction changes abruptly across an extremely small region of the feature space. Scores based on a single point (e.g., Self-Consistency) cannot distinguish between Mary and Alice, where Mary's predictions are actually unreliable. Also, in the case of Mike, single-point-based scores would not be able to identify if the disagreement was due Mike falling into a \"contested\" region, or if it is an isolated case.",
+        "bbox": [
+            169,
+            92,
+            826,
+            260
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "In high-stakes settings such as university admissions, if nearly identical applicants receive opposite outcomes solely because the decision boundary passes through a negligibly small region between them, then agreement on the original input alone may be insufficient evidence of predictive reliability. We therefore propose that predictions which fail to remain consistent under small, permissible variations to either the model or the input should be treated as ambiguous and flagged for human review.",
+        "bbox": [
+            169,
+            263,
+            826,
+            348
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "In this work, we define ambiguity as a special case of predictive inconsistency that arises when multiple equivalent models disagree on the prediction of a datapoint, or on equivalent data points in its neighborhood. This two-dimensional definition captures not only whether models disagree at a point, but whether that agreement (or disagreement) persists under minor, permissible variations to the input (neighbourhood). We use the term robust-ambiguity throughout the text to distinguish our definition from the \"ambiguity\" metric in Watson-Daniels et al. [2024]",
+        "bbox": [
+            169,
+            353,
+            826,
+            438
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "To achieve this, we propose a general framework, Robust Ambiguity Detection (RAD), which has the following contributions:",
+        "bbox": [
+            169,
+            443,
+            825,
+            472
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• A three-stage RAD framework introduced in Section 3, that, for any test datapoint generates a set of equivalent models, a set of local perturbations of the datapoint, and a matrix of predictions across both, named the ambiguity matrix.",
+        "bbox": [
+            215,
+            484,
+            825,
+            526
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• A RAD Score-Pair [RADMSC,RADFsc] (Section 4), which reduces the ambiguity matrix into two chance-corrected agreement scores, namely, Model-Space Consistency (MSC) and Feature-Space Consistency (FSC). The RAD Score-Pair quantifies the disagreement in each space. A ranking method RAD-Pareto-Rank (Section 5.3) is also introduced which rank orders datapoints based on robust-ambiguity for downstream tasks.",
+        "bbox": [
+            215,
+            530,
+            826,
+            601
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• A RAD Plot (Section 5) that visualises the RAD Score-Pair (Fig. 1) as four interpretable quadrants, each with specific properties, allowing a practitioner not only to flag ambiguous predictions but to diagnose why they are ambiguous.",
+        "bbox": [
+            215,
+            604,
+            825,
+            648
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Once a model is trained for a specific problem using a given dataset, the worldview of the model is always with respect to the decision boundary. Therefore, the RAD Score-Pair is always relative to the models. Therefore, RAD scores do not represent absolute properties of the data or its underlying distribution, but rather identify which predictions cannot be made reliably by the specific class of models.",
+        "bbox": [
+            169,
+            659,
+            826,
+            729
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "We demonstrate RAD on synthetic datasets with systematically controlled class overlap, as well as apply it to several real-world datasets from the UCI ML Repository (Section 7). Using these datasets, we also demonstrate a downstream abstention task, where we abstain predicting ambiguous datapoints based on RAD Pareto-Rank (Section 7.5). Section 8 discusses some potential applications of RAD. Section 9 concludes the paper.",
+        "bbox": [
+            169,
+            734,
+            826,
+            806
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "2 Related Work",
+        "text_level": 2,
+        "bbox": [
+            171,
+            824,
+            325,
+            840
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "There is an emerging group of metrics that have been developed to measure predictive multiplicity, i.e. the conflicting predictions from multiple equally competent models on a given input. These measures are typically some function of model disagreement, either through entropy, a simple voting mechanism, or others. Broadly, they fall into the umbrella of measuring model-space disagreements.",
+        "bbox": [
+            169,
+            856,
+            828,
+            912
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_number",
+        "text": "2",
+        "bbox": [
+            493,
+            935,
+            504,
+            948
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "chart",
+        "img_path": "images/a541e622938697f36ad1c99cb8f84f735ef1962010c0b6d0092e9bdf45f326ef.jpg",
+        "content": "",
+        "chart_caption": [
+            "Figure 1: A representation of the RAD Plot, which is a scatter plot of the RAD Score-Pair $[ \\mathrm { R A D _ { M S C } } , \\mathrm { R A D _ { F S C } } ]$ representing robust-ambiguity by jointly capturing Model-Space Consistency (MSC) and Feature-Space Consistency (FSC). Each inset pictograph of a matrix represents a typical ambiguity-matrix of a single datapoint t, from which the RAD Score-Pair is computed. Each $( \\mathrm { j } , \\mathrm { i } ) ^ { t h }$ location of an ambiguity matrix is the predicted class of the $i ^ { t h }$ equivalent model on the $j ^ { t h }$ neighbourhood point of t. Each quadrant uncovers specific properties, based on which potential actions could be taken. Pareto-optimal frontiers rank points for downstream tasks"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            251,
+            89,
+            740,
+            489
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Rashomon Capacity Hsu and Calmon [2022] quantifies predictive multiplicity for probabilistic classifiers by measuring the spread of predicted score distributions across the Rashomon set. It is formally defined as the channel capacity (under KL divergence) of the multiplicity set of output distributions for a sample. It applies to probabilistic outputs rather than thresholded class labels, and like other point-based metrics, it does not measure whether the score variation persists in the sample's local neighbourhood. Authors in Watson-Daniels et al. [2023, 2024] defined the metric ambiguity as the proportion of samples with diverging predictions among the equivalent model set, and obscurity Cavus and Biecek [2024] extended this to count how many models disagree with the majority prediction. All three operate at a fixed point.",
+        "bbox": [
+            169,
+            648,
+            826,
+            776
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Separately, local robustness Zhong et al. [2021], Leino and Fredrikson [2021], Summers and Dinneen [2021] studies the consistency of a single model's predictions within a local neighbourhood of an input. A single model can be vulnerable to perturbations as small as one pixel Huang et al. [2025], consequences of which can be undesirable in high-stakes settings. This captures feature-space disagreement with respect to one model, but ignores model-space variation.",
+        "bbox": [
+            169,
+            780,
+            826,
+            852
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Arbitrariness Cooper et al. [2024] is defined as the variance in predictions across equally good models for a single datapoint, occurring by chance. The associated self-consistency (SC) metric is the average pairwise agreement among equivalent models. This aligns with our goal of flagging unreliable predictions, but operates in one dimension (model-space) and at one point. The mechanism in Cooper et al. [2024] decomposes how much disagreement is attributable to random chance, while our work instead measures agreement (chance-corrected) jointly across model- and feature-space.",
+        "bbox": [
+            169,
+            854,
+            826,
+            912
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "page_number",
+        "text": "3",
+        "bbox": [
+            493,
+            935,
+            504,
+            948
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            169,
+            92,
+            825,
+            121
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Because arbitrariness and robust-ambiguity operate in different domains and measure different quantities, they are complementary. A complete reliability assessment requires measuring both, which is what RAD provides through the RAD Score-Pair.",
+        "bbox": [
+            169,
+            126,
+            826,
+            169
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Single model uncertainty scores (softmax probabilities, distance to SVM margin, leaf-node class distribution Hastie et al. [2009]) are widely used as proxies for reliability, although they neither reflect epistemic uncertainty nor model disagreement Gawlikowski et al. [2023], Hüllermeier and Waegeman [2021], but only describe the behaviour of a single chosen model. They cannot capture instability arising from predictive multiplicity or local robustness across an equivalent model set.",
+        "bbox": [
+            169,
+            174,
+            826,
+            246
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Ambiguity has been operationalised for abstention in Watson-Daniels et al. [2023, 2024], Cooper et al. [2024], Rudin et al. [2024]. However, a datapoint flagged as locally robust with respect to one model may not be locally robust under another equivalent model. Abstention based on a single model does not guarantee reliability when other equivalent models would respond differently. A joint consideration of all equivalent models across a neighbourhood around the target point is required before flagging for abstention, which RAD provides.",
+        "bbox": [
+            169,
+            250,
+            826,
+            335
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3 RAD Framework Overview",
+        "text_level": 2,
+        "bbox": [
+            171,
+            359,
+            437,
+            376
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "The Robust Ambiguity Detection (RAD) framework measures robust-ambiguity by computing disagreement among equivalent models, in the model-space, under local perturbations of a test datapoint, in the feature-space. It is model-agnostic and can be adapted to the data type and the data domain at hand. The framework has three stages; we describe them generically here with a concrete instantiation in Section 4.",
+        "bbox": [
+            169,
+            393,
+            825,
+            465
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Stage 1: Generating a set of similar models. A set of n models $\\mathcal { M } ^ { ( m ) }$ with nearly equal prediction performance, produced by a method m, but varying in model hyperparameters, bootstrapped training dataset, using different ML algorithms, different seeds, dropout masks, different algorithm families, etc. This is referred to as equivalent models (a sample of the broader Rashomon set), because there is no clear basis to prefer one over another.",
+        "bbox": [
+            169,
+            484,
+            825,
+            556
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Stage 2: Generating a set of similar data points. For a test datapoint $\\mathbf { t } \\in \\mathbb { R } ^ { d }$ , generate a set $\\mathcal { T } _ { \\mathbf { t } } = \\{ \\mathbf { t } _ { 1 } , \\mathbf { t } _ { 2 } , \\mathbf { t } _ { 3 } , \\ldots , \\mathbf { t } _ { p } \\}$ of $( p - 1 )$ synthetic neighbourhood points (with $\\mathbf { t } _ { 1 } ~ = ~ \\mathbf { t } )$ in its local neighborhood so that the stability of predictions in that region can be quantified.",
+        "bbox": [
+            169,
+            575,
+            825,
+            619
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Stage 3: Quantifying robust-ambiguity. Every model in $\\mathcal { M } ^ { ( m ) }$ will make predictions on $\\mathcal { T } _ { \\mathbf { t } }$ resulting in a two-dimensional ambiguity matrix, $A _ { T _ { \\bf t } } ^ { \\mathcal { M } ^ { ( m ) } }$ of size $p \\times n$ (where $| { \\mathcal { M } } ^ { ( m ) } | = n$ and $| \\mathcal { T } _ { \\mathbf { t } } | = p )$ with entry $( j , i )$ containing $\\mathcal { M } _ { i } ^ { ( m ) } ( \\mathbf { t } _ { j } )$ , the prediction of model i on perturbation j:",
+        "bbox": [
+            169,
+            640,
+            825,
+            694
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0d2ef8f8d7d925b7e77f29b236b4749524bb5f987e5c75d9bcb8ee4708857c23.jpg",
+        "text": "$$\n\\mathcal { A } _ { \\mathcal { T } _ { \\mathbf { t } } } ^ { M ^ { ( m ) } } = \\left[ \\begin{array} { c c c c } { \\mathcal { M } _ { 1 } ^ { ( m ) } ( \\mathbf { t } _ { 1 } ) } & { \\mathcal { M } _ { 2 } ^ { ( m ) } ( \\mathbf { t } _ { 1 } ) } & { . . . } & { \\mathcal { M } _ { n } ^ { ( m ) } ( \\mathbf { t } _ { 1 } ) } \\\\ { \\mathcal { M } _ { 1 } ^ { ( m ) } ( \\mathbf { t } _ { 2 } ) } & { \\mathcal { M } _ { 2 } ^ { ( m ) } ( \\mathbf { t } _ { 2 } ) } & { . . . } & { \\mathcal { M } _ { n } ^ { ( m ) } ( \\mathbf { t } _ { 2 } ) } \\\\ { \\vdots } & { \\vdots } & { \\ddots } & { \\vdots } \\\\ { \\mathcal { M } _ { 1 } ^ { ( m ) } ( \\mathbf { t } _ { p } ) } & { \\mathcal { M } _ { 2 } ^ { ( m ) } ( t _ { p } ) } & { . . . } & { \\mathcal { M } _ { n } ^ { ( m ) } ( \\mathbf { t } _ { p } ) } \\end{array} \\right]\\tag{1}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            310,
+            717,
+            681,
+            796
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "The ambiguity matrix for t is then reduced to the RAD Score-Pair $[ \\mathrm { R A D _ { M S C } } , \\mathrm { R A D _ { F S C } } ]$ , where ${ \\mathrm { R A D } } _ { \\mathrm { M S C } }$ (Model-space Consistency) measures inter-model agreement across the neighbourhood, and $\\mathrm { R A D } _ { \\mathrm { F S C } }$ (Feature-Space Consistency) measures intra-model stability across the neighbourhood. For this work, the specific reduction we use is given in Section 4.3. This RAD Score-Pair can then be used to decide the degree of ambiguity of a test datapoint, used in downstream tasks, or the nature of the ambiguity can be inspected using the RAD Plot (an example plot is shown in Figure 1), which is a scatter plot of the RAD Score-Pair interpreted based on which quadrant the datapoints fall.",
+        "bbox": [
+            169,
+            814,
+            826,
+            912
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "page_number",
+        "text": "4",
+        "bbox": [
+            493,
+            935,
+            504,
+            946
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "4 RAD Framework Implementation",
+        "text_level": 2,
+        "bbox": [
+            171,
+            89,
+            491,
+            107
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "To implement RAD for a specific problem, we need to decide, (Stage 1) how to generate a the set of equivalent models, $\\mathcal { M } ^ { ( m ) }$ , (Stage 2) how to generate the neighbourhood points set, $\\mathcal { T } _ { \\mathbf { t } } .$ of a given test datapoint t, and (Stage 3) how to compute the ambiguity Score-Pair by measuring the degree of disagreement in the ambiguity matrix $\\bar { A } _ { \\mathcal { T } _ { \\bf t } } ^ { \\mathcal { M } ^ { ( m ) } }$ of a datapoint t. In this paper, we focus on demonstrating RAD on three types of datasets with real-numbered attributes. Synthetic datasets, real-world datasets from the UCI ML Repository Asuncion et al. [2007], and one image dataset (MNIST Deng [2012]). This section will show an implementation of all three stages, and also introduce the usefulness of the RAD Plot as an interpretable diagnostic tool.",
+        "bbox": [
+            169,
+            119,
+            826,
+            238
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "4.1 Stage 1: Generate Equivalent Models in the Model-space",
+        "text_level": 2,
+        "bbox": [
+            171,
+            252,
+            609,
+            267
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "In our work, robust-ambiguity is defined with respect to both, the model-space and feature-space. Therefore, the ambiguity of a datapoint depends on how the models are being trained. In this implementation we select the Decision Tree (DT) Breiman et al. [2017] algorithm. Firstly, the best hyperparameter is found for the algorithm (DT) (through cross-validation experiments). This chosen hyperparameter is used as a \"blueprint\" to generate the set of similar models $\\mathcal { M } ^ { ( m ) }$",
+        "bbox": [
+            169,
+            276,
+            826,
+            349
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Next, using the chosen hyperparameters, we train the set of similar models $\\mathcal { M } ^ { ( D T + B S ) }$ , which is generating b number of DT models, each trained on a bootstrap sample (BS) of the training partition of the dataset.",
+        "bbox": [
+            169,
+            354,
+            825,
+            398
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "The method to generate $\\mathcal { M } ^ { ( m ) }$ depends on the specific application. If a problem demands simulation of a set of models that can allow higher levels of disagreement, i.e. find a more sensitive measure of ambiguity, bootstrap sampling can be used. Otherwise, if minimal stochastic level disagreement is to be measured, seed sampling can be used (underspecification setRudin et al. [2024]). That is, when the only source of variation among the models is the initial seed value used to train them. Alternatively, when using neural networks or other deep learning networks, a unique dropout mask Kendall and Gal [2017] can be used at the final layer to create the set of equivalent models, or Monte-Carlo Dropout Gal and Ghahramani [2016] can be used to generate multiple predictions. Ideally, the model set should effectively contain multiple models with similar performance that cannot be clearly differentiated.",
+        "bbox": [
+            169,
+            404,
+            826,
+            542
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "4.2 Stage 2: Generating Neighbourhood Datapoints in the Feature-space",
+        "text_level": 2,
+        "bbox": [
+            171,
+            558,
+            691,
+            574
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Local robustness is the property of a model to produce consistent, robust predictions in the local neighbourhood of a query data point, or when the input is slightly modified Zhong et al. [2021]. If a sample lies close to the decision boundary, such a consistent prediction is less likely, as a minor change in the input features can push it past the decision boundary, making that data point vulnerable Leino and Fredrikson [2021]. It is beneficial to then measure the prediction stability around a query data point, either within a hyper sphere or the underlying data manifold. It is important to note here that the type of perturbations of t we use to assess the models’ local robustness will inform the type of robustness we measure. For example, in this instance, we do not specifically use adversarial perturbations, therefore we intend to measure robustness under any perturbation, and not specifically adversarial robustness Gojić et al. [2023].",
+        "bbox": [
+            169,
+            583,
+            826,
+            723
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "For a test datapoint t, a SMOTE-style linear interpolation sampling rule was implemented to generate similar synthetic data points to generate $\\mathcal { T } _ { \\mathbf { t } }$ as follows",
+        "bbox": [
+            169,
+            728,
+            825,
+            757
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/9de48d9225acd108e5280fd6ca06f8a6a4921d6629e48ac9ab008c5dc1922610.jpg",
+        "text": "$$\n{ \\mathcal { T } } _ { \\mathbf { t } } ~ = ~ \\{ S ( \\mathbf { t } , \\mathbf { x } _ { r _ { i } } , \\lambda _ { i } ) ~ | ~ r _ { i } ~ \\sim ~ { \\mathcal { U } } \\{ 1 , \\dots , k \\} , \\mathbf { x } _ { r _ { i } } ~ \\in ~ \\mathrm { N N } _ { k } ( \\mathbf { t } , \\mathbf { D } ) , ~ \\lambda ~ \\sim ~ { \\mathcal { U } } ( 0 , 1 ) \\} _ { i = 1 } ^ { p }\\tag{2}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            186,
+            765,
+            790,
+            782
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "where $S ( \\mathbf t , \\mathbf x , \\lambda ) = \\mathcal { D } ( \\mathcal { E } ( \\mathbf t ) + \\lambda ( \\mathcal { E } ( \\mathbf x ) - \\mathcal { E } ( \\mathbf t ) ) )$ . Here, E is an encoder which transforms the feature space into a latent space, and D is a decoder which brings back the latent representation to the original feature space. $\\mathrm { N N } _ { k } ( { \\bf t } , { \\bf D } )$ is the k nearest neighbours of t with respect to the training dataset D. If sampling directly from the original feature space, then $\\mathcal { E } ( \\mathbf { x } ) = \\mathcal { D } ( \\mathbf { x } ) = \\mathbf { x }$ , which we do for the synthetic dataset and UCI ML datasets. For the MNIST dataset, we perform this sampling in a latent space learned by an autoencoder in this case Rumelhart et al. [1985].",
+        "bbox": [
+            169,
+            792,
+            826,
+            878
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Unlike the original SMOTE Chawla et al. [2002] algorithm, which generates synthetic samples within the same minority class to oversample that class, our approach considers nearest neighbours regardless of class. This allows perturbations to occur either between classes or within the same class, depending on the location of the test point. If t lies near a decision boundary, then the perturbations are more likely to span multiple classes, increasing the neighbourhood disagreement in the ambiguity-matrix. If it lies far from the boundary, the perturbations are more likely to remain within the same class. Furthermore, models with complex decision boundaries are more sensitive to minor perturbations of datapoints near the decision boundary and, consequently, more prone to ambiguity Black et al. [2022].",
+        "bbox": [
+            169,
+            883,
+            825,
+            912
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "page_number",
+        "text": "5",
+        "bbox": [
+            493,
+            935,
+            504,
+            948
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            169,
+            92,
+            826,
+            189
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "4.3 Stage 3: Compute RAD Score-Pair from the Ambiguity-Matrix",
+        "text_level": 2,
+        "bbox": [
+            171,
+            205,
+            653,
+            222
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "In this stage, the predictions of $\\mathcal { T } _ { \\mathbf { t } }$ by the set of models $\\mathcal { M } ^ { ( m ) }$ are used to generate the ambiguity matrix $A _ { T _ { \\mathrm { t } } } ^ { \\mathcal { M } ^ { ( m ) } } \\left( \\mathrm { E q . } \\left( 1 \\right) \\right)$ . The matrix is then reduced to the RAD Score-Pair, which captures robustambiguity across two dimensions.",
+        "bbox": [
+            169,
+            231,
+            826,
+            279
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "4.3.1 Choosing Disagreement Metric",
+        "text_level": 2,
+        "bbox": [
+            171,
+            292,
+            442,
+            308
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "To quantify the level of agreement among the equivalent models in the neighbourhood of t in the ambiguity-matrix, we use Gwet's Agreement Coefficient AC1 Gwet [2014]. There are several other choices to compute such agreement scores. Cohen's Kappa Cohen [1960] is limited to two raters, averaging pairwise scores compounds chance-correction errors. Fleiss' Kappa Fleiss [1971] handles multiple raters but suffers from the high-agreement paradox - paradoxically low scores under skewed label distributions, common when most data points are unambiguous. Gwet's AC1 Gwet [2014] is robust to this paradox and is also chance-corrected, making it the most appropriate choice for our setting.",
+        "bbox": [
+            169,
+            316,
+            826,
+            429
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Two assumptions must hold to use Gwet's AC1: (i) each rater makes judgments independently, and (ii) every rater judges every question (fully crossed design). Both conditions are satisfied here: models are trained independently, and there is no ordering of the models with no meaningful distinctions between the models in $\\mathcal { M } ^ { ( m ) }$ . Also, every model predicts on every query point and its perturbations. The Gwet's AC1 score ranges from —1 to 1, where 1 indicates perfect agreement, 0 indicates chance-level agreement, and negative values indicate systematic disagreement beyond chance.",
+        "bbox": [
+            169,
+            434,
+            825,
+            520
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "The Gwet's AC1 score is shown here in the context of RAD Score-Pair computation. Let $\\mathbf { G } \\in \\mathcal { V } ^ { N \\times K }$ be any matrix whose entry $G _ { n , k }$ records the categorical label assigned by rater $k \\in \\{ 1 , \\ldots , K \\}$ (columns) to question $n \\in \\{ 1 , \\ldots , N \\}$ (rows), with labels drawn from a finite set $\\mathcal { V }$ . Gwet's Agreement Coefficient AC1 on G is",
+        "bbox": [
+            169,
+            523,
+            825,
+            582
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/7812ed6aac7d96a8cb40e7d53072fd67530f6ff9961f40013dcf92d5093a1d82.jpg",
+        "text": "$$\n\\mathop { \\mathrm { A C 1 } } ( \\mathbf G ) = \\frac { p _ { o } ( \\mathbf G ) - p _ { e } ( \\mathbf G ) } { 1 - p _ { e } ( \\mathbf G ) }\\tag{3}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            395,
+            598,
+            599,
+            632
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "where",
+        "bbox": [
+            169,
+            643,
+            218,
+            656
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/a85fad0387170eb582f24222fe68cc10f8574f3d404515bbfe30c58147b3da2a.jpg",
+        "text": "$$\np _ { e } ( \\mathbf { G } ) = \\sum _ { y \\in \\mathcal { V } } \\hat { \\pi } _ { \\mathbf { G } } ( y ) \\left( 1 - \\hat { \\pi } _ { \\mathbf { G } } ( y ) \\right)\n$$",
+        "text_format": "latex",
+        "bbox": [
+            377,
+            681,
+            616,
+            717
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/904489448baf12012fbc5ac22c470b0519d5286184b9b13616f71a64e9f9b143.jpg",
+        "text": "$$\n\\hat { \\pi } _ { \\mathbf { G } } ( y ) ~ = ~ \\frac { 1 } { N K } \\sum _ { n = 1 } ^ { N } \\sum _ { k = 1 } ^ { K } \\mathbf { 1 } [ G _ { n , k } = y ] , ~ y \\in \\mathcal { Y }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            336,
+            734,
+            660,
+            777
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e8cc4b5fff171d843e6834804bc4039bc377365b7ec180ddf299bfbb5cef0fe8.jpg",
+        "text": "$$\np _ { o } ( { \\bf G } ) = \\frac { 1 } { N } \\sum _ { n = 1 } ^ { N } \\frac { 1 } { K ( K - 1 ) } \\sum _ { k = 1 } ^ { K } \\sum _ { { k ^ { \\prime } } = 1 \\atop { k ^ { \\prime } \\ne k } } ^ { K } { \\bf 1 } [ G _ { n , k } = G _ { n , k ^ { \\prime } } ]\n$$",
+        "text_format": "latex",
+        "bbox": [
+            310,
+            794,
+            684,
+            847
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "here $p _ { e } ( \\mathbf G )$ is chance agreement probability of ${ \\bf G } , p _ { o } ( { \\bf G } )$ is the observed agreement in $\\mathbf { G } ,$ averaged over all pairs of models across all points in the ambiguity matrix $A _ { T _ { \\bf t } } ^ { \\mathcal { M } ^ { ( m ) } }$ . The marginal probability of the class label $y$ across all models, and all datapoints in the ambiguity matrix is denoted as π(y).",
+        "bbox": [
+            169,
+            863,
+            825,
+            912
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "page_number",
+        "text": "6",
+        "bbox": [
+            493,
+            935,
+            504,
+            948
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "4.3.2 RAD Score-Pair Computation: $[ \\mathrm { R A D _ { M S C } } , \\mathrm { R A D _ { F S C } } ]$",
+        "text_level": 2,
+        "bbox": [
+            171,
+            90,
+            586,
+            107
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "We apply Gwet's AC1 score in two complementary ways: (1) treating models as independent raters to capture inter-model ambiguity (Model-Space Consistency), and (2) treating synthetic samples as independent raters to capture the intra-model ambiguity (Feature-Space Consistency).",
+        "bbox": [
+            169,
+            114,
+            825,
+            159
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Model-Space Consistency $\\mathrm { ( R A D _ { M S C } ) }$ captures the ambiguity arising from variations in the equivalent models. It is computed on the ambiguity matrix by treating models as raters, perturbed datapoints as questions, and predicted class labels as answers.",
+        "bbox": [
+            169,
+            162,
+            826,
+            207
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0fd3626cceeac976a0b3a20ca42d9753d60efeb94e23687d840905d4fb70d397.jpg",
+        "text": "$$\n\\mathrm { R A D _ { M S C } } = \\mathrm { A C 1 } ( \\mathbf { \\mathcal { A } } _ { \\mathcal { T } _ { \\mathbf { t } } } ^ { \\mathcal { M } ^ { ( m ) } } )\n$$",
+        "text_format": "latex",
+        "bbox": [
+            403,
+            213,
+            591,
+            233
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "This reveals inter-model disagreement over the neighbourhood.",
+        "bbox": [
+            171,
+            238,
+            589,
+            255
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "$\\mathrm { R A D } _ { \\mathrm { M S C } }$ \\~ high: Equivalent models mostly agree on all points in the neighbourhood.",
+        "bbox": [
+            215,
+            266,
+            800,
+            281
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "$\\mathrm { R A D _ { M S C } } \\sim$ mid: Equivalent models agree on some points in the neighbourhood but disagree on others.",
+        "bbox": [
+            215,
+            285,
+            825,
+            313
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "$\\mathrm { R A D _ { M S C } } \\sim$ low: Equivalent models disagree on most or all synthetic samples in the neighbourhood. The decision boundaries of equivalent models do not agree at all.",
+        "bbox": [
+            215,
+            318,
+            825,
+            347
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Feature-Space Consistency $( \\mathrm { R A D } _ { \\mathrm { F S C } } )$ captures ambiguity arising from variations in the datapoints in the neighbourhood of t. It is computed on the transposed ambiguity matrix by treating synthetic samples as raters and models as questions.",
+        "bbox": [
+            169,
+            357,
+            825,
+            401
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "img_path": "images/18cf235ee1ce9028bb6b8df8a768f13aeb3d52afce97e4cfefa4251936d3a177.jpg",
+        "text": "$$\n\\mathrm { R A D } _ { \\mathrm { F S C } } = A C 1 ( ( A _ { \\mathcal { T } _ { \\mathbf { t } } } ^ { { \\mathscr { M } } ^ { ( m ) } } ) ^ { T } )\n$$",
+        "text_format": "latex",
+        "bbox": [
+            393,
+            424,
+            601,
+            445
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "This reveals how stable each model is across the neighbourhood.",
+        "bbox": [
+            169,
+            450,
+            598,
+            465
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "$\\mathrm { R A D } _ { \\mathrm { F S C } } \\cdot$ high: Each equivalent model is internally stable in the neighbourhood.",
+        "bbox": [
+            215,
+            477,
+            776,
+            493
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "• RADFsC \\~ mid: Some equivalent models are stable across the neighbourhood, while others are not.",
+        "bbox": [
+            215,
+            496,
+            825,
+            525
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "$\\mathrm { R A D } _ { \\mathrm { F S C } }$ \\~ low: Most equivalent models flip their prediction within the neighbourhood.   \nModel class is locally unstable.",
+        "bbox": [
+            215,
+            529,
+            826,
+            558
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "When the ambiguity-matrix has a single row, $\\mathrm { R A D } _ { \\mathrm { M S C } }$ reduces to a pairwise inter-model agreement at one single point (similar to single-point based metrics such as Rashomon Capacity Hsu and Calmon [2022]). The integration over p neighbourhood points allows us to distinguish disagreement that persists within the neighbourhood from disagreement that exists only because t happens to be on an overlapping decision boundary.",
+        "bbox": [
+            169,
+            569,
+            826,
+            640
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "On the other hand, if the ambiguity matrix has a single column, $\\mathrm { R A D } _ { \\mathrm { F S C } }$ becomes similar to a local-robustness measurement Leino and Fredrikson [2021], Zhong et al. [2021]. The integration over the n equivalent models allow to distinguish a region where the model alone is unstable from a region where the entire model class is locally unstable.",
+        "bbox": [
+            169,
+            645,
+            826,
+            702
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Together, the RAD Score-Pair $[ \\mathrm { R A D _ { M S C } } , \\mathrm { R A D _ { F S C } } ]$ reveals the source of robust-ambiguity. The analysis, interpretation and use of the RAD Score-Pair are discussed in the next section.",
+        "bbox": [
+            169,
+            707,
+            825,
+            737
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "5 Interpreting RAD Score-Pair and RAD Plot",
+        "text_level": 2,
+        "bbox": [
+            171,
+            755,
+            573,
+            772
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "This section describes how the RAD Score-Pair is interpreted, visualised, and ranked. Section 5.1 introduces the RAD Plot and its four quadrants. Section 5.2 gives the aggregate distribution of points in the plot. Section 5.3 introduces RAD-Pareto-Rank, a method to rank ambiguous datapoints for downstream tasks.",
+        "bbox": [
+            169,
+            785,
+            826,
+            842
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "5.1 RAD Plot and Quadrants",
+        "text_level": 2,
+        "bbox": [
+            171,
+            857,
+            392,
+            872
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The RAD Score-Pair $[ \\mathrm { R A D _ { M S C } } , \\mathrm { R A D _ { F S C } } ]$ provides a two-dimensional view of how confusing a datapoint is for the deployed model class. For multi-class problems with c classes under a one-vs-all decomposition, every datapoint will have c such pairs; one per class, thus enabling per-class ambiguity analysis. We visualise the RAD Score-Pairs as a scatterplot in 2D space as shown in Fig. 1.",
+        "bbox": [
+            169,
+            882,
+            826,
+            912
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "page_number",
+        "text": "7",
+        "bbox": [
+            493,
+            935,
+            504,
+            948
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            171,
+            92,
+            825,
+            121
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "The RAD Score-Pair space can be divided into four quadrants using a threshold on each axis. The general idea of RAD Plot is captured in Fig. 1. This threshold can be calibrated based on the application's tolerance for ambiguity, the specific way the scores were computed (in this case Gwet's AC1 score) and the budget for human review: higher thresholds $( \\mathrm { e } . \\mathrm { g } . , 0 . 7 )$ flag more datapoints as ambiguous, lower thresholds flag fewer. In all our experiments, we use a threshold of 0.5 on each axis as it splits right in the middle of the \"moderate agreement\" level Gwet [2014]. Each quadrant corresponds to a qualitatively distinct cause of predictive ambiguity. The properties of each quadrant (Q1-Q4) of the RAD Plot are discussed next.",
+        "bbox": [
+            169,
+            126,
+            826,
+            238
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Q1: $[ \\mathrm { R A D _ { M S C } , R A D _ { F S C } } ] = [ \\mathbf { H i g h } , \\mathbf { H i g h } ]$ . Models agree with each other, and each model is stable across the neighbourhood. This is the robust region in the model- and feature-space, where models are able to retain their predictions despite minor permissible variations to both the model and data.",
+        "bbox": [
+            171,
+            248,
+            825,
+            292
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Q2: $[ \\mathrm { R A D _ { M S C } } , \\mathrm { R A D _ { F S C } } ] = [ \\mathrm { L o w } , \\mathrm { H i g h } ] .$ Each individual model is internally stable; it keeps predicting the same class throughout the neighbourhood, but the models disagree with each other. The models have learned different but internally coherent boundaries in this region. The ambiguity is a global model-level disagreement, not a local spatial one. The neighbourhood itself is not ambiguous, as it sits cleanly on one side of each model's boundary, but the models placed those boundaries in different places. This is epistemic uncertainty Hüllermeier and Waegeman [2021] about which model is right, not about where the boundary is.",
+        "bbox": [
+            169,
+            304,
+            823,
+            402
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Q3: $[ \\mathrm { R A D _ { M S C } } , \\mathrm { R A D _ { F S C } } ] = [ \\mathbf { L o w } , \\mathbf { L o w } ]$ . Models disagree with each other, and each individual model also changes its prediction across the neighbourhood. This is a strong indication to abstain, since ambiguity can be attributed to both sources.",
+        "bbox": [
+            171,
+            412,
+            815,
+            457
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Q4: $[ \\mathrm { R A D } _ { \\mathrm { M S C } } , \\mathrm { R A D } _ { \\mathrm { F S C } } ] = [ \\mathbf { H i g h } , \\mathbf { L o w } ]$ . Models broadly agree with each other, but each individual model is unstable across the neighbourhood. The models have placed their boundaries in roughly the same place, and that boundary runs directly through the neighbourhood. The models are consistent with each other about where the boundary is, but the test point is sitting right on top of it.",
+        "bbox": [
+            169,
+            467,
+            826,
+            525
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "5.2 Overall Interpretation of RAD Plot",
+        "text_level": 2,
+        "bbox": [
+            171,
+            540,
+            459,
+            555
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "The quadrant interpretation above describes individual datapoints. The aggregate distribution of points across the plot is also informative, since it indicates whether the dominant source of unreliability is the model-space, feature-space, or both, and what kind of intervention is likely to help. We identify four characteristic patterns, summarised in Table 1.",
+        "bbox": [
+            169,
+            565,
+            826,
+            622
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Right skew (mass in $\\mathrm { Q 1 + Q 4 ) }$ is feature-space dominant: the model class has converged on a coherent boundary, but the data sits in fragile regions relative to it. Upward skew $( \\mathrm { Q } 1 + \\mathrm { Q } 2 )$ is model-space dominant: each model is internally stable, but different models placed their boundaries elsewhere. Diagonal spread (Q1 to Q3) couples both instabilities and is a typical signature of label noise or inconsistent annotation. Concentration in Q3 is the worst case, where neither space is stable.",
+        "bbox": [
+            169,
+            627,
+            825,
+            699
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "5.3 Ranking Robust-ambiguity with Pareto Frontier",
+        "text_level": 2,
+        "bbox": [
+            171,
+            713,
+            550,
+            728
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Finding the most ambiguous datapoints requires minimising both $\\mathrm { R A D } _ { \\mathrm { M S C } }$ and ${ \\mathrm { R A D } } _ { \\mathrm { F S C } } ,$ which can be treated as a bi-objective problem solved by the Pareto-optimal frontier Deb [2011]. A point is Pareto-optimal if no other point has lower $\\mathrm { R A D } _ { \\mathrm { M S C } }$ and lower $\\mathrm { R A D } _ { \\mathrm { F S C } }$ . Successive shells, obtained by \"peeling\", rank datapoints from most to least ambiguous (Fig. 1). We combine the Paretofrontier selection, with the quadrant interpretation in two passes. First, we peel shells restricted to points outside Q1 (i.e., in Q2/Q3/Q4), ordering them from most to least ambiguous. Once these are exhausted, the remaining points all lie in Q1, and we rank them by Pareto shell as well, so that the least ambiguous robust points appear last. Within any shell, ties are broken by Euclidean distance from the perfect-agreement point (1, 1) in the RAD Plot.",
+        "bbox": [
+            169,
+            738,
+            826,
+            864
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "This shell-by-shell ordering, which also accounts for the RAD Plot quadrants, is named RAD-Pareto-Rank. It is used in the abstention experiments in Section 7.5, and is one mechanism by which the RAD Score-Pair can be deployed in a downstream task.",
+        "bbox": [
+            171,
+            868,
+            826,
+            912
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "page_number",
+        "text": "8",
+        "bbox": [
+            493,
+            935,
+            504,
+            948
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "table",
+        "img_path": "images/60fbe9d480ffd71b59137532857fa96c86506341782760709f72ebfe9e24a010.jpg",
+        "table_caption": [
+            "Table 1: Aggregate interpretation of RAD Plot. Each row describes a characteristic pattern in the distribution of points across the plot. The dominant source of unreliability it implies, and some model-side and data-side possible actions are listed."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Pattern</td><td>Dominant cause</td><td>Model-Space action</td><td>Feature-Space action</td></tr><tr><td>Right skew (Q1 + Q4)</td><td>Feature-space</td><td>Model side action is unlikely to help, since the models already agree.</td><td>Feature engineering, or tar- geted data collection in the affected sub-region. The ambiguity can also be irre- ducible (aleatoric) if none of the previous actions helps.</td></tr><tr><td>Upward skew (Q1 + Q2)</td><td>Model-space</td><td>Better regularisation. Ensembling can reduce the variance, but not the under- lying disagreement.</td><td>More labels in the disputed region. Active learning rather than uniform collec- tion.</td></tr><tr><td>Diagonal spread (Q1 → Q3)</td><td>Both spaces are unstable. Can be label-noise, low model capacity, or sharp bound- ary transitions.</td><td>Increase model capacity (if underfit- ting). Model family change is unlikely to help.</td><td>Audit affected points for labelling errors, inter- annotator disagreement, or ambiguous class definitions.</td></tr><tr><td>Concentrated in Q3</td><td>Both spaces are unstable.</td><td>Flag for human review. Increasing model capacity, regularisation, alterna- tive model family. If still in Q3, am- biguity is consistent with irreducible uncertainty.</td><td>Audit features and labels. Consider whether the task definition (class taxonomy) is well-posed.</td></tr></table>",
+        "bbox": [
+            174,
+            140,
+            825,
+            433
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "6 Experiments",
+        "text_level": 2,
+        "bbox": [
+            171,
+            459,
+            313,
+            477
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Experiments were conducted to evaluate how RAD can be used to investigate the ambiguity levels on a wide range of datasets, both synthetic and real. The experiments demonstrate the usefulness of the RAD Score-Pairs and RAD Plot first. Next we also demonstrate an example downstream task of abstention Hendrickx et al. [2024], Zhang et al. [2023] based on the RAD-Pareto-Ranks of test datapoints.",
+        "bbox": [
+            169,
+            491,
+            826,
+            563
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Synthetic Datasets. RAD was applied to 5 binary synthetic datasets - blobs, spirals, concentric circles, moons, and checkerboard; each at three class overlap levels, low, medium and high (5 × 3 = 15 synthetic configurations). Each dataset contained 1000 datapoints (80/20 train/test split).",
+        "bbox": [
+            169,
+            574,
+            826,
+            618
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Real-world datasets. From UCI ML Repository Asuncion et al. [2007], 16 datasets were used to demonstrate ambiguity visualization when decision boundaries cannot be visually inspected (Binary class: Magic Gamma Telescope, Default of Credit Card Clients, Rice Bin, Banknote Authentication, Heart Failure Risk, Mammographic Mass; Multi-class: Statlog, Glass Identification, E-Coli, Iris, Optical Digit Recognition, Handwritten Digit Recognition, Heart Disease, Breast Cancer (Wisconsin), COMPAS, Wine Quality). The MNIST dataset Deng [2012] was also used. In both cases, we make 80/20 train/test stratified splits.",
+        "bbox": [
+            169,
+            628,
+            828,
+            728
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Abstention Experiment. To demonstrate a downstream task, we perform an abstention experiment by ranking datapoints following RAD-Pareto-Ranks as described in Section 5.3. We train a single hyperparameter optimised decision tree for prediction only, for each dataset. Based on the best hyperparameter set, we train the RAD framework, which we use to get the RAD Score-Pairs. In the test set, we then progressively reject samples using the RAD-Pareto-Rank order, measuring accuracy on the remaining test set. This produces accuracy at varying coverage levels (100% to 0% of data). We report the Area Under the Rejection Curve (AURC): accuracy vs. coverage Hendrickx et al. [2024].",
+        "bbox": [
+            169,
+            739,
+            825,
+            852
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "We compare RAD-Pareto rejection against the following baselines:",
+        "bbox": [
+            171,
+            856,
+            614,
+            872
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "• Self-Consistency (SC): Average pairwise agreement across the 25 models on a single test datapoint. Samples with the lowest SC are rejected first Cooper et al. [2024].",
+        "bbox": [
+            215,
+            883,
+            821,
+            912
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "page_number",
+        "text": "9",
+        "bbox": [
+            493,
+            935,
+            504,
+            946
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "• Entropy: Class membership entropy from individual model predictions. Standard uncertainty-based rejection Gal and Ghahramani [2016].",
+        "bbox": [
+            215,
+            92,
+            772,
+            121
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "• Random: A baseline, where samples are selected randomly.",
+        "bbox": [
+            215,
+            128,
+            629,
+            143
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "The RAD Framework stages are configured as follows.",
+        "bbox": [
+            169,
+            155,
+            534,
+            171
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Model for Prediction. We have chosen decision tree algorithm Breiman [2001] for all experiments. For each dataset, the best hyperparameter is tuned through a 5-fold stratified cross-validation experiment, and the best model is fit on the full training set. Note that this model is only used for the prediction, and not a part of RAD.",
+        "bbox": [
+            169,
+            181,
+            826,
+            239
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "RAD Stage 1 Setup. Using the best hyperparameter configuration, $n = 2 5 ^ { 1 }$ decision tree models were trained on bootstrap samples of the training set to build the set of equivalent models. This is the $\\mathcal { M } ^ { ( m ) }$ set.",
+        "bbox": [
+            169,
+            250,
+            825,
+            294
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "RAD Stage 2 Setup. For a given test point t, a total of $p = 1 0 0 ^ { 1 }$ points (inclusive of t) from the neighbourhood $\\mathcal { T } _ { \\mathbf { t } }$ is generated following Eq. (2). For the MNIST dataset, an autoencoder was trained first, and the perturbations were made in the latent space, as described in Section 4.2. For all the experiments, we have used $k = 1 0$ nearest neighbours to generate the local synthetic samples (details in Section 7.1).",
+        "bbox": [
+            169,
+            306,
+            826,
+            377
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "RAD Stage 3 Setup. The details of this stage are described in Section 4.3. In addition to this, we generate per-class one-vs-all ambiguity-matrices to get per-class RAD Plots and RAD Score-Pairs (c classes will lead to c Rad Score-Pairs for a t). This will enable tracing the per-class properties. Instead of the original Gwet's AC1 recommended seven binned levels Gwet [2014], we simplify and choose the midpoint of the bins and set 0.5 to be the \"mid\" point along both the axes of RAD Plot to indicate the threshold to split the quadrants.",
+        "bbox": [
+            169,
+            388,
+            826,
+            474
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "7 Results and Discussion",
+        "text_level": 2,
+        "bbox": [
+            171,
+            492,
+            397,
+            508
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "In this section, we analyse and discuss the results for the synthetic dataset (Section 7.2) and realworld (Section 7.3) datasets, with respect to RAD Plots. In Section 7.5, we present the results of the abstention experiment.",
+        "bbox": [
+            169,
+            522,
+            826,
+            565
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "7.1 Selecting k for RAD Stage 2",
+        "text_level": 2,
+        "bbox": [
+            171,
+            582,
+            410,
+            597
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "The number of nearest neighbours k in Eq. (2) (Stage 2, Section 4.2) controls how local the perturbation sampling is. We choose a plausible default at which the quadrant assignments are stable. Choosing from $k \\in \\{ 2 , 3 , 4 , 6 , 8$ , 10, 13, 15, 20, 25, 30}, we recorded the smallest k beyond which test points stopped switching quadrants. On 21 of the 32 datasets where any switching occurred, the mean stabilisation point was $k = 1 1 . 7$ (median 11.0). The rest showed no switches across the range. We use $k = 1 0$ throughout, which is the closest round value and is for all datasets for our purpose.",
+        "bbox": [
+            169,
+            607,
+            828,
+            693
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "7.2 Synthetic Datasets",
+        "text_level": 2,
+        "bbox": [
+            171,
+            707,
+            343,
+            723
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Using the synthetic datasets, experiments were designed to test two hypotheses of our framework. First, increasing class overlap moves points away in the RAD Plot from the perfect agreement vertex (1, 1) in Q1 towards the ambiguous quadrants. Second, the direction in which the points move depends on the nature of the decision boundary. The results show that both hypotheses are true. Fig 2 and Fig. 3 illustrate two cases. The full set of results for the synthetic datasets is available in the Appendix A.",
+        "bbox": [
+            169,
+            733,
+            826,
+            818
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Across all five synthetic datasets, as class overlap is increased from low to high, the RAD Plots show systematic movement of the points out of Q1 and into the ambiguous quadrants. At low overlap, the cloud is concentrated in Q1, at medium and high overlap, the mass spreads towards Q2, Q3, or",
+        "bbox": [
+            169,
+            821,
+            826,
+            866
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "page_footnote",
+        "text": "1Bootstrap-model sampling and neighbourhood sampling are both stochastic, so the RAD Score-Pair for a test point will have variance that shrinks as n and p grow. Preliminary runs on a subset of our datasets showed that the per-point Score-Pair varied negligibly under independent re-runs at n = 25 and p = 100.",
+        "bbox": [
+            169,
+            875,
+            826,
+            912
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "page_number",
+        "text": "10",
+        "bbox": [
+            490,
+            935,
+            509,
+            948
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "chart",
+        "img_path": "images/8d78f39bc58f9e27e7fbdd7ed9f9b42d96ab616f48474167f74e4718f317d26f.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Low overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            179,
+            102,
+            390,
+            266
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/44aa0b173bb81e10d2982d19a49f046ddf33338a23b5f049d2a0439943e1deb0.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Medium overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            393,
+            101,
+            607,
+            267
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/5e93de1660c8816b9662a9fbc085958f87b3bbdb576dc6f72ce6e47001264f18.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) High overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            611,
+            102,
+            818,
+            265
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/24207a779a6457fdc01b639498d9801a5a22d8a874f21aee082fcc7435cd13f7.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Low overlap RAD Plot"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            179,
+            297,
+            392,
+            462
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/3446b9cedf616a151c6b9000fd3370e56c3eda2621f18400aa786904bad08ae9.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Medium overlap RAD Plot"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            397,
+            296,
+            606,
+            462
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/e5198bd873126319d374f65866046d0b17e77bcb4b4634326c3fb839fea8bc2f.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) High overlap RAD Plot"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            609,
+            297,
+            818,
+            462
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Figure 2: Left column: Decision boundary plots in 2-dimensions for the two circles dataset. Right column: RAD Plot showing the distribution of RAD Score-Pair.",
+        "bbox": [
+            169,
+            487,
+            825,
+            517
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Q4 depending on the nature of the decision boundary. This is the predicted behaviour, where RAD identifies more ambiguous points as the modelling task itself becomes truly ambiguous.",
+        "bbox": [
+            169,
+            593,
+            825,
+            623
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "In Fig. 2, for the concentric circles dataset with mid and high overlap, the ambiguous points cluster in Q2 in the RAD Plot, with some spread into Q3. This is the upward-skew pattern mentioned in Section 5.1. Each individual model is internally stable in the neighbourhood of these points, but different models in the ambiguity-matrix have placed their boundaries through the overlapping region. The width of the ambiguous region in feature-space Fig. 2 is wide enough that perturbations stay on one side of any given model's boundary, but the boundaries themselves disagree. The diagnosis is therefore model-space dominant.",
+        "bbox": [
+            169,
+            628,
+            826,
+            727
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "In the case of the checkerboard dataset, in Fig. 3, in the low overlap case, the dataset is nearly perfectly split along the two features, but induced noise places a small number of points exactly on the partition lines. These points appear in Q4, where the models agree about where the boundary is, but the points sit on top of it, so local perturbations flip predictions within each model. This aligns with the interpretation of Q4 from Section 5. As overlap increases, individual boundaries diverge, and the Q4 band widens into a mix of Q3 and Q4, indicating model disagreement now compounds the local instability.",
+        "bbox": [
+            169,
+            731,
+            826,
+            830
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "When boundary regions are wide, and models disagree about their placements, ambiguous datapoints populate both Q2 and Q3, a diagonal-spread signature. The aggregate pattern correctly identifies that both model-space and feature-space instabilities are important.",
+        "bbox": [
+            169,
+            834,
+            826,
+            878
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "These results serve as a validation of the framework. This same logic extends to the real-world dataset, where the decision boundaries cannot be directly inspected.",
+        "bbox": [
+            169,
+            883,
+            825,
+            912
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "page_number",
+        "text": "11",
+        "bbox": [
+            488,
+            935,
+            508,
+            948
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/a080bbd7af2aba802feed9d500321f08315aa82e8e30e8fb23e0c3e0bae6c30a.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Low overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            179,
+            102,
+            392,
+            266
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/efcad353e04fe12f92e9e54d21e466a10b19cbb263dba7b6dc11e1711fefebc8.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Medium overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            393,
+            102,
+            606,
+            266
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/5c573e5f88f9b54127bfd8fadd29b817cf311297d25b61af40a8734b6017356b.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) High overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            607,
+            102,
+            818,
+            265
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/748cbc52901067f5b72207a30f198082828fcc713dc989b998dfdd8768e98468.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Low overlap RAD plot"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            181,
+            297,
+            390,
+            462
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/3b14465173cad1336c6f23c385e0750e6704ff06a86968f8348cb5583db34b59.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Medium overlap RAD plot"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            397,
+            297,
+            604,
+            462
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/57e6e7be006cd7ecf5a3ae25e41d38cc6f73596ddd18ee776ec3d172ec146f0f.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) High overlap RAD plot",
+            "Figure 3: Left column: Decision boundary plots in 2-dimensions for the checkerboard dataset. Right column: RAD Plot showing the distribution of RAD Score-Pair."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            607,
+            297,
+            818,
+            462
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "7.3 Real-world Datasets",
+        "text_level": 2,
+        "bbox": [
+            171,
+            542,
+            356,
+            558
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "With the synthetic experiments confirming that RAD Score-Pair and RAD Plot can correspond to interpretable decision boundaries, we now analyse the results of the real-world datasets. We present five binary datasets and two multi-class datasets to analyse them. The full set of results of 17 datasets are available in the Appendix A.",
+        "bbox": [
+            169,
+            569,
+            826,
+            626
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "7.3.1 Binary Datasets",
+        "text_level": 2,
+        "bbox": [
+            171,
+            638,
+            338,
+            654
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "We show five binary datasets, each specifically known for possible class overlap. Fig.4 shows the RAD Plot for each of them.",
+        "bbox": [
+            169,
+            662,
+            825,
+            691
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "In Fig. 4a for the Gamma Telescope dataset, the task is to predict whether a captured light signal originates from a gamma event (class 0) or a hadron event (class 1). These two phenomena produce physically similar signals. Points are distributed across every quadrant, indicating that both sources of ambiguity are contributing to this dataset. Some samples sit on a contested boundary (Q4), some have model disagreement (Q2), and some are unstable in both spaces (Q3). A practitioner deploying such a model should inspect the predictions in Q2/Q3/Q4, and then can use the recommendations made in Section 5.2.",
+        "bbox": [
+            169,
+            696,
+            826,
+            795
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "In Fig. 4b Banknote Authentication dataset is inherently well-separated, as the image-statistic features provide strong discrimination between genuine and forged notes. This separation is clearly reflected in the RAD Plot, where nearly all datapoints lie in Q1, with only two datapoints appearing in Q2 and Q4 (using a threshold of 0.5). In practical deployments where even a small number of ambiguous cases may carry significant operational risk - for example, highly sophisticated counterfeits designed to closely resemble genuine notes - the threshold can be increased to flag a larger set of samples for manual review. In this setting, RAD functions less as a routine rejection mechanism and more as a calibrated early-warning or inspection prioritization tool.",
+        "bbox": [
+            169,
+            800,
+            826,
+            912
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "page_number",
+        "text": "12",
+        "bbox": [
+            490,
+            935,
+            509,
+            948
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/3f2edee5a297741f7ce0146ef1026623b308141d082ad0b71913756840ee77af.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Gamma Telescope"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            179,
+            102,
+            392,
+            265
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "chart",
+        "img_path": "images/0e0423e1448aea2b54e0807274632c1c0967ebb67557e9fb67aabce036b4cc19.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Banknote Authentication"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            395,
+            102,
+            606,
+            266
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "chart",
+        "img_path": "images/41514ec44899d918173c3075664dc13561b39974c9e5169cd7e22a7e6078e188.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) Heart Failure"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            607,
+            102,
+            820,
+            265
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "chart",
+        "img_path": "images/1bd350e194bcc0169391ab22c3bbf9c08b482bb3f9484a7697da208660b1e607.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Breast Cancer (Wisconsin)"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            285,
+            297,
+            498,
+            462
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "chart",
+        "img_path": "images/d4793b6aac9d4e2d38e2fe7fef072cb8e77e01b19137cd60b4579b29256b91a4.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Rice",
+            "Figure 4: Real-world binary dataset RAD Plots."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            501,
+            297,
+            712,
+            462
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "For the Heart Failure dataset, the model is trained to predict whether the patients' clinical risk factors will lead to heart failure or not. In Fig. 4c, all ambiguous datapoints fall in Q4, where models agree on a coherent decision boundary, but a subset of patients sit on top of it. This is precisely the boundary-on-point case in Section 5.1. Clinically, these can be genuine borderline cases, or lack of patient cases in the region, patients whose risk profile places them at the decision threshold rather than evidence that of a model issue. The appropriate action is dedicated human review by an expert clinician, not model retraining. Similarly, Fig. 4d and 4e can be interpreted.",
+        "bbox": [
+            169,
+            534,
+            826,
+            632
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Together, these three datasets exemplify the three non-trivial ambiguity sources separately (Heart Failure, Rice: feature-space only, Banknote: minor/well-separated; Gamma Telescope: all sources), demonstrating that RAD Plot's quadrant structure surfaces interpretable distinctions even in highdimensional data where the boundary cannot be visualised.",
+        "bbox": [
+            169,
+            637,
+            828,
+            695
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "7.3.2 Multi-Class Datasets",
+        "text_level": 2,
+        "bbox": [
+            171,
+            712,
+            372,
+            727
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "RAD is able to provide a richer analysis when applied to multi-class datasets, as a one-vs-all RAD plot can be generated, allowing us to inspect which classes are the most confusable. We use the Wine Quality dataset, which scores wines from 3 to 9 from their chemical properties. It is expected that the scores in the middle (5, 6, 7) to overlap, and the extreme scores (3, 9) to be well-separated, since intermediate quality is a more subjective opinion than a \"clearly bad\" or a \"clearly excellent\".",
+        "bbox": [
+            169,
+            738,
+            826,
+            810
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "The per-class RAD Plots (Fig. 5) precisely show this phenomenon. Score classes 3 and 9 contain no ambiguous datapoints, and RAD shows them as cleanly separable. Scores 5, 6, and 7 show substantial mass in Q3, indicating both model disagreement and local instability are present. This is the diagonal-spread signature from Section 5.2, which indicates that there might be label-noise or truly ambiguous class definitions. Both interpretations can apply here. Human raters scoring wines on a 10-point scale produce labels that are intrinsically noisy in the middle range, and the class definitions themselves (difference between 6 and 7) are not crisply defined. This indicates that the task is genuinely ambiguous at the middle of the quality scale, and that a coarser class taxonomy $( \\mathrm { e . g . }$ low/medium/high) could be considered. Similarly, in Fig. 6 the spread patterns show in Handwritten Digit Recognition dataset, the digit 1, 2 and 7 are the most ambiguous ones.",
+        "bbox": [
+            169,
+            814,
+            826,
+            912
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "page_number",
+        "text": "13",
+        "bbox": [
+            490,
+            935,
+            509,
+            948
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            169,
+            92,
+            825,
+            135
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "This per-class view is one of ${ \\bf R A D } ^ { * } { \\bf s }$ very useful diagnostic outputs for multi-class problems, which a single accuracy number could not have uncovered.",
+        "bbox": [
+            169,
+            140,
+            826,
+            169
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "7.4 RAD Score-Pair Component Analysis",
+        "text_level": 2,
+        "bbox": [
+            171,
+            189,
+            477,
+            204
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "We investigate if RAD Score-Pair's components $\\mathrm { R A D } _ { \\mathrm { M S C } }$ and $\\mathrm { R A D } _ { \\mathrm { F S C } }$ , have independent informative or redundant signals. We test this directly across all test-point across all datasets. When every test datapoint is pooled over all datasets, $\\mathrm { R A D } _ { \\mathrm { M S C } }$ and $\\mathrm { R A D } _ { \\mathrm { F S C } }$ are moderately correlated $( \\rho = 0 . 6 1 )$ , but this is actually due to Q1 has most of the datapoints, where the equivalent models and neighbourhood mostly agree. 94.7% of synthetic and 83.4% of real-world dataset points has $\\mathrm { R A D } _ { \\mathrm { M S C } } \\approx \\mathrm { R A D } _ { \\mathrm { F S C } } \\approx 1$ (most datapoints are not ambiguous). Restricting to only the ambiguous quadrants, Q2/Q3/Q4, indicates a Spearman $\\rho = - 0 . 2 3$ on the synthetic ambiguous subset and $\\rho = + 0 . 1 7$ on the real-world ambiguous subset (to be interpreted as a descriptive indication, as a small number of points are ambiguous). Among the points where the framework is useful for identifying ambiguity, $\\mathrm { R A D } _ { \\mathrm { M S C } }$ and $\\mathrm { R A D } _ { \\mathrm { F S C } }$ are essentially uncorrelated. This demonstrates that the components of the RAD Score-Pair carry independent information.",
+        "bbox": [
+            169,
+            214,
+            826,
+            369
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "chart",
+        "img_path": "images/2d350ac20703439d7da8405a0e2806da0fa51bee40c7da8f6148e9890657553c.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) 3/10"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            174,
+            397,
+            339,
+            523
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "chart",
+        "img_path": "images/c0e3c71d8ac410cb581e241e9f5dab609363780f04e7a518b6b06badd864dff4.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) 4/10"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            339,
+            397,
+            500,
+            523
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "chart",
+        "img_path": "images/72d0d3d60dd73a502fbffeeab3d3db5232040d5dfb6a3688cc90440d7a108445.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) 5/10"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            500,
+            397,
+            661,
+            523
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "chart",
+        "img_path": "images/d089405cff029ab5f0828de651eea6783c79839e5219e6dada1ced1b54c52522.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) 6/10"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            661,
+            397,
+            823,
+            523
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "chart",
+        "img_path": "images/6844c1299be18025114808bf1ae3906cae6e1acbc7896d949af1ec6672df16c8.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) 7/10"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            254,
+            554,
+            418,
+            679
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "chart",
+        "img_path": "images/93d414ad7f766dac136bb30d5fea0c99bfdc05edd8ee63f38d13597d61b39884.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) 8/10"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            419,
+            554,
+            580,
+            679
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "chart",
+        "img_path": "images/fbb5640020fcbc699f99b972de7f70fcad5a0eff71e6392a04499350fcfe0d97.jpg",
+        "content": "",
+        "chart_caption": [
+            "(g) 9/10",
+            "Figure 5: Multi-class dataset Wine Quality class-wise RAD Plots. Wine quality scores in the middle are the most confusable classes."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            581,
+            554,
+            743,
+            680
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "7.5 Abstention Results",
+        "text_level": 2,
+        "bbox": [
+            171,
+            766,
+            346,
+            781
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "We evaluate the abstention experiment mentioned in Section 6 on the synthetic and Real-world datasets separately. The complete per-dataset AURC table in Appendix A. Here we summarise the results focusing on demonstrating the feasibility of using RAD in a downstream task.",
+        "bbox": [
+            169,
+            794,
+            825,
+            837
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Figure 7 summarises pairwise comparisons across all methods using the Wilcoxon signed-rank test with Holm correction Demšar [2006]. RAD-Pareto achieves the lowest mean rank in both types of datasets (2.47 in synthetic, 1.97 in UCI). It is statistically indistinguishable from the other RAD components and Self-Consistency, but significantly better than Entropy and Random. This result demonstrates that the RAD Score-Pair, ranked through RAD Pareto-Rank, produces a rejection score that performs at least as well as standard model-disagreement baselines while introducing the interpretability of the quadrant diagnosis.",
+        "bbox": [
+            169,
+            842,
+            826,
+            912
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "page_number",
+        "text": "14",
+        "bbox": [
+            490,
+            935,
+            509,
+            946
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "chart",
+        "img_path": "images/4d350955f3831a82a8d4dad5d8f7adcabe33f1290f496ca886c80056b0f5f940.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Class 0"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            173,
+            101,
+            307,
+            202
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "chart",
+        "img_path": "images/f5538369618c2516d431486f25dbe0e14f38e1fbb3376577616471ca1e0736b0.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Class 1"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            307,
+            101,
+            436,
+            202
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "chart",
+        "img_path": "images/16ef89fa7b5d212c8343a05751d92b58b123fb0ff6cc25e161bcb964db710fad.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) Class 2"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            437,
+            101,
+            566,
+            202
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "chart",
+        "img_path": "images/84ba530324aff38b76f2430caca80e471f2004aa569033e9e068df9099faad27.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Class 3"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            566,
+            101,
+            694,
+            202
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "chart",
+        "img_path": "images/5858fde8818f11064e7b233e8f588ab11619fd0bc4e2a6c5b219f57727f0a097.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Class 4"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            694,
+            101,
+            823,
+            202
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "chart",
+        "img_path": "images/61523e86bdb54c897bfacaac19dfec747304c1820332c587373de4253725eb5a.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) Class 5"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            173,
+            231,
+            305,
+            334
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "chart",
+        "img_path": "images/fdbcc674e1d6649443a07d0a2df8e9bd04c7ab68dab98cbdd9eb8b730651a0ca.jpg",
+        "content": "",
+        "chart_caption": [
+            "(g) Class 6"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            305,
+            231,
+            436,
+            334
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "chart",
+        "img_path": "images/0aa948b1e5c74634b70450df613a14a3b10c150ec4974f45799e7622a2e6a1d5.jpg",
+        "content": "",
+        "chart_caption": [
+            "(h) Class 7"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            436,
+            231,
+            565,
+            334
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "chart",
+        "img_path": "images/00d0b84357ef43c6c2c223e4e3adecba03e74e4ca3cf2bfb7839218422c28900.jpg",
+        "content": "",
+        "chart_caption": [
+            "(i) Class 8"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            565,
+            231,
+            694,
+            334
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "chart",
+        "img_path": "images/b89815f74c56289415b8b1bfc20513de7c644ca203a78869bb4d5af25b0332fa.jpg",
+        "content": "",
+        "chart_caption": [
+            "(j) Class 9",
+            "Figure 6: Multi-class dataset Handwritten Digit Recognition class-wise RAD Plots. Spread patterns show, digits 1, 2 and 7 are the most confusable classes."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            694,
+            231,
+            823,
+            334
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "table",
+        "img_path": "images/6d4515ec556f15ed6610336029ce391509b8f154cf2b89a7e13eda27810587fd.jpg",
+        "table_caption": [
+            "Table 2: Summary of the abstention experiment, compared against RAD-Pareto. The W/L/T row reports the number of datasets on which RAD-Pareto wins/loses/ties with the method in the corresponding column. The Avg. rank row reports the mean rank across methods on that dataset group (lower is better)."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>RAD-Pareto | Random</td><td></td><td>Entropy</td><td>SC</td><td> ${ \\mathrm { R A D } } _ { \\mathrm { M S C } }$ </td><td> $\\mathrm { R A D } _ { \\mathrm { F S C } }$ </td></tr><tr><td colspan=\"6\">Synthetic datasets  $( N = 1 5 )$ </td></tr><tr><td>W/L/T vs Pareto</td><td>11/0/4</td><td>11/0/4</td><td>7/3/5</td><td>7/3/5</td><td>5/4/6</td></tr><tr><td>Average rank 2.47</td><td>5.27</td><td>4.47</td><td>3.23</td><td>2.87</td><td>2.70</td></tr><tr><td colspan=\"6\">Real-world datasets (N = 17)</td></tr><tr><td>W/L/T vs Pareto</td><td>17/0/0</td><td>17/0/0</td><td>11/6/0</td><td>11/6/0</td><td>12/4/1</td></tr><tr><td>Average rank 1.97</td><td>5.24</td><td>5.06</td><td>3.24</td><td>2.71</td><td>2.79</td></tr></table>",
+        "bbox": [
+            238,
+            468,
+            756,
+            590
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            171,
+            619,
+            825,
+            650
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "8 RAD Use-cases",
+        "text_level": 2,
+        "bbox": [
+            171,
+            670,
+            334,
+            685
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "In Section 7.5, we demonstrate a downstream abstention task. The RAD Plot also can be used in several deployment time uses. Some possible use cases are outlined below.",
+        "bbox": [
+            169,
+            702,
+            825,
+            732
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Distinguishing data drift from model staleness. In production, new incoming datapoints can be scored against the deployed models and placed on the RAD Plot alongside the original test/train distribution. A systematic shift toward Q3/Q4 while the reference remains in Q1 indicate a possible data-drift Gama et al. [2014], incoming data has moved into regions where deployed models are unstable. Points clustering in Q2/Q3 with degrading labelled-sample accuracy indicates a possible concept-drift Gama et al. [2014]. Combined with rolling predictive performance, the RAD Plot makes a stronger drift diagnostic than individual signals.",
+        "bbox": [
+            169,
+            744,
+            825,
+            843
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Quality control for retrained models. When a deployed model is retrained, the RAD Plot can serve as an acceptance test. A practitioner can define a threshold, for example, \"at most 5% of a held-out reference set may fall in Q3\", and reject retrained models that satisfy accuracy targets but violate this threshold. This treats predictive ambiguity as an important deployment criterion along with accuracy and calibration, particularly relevant in high-stakes domains where regressions in predictive consistency are costly even when the accuracy is preserved.",
+        "bbox": [
+            169,
+            854,
+            826,
+            912
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "page_number",
+        "text": "15",
+        "bbox": [
+            490,
+            935,
+            509,
+            948
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "image",
+        "img_path": "images/44d114275c4ac611de4b60ecbe9c996f8a77e489e9d9b38dbedcd633f6b139cd.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            251,
+            87,
+            745,
+            190
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "image",
+        "img_path": "images/83a1013a35ffaaadc6120312a230c2ddb143195c32619441252dfc4cf3a195b6.jpg",
+        "image_caption": [
+            "Figure 7: Critical-difference diagrams summarising rejection AURC across the Synthetic datasets $( N = 1 5$ , top) and Real-world datasests $( N = 1 7$ , bottom). Methods are arranged by mean rank (lower is better). A bar connecting a group of methods indicates that they are not significantly different by pairwise Wilcoxon signed-rank test with Holm correction at $\\alpha = 0 . 0 5$"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            251,
+            222,
+            745,
+            325
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            169,
+            417,
+            774,
+            448
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Insurance policy retention. An insurance company can score their customers through RAD and identify the ambiguous points, which are the customers who are unsure about if they will renew or not. Ranking them and contacting them for a better offer to retain them. Such a ranked approach can be effective as it can maximise the retention rate under a budget.",
+        "bbox": [
+            169,
+            462,
+            825,
+            518
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "9 Conclusion",
+        "text_level": 2,
+        "bbox": [
+            171,
+            540,
+            300,
+            556
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "We defined robust-ambiguity as predictive inconsistency across both model-space and feature-space simultaneously. Prior work on predictive multiplicity quantifies model-space disagreement at a single point Cooper et al. [2024], Marx et al. [2020], Hsu and Calmon [2022], and prior work on local robustness quantifies feature-space stability of a single model Leino and Fredrikson [2021], Zhong et al. [2021]. Neither captures the interaction. A datapoint can be predictively consistent at a point yet flip under a perturbation that any reasonable practitioner would consider admissible. Conversely, models may agree at one point but disagree across an entire neighbourhood. These are distinct failure modes, and reliability assessment that addresses only one is incomplete.",
+        "bbox": [
+            169,
+            573,
+            826,
+            685
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "The RAD framework operationalises this through the RAD Score-Pair [RADMSC, RADFSC] and the RAD Plot, which together reveal not only whether a prediction is ambiguous but why: model disagreement versus boundary proximity versus both. Our experiments validate that RAD identifies ambiguous datapoints across synthetic and real-world datasets. Ranking these datapoints via the RAD-Pareto-Rank, which utilises the Pareto frontier, yields a downstream rejection score competitive with established uncertainty baselines.",
+        "bbox": [
+            169,
+            689,
+            826,
+            775
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "A key property of RAD is that its scores are always relative to the deployed model class/method, that is, they identify which predictions cannot be made reliably by the models being used. The same dataset analysed with decision trees may flag different samples than with neural networks.",
+        "bbox": [
+            169,
+            780,
+            826,
+            824
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "A more fundamental empirical finding underwrites this result: predictions in the ambiguous quadrants Q2, Q3, and Q4 are near chance-level accurate, while Q1 predictions average 0.91. This is not a property of poorly fitted models, that is, the same models that achieve high accuracy in Q1 produce near-random predictions in the ambiguous quadrants. It is the framework working as intended: RAD identifies, before any prediction is made, which datapoints the deployed model class cannot decide reliably.",
+        "bbox": [
+            169,
+            828,
+            826,
+            912
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "page_number",
+        "text": "16",
+        "bbox": [
+            490,
+            935,
+            509,
+            948
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "RAD requires n × p predictions per test sample, which can be expensive at scale. We focused on tree-based methods here to demonstrate the framework, but extending to deep networks, making RAD work on predicted scores instead of class labels, and to regression is natural future work. The SMOTE-style perturbation strategy requires some domain adaptation for structured input types (audio, text), but the framework itself is type-agnostic.",
+        "bbox": [
+            169,
+            92,
+            826,
+            162
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "References",
+        "text_level": 2,
+        "bbox": [
+            171,
+            181,
+            269,
+            198
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "Arthur Asuncion, David Newman, et al. Uci machine learning repository, 2007.",
+            "Emily Black, Manish Raghavan, and Solon Barocas. Model multiplicity: Opportunities, concerns, and solutions. In Proceedings of the 2022 ACM conference on fairness, accountability, and transparency, pages 850–863, 2022.",
+            "Leo Breiman. Statistical modeling: The two cultures (with comments and a rejoinder by the author). Statistical science, 16(3):199–231, 2001.",
+            "Leo Breiman, Jerome Friedman, Richard A Olshen, and Charles J Stone. Classification and regression trees. Chapman and Hall/CRC, 2017.",
+            "Mustafa Cavus and Przemysław Biecek. An experimental study on the rashomon effect of balancing methods in imbalanced classification. In Joint European Conference on Machine Learning and Knowledge Discovery in Databases, pages 3–18. Springer, 2024.",
+            "Nitesh V Chawla, Kevin W Bowyer, Lawrence O Hall, and W Philip Kegelmeyer. Smote: synthetic minority over-sampling technique. Journal of artificial intelligence research, 16:321–357, 2002.",
+            "Jacob Cohen. A coefficient of agreement for nominal scales. Educational and psychological measurement, 20(1):37–46, 1960.",
+            "A Feder Cooper, Katherine Lee, Madiha Zahrah Choksi, Solon Barocas, Christopher De Sa, James Grimmelmann, Jon Kleinberg, Siddhartha Sen, and Baobao Zhang. Arbitrariness and social prediction: The confounding role of variance in fair classification. In Proceedings of the AAAI Conference on Artificial Intelligence, volume 38, pages 22004–22012, 2024.",
+            "Kalyanmoy Deb. Multi-objective optimisation using evolutionary algorithms: an introduction. In Multi-objective evolutionary optimisation for product design and manufacturing, pages 3-34. Springer, 2011.",
+            "Janez Demšar. Statistical comparisons of classifiers over multiple data sets. Journal of Machine learning research, 7(Jan):1–30, 2006.",
+            "Li Deng. The mnist database of handwritten digit images for machine learning research [best of the web]. IEEE signal processing magazine, 29(6):141–142, 2012.",
+            "Joseph L Fleiss. Measuring nominal scale agreement among many raters. Psychological bulletin, 76 (5):378, 1971.",
+            "Deborah Frisch and Jonathan Baron. Ambiguity and rationality. Journal of Behavioral Decision Making, 1(3):149–157, 1988.",
+            "Yarin Gal and Zoubin Ghahramani. Dropout as a bayesian approximation: Representing model uncertainty in deep learning. In international conference on machine learning, pages 1050–1059. PMLR, 2016.",
+            "João Gama, Indrė Žliobaitė, Albert Bifet, Mykola Pechenizkiy, and Abdelhamid Bouchachia. A survey on concept drift adaptation. ACM computing surveys (CSUR), 46(4):1–37, 2014.",
+            "Prakhar Ganesh, Afaf Taik, and Golnoosh Farnadi. Systemizing multiplicity: The curious case of arbitrariness in machine learning. In Proceedings of the AAAI/ACM Conference on AI, Ethics, and Society, volume 8, pages 1032–1048, 2025."
+        ],
+        "bbox": [
+            171,
+            205,
+            697,
+            222
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "page_number",
+        "text": "17",
+        "bbox": [
+            490,
+            935,
+            509,
+            948
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "Jakob Gawlikowski, Cedrique Rovile Njieutcheu Tassi, Mohsin Ali, Jongseok Lee, Matthias Humt Jianxiang Feng, Anna Kruspe, Rudolph Triebel, Peter Jung, Ribana Roscher, et al. A survey of uncertainty in deep neural networks. Artificial intelligence review, 56(Suppl 1):1513–1589, 2023.",
+            "Gorana Gojić, Vladimir Vincan, Ognjen Kundačina, Dragiša Mišković, and Dinu Dragan. Nonadversarial robustness of deep learning methods for computer vision. In 2023 10th International Conference on Electrical, Electronic and Computing Engineering (IcETRAN), pages 1–9. IEEE, 2023.",
+            "Kilem L Gwet. Handbook of inter-rater reliability: The definitive guide to measuring the extent of agreement among raters. Advanced Analytics, LLC, 2014.",
+            "Trevor Hastie, Robert Tibshirani, Jerome H Friedman, and Jerome H Friedman. The elements of statistical learning: data mining, inference, and prediction, volume 2. Springer, 2009.",
+            "Kilian Hendrickx, Lorenzo Perini, Dries Van der Plas, Wannes Meert, and Jesse Davis. Machine learning with a reject option: A survey. Machine Learning, 113(5):3073–3110, 2024.",
+            "Hsiang Hsu and Flavio Calmon. Rashomon capacity: A metric for predictive multiplicity in classification. Advances in Neural Information Processing Systems, 35:28988–29000, 2022.",
+            "Kuan Huang, Noorul Sahel, Dikshya Karki, Meng Xu, and Yingfeng Wang. One pixel can change the diagnosis: Adversarial and non-adversarial robustness and uncertainty in breast ultrasound classification model. In Proceedings of the AAAI Symposium Series, volume 7, pages 524–529, 2025.",
+            "Eyke Hüllermeier and Willem Waegeman. Aleatoric and epistemic uncertainty in machine learning: An introduction to concepts and methods. Machine learning, 110(3):457–506, 2021.",
+            "Alex Kendall and Yarin Gal. What uncertainties do we need in bayesian deep learning for computer vision? Advances in neural information processing systems, 30, 2017.",
+            "George J Klir. Where do we stand on measures of uncertainty, ambiguity, fuzziness, and the like? Fuzzy sets and systems, 24(2):141–160, 1987.",
+            "Klas Leino and Matt Fredrikson. Relaxing local robustness. Advances in Neural Information Processing Systems, 34:17072–17083, 2021.",
+            "Charles Marx, Flavio Calmon, and Berk Ustun. Predictive multiplicity in classification. In International conference on machine learning, pages 6765–6774. PMLR, 2020.",
+            "Cynthia Rudin, Chudi Zhong, Lesia Semenova, Margo Seltzer, Ronald Parr, Jiachang Liu, Srikar Katta, Jon Donnelly, Harry Chen, and Zachery Boner. Amazing things come from having many good models. arXiv preprint arXiv:2407.04846, 2024.",
+            "David E Rumelhart, Geoffrey E Hinton, and Ronald J Williams. Learning internal representations by error propagation. Technical report, 1985.",
+            "Cecilia Summers and Michael J Dinneen. Nondeterminism and instability in neural network optimization. In International Conference on Machine Learning, pages 9913–9922. PMLR, 2021.",
+            "Jamelle Watson-Daniels, David C Parkes, and Berk Ustun. Predictive multiplicity in probabilistic classification. In Proceedings of the AAAI Conference on Artificial Intelligence, volume 37, pages 10306–10314, 2023.",
+            "Jamelle Watson-Daniels, Flavio du Pin Calmon, Alexander D'Amour, Carol Long, David C Parkes, and Berk Ustun. Predictive churn with the set of good models. arXiv preprint arXiv:2402.07745, 2024.",
+            "Xu-Yao Zhang, Guo-Sen Xie, Xiuli Li, Tao Mei, and Cheng-Lin Liu. A survey on learning to reject. Proceedings of the IEEE, 111(2):185–215, 2023.",
+            "Ziyuan Zhong, Yuchi Tian, and Baishakhi Ray. Understanding local robustness of deep neural networks under natural variations. In International Conference on Fundamental Approaches to Software Engineering, pages 313–337. Springer International Publishing Cham, 2021."
+        ],
+        "bbox": [
+            171,
+            92,
+            828,
+            135
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "page_number",
+        "text": "18",
+        "bbox": [
+            488,
+            935,
+            509,
+            948
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "A Appendix",
+        "text_level": 2,
+        "bbox": [
+            171,
+            90,
+            294,
+            107
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "A.1 Experiment Set Up",
+        "text_level": 2,
+        "bbox": [
+            171,
+            119,
+            352,
+            135
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "table",
+        "img_path": "images/435b59a179aa1f4b4765abda21dc92ea119b21db728ec1df799a847375e66ab2.jpg",
+        "table_caption": [
+            "Table 3: Synthetic and real datasets with geometric construction details"
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Dataset</td><td>Lib</td><td>Method</td><td>Geometry / Construction</td><td>Params</td></tr><tr><td>Blobs</td><td>sklearn</td><td>Gaussian mixture</td><td>Two isotropic Gaussian clusters centered at (−5, −5) and (5, 5) forming linearly separable regions with tunable overlap via variance</td><td>σ = 2 · overlap</td></tr><tr><td>CustomBlobs</td><td>numpy</td><td>Radial Gaussians</td><td>Four Gaussian clusters placed on a circle around the origin. Cluster centers are computed using po- lar angles (0°, 120°, 240°) with distance inversely proportional to overlap, controlling inter-class mix-</td><td>spread, overlapij</td></tr><tr><td>Spirals</td><td>numpy</td><td>Parametric curves</td><td>ing Two interleaving logarithmic-like spirals generated from polar coordinates where radius increases with angle; second spiral is mirrored and perturbed, cre-</td><td>noise, overlap</td></tr><tr><td>Checkerboard</td><td>numpy</td><td>Grid partitioning</td><td>ating tightly intertwined nonlinear manifolds Uniform sampling in a bounded square domain partitioned into a grid; class labels alternate based on parity of integer cell indices ([x] + [y]) mod</td><td>k squares, noise</td></tr><tr><td>Moons</td><td>sklearn</td><td>Manifold learning toy data</td><td>2 Two interleaving half-circle manifolds in 2D Eu- clidean space forming a nonlinear classification boundary with crescent-shaped clusters</td><td>noise</td></tr><tr><td>Circles</td><td>sklearn</td><td>Concentric manifolds</td><td>Two concentric circular decision regions where inner circle is scaled version of outer circle, pro- ducing nonlinear radial separability</td><td>noise, factor</td></tr><tr><td>Sine</td><td>numpy</td><td>Functional data shift</td><td>Two sinusoidal curves defined as y = sin(x) + € and a vertically shifted copy y = sin(x) + 1.5 + €, forming partially overlapping functional bands</td><td>noise</td></tr><tr><td>COMPAS</td><td>Hugging Face dataset</td><td>Real-world tabular</td><td>Structured dataset of criminal recidivism; no ge- ometric structure, but mixed categorical features mapped into Euclidean space via label encoding</td><td>categorical encoding</td></tr><tr><td>UCI</td><td>ucimlrepo</td><td>Real-world tabular</td><td>Arbitrary feature space depending on dataset ID; no inherent geometry, but transformed into nu- meric feature space for learning tasks</td><td>dataset ID</td></tr></table>",
+        "bbox": [
+            176,
+            172,
+            823,
+            525
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "table",
+        "img_path": "images/5387514ac10959cde70e0bd02e2832f5cd7f6ee77300e8c442e82555e6416ae7.jpg",
+        "table_caption": [
+            "Table 4: Hyperparameter tuning setup using 5-fold cross-validation for Decision Tree models"
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Model</td><td>Hyperparameter</td><td>Search Space</td><td>Validation Strategy</td></tr><tr><td>Decision Tree</td><td>max_depth</td><td>Integers [2, 100]</td><td>5-fold cross-validation (accuracy)</td></tr><tr><td>Tuning Objective</td><td>Metric</td><td>Accuracy</td><td>Mean CV accuracy across folds</td></tr><tr><td>Model Selection</td><td>Criterion</td><td>Best mean CV score</td><td>Selected hyperparameter = argmax score</td></tr></table>",
+        "bbox": [
+            205,
+            569,
+            794,
+            642
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "A.2 Sensitivity Analysis",
+        "text_level": 2,
+        "bbox": [
+            171,
+            666,
+            354,
+            681
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "RAD Stage 2 Setup. In stage 2 of RAD, a choice needs to be made for the value of k nearest neighbors to be considered when generating local synthetic samples. This choice can be made by understanding how much of an impact it has on the RAD scores first. Each instance has a RAD score pair that positions it into one of the 4 quadrants of the RAD plot. The RAD plot is generally divided into quadrants using the 0.5 threshold along each axis. The quadrant an instance belongs to, therefore, directly depends on the choice of this threshold. Considering the fixed threshold of 0.5, we computed the value of k for which a data point moves from Q1 to any other quadrant. The motivation for checking this, is that if the quadrant shifts from Q1 (robust) to any other quadrant, a robust instance becomes ambiguous. The value of k literally means the size of the neighborhood around which synthetic data is created, and so it is important to make sure this remains low enough to ensure the neighborhood is local and not global, and also high enough to ensure enough diverse (from across classes) data is collected. This is demonstrated in Fig. 8, where the value of 10 is around which the quadrant shifts stabilise.",
+        "bbox": [
+            169,
+            691,
+            826,
+            872
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "A.3 Experiment Results",
+        "text_level": 2,
+        "bbox": [
+            171,
+            890,
+            356,
+            905
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "page_number",
+        "text": "19",
+        "bbox": [
+            490,
+            935,
+            509,
+            948
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "chart",
+        "img_path": "images/8c28ae8f6330254dc2ee2feaf8a3770863d6e5979118d1cf3eddb4b076858fc9.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Real Datasets (17)"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            207,
+            140,
+            493,
+            301
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "chart",
+        "img_path": "images/124c7554745d717af7a6f36577c9523925b646639fae975bcf1f7f8173c194e9.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Synthetic Datasets (15)",
+            "Figure 8: Average fraction of samples that shift quadrants at different K-values across all datasets"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            503,
+            145,
+            782,
+            300
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "chart",
+        "img_path": "images/e1b08bd23ec474d258433e2752f4d86a94492b2f5460b7f3314e3ae207e6b114.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Low overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            174,
+            452,
+            388,
+            616
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "chart",
+        "img_path": "images/c57d5164fafa65f2e5099570b92ca6b6ddfe6d51a10db60e1ad4fcd0e346f6a5.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            392,
+            450,
+            606,
+            616
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "chart",
+        "img_path": "images/7bc72d5c5499346c41c4dc12334b8ffcb0767b2072a83b4d4ee5dc57fcd50629.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Medium overlap",
+            "(c) High overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            609,
+            449,
+            823,
+            614
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "chart",
+        "img_path": "images/4d9f7f470230157c3ed37ab699d803f338421e0b0ae81b5cf3be367645e8e70d.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Low overlap RAD plot"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            174,
+            646,
+            388,
+            810
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "chart",
+        "img_path": "images/41dca66b5ce9661c28b3119704786d717965af277acec7aef91db3b944504233.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Medium overlap RAD plot"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            393,
+            645,
+            606,
+            810
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "chart",
+        "img_path": "images/092aee1683f62abe96398a3a3fef10a59a11a511fede28179b01e15f0080018b.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) High overlap RAD plot",
+            "Figure 9: Blobs Dataset. Top Row: Decision boundary plots in 2-dimensions, Bottom Row: RAD Plot in 2-dimensions $( R A D _ { M S C }$ and $R A D _ { F S C } )$"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            611,
+            646,
+            821,
+            810
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "page_number",
+        "text": "20",
+        "bbox": [
+            488,
+            935,
+            509,
+            948
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "chart",
+        "img_path": "images/9f2cbd3ecfa5d89eb8dc01bcddd28c09ed46f064d0a07d1e9b0899d8f49f977c.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Low overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            174,
+            297,
+            390,
+            463
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/369e4c41672d8adf26535e10dfe7f1a982c2845cfc32309bcfa5075501eb08cc.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Medium overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            395,
+            297,
+            606,
+            463
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/b1308559561ee5eb96c7be21fc8a40637e945b6735bde59d63dd6deb66745f0f.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) High overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            609,
+            297,
+            821,
+            462
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/67255ef2b4c7e0824236cab2e03c69e098dd40f3147844fa74ae969c2224c8e3.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Low overlap RAD plot"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            176,
+            494,
+            388,
+            657
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/da9e6a76801aaa00d975e37d482700c69da7887a01b920b985c7242bec4276a1.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Medium overlap RAD plot"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            393,
+            493,
+            606,
+            657
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/e2c3a84886fa6809d22ea350aa7772551f19b5fd4944fecc14a3a438fcda3c43.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) High overlap RAD plot"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            611,
+            493,
+            821,
+            656
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "Figure 10: Spirals Dataset. Top Row: Decision boundary plots in 2-dimensions, Bottom Row: RAD Plot in 2-dimensions $( R A D _ { M S C }$ and $R A D _ { F S C } )$",
+        "bbox": [
+            171,
+            683,
+            825,
+            713
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "page_number",
+        "text": "21",
+        "bbox": [
+            488,
+            935,
+            508,
+            948
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/1cb40895aa865f317b3173642ca49d66fa9c7dabb414d2a843468a0f80622212.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Low overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            176,
+            109,
+            387,
+            273
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/ca66b0281e5edaa04d84bb35a0aaf6a4335de114e8b576c0c8a6a2612aee470c.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Medium overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            393,
+            109,
+            606,
+            273
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/7305a33d2a16bccdd0b54d644eef5eced2aae7396499255d75b8dd07c2fbf5f9.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) High overlap"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            611,
+            109,
+            821,
+            273
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/e3beea1e65989cbf67162289a584b4ebf8e2720af3cb147545ea901ea22cf75b.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Low overlap RAD plot"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            178,
+            305,
+            388,
+            469
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/c29c4ff6467f9e1582a2da016e146fbe5206a66d92019e49f69badb152cb2384.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Medium overlap RAD plot"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            393,
+            304,
+            606,
+            469
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/8fcdb57dc6f724a82af871f8974ab4268392bdd044c42ae2ddb733994ed7124d.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) High overlap RAD plot",
+            "Figure 11: Moons Dataset. Top Row: Decision boundary plots in 2-dimensions, Bottom Row: RAD Plot."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            611,
+            305,
+            821,
+            469
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/867c6aea0d56c811f8adb5296fc2106c0c0cecf9f3630c436cb9f38596a9a5e5.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Rice"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            174,
+            560,
+            338,
+            685
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/aa6a5b85c56112a367fea77cb379daf8d7a0d249760f2418a42f84ac725a7378.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Default of Credit Card Clients"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            339,
+            560,
+            500,
+            686
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/a6a42cf549a61c5e74132702195160bd2e6ca07ce55558a1f5210a64e7915973.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) Mammographic Mass"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            501,
+            560,
+            661,
+            685
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/7d29e9f08a1471fc930e744e5c8214c06744973916662d077eaafa7564328cac.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Breast Cancer Wisconsin",
+            "Figure 12: UCI Binary Datasets RAD Plots."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            661,
+            560,
+            821,
+            685
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/c97b43832625c7337865135dab84ba3dba5025e06232935936116499e50df970.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Class 0"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            173,
+            773,
+            287,
+            861
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/d87195ebda473285e7ce3b5e88ae217e56be01f9227f29f5d7620995c2afa18a.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Class 1"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            289,
+            773,
+            398,
+            861
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/ff2ea400bd925422b7306ab35ff742b1bcf351336bdfbd4e067d6f4e7fb03a0d.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) Class 2"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            398,
+            773,
+            508,
+            861
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/7b9dd97b35063e2e4f44b717e6c51d0a5541e61d363cda81a1417a54fbd00891.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Class 3"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            509,
+            773,
+            619,
+            861
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/5bb03259af83ae65ba2ef963d4e1e5466526681033b6de187f846f8473b181c1.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Class 4"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            619,
+            773,
+            728,
+            861
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/f7eaac05bdb9b68d99938dd709c2a239a8ccfd26070493b678f92f3223e5a629.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) Class 5",
+            "Figure 13: UCI Multi-class dataset Statlog Landsat RAD Plots."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            728,
+            775,
+            836,
+            861
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "page_number",
+        "text": "22",
+        "bbox": [
+            488,
+            935,
+            509,
+            948
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/d68d0355ce095bf5ccd7b2a33d88ed010caec3751fa35506e873efb33c03fa53.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Class 0"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            181,
+            112,
+            276,
+            184
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/6070ce4d2f1dbd74a50709a56dc7975c073f2f4cb3814a154e15c9dbca85bc54.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Class 1"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            276,
+            112,
+            364,
+            184
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/5543162eb93c92aad8c742e531570b956895d869c48db200ed68ba64fd24e38f.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) Class 2"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            366,
+            112,
+            457,
+            185
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/12918e96fa86cae467ee90acec90f889d47d932f0b801cc3d3cdea313ecde599.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Class 3"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            457,
+            112,
+            547,
+            185
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/ceb17d6e6775f946409a34f7c7aa4f7e0051b7e52dedb457b859c84c81aebc91.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Class 4"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            545,
+            113,
+            637,
+            185
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/18b891aeaa26aa847fd0eb73cc837eae4472b383ec529f9930c9baf58b701be2.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) Class 5"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            638,
+            112,
+            727,
+            185
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/b3a68b67e91a2bdc9ea2b7b21e6b26f78fce56db94b497595b39940973bbc10d.jpg",
+        "content": "",
+        "chart_caption": [
+            "(g) Class 6",
+            "Figure 14: UCI Multi-class dataset E.coli RAD Plots."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            728,
+            112,
+            818,
+            184
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/3262e60f81581ddda6f3575f6f7b47e9b38c310100a17f04a9ff309b2b4ed0e0.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Class 0"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            174,
+            267,
+            305,
+            369
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/4f481a7810105d4349e59b4e1c0cd05ca3a02045d3bc28f97417490d2b50a3ea.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Class 1"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            305,
+            267,
+            434,
+            369
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/101f09914e3912e753b026d5e118783e27d86178047d769ffd9e0688a6c68dd2.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) Class 2"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            434,
+            267,
+            565,
+            369
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/1a7b7ac885f820b8b2a355d3a11ca23be89344762e132e67b71cd321c8c713d0.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Class 3"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            566,
+            267,
+            694,
+            369
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/45c064f79eb2647ce7b6f9bc425520430f4bbe096768314944e641662630763d.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Class 4",
+            "Figure 15: UCI Multi-class dataset Heart Disease RAD Plots."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            694,
+            267,
+            825,
+            369
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/409768aee560fafe8357cf6a7c6f98a47808eefb1101b638d04e9c09f7524e1b.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Class 0"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            173,
+            454,
+            287,
+            540
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/54dfd432a29e533e50f964845074b60225ef4d4c47bff2fcd2266ce49ff64331.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Class 1"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            287,
+            454,
+            397,
+            540
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/9f8ee5c770f744f6b81722810ec70ffda97bfa8a553718f37a3b6c7b7c0e025f.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) Class 2"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            398,
+            454,
+            508,
+            540
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/d3e13f48685b7ecff905665899d8744901c2f41ae6ee9fb85c14cfd752138a94.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Class 3"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            508,
+            454,
+            617,
+            540
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/4ddbee84a491c1795068019acd6bf3b0677673fea7114f8c82ac98a6c397f5e9.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Class 4"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            619,
+            454,
+            727,
+            540
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/0aa352f6cad496adfa5140deeb0a24c39a6fe57a5f0c7812951e87919aed5ff4.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) Class 5",
+            "Figure 16: UCI Multi-class dataset Glass Identification RAD Plots."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            727,
+            454,
+            836,
+            540
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/2ea32b2e0ac3c512cd77b1e0d2952db81a2bc752252df1c72303bfeb2e6ff952.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Class 0"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            173,
+            625,
+            305,
+            726
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/f793b4d3878c19e893d656ea21f388094621a0f024541907134781da52816bd9.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Class 1"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            305,
+            625,
+            437,
+            726
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/97e18feeb58b87a816ee868d76deae45df4b99ce349cee81fbedaea9e0b6f964.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) Class 2"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            441,
+            625,
+            565,
+            726
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/8ee79af8ddac503e8da61b9e0abf10f4e97dc215d96b6a23ea799fe7d7ad2d57.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Class 3"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            566,
+            625,
+            696,
+            726
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/3e89200ed080aa12b465bb1315d13bd3df6f8450d43540bf2d4bced8ea491f4c.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            697,
+            625,
+            823,
+            726
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/8ab70566f12700a1b5fcf2efc71022ce17da18ed07995248c7d7eabf89395d40.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) Class 5"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            174,
+            755,
+            305,
+            857
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/bdc32767f6983911c5a056226a70b0696baddf6ec53abaee2a838f2f487f9480.jpg",
+        "content": "",
+        "chart_caption": [
+            "(g) Class 6"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            307,
+            755,
+            436,
+            857
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/5a7bf196af460d8509814a8cfc28e2fc566218a470014f4d76d5badb2281f20a.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Class 4",
+            "(h) Class 7"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            437,
+            755,
+            565,
+            858
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/a1439c537da59c7e2b305878b744794af3198c1e28ecd5260aa50cdba6c19558.jpg",
+        "content": "",
+        "chart_caption": [
+            "(i) Class 8"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            566,
+            755,
+            694,
+            857
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/0e396cb87106841afc4ac2efccc2db0ef7cbd2438ef38bb4a48b94ffa8004cc2.jpg",
+        "content": "",
+        "chart_caption": [
+            "(j) Class 9",
+            "Figure 17: UCI Multi-class dataset Optical Digit Recognition RAD Plots."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            696,
+            756,
+            823,
+            857
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "page_number",
+        "text": "23",
+        "bbox": [
+            488,
+            935,
+            509,
+            948
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "chart",
+        "img_path": "images/439b7646f7e2fb1e94c90f43e8938a050743e06d96d86982335438af10c106cf.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Class 0"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            174,
+            161,
+            307,
+            263
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/de53552d57dcd0e2b32cac52d13c3d24b7ada99d4ec611f5e272d6f4259bd437.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Class 1"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            307,
+            161,
+            436,
+            263
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/7adb4e858273d6b435b4b20c11944c6bb6acf92bff1af05d9b9104b61b60aceb.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) Class 2"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            437,
+            161,
+            566,
+            263
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/9cc8d07ba9aa6e8958ad7854069b182f452317278127135899101669223877eb.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Class 3"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            568,
+            161,
+            696,
+            263
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/e4a55e14b34f2f92f2caa2dbb0143baa68d49ab65a4842ccb062c6684735d112.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Class 4"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            696,
+            161,
+            823,
+            263
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/a166e897cf5e6b5f1b392692dccf37050d052e9e134572cf1c4d7eefc88865e9.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) Class 5"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            173,
+            291,
+            305,
+            393
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/576de112c5819ecb3b90aced4bab5c3ee0b4606eb812d0f8072abc842a178b18.jpg",
+        "content": "",
+        "chart_caption": [
+            "(g) Class 6"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            305,
+            292,
+            436,
+            393
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/015ab912897163d769e7151b7df022efad84ac9b74eee32d344030cceda8f906.jpg",
+        "content": "",
+        "chart_caption": [
+            "(h) Class 7"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            436,
+            292,
+            565,
+            393
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/e4176d192f60fd511b14577cbb7226d2153a6026c7f412a096c3ee2dd7b3a3c6.jpg",
+        "content": "",
+        "chart_caption": [
+            "(i) Class 8"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            566,
+            292,
+            694,
+            393
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/f0fa95bc1ec7079dd321935cd42b2c031cabde875724bcea092fc91b42e11f32.jpg",
+        "content": "",
+        "chart_caption": [
+            "Figure 18: UCI Multi-class dataset Handwritten Digit Recognition RAD Plots.",
+            "(j) Class 9"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            694,
+            292,
+            823,
+            393
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/2ab0185393938d2d090baa470241458fa42750f86fe4e9f3af5deeff60c4977c.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Class 0"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            173,
+            575,
+            305,
+            678
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/8e92863fed3a2a18837a6232aa3778cb8197663389272d4dea9c71e4f7c717cc.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) Class 1"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            305,
+            575,
+            436,
+            678
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/6409901bdbba7a8719328e4d30aca3b48b50004dca080f4ff3569e3c2e35d635.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) Class 2"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            437,
+            575,
+            563,
+            678
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/6a2a4aa8421d51eba20f6cc2bfcc1e1e1916b95f6c1e2eed0458868539f43887.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Class 3"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            566,
+            575,
+            694,
+            678
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/57df7c8b729f1b648ba19f91419ecbf61d97c6dbc70ff1b1e744f1d6e2dce856.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) Class 4"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            694,
+            577,
+            823,
+            678
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/116f6fbc02875e2c77c5d75cc4477d438c52ebd32a9989817d8e2ed89ddc53c4.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) Class 5"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            174,
+            707,
+            305,
+            808
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/50edf0d68a14f0618fdf32d5867c45c89a31b295c7b84feac2324ab654497a49.jpg",
+        "content": "",
+        "chart_caption": [
+            "(g) Class 6"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            307,
+            707,
+            436,
+            808
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/0ee35f230d70bcfa0c9f492ca004549c2c7ef8132b9c9b6015d0af3663b130aa.jpg",
+        "content": "",
+        "chart_caption": [
+            "(h) Class 7",
+            "Figure 19: MNIST RAD Plots."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            437,
+            705,
+            565,
+            808
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/295319a44d0592b168fb01e0ab579fa879aeebf09144270bb92350c317a28f70.jpg",
+        "content": "",
+        "chart_caption": [
+            "(i) Class 8"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            566,
+            707,
+            694,
+            809
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "chart",
+        "img_path": "images/37f3b1d0c6b1721174862b29fc92561af3cbfee161ce6f1b72636ffa30b9cde8.jpg",
+        "content": "",
+        "chart_caption": [
+            "(j) Class 9"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            696,
+            707,
+            823,
+            809
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "page_number",
+        "text": "24",
+        "bbox": [
+            488,
+            935,
+            509,
+            946
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "text",
+        "text": "A.4 Abstention Results",
+        "text_level": 2,
+        "bbox": [
+            87,
+            178,
+            224,
+            196
+        ],
+        "page_idx": 24
+    },
+    {
+        "type": "table",
+        "img_path": "images/e88b3ee9b51e9c6fa4ef087e8963e06a450e39dcfe7c11e968ed368a942b1086.jpg",
+        "table_caption": [
+            "Table 5: Rejection performance measured via AUC of accuracy vs. coverage (AURC). Values in parentheses denote improvement over the random rejection baseline (%). Synthetic datasets are grouped into Low/Medium/High difficulty levels based on ascending parameter values. The vertical bar separates baseline rejection methods (left) from the RAD individual components and family (right). Bold indicates the best score on each row across all comparison methods (Random excluded as baseline, all method ties are not made bold). RAD Scores and RAD-Pareto is best or tied for best on 28 of 32 datasets, and performs better compared to Self-Consistency on 17 of the 22 non-tied rows."
+        ],
+        "table_footnote": [
+            "continued on next page"
+        ],
+        "table_body": "<table><tr><td>Dataset</td><td>Setting</td><td>Random</td><td>Entropy</td><td>Self-Consistency</td><td> $\\mathrm { R A D } _ { \\mathrm { M S C } }$ </td><td>RADFSC</td><td>RAD-Pareto</td></tr><tr><td colspan=\"8\">Synthetic datasets (controlled overlap)</td></tr><tr><td rowspan=\"3\">Blobs</td><td>Low</td><td>1.0000</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td><td>1.000 (0.00)</td><td>1.0000 (0.00)</td></tr><tr><td>Medium</td><td>1.0000</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td></tr><tr><td>High</td><td>0.8013</td><td>0.8227 (2.68)</td><td>0.8743 (9.11)</td><td>0.8754 (9.25)</td><td>0.8833 (10.25)</td><td>0.8903 (11.11)</td></tr><tr><td rowspan=\"3\">Circles</td><td>Low</td><td>1.0000</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td></tr><tr><td>Medium</td><td>0.9869</td><td>0.9869 (0.01)</td><td>0.9867 (-0.01)</td><td>0.9994 (1.27)</td><td>0.9997 (1.30)</td><td>0.9996 (1.30)</td></tr><tr><td>High</td><td>0.8353</td><td>0.8968 (7.37)</td><td>0.9030 (8.11)</td><td>0.9324 (11.62)</td><td>0.9326 (11.66)</td><td>0.9362 (12.09)</td></tr><tr><td rowspan=\"3\">Moons</td><td>Low</td><td>1.0000</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td><td>1.0000 (0.00)</td></tr><tr><td>Medium</td><td>0.9892</td><td>0.9927 (0.36)</td><td>1.0000 (1.10)</td><td>1.0000 (1.10)</td><td>1.0000 (1.10)</td><td>1.0000 (1.10)</td></tr><tr><td>High</td><td>0.9367</td><td>0.9906 (5.76)</td><td>0.9959 (6.33)</td><td>0.9956 (6.29)</td><td>0.9936 (6.09)</td><td>0.9948 (6.21)</td></tr><tr><td rowspan=\"3\">Spirals</td><td>Low</td><td>0.9918</td><td>0.9930 (0.12)</td><td>1.0000 (0.82)</td><td>0.9995 (0.78)</td><td>1.0000 (0.83)</td><td>0.9999 (0.82)</td></tr><tr><td>Medium</td><td>0.9784</td><td>0.9798 (0.14)</td><td>0.9986 (2.06)</td><td>0.9995 (2.16)</td><td>0.9997 (2.18)</td><td>0.9996 (2.16)</td></tr><tr><td>High</td><td>0.9652</td><td>0.9767 (1.20)</td><td>0.9975 (3.35)</td><td>0.997 (3.29)</td><td>0.9982 (3.42)</td><td>0.9981 (3.42)</td></tr><tr><td rowspan=\"3\">Checkerboard</td><td>Low</td><td>0.9948</td><td>0.9995 (0.48)</td><td>1.0000 (0.53)</td><td>1.0000 (0.53)</td><td>0.9999 (0.52)</td><td>0.9999 (0.52)</td></tr><tr><td>Medium</td><td>0.8970</td><td>0.9591 (6.93)</td><td>0.9689 (8.03)</td><td>0.971 (8.26)</td><td>0.9404 (4.84)</td><td>0.9719 (8.35)</td></tr><tr><td>High</td><td>0.7345</td><td>0.7817 (6.43)</td><td>0.7986 (8.73)</td><td>0.8582 (16.85)</td><td>0.8553 (16.45)</td><td>0.8569 (16.67)</td></tr></table>",
+        "bbox": [
+            179,
+            313,
+            818,
+            653
+        ],
+        "page_idx": 24
+    },
+    {
+        "type": "page_number",
+        "text": "25",
+        "bbox": [
+            49,
+            488,
+            63,
+            509
+        ],
+        "page_idx": 24
+    },
+    {
+        "type": "table",
+        "img_path": "images/2f43318d3d9c2da1e473949178cf0b9723437363b149150a33a17c817d8f5903.jpg",
+        "table_caption": [
+            "(continued from previous page)"
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Dataset</td><td>Setting</td><td>Random</td><td>Entropy</td><td>Self-Consistency</td><td> $\\mathrm { R A D } _ { \\mathrm { M S C } }$ </td><td> $\\mathrm { R A D } _ { \\mathrm { F S C } }$ </td><td>RAD-Pareto</td></tr><tr><td colspan=\"8\">Real-world datasets (Multi-Class (MC Binary classification (Bin) settings)</td></tr><tr><td>Magic Gamma Telescope</td><td>Bin</td><td>0.8256</td><td>0.9005 (9.07)</td><td>0.9281 (12.42)</td><td>0.9330 (13.01)</td><td>0.9275 (12.34)</td><td>0.9344 (13.18)</td></tr><tr><td>Default of Credit Card Clients</td><td>Bin</td><td>0.8224</td><td>0.8237 (0.17)</td><td>0.8135 (-1.07)</td><td>0.8135 (-1.07)</td><td>0.8411 (2.28)</td><td>0.8573 (4.24)</td></tr><tr><td>Rice</td><td>Bin</td><td>0.9170</td><td>0.9120 (-0.53)</td><td>0.9222 (0.57)</td><td>0.9848 (7.41)</td><td>0.9870 (7.65)</td><td>0.9875 (7.70)</td></tr><tr><td>Banknote Authentication</td><td>Bin</td><td>0.9943</td><td>0.9929 (-0.14)</td><td>0.9938 (-0.05)</td><td>0.9996 (0.53)</td><td>0.9998 (0.55)</td><td>0.9997 (0.55)</td></tr><tr><td>Heart Failure Risk</td><td>Bin</td><td>0.8351</td><td>0.7982 (-4.41)</td><td>0.8061 (-3.47)</td><td>0.8202 (-1.78)</td><td>0.8724 (4.48)</td><td>0.9011 (7.91)</td></tr><tr><td>Mammographic Mass</td><td>Bin</td><td>0.8421</td><td>0.8669 (2.95)</td><td>0.9105 (8.12)</td><td>0.9194 (9.18)</td><td>0.9028 (7.21)</td><td>0.8827 (4.82)</td></tr><tr><td>Statlog (Landsat Satellite)</td><td>MC</td><td>0.8550</td><td>0.8413 (-1.60)</td><td>0.9630 (12.64)</td><td>0.9689 (13.33)</td><td>0.9702 (13.49)</td><td>0.9696 (13.41)</td></tr><tr><td>Glass Identification</td><td>MC</td><td>0.7293</td><td>0.7415 (1.68)</td><td>0.7295 (0.03)</td><td>0.8241 (13.01)</td><td>0.8371 (14.79)</td><td>0.8305 (13.88)</td></tr><tr><td>E Coli</td><td>MC</td><td>0.7968</td><td>0.7425 (-6.81)</td><td>0.9434 (18.41)</td><td>0.9556 (19.94)</td><td>0.9517 (19.45)</td><td>0.9542 (19.77)</td></tr><tr><td>Iris</td><td>MC</td><td>0.9263</td><td>0.9941 (7.32)</td><td>0.9804 (5.84)</td><td>0.9966 (7.59)</td><td>0.9927 (7.18)</td><td>0.9966 (7.60)</td></tr><tr><td>Optical Digit Recognition</td><td>MC</td><td>0.7521</td><td>0.8715 (15.88)</td><td>0.9275 (23.32)</td><td>0.9311 (23.80)</td><td>0.9244 (22.92)</td><td>0.9301 (23.67)</td></tr><tr><td>Handwritten Digit Recognition</td><td>MC</td><td>0.9422</td><td>0.9359 (-0.67)</td><td>0.9924 (5.33)</td><td>0.9913 (5.22)</td><td>0.9911 (5.19)</td><td>0.9913 (5.21)</td></tr><tr><td>Heart Disease</td><td>MC</td><td>0.5390</td><td>0.6652 (23.42)</td><td>0.8199 (52.14)</td><td>0.8062 (49.59)</td><td>0.7893 (46.45)</td><td>0.8110 (50.47)</td></tr><tr><td>Breast Cancer (Wisconsin)</td><td>MC</td><td>0.9331</td><td>0.9067 (-2.83)</td><td>0.9923 (6.35)</td><td>0.9918 (6.30)</td><td>0.9908 (6.19)</td><td>0.9912 (6.24)</td></tr><tr><td>COMPAS</td><td>MC</td><td>0.9910</td><td>0.9991 (0.82)</td><td>0.9916 (0.06)</td><td>0.9916 (0.06)</td><td>0.9995 (0.86)</td><td>0.9995 (0.86)</td></tr><tr><td>MNIST</td><td>MC</td><td>0.8622</td><td>0.8034 (-6.81)</td><td>0.9652 (11.96)</td><td>0.8788 (1.93)</td><td>0.9236 (7.13)</td><td>0.9095 (5.49)</td></tr><tr><td>Wine Quality</td><td>MC</td><td>0.5913</td><td>0.5977 (1.10)</td><td>0.7803 (31.97)</td><td>0.7307 (23.58)</td><td>0.6888 (16.49)</td><td>0.7105 (20.17)</td></tr></table>",
+        "bbox": [
+            178,
+            189,
+            818,
+            526
+        ],
+        "page_idx": 25
+    },
+    {
+        "type": "page_number",
+        "text": "",
+        "bbox": [
+            49,
+            488,
+            63,
+            509
+        ],
+        "page_idx": 25
+    }
+]

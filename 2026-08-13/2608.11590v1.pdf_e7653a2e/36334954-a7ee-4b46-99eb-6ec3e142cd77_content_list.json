@@ -1,0 +1,3493 @@
+[
+    {
+        "type": "text",
+        "text": "CookVoice: Unified Framework for Style Controllable Multi-Modal Human Voice Generation",
+        "text_level": 1,
+        "bbox": [
+            107,
+            93,
+            892,
+            134
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Haowei Lou <sup>ID</sup> <sup>1</sup>, Hye-Young Paik <sup>ID</sup> <sup>1</sup>, Dai Jia <sup>ID</sup> <sup>2</sup>, Kai Li <sup>ID</sup> <sup>2</sup>, Lina Yao <sup>ID</sup> <sup>1</sup>",
+        "bbox": [
+            194,
+            149,
+            798,
+            167
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "<sup>1</sup> UNSW Sydney",
+        "bbox": [
+            426,
+            178,
+            573,
+            196
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "<sup>2</sup> Dolby Laboratories",
+        "bbox": [
+            411,
+            195,
+            589,
+            211
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "haowei.lou@unsw.edu.au, h.paik@unsw.edu.au, Jia.Dai@dolby.com, Kai.Li@dolby.com, lina.yao@unsw.edu.au",
+        "bbox": [
+            139,
+            214,
+            865,
+            240
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Abstract",
+        "text_level": 2,
+        "bbox": [
+            247,
+            260,
+            326,
+            274
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Human voice generation has made rapid progress in speech generation, singing voice generation, voice cloning, and voice editing. However, most existing systems are designed for specific tasks and often rely on task-dependent architectures, control signals, or autoregressive decoding, limiting fine-grained controllability and inference efficiency. In this paper, we propose CookVoice, a unified framework for multimodal, multi-style, and multi-task human voice generation. CookVoice decomposes the human voice into three key factors: content, prosody, and style, enabling both speech and singing voice generation within a unified model. To achieve precise and flexible controllability, we design a flexible alignment strategy that maps text, style, and prosody control signals onto the frame-level of spectrogram. This design allows CookVoice to support a wide range of tasks, including text-to-speech, text-to-singing voice, style-controllable generation, voice mimicry, voice conversion, and voice editing. Experimental results show that CookVoice achieves generation quality comparable to existing Text-to-Speech and text-to-singing voice baselines, while providing stronger style and prosody controllability. Moreover, CookVoice achieves comparable performance to large-scale baselines with only 43.51 million parameters and efficient inference using as few as 4 ODE steps, making it a practical solution for real-world human voice generation applications. Demo page is available at https://haoweilou.github.io/CookVoice/.",
+        "bbox": [
+            90,
+            278,
+            480,
+            589
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Index Terms: voice generation, generative artificial intelligence, speech generation, singing voice generation",
+        "bbox": [
+            92,
+            588,
+            478,
+            614
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "1. Introduction",
+        "text_level": 2,
+        "bbox": [
+            215,
+            626,
+            356,
+            639
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Recent years have witnessed an emergence of human voice generative AI, with models capable of high-quality text-tospeech (TTS) [1, 2, 3, 4], singing voice generation [5, 6, 7], zero-shot voice cloning [2, 4, 1], and voice editing [8]. Driven by advances in acoustic representation learning [9, 10], and generative artificial intelligence [11, 12] modern systems can generate increasingly natural and expressive voices from multi-modal input. However, despite this progress, most existing voice generation systems are still designed around isolated tasks. TTS models focus on generating speech from text [13], singing voice synthesis models typically require musical scores and note input [14, 5], style-controllable TTS models rely on text style prompts or reference speech [3, 1], and voice cloning models mainly emphasize speaker similarity [4]. Different forms of human voice generation tasks are commonly treated as separate problems, requiring task-specific architectures, datasets, training objectives, and control signals.",
+        "bbox": [
+            90,
+            646,
+            480,
+            857
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "This fragmentation makes human voice generation unnecessarily complex. Theoretically, speech and singing share the same fundamental linguistic basis, yet they differ substantially in temporal structure and prosodic behavior. In speech, duration and prosody are often implicit and context-dependent, while in singing, they are explicitly constrained by musical notes, beats, and melody. Moreover, style-controllable voice generation focuses on cloning the rich paralinguistic styles within reference speech, such as emotion, gender, age, timbre, and speaking or singing style. These styles may come from different modalities, including natural language descriptions, reference speech, reference singing voices, lexical tones, stresses, notes, or F0 contours. Existing methods usually handle only a subset of these controls, making it difficult to flexibly decide what to generate, how it should sound, and where its prosody should come from.",
+        "bbox": [
+            90,
+            857,
+            480,
+            883
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            519,
+            262,
+            910,
+            424
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "A unified model capable of generating different forms of human voice under a single controllable interface is highly desirable for both academia and the industrial community. Ideally, such a model should support both speech and singing voice generation, accept multimodal style control, and allow explicit control over prosody. This requires a framework that can represent human voice generation through shared factors, including content, prosody, and style, while preserving the distinct characteristics of different tasks. More importantly, the framework should remain simple to train, straightforward to use, and efficient at inference time.",
+        "bbox": [
+            519,
+            423,
+            910,
+            560
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "However, achieving such a unified framework remains challenging. Many recent voice generation models rely on autoregressive (AR) decoding or implicit alignment mechanisms [1, 2], while recent unified voice generation systems further attempt to cover multiple tasks within a single model [15, 8]. Although these models can achieve strong generation quality, their controllability is often constrained by the underlying generation mechanism. AR models generate acoustic tokens sequentially and therefore model duration and prosody implicitly through token prediction. This design is flexible at the utterance level, but it makes fine-grained temporal control difficult, since users cannot directly specify how each phoneme, note, or frame should evolve over time. In contrast, many NAR systems [13, 3, 16, 4] improve temporal stability by imposing explicit or restricted alignments, such as phoneme-level durations [13, 16, 3], noteto-phoneme mapping [14, 6, 7], or sentence-level prosody references [15, 8]. While these designs improve controllability over AR decoding, they often rely on predefined assumptions between content and prosody, which limits their flexibility when multiple control signals are jointly involved.",
+        "bbox": [
+            519,
+            560,
+            910,
+            808
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "These limitations become more severe for tasks requiring precise temporal control, such as singing voice generation and prosody mimicry. For singing, phonemes must follow scoredefined note durations and melodies; for voice mimicry, the generated voice should preserve detailed frame-level prosodic patterns from a reference signal. When content, style, and prosody are combined, implicit AR alignment or restricted NAR alignment makes it difficult to achieve both flexible control and precise temporal consistency. To address this issue, CookVoice adopts a flexible frame-level alignment strategy. Instead of assuming a fixed dependency between content and prosody, CookVoice explicitly expands different control signals to the acoustic frame level and allows them to be combined freely. This design enables more fine-grained and flexible controllability across speech, singing voice generation, and prosody mimicry.",
+        "bbox": [
+            519,
+            808,
+            910,
+            883
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "aside_text",
+        "text": "arXiv:2608.11590v1 [cs.SD] 12 Aug 2026",
+        "bbox": [
+            30,
+            363,
+            65,
+            783
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "table",
+        "img_path": "images/33d6f4a825b1c3fe6f0ae9672aa484b59cf9c7c1e887195b0ab9be6697abe755.jpg",
+        "table_caption": [
+            "Table 1: Alignment method and controllability comparison."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Model Class</td><td>Alignment Method</td><td>Controllability</td></tr><tr><td>AR</td><td>Token prediction</td><td>Voice-level</td></tr><tr><td>NAR</td><td>Restricted alignment</td><td>Phoneme-level</td></tr><tr><td>CookVoice</td><td>Flexible alignment</td><td>Frame-level</td></tr></table>",
+        "bbox": [
+            104,
+            110,
+            467,
+            179
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            90,
+            206,
+            480,
+            331
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "In this work, we propose CookVoice, a unified nonautoregressive (NAR) framework for multimodal, multi-style, and multi-task human voice generation. CookVoice formulates human voice generation as conditional latent acoustic generation, where the target voice is represented in a compact latent space and generated from three shared factors: content, prosody, and style. Content is represented by phoneme sequences derived from text or lyrics. Prosody can be controlled through discrete signals, such as lexical tones, stresses, and MIDI notes, or continuous frame-level F0 contours extracted from a reference voice. Style can be provided by either textbased descriptions or reference voice prompts, enabling both natural language style control and reference-based style transfer.",
+        "bbox": [
+            90,
+            331,
+            480,
+            505
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Instead of relying on implicit AR token-prediction, CookVoice adopts temporally aligned NAR generation pipeline which explicitly align content, prosody, and style tokens to acoustic tokens at frame level. For speech, phoneme durations are learned or predicted from alignment information. For singing voice, durations are deterministically derived from musical score timing. This design allows speech and singing voices to be modeled under the same temporal framework, while preserving their different duration and prosody structures. The temporally aligned representations are then integrated through a multimodal adaptive fusion module and passed to a flowmatching Diffusion Transformer for high-quality latent acoustic generation.",
+        "bbox": [
+            90,
+            505,
+            480,
+            667
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "CookVoice supports a broad range of human voice generation tasks within a single framework, including TTS, text-stylecontrollable TTS, voice-style-controllable TTS, singing voice generation, style-controllable singing voice generation, prosody mimicry and many others. These tasks are handled by activating different combinations of content, prosody, and style conditions, rather than training separate task-specific models. As a result, CookVoice is a simple, interpretable, and highly controllable framework for the generation of human voice in both speech and singing domains. The main contributions are summarized as follows:",
+        "bbox": [
+            90,
+            665,
+            480,
+            803
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "1. We propose CookVoice, a unified framework for multi-task human voice generation. By decomposing human voice into style, content, and prosody, CookVoice successfully unifying multiple voice generation task within a unified model.",
+        "bbox": [
+            89,
+            804,
+            480,
+            856
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "2. We design a flexible alignment mechanism for fine-grained controllable human voice generation. By aligning different control signals at frame level, CookVoice can flexibly support multimodal style and prosody control, enabling more precise control over paralinguistic style, melody, duration, and prosodic expression.",
+        "bbox": [
+            85,
+            857,
+            480,
+            883
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            534,
+            89,
+            909,
+            140
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "3. Our experiment demonstrate CookVoice achieves higher style and prosody controllability than existing baselines, including models trained with larger-scale data or larger model sizes. Despite using a lightweight architecture and a much smaller training data, CookVoice achieves superior style similarity and F0 controllability while maintaining efficient inference and competitive generation quality.",
+        "bbox": [
+            515,
+            140,
+            910,
+            230
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "2. Preliminary",
+        "text_level": 2,
+        "bbox": [
+            647,
+            242,
+            783,
+            258
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "2.1. Problem Formulation",
+        "text_level": 2,
+        "bbox": [
+            519,
+            263,
+            699,
+            278
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Human Voice Generation (HVG) is to generate waveform from different modality of control signal. In this study, we define the human voice as a combination of human speech and the singing voice. Control signals include text, lyric, note, and reference voice. Full details covered tasks are presented in Appendix D. For readers unfamiliar with linguistic and musical concepts, we provide terminology definitions in Appendix E.",
+        "bbox": [
+            519,
+            284,
+            909,
+            372
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Formally, we formulate HVG tasks as follow. Let $Y \\in$ $\\mathbb { R } ^ { N \\times T }$ denotes the latent embedding extracted from a spectrogram via HiFi-GAN [9], with N and T denoting the latent dimension and the number of frames. To systematically model the generation process, we assume the human voice can be disentangled into five independent key components:",
+        "bbox": [
+            519,
+            372,
+            909,
+            447
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Style $( S \\in \\mathbb { R } ^ { D } )$ : Encodes a global paralinguistic styles embedding of voice, indicating how the voice is expressed (e.g., gender, age, and emotion). This style embedding can be conditioned on different sources: either a text description $S _ { T }$ (e.g., ”A female speaking happily”), or a reference voice $S _ { \\nu }$ to clone the speaking style of target voice V;",
+        "bbox": [
+            519,
+            447,
+            909,
+            521
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Content $( X \\in \\mathbb { R } ^ { L _ { 1 } } ) \\colon$ Represents the linguistic content to be voiced. Content in Text-to-Speech (TTS) can be text, while in Text-To-Singing Voice (TTSV), it refers to the lyrics. In this study, X specifically denotes the sequence of phonemes;",
+        "bbox": [
+            519,
+            521,
+            909,
+            573
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Prosody $( { \\mathcal { P } } ) { \\mathrm { : } }$ contains all forms of prosody variations that shape the expressiveness and melody of the voice. We categorize prosody signals into discrete and continuous signals. The discrete signal $( \\mathcal { P } _ { d i s c } )$ contains lexical prosody tokens $\\mathcal { P } _ { l e x } \\in \\mathbb { R } ^ { L _ { 1 } }$ (e.g., tones in Mandarin Chinese or word stress in English) for speech, and musical notes $\\mathcal { P } _ { n o t e } \\in \\mathbb { R } ^ { L _ { 2 } }$ for singing voices. While musical notes govern prosody variation similar to lexical tones, their sequence length $( L _ { 2 } )$ can differ from the phoneme length $( L _ { 1 } )$ , as a single musical note may span multiple phonemes, or a single phoneme may stretch across multiple notes. Alternatively, the continuous prosody $( \\mathcal { P } _ { c o n t } )$ represents the frame-level fundamental frequency $( F _ { 0 } \\in \\mathbb { R } ^ { T } )$ contour extracted from a voice. It aligns temporally with the latent embedding, sharing the same frame length T.",
+        "bbox": [
+            519,
+            573,
+            909,
+            747
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Our objective is to train a generative model G(·) that can generate latent embedding $\\hat { Y }$ conditioned on different source of control signal $( \\hat { Y } = \\mathcal G ( S , X , \\mathcal P ) )$ ). Depending on the requirements of different tasks, S and P can be selectively conditioned on different source. Detailed task formulations are provided in Table 5.",
+        "bbox": [
+            519,
+            746,
+            909,
+            825
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "2.2. Latent Acoustic Encoding",
+        "text_level": 2,
+        "bbox": [
+            519,
+            837,
+            726,
+            851
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "We employ an Autoencoder (AE) with similar architecture with the HiFi-GAN [9] to efficiently encode audio signals into latent embedding. The encoder takes a linear spectrogram spec $\\in$ $\\mathbb { R } ^ { 5 1 3 \\times T }$ as input and compresses it into a continuous latent embedding $\\boldsymbol { Y } \\in \\mathbb { R } ^ { \\boldsymbol { N } \\times \\boldsymbol { T } }$ , where N denotes the latent channel dimension and $T$ represents the temporal frame length. The decoder is constructed using a series of transposed 1D convolutional layers, which progressively upsample the latent embedding $Y$ to reconstruct the original audio waveform. To ensure high-fidelity audio generation, the AE is jointly optimized using an adversarial loss from a discriminator alongside a reconstruction loss. Once the AE is fully trained, its weights are frozen. Latent embedding Y serves as the ground-truth target for CookVoice during voice generation.",
+        "bbox": [
+            519,
+            857,
+            910,
+            883
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            90,
+            89,
+            480,
+            239
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "3. CookVoice",
+        "text_level": 2,
+        "bbox": [
+            223,
+            252,
+            347,
+            266
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The overall architecture of CookVoice is presented in Figure 1.   \nThis section will present the architecture of CookVoice in detail.",
+        "bbox": [
+            90,
+            273,
+            478,
+            298
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "3.1. Style Encoder",
+        "text_level": 2,
+        "bbox": [
+            92,
+            322,
+            220,
+            335
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Style Encoder is designed to generate a style embedding $S ,$ which dictates the stylistic characteristics of the generated voice. In CookVoice, style conditioning can be derived from two modalities.",
+        "bbox": [
+            90,
+            342,
+            478,
+            391
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The first modality is text, coming from the text-based style prompt $S _ { T }$ . In this scenario, the style is controlled by natural language descriptions (e.g., a female is speaking with a happy emotion). Given a text-based style description $\\tau$ , we first extract its semantic embedding using a pre-trained, frozen, MP-Net [17] sentence encoder. The resulting embedding is then projected through a trainable linear layer to obtain the text style embedding $S _ { T } \\in \\mathbb { R } ^ { D }$",
+        "bbox": [
+            90,
+            391,
+            480,
+            491
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The second modality is a reference voice, V. This addresses scenarios requiring zero-shot voice cloning or timbre transfer, where the generated voice must mimic a reference voice. We encode the acoustic signal into a latent space using the encoding method described in Section 2.2. The resulting latent embedding $\\boldsymbol { \\nu } \\in \\mathbb { R } ^ { N \\times T }$ is then processed by a trainable Transformer [18] encoder with an attentive pooling layer to obtain the voice style embedding $S _ { \\nu } \\in \\mathbb { R } ^ { D }$",
+        "bbox": [
+            90,
+            491,
+            480,
+            590
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "During model training, the overall style condition S is uniformly sampled from either the text modality $S _ { T }$ or the voice modality $S _ { \\nu }$ with a 50% probability for each item within the batch. To align with the temporal resolution of the latent embedding $\\boldsymbol { \\nu } \\in \\mathbb { R } ^ { \\boldsymbol { \\breve { N } \\times T } }$ , the style embedding $S$ is expanded by repeating it T times along the temporal axis, producing the sequencelength style embedding $S _ { e } \\in \\mathbb { R } ^ { D \\times T }$",
+        "bbox": [
+            90,
+            589,
+            480,
+            678
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "3.2. Content Encoder",
+        "text_level": 2,
+        "bbox": [
+            92,
+            688,
+            240,
+            701
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "We employ a LanStyleTTS multilingual Grapheme-to-phenome (G2P) module [19] to convert text into phonemes $X$ and prosody tokens $P ,$ , where $X , P \\in \\mathbb { R } ^ { L _ { 1 } }$ . The phoneme sequence X captures the linguistic content, while the prosody sequence $P$ explicitly models phoneme-level prosodic variations (e.g., lexical tones in Mandarin or phoneme stress in English) across different linguistic contexts. In CookVoice, X strictly denotes the linguistic content, while $P$ serves as a discrete prosodyconditioning signal (also detailed in Section 3.3.1).",
+        "bbox": [
+            90,
+            708,
+            480,
+            820
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Phonemes are first mapped into a sequence of embeddings $X \\in \\mathbb { R } ^ { D \\times L _ { 1 } }$ and then processed through Feed-Forward Transformer (FFT) blocks [13]. A critical factor for natural and expressive voice generation is the duration of the phoneme $\\bar { \\mathcal { D } _ { X } } \\in \\mathbb { Z } ^ { L _ { 1 } }$ , which exhibits vastly different behaviors in the speech versus singing voice. In conventional TTS tasks, the absence of explicit duration constraints necessitates the use of a duration predictor [13, 3] or AR architectures [1, 20] for implicit inference. Conversely, in TTSV tasks, note durations are explicitly dictated by musical scores. To unify both tasks within CookVoice, we adopt a flexible duration alignment and expansion strategy.",
+        "bbox": [
+            90,
+            820,
+            480,
+            883
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            519,
+            89,
+            909,
+            177
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "During the training stage, we handle speech and singing voice differently. For speech, we use pre-trained ParaStyleTTS [3] to find optimal alignments between the speech audio and the phoneme sequence, yielding ground-truth durations $\\mathcal { D } _ { X }$ For singing voice, where score durations are denoted in relative beats rather than absolute time (e.g., seconds), we compute the relative temporal proportion of each phoneme based on its assigned beats. This relative proportion is then multiplied by the total number of acoustic frames T to ascertain the absolute frame-level duration. Both duration sequences satisfy the constraints $\\mathcal { D } _ { X } \\in \\mathbb { Z } ^ { L _ { 1 } }$ and $\\begin{array} { r } { \\sum _ { i = 1 } ^ { L _ { 1 } } { D _ { X } ^ { i } } = \\dot { T } } \\end{array}$ . Each phoneme embedding $X _ { i }$ is then repeated $\\mathcal { D } _ { X } ^ { i }$ times to produce the durationexpanded content embedding $\\mathbf { \\bar { \\Psi } } _ { X _ { e } } ^ { \\mathbf { \\Psi } } \\in \\mathbf { \\Psi } \\mathbb { R } ^ { D \\times T }$ , which perfectly matches the temporal dimension of the latent acoustic embedding.",
+        "bbox": [
+            519,
+            177,
+            909,
+            363
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "During the inference stage, we use a trained duration predictor from ParaStyleTTS [3] to predict phoneme durations for bilingual speech. For singing voice generation, the duration is deterministically computed from the provided musical score using the relative proportion methodology applied during training.",
+        "bbox": [
+            519,
+            363,
+            909,
+            429
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "3.3. Prosody Encoder",
+        "text_level": 2,
+        "bbox": [
+            519,
+            438,
+            670,
+            451
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Prosody affects how the content is expressed differently for speech and singing. In CookVoice, we categorize control signals of prosody, denoted as $\\mathcal { P } _ { \\cdot }$ , into discrete and continuous signals. The expanded prosody token is denoted as $\\mathcal { P } _ { e } \\in \\mathbb { R } ^ { D \\times T }$",
+        "bbox": [
+            519,
+            457,
+            909,
+            508
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "3.3.1. Discrete Signals",
+        "text_level": 2,
+        "bbox": [
+            521,
+            519,
+            668,
+            533
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Discrete prosody signals come from either the G2P module (for speech) or musical scores (for singing). For speech, these consist of the aforementioned lexical prosody tokens $P _ { l e x }$ (tones and stresses). Since the sequence length of $P _ { l e x }$ matches the phonemes $( L _ { 1 } )$ , each token has the same duration $\\mathcal { D } ^ { i }$ of its corresponding phoneme. Consequently, the mapped token embeddings are repeated $\\mathcal { D } ^ { i }$ times, giving the expanded discrete speech prosody embedding $\\bar { P _ { d i s c , e } } \\in \\bar { \\mathbb { R } } ^ { D \\times { T } }$",
+        "bbox": [
+            519,
+            539,
+            909,
+            639
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "For singing voice, the discrete signals are musical note tokens $\\overline { { P _ { n o t e } } } ^ { \\mathbf { \\bar { \\alpha } } } \\in \\mathbb { R } ^ { L _ { 2 } }$ . Similarly to the duration expansion in the Phoneme Encoder, we compute the exact frame duration for each note based on the score’s beat allocation and the total frames $T .$ The note embeddings are then expanded accordingly, serving as the singing counterpart for $P _ { d i s c , e }$",
+        "bbox": [
+            519,
+            639,
+            909,
+            714
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "3.3.2. Continuous Signals",
+        "text_level": 2,
+        "bbox": [
+            521,
+            726,
+            689,
+            739
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Continuous prosody signals are extracted directly from the reference voice waveform to explicitly represent fundamental frequency variations over time. We extract a continuous $F _ { 0 }$ contour $\\dot { \\in \\mathbb { R } ^ { T } }$ , which is passed through a linear projection layer to generate the continuous prosody embedding $\\mathbf { \\bar { \\mathit { P } } } _ { c o n t } \\in \\mathbb { R } ^ { \\mathbf { \\bar { \\mathit { D } } } \\times T }$",
+        "bbox": [
+            519,
+            745,
+            909,
+            808
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "During model training, the prosody embedding $\\mathcal { P } _ { e } \\in$ $\\mathbb { R } ^ { D \\times T }$ is constructed by randomly selecting the discrete representation $( P _ { d i s c , e } )$ or the continuous representation $( P _ { c o n t } )$ with equal probability. This strategy ensures that the model learns robust prosody control from both discrete tokens and continuous signals.",
+        "bbox": [
+            519,
+            808,
+            909,
+            883
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "image",
+        "img_path": "images/2054c35d757e0ef2d6c0b9c91bc90026595d7b8564e46c7addc4c78e265d9a88.jpg",
+        "image_caption": [
+            "Figure 1: Architecture of the CookVoice"
+        ],
+        "image_footnote": [],
+        "bbox": [
+            146,
+            90,
+            852,
+            378
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3.4. Flow-Matching DiT",
+        "text_level": 2,
+        "bbox": [
+            92,
+            426,
+            257,
+            439
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Given the style $S _ { e } ,$ content $X _ { e } ,$ , and prosody $\\mathcal { P } _ { e }$ satisfy $S _ { e } , X _ { e } , \\mathcal { P } _ { e } \\in \\mathbb { R } ^ { D \\times T }$ , we concatenate them along the feature dimension to construct a conditioning embedding $\\breve { C } \\in \\mathbb { R } ^ { 3 D \\times T } ;$",
+        "bbox": [
+            90,
+            447,
+            478,
+            485
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/97a03a02839155c63d16c86180c74a60f980850efa87d496f3d57b940ba486f1.jpg",
+        "text": "$$\nC = [ S _ { e } ; X _ { e } ; \\mathcal { P } _ { e } ]\n$$",
+        "text_format": "latex",
+        "bbox": [
+            228,
+            498,
+            342,
+            512
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "In the final stage of CookVoice, our objective is to translate the condition embedding $C \\in \\mathbb { R } ^ { 3 \\acute { D } \\times T }$ into high-fidelity latent embedding. To achieve this, we use a Diffusion Transformer (DiT) [11] as the core acoustic model, where $C$ serves as the essential cross-attention conditioning signal to guide the voice generation process.",
+        "bbox": [
+            90,
+            525,
+            480,
+            601
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We frame the generative process within the Optimal Transport Flow-Matching [12] (OT-FM) paradigm. Assuming a standard Gaussian prior $Y _ { 0 } \\ \\sim \\ { \\mathcal { N } } ( 0 , I )$ and a target voice latent embedding $\\boldsymbol { Y } _ { 1 } ~ \\in ~ \\mathbb { R } ^ { \\boldsymbol { N } \\times \\boldsymbol { T } }$ , our DiT network, parameterized as $v _ { \\theta } ( Y _ { t } , t , C )$ , is trained to regress the target vector field $Y _ { 1 } - Y _ { 0 }$ that drives the linear probability path between the prior and the empirical data distribution. The model is optimized using the standard Flow-Matching Mean Squared Error (MSE) objective.",
+        "bbox": [
+            90,
+            601,
+            480,
+            702
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/dd2c273ec56253f5d2f3f860dc231c0366e1cb36747c10936785d25c9ff0f207.jpg",
+        "text": "$$\n\\mathcal { L } _ { F M } = \\mathbb { E } _ { t , Y _ { 0 } , Y _ { 1 } } \\left[ | | v _ { \\theta } ( Y _ { t } , t , C ) - ( Y _ { 1 } - Y _ { 0 } ) | | ^ { 2 } \\right]\\tag{1}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            132,
+            713,
+            436,
+            730
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "During inference, we sample the noise $Y _ { 0 }$ and simulate the empirical probability flow Ordinary Differential Equation (ODE), given by $d Y _ { t } = v _ { \\theta } ( Y _ { t } , t , C ) d t$ . To solve this ODE and map the unstructured noise to the final acoustic representation $Y _ { 1 }$ , we employ a standard first-order Euler numerical solver. Starting from $t = 0 ,$ , the trajectory is discretely integrated with a fixed step size ∆t:",
+        "bbox": [
+            90,
+            741,
+            480,
+            829
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/88e9c0f2ef50d8a4f3936a9a1a6e4fd09f2c11a67faf52ae3803ab7088851d81.jpg",
+        "text": "$$\nY _ { t + \\Delta t } = Y _ { t } + \\Delta t \\cdot v _ { \\theta } ( Y _ { t } , t , C )\\tag{2}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            184,
+            843,
+            386,
+            857
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "To transform noise $Y _ { 0 }$ into latent embedding condition on $C .$",
+        "bbox": [
+            90,
+            869,
+            465,
+            883
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3.5. Multi-Task Training",
+        "text_level": 2,
+        "bbox": [
+            521,
+            426,
+            690,
+            441
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "CookVoice supports multiple generation tasks through a simple condition-switching training strategy. Instead of designing taskspecific objectives or separate task heads, we randomly replace the conditioning embeddings during training. For each sample in the training batch, the style condition is randomly sampled from either the text-based style embedding $S _ { T }$ or the voicebased style embedding $S _ { \\nu }$ . Similarly, the prosody condition is randomly sampled from either the discrete prosody embedding $\\mathcal { P } _ { d i s c , e }$ or the continuous $F _ { 0 }$ -based prosody embedding $\\mathcal { P } _ { c o n t } \\colon$",
+        "bbox": [
+            517,
+            449,
+            909,
+            562
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/cf866c51487466ba45479d1254f89c9fff21c6843a9d148f531fa73bf5b623af.jpg",
+        "text": "$$\nS = \\left\\{ { \\begin{array} { l l } { S _ { T } , } & { p = 0 . 5 , } \\\\ { S _ { \\nu } , } & { p = 0 . 5 , } \\end{array} } \\right. ~ \\mathcal { P } _ { e } = \\left\\{ { \\begin{array} { l l } { \\mathcal { P } _ { d i s c , e } , } & { p = 0 . 5 , } \\\\ { \\mathcal { P } _ { c o n t } , } & { p = 0 . 5 . } \\end{array} } \\right.\\tag{3}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            539,
+            579,
+            868,
+            613
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "This randomization is applied at the sample level within the batch, so different samples may use different style and prosody sources in the same training step. As a result, CookVoice learns to generate voices under different combinations of control signals, such as text style with discrete prosody, voice style with discrete prosody, text style with continuous $F _ { 0 }$ , and voice style with continuous $F _ { 0 }$ . This strategy allows a single model to support multiple speech and singing voice generation tasks without changing the model architecture or training objective.",
+        "bbox": [
+            517,
+            633,
+            909,
+            747
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "4. Experiments",
+        "text_level": 2,
+        "bbox": [
+            643,
+            762,
+            786,
+            777
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "4.1. Dataset",
+        "text_level": 2,
+        "bbox": [
+            521,
+            785,
+            608,
+            799
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We combine multiple open-sourced bilingual (english and chinese ) speech and singing voice dataset to conduct the experiment including Baker [21], LJSpeech [22], ESD [23], CREMA-D [24], CommonPhone [25], Genshin Voice dataset [26], GTSinger [27]. The combined dataset contains approximately 123k voice samples, 168 hours of voices from 6,361 speakers.",
+        "bbox": [
+            519,
+            807,
+            909,
+            883
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "4.2. Preprocessing",
+        "text_level": 2,
+        "bbox": [
+            92,
+            89,
+            220,
+            103
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "First, we extract the raw $F _ { 0 }$ contour (in Hz) from each voice sample. To accommodate the wide and varying pitch ranges inherent to both speech and singing voices, we project the $F _ { 0 }$ values onto a logarithmic scale and normalize them using a lower of 50 Hz.",
+        "bbox": [
+            90,
+            108,
+            480,
+            171
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3630edeb17b2ac6941674e5bebdb82edeb981439d79ed5e9a83a0585e4fef9d2.jpg",
+        "text": "$$\n\\tilde { f } = \\frac { \\log \\mathrm { F } _ { 0 } - \\log f _ { \\mathrm { m i n } } } { \\log f _ { \\mathrm { m a x } } - \\log f _ { \\mathrm { m i n } } } , \\quad f _ { \\mathrm { m i n } } = 5 0 .\\tag{4}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            156,
+            179,
+            413,
+            208
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "While $\\tilde { f } _ { t }$ provides a standardized absolute pitch, relying on it directly can introduce entanglement. Paralinguistic styles, such as age and gender, can effectively dictate a speaker’s absolute pitch range and are already captured by the style embedding. Using absolute $F _ { 0 }$ as an explicit condition would therefore cause interference between prosody and style. To decouple the melody from the speaker’s timbre, we convert the absolute $F _ { 0 }$ into a relative pitch contour by removing its voice-level mean. Specifically:",
+        "bbox": [
+            90,
+            211,
+            480,
+            324
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1f279fb5e81c9d743a47cece3d66703fe3a19fe599635d645ddec1587ecede17.jpg",
+        "text": "$$\n\\hat { f } = \\left\\{ \\begin{array} { l l } { \\tilde { f } _ { t } - \\operatorname* { m e a n } ( \\tilde { f } _ { t } ) , } & { t \\in \\mathcal { U } } \\\\ { - 2 , } & { t \\not \\in \\mathcal { U } , } \\end{array} \\right.\\tag{5}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            183,
+            323,
+            384,
+            356
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "U denotes voiced frames. For unvoiced frames, we set a constant value of −2. This design ensures that the explicit $F _ { 0 }$ input exclusively controls relative intonation and melody, effectively avoiding conflicts with the style.",
+        "bbox": [
+            90,
+            361,
+            480,
+            412
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "4.3. Implementation Details",
+        "text_level": 2,
+        "bbox": [
+            92,
+            422,
+            282,
+            436
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "The CookVoice model is trained on 110k samples, with a singing-to-speech ratio of 1:9. All evaluation samples are not seen by the model during training stage. For each sample, the temporally aligned style, content, and prosody embeddings are concatenated along the feature dimension to form the conditioning embedding. This conditioning embedding is then used as the condition for DiT-S backbone [11], which learns to generate the target latent acoustic embedding. The model is optimized with the Flow-Matching objective [12]. We train CookVoice on a single NVIDIA RTX 5090 GPU with 32 batch size for 800K steps.",
+        "bbox": [
+            90,
+            441,
+            480,
+            579
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "4.4. Evaluation Metrics",
+        "text_level": 2,
+        "bbox": [
+            92,
+            589,
+            253,
+            602
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "To comprehensively evaluate the performance of CookVoice, we use both subjective and objective evaluation metrics to assess generated voice quality, intelligibility, style adherence, and prosody accuracy.",
+        "bbox": [
+            90,
+            608,
+            480,
+            659
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Subjective Evaluation: We evaluate CookVoice from four perspectives: perceptual quality, content intelligibility, style controllability, and prosody controllability. For subjective evaluation, we conduct Mean Opinion Score (MOS) listening tests to measure the naturalness and overall perceptual quality of generated speech and singing voices. For singing voice generation, we additionally use Melody Comparative MOS (M-CMOS) to evaluate melody consistency.",
+        "bbox": [
+            90,
+            658,
+            480,
+            758
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Objective Evaluation: We first assess content intelligibility using Word Error Rate (WER), Phoneme Error Rate (PhoER), and Prosody Error Rate (ProER). The generated audio is transcribed by an ASR system, Whisper [28], and compared with the ground-truth content at different levels. WER measures word-level errors, PhoER measures phonemelevel errors, and ProER measures errors in discrete prosody tokens such as tones, stresses, or note-related prosodic labels. To evaluate style controllability, we compute Style Similarity (S-SIM) between the generated voice and the target style reference. Specifically, we extract style embeddings from both audio samples using a pre-trained style encoder [29] and calculate their cosine similarity, where a higher value indicates better style preservation. To evaluate prosody controllability, we use F0 Root Mean Square Error (F0-RMSE) and F0 Pearson Correlation (F0-CORR). F0-RMSE measures the absolute pitch deviation between generated and target F0 contours, while F0- CORR measures whether the generated pitch follows the target pitch trend. Detailed metric definitions are provided in the $\\mathbf { A } \\mathbf { p } \\mathbf { \\cdot }$ pendix B.",
+        "bbox": [
+            90,
+            758,
+            480,
+            883
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            517,
+            89,
+            910,
+            215
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "5. Results & Discussion",
+        "text_level": 2,
+        "bbox": [
+            608,
+            227,
+            821,
+            242
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "In this section, we provide an analysis of experimental results and organize the discussion to answer the following five research questions (RQs):",
+        "bbox": [
+            519,
+            249,
+            909,
+            288
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "• RQ1: How does CookVoice perform compared with existing TTS and TTSV baselines in term of audio?",
+        "bbox": [
+            521,
+            291,
+            909,
+            316
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "• RQ2: How controllable is CookVoice in terms of style and prosody compared with existing baselines?",
+        "bbox": [
+            521,
+            317,
+            909,
+            343
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "• RQ3: How do different style and prosody control signals affect the generation performance?",
+        "bbox": [
+            522,
+            344,
+            907,
+            370
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "• RQ4: How does the number of ODE solver steps affect the quality-efficiency trade-off?",
+        "bbox": [
+            522,
+            372,
+            909,
+            398
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "• RQ5: How efficient is CookVoice compared with existing TTS and TTSV models?",
+        "bbox": [
+            522,
+            398,
+            909,
+            424
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "5.1. RQ1: Performance Comparison",
+        "text_level": 2,
+        "bbox": [
+            521,
+            437,
+            766,
+            451
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "We compare CookVoice with representative TTS and TTSV baselines in terms of controllability, perceptual quality, and intelligibility using both subjective and objective metrics. As shown in Tables 2 and 3, CookVoice achieves comparable generation quality while providing stronger style and prosody controllability across both TTS and TTSV tasks.",
+        "bbox": [
+            519,
+            456,
+            909,
+            532
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "The main advantage of CookVoice lies in controllability. For TTS, CookVoice consistently improves style similarity and prosody consistency over the compared baselines. Under voicebased style control, CookVoice achieves an S-SIM of over 90% and an F0-CORR of up to 0.7102, whereas the best TTS baselines (Vevo2) achieve an SSIM of approximately 75% and an F0-CORR of approximately 0.25. A similar trend is observed for TTSV, CookVoice achieves the highest style similarity and prosody consistency, reaching an S-SIM of 95.00% and an F0- CORR of 0.8425. These results demonstrate that CookVoice more accurately preserves the style instruction from either voice or text modality and follows the prosody sourced from different types of control signals.",
+        "bbox": [
+            517,
+            532,
+            909,
+            695
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "In terms of perceptual quality, CookVoice exhibits different performance patterns for speech and singing voice generation. For TTS, its MOS scores are lower than most TTS baselines, although its best configuration achieves a MOS of 3.98, close to the ground-truth score of 4.05. For TTSV, CookVoice achieves a best MOS of 3.40, outperforming most of the compared singing voice generation systems and remaining comparable to Vevo2, which achieves 3.42. CookVoice also obtains the highest MC-MOS score, indicating better perceived melody consistency.",
+        "bbox": [
+            517,
+            695,
+            910,
+            820
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "For intelligibility, CookVoice achieves comparable WER results. Its TTS performance lies in the middle range of the evaluated baselines. For TTSV, CookVoice outperforms most baselines on the Chinese song and achieves the secondlowest English WER among the models that support English",
+        "bbox": [
+            519,
+            820,
+            910,
+            883
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Table 2: Controllability evaluation. Include style controllability, Style-Similarity S-SIM ↑ and Prosody Controllability F0-RMSE ↓ and F0-CORR ↑. Values in parentheses indicate the relative performance improvements compared to the best-performing baselines.",
+        "bbox": [
+            89,
+            98,
+            910,
+            127
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0b38f8bd4bcbb7fdd72aaa48c1c3aff92438d3a41fbf25c0f51e32438d34b007.jpg",
+        "text": "$$\n\\mathrm { T e x t } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            158,
+            373,
+            172
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ea69bdc1bb89dba3530d1648ed111a6ad09008b7ecc02aa20bc7a564d9f37d36.jpg",
+        "text": "$$\n\\mathrm { V o i c e } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            171,
+            376,
+            184
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/cd2736b7e0fc8629b3d6254a00cbbeadbdc86849a6016963bca2bd04b9a15ef3.jpg",
+        "text": "$$\n3 0 . 5 3 \\pm 1 0 . 9 8\n$$",
+        "text_format": "latex",
+        "bbox": [
+            435,
+            158,
+            531,
+            172
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/d900d7b9d2db9749e363058e0827b97116aefa15f37bbb3a0c34c7315c2f9ce3.jpg",
+        "text": "$$\n4 6 . 6 7 \\pm 1 7 . 1 0\n$$",
+        "text_format": "latex",
+        "bbox": [
+            435,
+            171,
+            531,
+            184
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/b813fe009c98dffb4c1a7ae86e25f6c45b612351ed43a70a252b25ebd4d23d03.jpg",
+        "text": "$$\n1 3 8 . 1 8 \\pm 4 3 . 1 7\n$$",
+        "text_format": "latex",
+        "bbox": [
+            598,
+            158,
+            699,
+            172
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/41cada704ab70e561131f3aa3128fe7111c002e52782bb4d8f68f451f98c44e9.jpg",
+        "text": "$$\n0 . 1 0 6 5 \\pm 0 . 1 7 0 9\n$$",
+        "text_format": "latex",
+        "bbox": [
+            768,
+            158,
+            878,
+            172
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c4142d68bdb20199634e50df8ee51d64eb0a9891e2286e80c7573d2bf73e5eec.jpg",
+        "text": "$$\n\\mathrm { V o i c e } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            184,
+            376,
+            196
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0d9f524748944254a25fba5488aba9ae20fd23a6d3de67ee1fa0c7699afe034d.jpg",
+        "text": "$$\n6 6 . 2 9 \\pm 1 3 . 7 3\n$$",
+        "text_format": "latex",
+        "bbox": [
+            435,
+            184,
+            529,
+            196
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1f5e084f1ac0ff98665cf8391951e8de3f2c34539c60f52f06cd06382a0cff64.jpg",
+        "text": "$$\n1 2 6 . 3 5 \\pm 4 5 . 2 3\n$$",
+        "text_format": "latex",
+        "bbox": [
+            598,
+            171,
+            699,
+            184
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/5ca73930103e928dad5869bc2e6f0ea79fab1dfafd2aa12ea10c8abb090880ee.jpg",
+        "text": "$$\n0 . 1 9 0 2 \\pm 0 . 2 4 2 3\n$$",
+        "text_format": "latex",
+        "bbox": [
+            768,
+            171,
+            878,
+            184
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/25c439d85b547a0295147b0fccb336948096c0113f6669b450dc878437332c5c.jpg",
+        "text": "$$\n\\mathrm { T e x t } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            196,
+            373,
+            209
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c8064fc58b7f64d46578d3277d650a1c077543efb5f51dcd764aa8c47466db69.jpg",
+        "text": "$$\n1 3 6 . 5 6 \\pm 4 6 . 2 8\n$$",
+        "text_format": "latex",
+        "bbox": [
+            598,
+            184,
+            699,
+            196
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3a21dce872900a02e1844c13679197b8e80acd9f5335fba32f76edab971ef129.jpg",
+        "text": "$$\n4 2 . 9 6 \\pm 1 7 . 7 3\n$$",
+        "text_format": "latex",
+        "bbox": [
+            435,
+            197,
+            529,
+            210
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/bdcd115bc2144ffde712af2a8b8a06153057cf97b26dd0ebf4f3579046290ed1.jpg",
+        "text": "$$\n0 . 1 5 0 5 \\pm 0 . 1 7 0 3\n$$",
+        "text_format": "latex",
+        "bbox": [
+            768,
+            184,
+            878,
+            196
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4d403de68eabf7b0833d4b567279c32b7ef6f1f2d0c75a203b2b305d446619a7.jpg",
+        "text": "$$\n\\mathrm { V o i c e } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            209,
+            378,
+            221
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/9119c3bbc9079be10b660ea6ab67f06f567e4a0fa4e1ce66843f709ad1cbcfd0.jpg",
+        "text": "$$\n1 2 6 . 5 6 \\pm 3 7 . 9 3\n$$",
+        "text_format": "latex",
+        "bbox": [
+            598,
+            197,
+            699,
+            210
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/be46bd1c1c7a7fef395d1acf2597666a8f2e0caa95452494eba8bbcf84c5eb4b.jpg",
+        "text": "$$\n7 1 . 1 9 \\pm 1 3 . 7 7\n$$",
+        "text_format": "latex",
+        "bbox": [
+            435,
+            209,
+            529,
+            222
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/2511687a05dadb5714f41c7e9d5913c69a2cd880943d71b3b5d736f661345b92.jpg",
+        "text": "$$\n0 . 1 7 7 7 \\pm 0 . 2 2 0 6\n$$",
+        "text_format": "latex",
+        "bbox": [
+            768,
+            196,
+            878,
+            209
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/90fbe940974768dcd10c1a54fadfdd4248cb281d06f865d72aa521ace8c23ac6.jpg",
+        "text": "$$\n\\mathrm { V o i c e } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            221,
+            378,
+            234
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/972366a98255f69458fddda425087fac5309282cfc73125e2a2cc6a54151f75d.jpg",
+        "text": "$$\n1 2 3 . 6 5 \\pm 4 3 . 9 9\n$$",
+        "text_format": "latex",
+        "bbox": [
+            598,
+            209,
+            699,
+            221
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/391bcb1e2a50b32591419e9a2b719bf38612658a3c173eaf3e2408eb75e18595.jpg",
+        "text": "$$\n7 5 . 1 1 \\pm 8 . 2 0\n$$",
+        "text_format": "latex",
+        "bbox": [
+            438,
+            221,
+            527,
+            234
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e343837db5f3ffdfbdc66070cef99ef38cb72670972b47f29a0093003f67524f.jpg",
+        "text": "$$\n0 . 2 5 4 8 \\pm 0 . 2 5 6 0\n$$",
+        "text_format": "latex",
+        "bbox": [
+            768,
+            209,
+            878,
+            221
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/620cd7b1e3a8d98c5b8bb9e4023c3d55db63f6810bbe5131d988033f72e0ca1c.jpg",
+        "text": "$$\n1 3 6 . 0 0 \\pm 4 5 . 0 9\n$$",
+        "text_format": "latex",
+        "bbox": [
+            598,
+            221,
+            699,
+            234
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/548924a56c66203bd6961d1b83bd3a06fabc30008e7c43d566f4abf9c45ff0c7.jpg",
+        "text": "$$\n0 . 1 2 4 2 \\pm 0 . 1 8 0 6\n$$",
+        "text_format": "latex",
+        "bbox": [
+            768,
+            221,
+            878,
+            234
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/12d0248468f33c7d1f5a4705aa58b44fbf68398132a52f8811b921bb8d3a2b6c.jpg",
+        "text": "$$\nS _ { T } + \\mathcal { P } _ { d i s c }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            174,
+            256,
+            253,
+            271
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/af69028f4cbc0504de2d4c6e75ce2ef8514e574cbe9aea37efb93ed9f16e8d64.jpg",
+        "text": "$$\n\\mathrm { T e x t } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            256,
+            373,
+            269
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/64288c83359bbe2c98b56d9087952135122ece7f6ff48070f42088d586551d70.jpg",
+        "text": "$$\n6 0 . 7 8 \\pm 1 4 . 8 6 _ { ( + 4 1 . 4 8 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            406,
+            256,
+            556,
+            271
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f0fc9cf79153f44833bb4b8d2d32f7bcb46f3ba8e36c2e68f4433ec03a5136ee.jpg",
+        "text": "$$\n\\mathrm { T e x t } + \\mathrm { C O N T }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            269,
+            378,
+            282
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4f39708eaacc8c0308fe3c2291d3f4efaf75894c91ba18c5a00d07f56844ad4d.jpg",
+        "text": "$$\nS \\tau + \\mathcal { P } _ { c o n t }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            174,
+            269,
+            255,
+            282
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ccea6a3c62c2f4117765140d12b172e1c26bcea7ce04581cbea9a35a9914c8fb.jpg",
+        "text": "$$\n1 1 9 . 5 6 \\pm 5 0 . 7 3 _ { ( \\downarrow 5 . 5 3 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            574,
+            256,
+            721,
+            271
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/d8e0e20ead5ffd641e4c4724c537a4527f40dd45ae6e5c632c94f738ffb149db.jpg",
+        "text": "$$\n0 . 3 9 2 9 \\pm 0 . 2 3 9 5 _ { ( + 1 2 1 . 1 0 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            736,
+            256,
+            909,
+            271
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/9274db979f4c850ea5210b29bf96798ca9878b04c698497734ff6d8e031533dc.jpg",
+        "text": "$$\n7 3 . 0 9 \\pm 1 \\mathrm { \\dot { 6 } } . 3 8\n$$",
+        "text_format": "latex",
+        "bbox": [
+            435,
+            269,
+            531,
+            281
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6ac3a78533e291e2bda4479cb42764a4eb554d391dc3bce52cdf527aaa4beb50.jpg",
+        "text": "$$\n8 8 . 8 5 \\pm 3 8 . 5 6\n$$",
+        "text_format": "latex",
+        "bbox": [
+            598,
+            269,
+            695,
+            281
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/654c5d3848cebe3523e5ad5bf13a50752fd8b1b90848f30fb8a69a46812e221b.jpg",
+        "text": "$$\n\\mathrm { V o i c e } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            281,
+            379,
+            294
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f8c3a5897aab4e87c4d2cb1f842a56beb89f0c0fb15738722898e7ab7e7172d1.jpg",
+        "text": "$$\nS _ { \\mathcal { V } } + \\mathcal { P } _ { d i s c }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            174,
+            282,
+            253,
+            294
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ce9d762abf33ee5d3f6163a492c61600e2027eb95a95a79e60924df5f695aefa.jpg",
+        "text": "$$\n8 7 . 4 7 \\pm 3 . 7 7 _ { ( + 1 6 . 4 6 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            410,
+            281,
+            552,
+            296
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/bac5ce7e6731958ac1992a65d1b8b9a17bf86dc28280ef5fa8323b4d51e5fc53.jpg",
+        "text": "$$\n0 . 6 4 1 6 \\pm 0 . 2 0 1 1\n$$",
+        "text_format": "latex",
+        "bbox": [
+            766,
+            269,
+            878,
+            281
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0e872a6c880347ea421fe53ab7803ec45f4c0ce4061cc1e47272e6bba1d8b571.jpg",
+        "text": "$$\n9 9 . 0 5 \\pm 4 3 . 7 7 _ { ( \\downarrow 1 9 . 8 9 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            573,
+            281,
+            721,
+            296
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/81353651d5c1d35bc64f5907497c314539a918e353353236da026079c3b086ab.jpg",
+        "text": "$$\n0 . 5 3 3 0 \\pm 0 . 2 3 3 8 _ { ( + 1 0 9 . 1 8 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            736,
+            281,
+            907,
+            296
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/8c775f37b1011f4cb0ad0b6069e98fbf4b1bcac537068b958d371659789e5b00.jpg",
+        "text": "$$\nS _ { \\nu } + \\mathcal { P } _ { c o n t }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            174,
+            294,
+            255,
+            307
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/34fe61c0f959d580a226f1ae2c7af29cc742b101b98d70d6e7481f60efb2a90d.jpg",
+        "text": "$$\n\\mathrm { V o i c e } + \\mathrm { C O N T }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            294,
+            383,
+            307
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ba386fa3295a9602a72fc966743e41d9f186057d9d31c414213bdffa72ac122a.jpg",
+        "text": "$$\n9 1 . 6 5 \\pm \\dot { 2 } . 9 8\n$$",
+        "text_format": "latex",
+        "bbox": [
+            438,
+            294,
+            527,
+            307
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1a5f8d9018d9b14e4afaeff74892fdfd979ac83c82b0ba6e93217f24bdbfad4e.jpg",
+        "text": "$$\n7 4 . 9 8 \\pm 2 \\ddot { 4 } . 5 3\n$$",
+        "text_format": "latex",
+        "bbox": [
+            600,
+            294,
+            697,
+            307
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/8eb38737deeb8f99b7358c94f56ec79464299456f8f058244808a405abf706cc.jpg",
+        "text": "$$\n0 . 7 1 0 2 \\pm 0 . { \\dot { 1 } } 7 1 4\n$$",
+        "text_format": "latex",
+        "bbox": [
+            766,
+            294,
+            880,
+            307
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/422446cfb2ad7e29a33145eae6b6e66c6ec110279a86c5faa903055c6f3bf337.jpg",
+        "text": "$$\n\\mathrm { T e x t } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            312,
+            373,
+            325
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ccd82f4e16c0e7701a56caed90093ff656902581fc4b0c65cb9a1e38bef29d46.jpg",
+        "text": "$$\n7 5 . 8 1 \\pm 5 . 8 1\n$$",
+        "text_format": "latex",
+        "bbox": [
+            438,
+            312,
+            526,
+            325
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/7affdd39aa2070eb2bd9ec93ebc95ce5936cdfd8d705e1351ecbafe6192072fa.jpg",
+        "text": "$$\n1 0 0 . 4 8 \\pm 2 6 . 2 3\n$$",
+        "text_format": "latex",
+        "bbox": [
+            596,
+            312,
+            699,
+            325
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/bee276aba45f8b261eeb1e7118fe0c033d72b450e6845165c48d7a409f0bed79.jpg",
+        "text": "$$\n0 . 4 5 8 0 \\pm 0 . 1 8 5 7\n$$",
+        "text_format": "latex",
+        "bbox": [
+            766,
+            312,
+            878,
+            325
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/da114520644bf8f1cf67cab4d0ccb7e449ed311b7f9d3b12307242b12589d874.jpg",
+        "text": "$$\n\\mathrm { V o i c e } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            325,
+            378,
+            337
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/21aeb0e738ec3526139bba112c2481fc9e2afc7b58fc7840ae71c75806a8db59.jpg",
+        "text": "$$\n8 2 . 0 0 \\pm 5 . 4 0\n$$",
+        "text_format": "latex",
+        "bbox": [
+            438,
+            325,
+            526,
+            338
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c8b3c39611b876e2ea3f4f7629733e03672a192b72cea37dce6ddb8992c34f39.jpg",
+        "text": "$$\n1 0 1 . 8 2 \\pm 2 5 . 7 9\n$$",
+        "text_format": "latex",
+        "bbox": [
+            596,
+            325,
+            699,
+            337
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/151dd2de9c8dbac01edebe342c9f12d53537d9c2fecf4e3a35ce40dacab02afc.jpg",
+        "text": "$$\n0 . 4 8 5 6 \\pm 0 . 1 5 1 8\n$$",
+        "text_format": "latex",
+        "bbox": [
+            766,
+            325,
+            878,
+            337
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/85f7ebe4edab7e774cf9d13711baf90ba0794b80f0553fd5f6c9f5ffbc14dbd7.jpg",
+        "text": "$$\n\\mathrm { V o i c e } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            337,
+            379,
+            350
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c6ea22312c23099966baa760dbdb548bf3a9ca82d7f28e247527846bc8c6c772.jpg",
+        "text": "$$\n8 7 . 5 3 \\pm 5 . 0 2\n$$",
+        "text_format": "latex",
+        "bbox": [
+            438,
+            337,
+            526,
+            350
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/b637d0c6d3d92c3a5ee4f6039494b27bba663cb6678cba238eadc397aa05bf58.jpg",
+        "text": "$$\n9 2 . 5 0 \\pm 2 2 . 0 1\n$$",
+        "text_format": "latex",
+        "bbox": [
+            598,
+            337,
+            697,
+            350
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0785653133c3ba9df6f11a5133aba9f44e905a06d628851690dcf4f9ddd79b6f.jpg",
+        "text": "$$\n0 . 5 6 4 3 \\pm 0 . 1 7 4 9\n$$",
+        "text_format": "latex",
+        "bbox": [
+            768,
+            337,
+            878,
+            350
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e0d877b2efe67c4834508b5b9461b2c4aabfb3453d851a6062bcc2b0d3172307.jpg",
+        "text": "$$\n\\mathrm { V o i c e } + \\mathrm { C O N T }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            349,
+            383,
+            362
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6e03aaf896f42beea844b51b69aa1e9aecef17e471c5aef43eebe2fb09998a5a.jpg",
+        "text": "$$\n8 6 . 5 5 \\pm 7 . 1 8\n$$",
+        "text_format": "latex",
+        "bbox": [
+            438,
+            349,
+            526,
+            362
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3c0fa5f4d4145742ae8f9a2f8893aee56e50bbad015fefee81425a98585809d3.jpg",
+        "text": "$$\n7 9 . 5 6 \\pm 2 8 . 6 9\n$$",
+        "text_format": "latex",
+        "bbox": [
+            600,
+            349,
+            695,
+            362
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/5ba3bb43f63fb6bd5539a59cbcc662171cb278a4d185c26f667058e605a86a90.jpg",
+        "text": "$$\n\\mathrm { V o i c e } + \\mathrm { C O N T }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            361,
+            384,
+            375
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/217a00964a19413e8baf4fa25091090f9792a692f20dc8e3b8827d7c2c7d4358.jpg",
+        "text": "$$\n8 8 . 0 9 \\pm 3 . 5 6\n$$",
+        "text_format": "latex",
+        "bbox": [
+            438,
+            362,
+            526,
+            375
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c008801275cc684d7471003b096cbacceec48ec33a6558f8c66ce7a7555c687d.jpg",
+        "text": "$$\n0 . 7 1 2 5 \\pm 0 . 1 6 1 5\n$$",
+        "text_format": "latex",
+        "bbox": [
+            768,
+            349,
+            878,
+            362
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/a1dac340e5379f43cfb4dfb197ccdbf1a273cd8a5a94d651106e76d1e6dbb6a8.jpg",
+        "text": "$$\n9 0 . 0 9 \\pm 2 6 . 9 4\n$$",
+        "text_format": "latex",
+        "bbox": [
+            600,
+            361,
+            695,
+            375
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4cd8719561161fa4e4ab72bc562cf3107c29d0338b89d3c65b165c6ade149b32.jpg",
+        "text": "$$\n0 . 6 2 4 2 \\pm 0 . 1 4 7 9\n$$",
+        "text_format": "latex",
+        "bbox": [
+            768,
+            361,
+            878,
+            375
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3f38b70bc90c304cb88dd2d0f24031f68c6d980bdc4056bbe9e1d4b0be67f99e.jpg",
+        "text": "$$\nS _ { T } + \\mathcal { P } _ { d i s c }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            174,
+            398,
+            253,
+            412
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/cee76072fece32dd996da7c8a37fc5ac209e2799e6923b25798422998a3a892c.jpg",
+        "text": "$$\n\\mathrm { T e x t } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            397,
+            373,
+            411
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/064f701da2238683402b65c05defb4e477701d7a4129b9a14c9dde3d5c7540d9.jpg",
+        "text": "$$\nS \\tau + \\mathcal { P } _ { c o n t }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            174,
+            412,
+            255,
+            424
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4b94e8fb62b3709c6a742322afe11dcecf46392a7840b94637ddfd2c387a4a33.jpg",
+        "text": "$$\n\\mathrm { T e x t } + \\mathrm { C O N T }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            410,
+            378,
+            424
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/65f96a0a0f1d57bc05fd0564f70e36eb2526225044fa24e5ba51fc96b030d69b.jpg",
+        "text": "$$\n8 5 . 7 5 \\pm 5 . 4 1 _ { ( + 1 3 . 1 1 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            410,
+            398,
+            552,
+            412
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/30d96f489749ba180c577a9441ab37e55ecde21f265d9e39e282fdcc422eae6a.jpg",
+        "text": "$$\n9 7 . 7 3 \\pm 2 7 . 3 7 _ { ( \\downarrow 2 . 7 4 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            574,
+            398,
+            717,
+            412
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/37a52c61361f1561dd47473ef50713926f9aa546b16dbee8be1068dae95f26f1.jpg",
+        "text": "$$\n0 . 5 3 8 3 \\pm 0 . 1 8 2 5 _ { ( + 1 7 . 5 3 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            739,
+            398,
+            905,
+            412
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/86334066e85bec9c5c3b637c3e832ce22f31aa866f6242f8a423d4929a68d59f.jpg",
+        "text": "$$\nS _ { \\mathcal { V } } + \\mathcal { P } _ { d i s c }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            174,
+            424,
+            253,
+            436
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/17a9bc80af89eb86240c91866da9df61f7c10b643934d8c431c85e93937fdc43.jpg",
+        "text": "$$\n7 2 . 5 1 \\pm 1 8 . 0 2\n$$",
+        "text_format": "latex",
+        "bbox": [
+            435,
+            411,
+            531,
+            423
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0be14937546e1124c4f921bbae841d1337370da56c104749027bdcd68ebccb59.jpg",
+        "text": "$$\n\\mathrm { V o i c e } + \\mathrm { D I S C }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            423,
+            378,
+            436
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4d869a7f5342b5c7218c72c75d79d2b5d559769612a5a01a4f3dc82c1b72b138.jpg",
+        "text": "$$\n6 8 . 1 2 \\pm 2 \\dot { 0 } . 6 9\n$$",
+        "text_format": "latex",
+        "bbox": [
+            598,
+            411,
+            695,
+            423
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/d3c0c584f58f14437df5885ced641448ed6376f1435a9b4e17696d9908f121f1.jpg",
+        "text": "$$\nS _ { \\mathcal { V } } + \\mathcal { P } _ { c o n t }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            174,
+            436,
+            255,
+            449
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/028414631f7557d0fb04d81bdbf9ed79e9f45e9f5dc0cc22be751e18daa85488.jpg",
+        "text": "$$\n9 3 . 7 2 \\pm 2 . 0 0 _ { ( + 7 . 0 7 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            411,
+            423,
+            549,
+            437
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/525500aba8de4b96ca09fd5934815196fc72b34ec38d5743053ac57045128311.jpg",
+        "text": "$$\n\\mathrm { V o i c e } + \\mathrm { C O N T }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            285,
+            435,
+            383,
+            449
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/99c94834006eab6f6fa4c82d96943fa9f71f58b719ccbcd16610ce5ff3121f63.jpg",
+        "text": "$$\n0 . 8 4 0 1 \\pm 0 . { \\dot { 0 } } 6 5 5\n$$",
+        "text_format": "latex",
+        "bbox": [
+            766,
+            411,
+            878,
+            423
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/54d63f9ba1df76b486717fcd42055cfe9b8d251816ac4494263e99d658864df5.jpg",
+        "text": "$$\n9 5 . 0 1 \\pm 2 8 . 4 3 _ { ( \\uparrow 2 . 7 1 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            574,
+            423,
+            719,
+            436
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1728e5274b10ad8541a13884b193e19c71a2b7d096f7c6f2b4eb3f9664159ce6.jpg",
+        "text": "$$\n9 5 . 0 0 \\pm 1 . 7 2 _ { ( + 7 . 8 4 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            413,
+            436,
+            549,
+            450
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1cb3533ee157411b799474337eb853a2de737e48dedb1f8dc3b93cf80d7cf616.jpg",
+        "text": "$$\n5 6 . 9 6 \\pm 1 4 . 7 6 _ { ( \\downarrow 2 8 . 4 1 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            573,
+            436,
+            721,
+            449
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/d30053517f6a017774f7beef3759ed0b51a6230c6815b5464a5bf2349652446b.jpg",
+        "text": "$$\n0 . 5 7 0 4 \\pm 0 . 1 6 8 5 _ { ( + 1 . 0 8 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            741,
+            423,
+            902,
+            436
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f4f5b0c06e8bec08300b1f28c2a0d0231f34d7ca11be943fd042b51203635ae7.jpg",
+        "text": "$$\n0 . 8 4 2 5 \\pm 0 . 0 7 1 1 _ { ( + 1 8 . 2 5 \\% ) }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            739,
+            436,
+            905,
+            450
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "table",
+        "img_path": "images/a1de435929c2b903ac5aabbd0173e4260bb4b8f336638459ffbe8e78cfd0cbe1.jpg",
+        "table_caption": [
+            "Table 3: Quality evaluation in terms ofMean Opinion Score (MOS), Melody Comparative Mean Opinion Score (MC-MOS) and Word Error Rate (WER) for Chinese (CH) and English (EN)."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Task</td><td>Model</td><td>Style + Prosody</td><td>MOS ↑</td><td>MC-MOS ↑</td><td>WER-CH↓</td><td>WER-EN↓</td></tr><tr><td rowspan=\"10\">TTS</td><td>CosyVoice [1]</td><td> $\\mathrm { T e x t } + \\mathrm { D I S C }$ </td><td> $4 . 3 0 \\pm 0 . 9 0$ </td><td></td><td> $5 . 9 7 \\pm 7 . 5 3$ </td><td> $3 . 1 4 \\pm 6 . 1 1$ </td></tr><tr><td>CosyVoice [1]</td><td> $\\mathrm { V o i c e } + \\mathrm { D I S C }$ </td><td> $4 . 0 5 \\pm 1 . 0 7$ </td><td></td><td> $1 1 . 2 7 \\pm 1 2 . 4 0$ </td><td> $5 . 7 9 \\pm 9 . 8 5$ </td></tr><tr><td>F5-TTS [4]</td><td> $\\mathrm { V o i c e } + \\mathrm { D I S C }$ </td><td> $4 . 3 5 \\pm 0 . 9 6$ </td><td></td><td> $5 . 2 3 \\pm 7 . 4 5$ </td><td> $2 . 3 4 \\pm 4 . 6 7$ </td></tr><tr><td>ParaStyleTTS [3]</td><td> $\\mathrm { T e x t } + \\mathrm { D I S C }$ </td><td> $4 . 0 3 \\pm 1 . 0 1$ </td><td></td><td> $9 . 6 7 \\pm 8 . 2 5$ </td><td> $5 . 2 1 \\pm 6 . 9 5$ </td></tr><tr><td>IndexTTS [2]</td><td> $\\mathrm { V o i c e } + \\mathrm { D I S C }$ </td><td> $4 . 4 2 \\pm 0 . 8 0$ </td><td></td><td> $4 . 1 6 \\pm 6 . 6 3$ </td><td> $2 . 8 8 \\pm 6 . 0 4$ </td></tr><tr><td>Vevo2 [8]</td><td> $\\mathrm { V o i c e } + \\mathrm { D I S C }$ </td><td> $4 . 3 0 \\pm 0 . 7 5$ </td><td></td><td> $6 . 3 5 \\pm 6 . 7 3$ </td><td> $3 . 8 2 \\pm 6 . 4 7$ </td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>CookVoice</td><td> $\\mathrm { T e x t } + \\mathrm { D I S C }$ </td><td></td><td></td><td></td><td></td></tr><tr><td> $S _ { T } + \\mathcal { P } _ { d i s c }$ </td><td> $\\mathrm { T e x t } + \\mathrm { C O N T }$ </td><td> $3 . 4 5 \\pm 1 . 1 4$ </td><td></td><td> $9 . 4 8 \\pm 1 1 . 8 8$ </td><td> $6 . 0 7 \\pm 1 2 . 3 5$ </td></tr><tr><td> $S \\tau + \\mathcal { P } _ { c o n t }$   $S _ { \\mathcal { V } } + \\mathcal { P } _ { d i s c }$ </td><td> $\\mathrm { V o i c e } + \\mathrm { D I S C }$ </td><td> $3 . 8 0 \\pm 1 . 0 8$   $3 . 6 0 \\pm 1 . 0 2$ </td><td></td><td> $9 . 0 3 \\pm 1 0 . 9 8$ </td><td> $5 . 2 3 \\pm 8 . 7 6$ </td></tr><tr><td></td><td> $S _ { \\nu } + \\mathcal { P } _ { c o n t }$ </td><td> $\\mathrm { V o i c e } + \\mathrm { C O N T }$ </td><td></td><td></td><td> $8 . 6 6 \\pm 1 0 . 1 4$   $8 . 1 3 \\pm 1 0 . 0 7$ </td><td> $4 . 4 1 \\pm 7 . 4 0$   $4 . 1 9 \\pm 7 . 4 5$ </td></tr><tr><td></td><td>Ground Truth</td><td></td><td> $3 . 9 8 \\pm 0 . 9 1$ </td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td> $4 . 0 5 \\pm 0 . 9 2$ </td><td></td><td> $6 . 3 3 \\pm 9 . 3 3$ </td><td> $3 . 3 9 \\pm 7 . 0 7$ </td></tr><tr><td rowspan=\"10\"></td><td>DiffSinger [5]</td><td> $\\mathrm { T e x t } + \\mathrm { D I S C }$ </td><td> $2 . 8 0 \\pm 0 . 8 1$ </td><td> $- 0 . 8 0 \\pm 1 . 6 6$ </td><td> $1 7 . 7 9 \\pm 1 4 . 1 6$ </td><td></td></tr><tr><td>StyleSinger [6]</td><td> $\\mathrm { V o i c e } + \\mathrm { D I S C }$ </td><td> $3 . 2 0 \\pm 1 . 0 8$ </td><td> $- 0 . 4 0 \\pm 1 . 6 1$ </td><td> $1 1 . 3 1 \\pm 7 . 6 8$ </td><td></td></tr><tr><td>TCSinger [7]</td><td> $\\mathrm { V o i c e } + \\mathrm { D I S C }$ </td><td> $2 . 4 0 \\pm 1 . 0 7$ </td><td> $- 0 . 9 5 \\pm 1 . 4 1$ </td><td> $9 . 8 8 \\pm 7 . 2 3 $ </td><td> $2 9 . 0 3 \\pm 1 9 . 3 1$ </td></tr><tr><td>Vevo1.5 [15]</td><td> $\\mathrm { V o i c e } + \\mathrm { C O N T }$ </td><td> $3 . 3 3 \\pm 1 . 2 9$ </td><td> $- 0 . 7 4 \\pm 1 . 6 6$ </td><td> $8 . 8 5 \\pm 1 1 . 0 9$ </td><td> $2 3 . 6 2 \\pm 1 4 . 6 7$ </td></tr><tr><td>Vevo2 [8]</td><td> $\\mathrm { V o i c e } + \\mathrm { C O N T }$ </td><td> $3 . 4 2 \\pm 1 . 3 0$ </td><td> $0 . 1 1 \\pm 1 . 7 6$ </td><td> $4 . 6 6 \\pm 6 . 0 4$ </td><td> $1 1 . 3 7 \\pm 9 . 8 0$ </td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td>CookVoice</td><td> $\\mathrm { T e x t } + \\mathrm { D I S C }$ </td><td> $2 . 4 0 \\pm 0 . 8 9$ </td><td> $- 1 . 3 9 \\pm 1 . 2 4$ </td><td></td><td></td></tr><tr><td>Sτ + Pdisc</td><td> $\\mathrm { T e x t } + \\mathrm { C O N T }$ </td><td></td><td></td><td> $1 1 . 7 1 \\pm 1 0 . 4 4$ </td><td> $1 9 . 5 6 \\pm 1 4 . 4 7$ </td></tr><tr><td> $S \\tau + \\mathcal { P } _ { c o n t }$ </td><td></td><td> $3 . 2 0 \\pm 0 . 9 3$ </td><td> $- 0 . 1 9 \\pm 1 . 4 4$ </td><td> $9 . 7 9 \\pm 9 . 2 6$ </td><td> $2 1 . 1 0 \\pm 1 7 . 8 1$ </td></tr><tr><td> $S _ { \\mathcal { V } } + \\mathcal { P } _ { d i s c }$   $S _ { \\mathcal { V } } + \\mathcal { P } _ { c o n t }$ </td><td> $\\mathrm { V o i c e } + \\mathrm { D I S C }$ </td><td> $2 . 8 0 \\pm 1 . 0 0$ </td><td> $- 0 . 9 4 \\pm 1 . 4 1$ </td><td> $1 1 . 4 5 \\pm 9 . 1 4$ </td><td> $2 2 . 5 3 \\pm 1 6 . 9 2$ </td></tr><tr><td colspan=\"2\">Ground Truth</td><td> $\\mathrm { V o i c e } + \\mathrm { C O N T }$ </td><td> $3 . 4 0 \\pm 0 . 9 7$ </td><td> $0 . 2 8 \\pm 1 . 4 4$ </td><td> $1 0 . 0 1 \\pm 9 . 7 0$ </td><td> $2 4 . 3 7 \\pm 1 7 . 2 3$ </td></tr></table>",
+        "bbox": [
+            141,
+            523,
+            858,
+            866
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "table",
+        "img_path": "images/b6cfa9e00460f54188bfcd2071990373795f28888f5d158512f98f2937748c4f.jpg",
+        "table_caption": [
+            "Table 4: Capability–performance–efficiency comparison table with representative voice generation baselines. The task and control columns summarize the configurations evaluated in this study. T and V denote text- and voice-based style control, while D and C denote discrete and continuous prosody control, respectively. Performance values report the best observed result among the evaluated configurations of each model. S-SIM and F0-CORR are presented as TTS/TTSV."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td></td><td colspan=\"3\">Functional Coverage</td><td colspan=\"2\">Perceptual Quality</td><td colspan=\"2\">Controllability</td><td colspan=\"3\">Computational Efficiency</td></tr><tr><td>Model</td><td>Task</td><td>Style</td><td>Prosody</td><td>TTS MOS</td><td>TTSV MOS / MC-MOS</td><td>S-SIM (%) TTS / TTSV</td><td>F0-CORR TTS / TTSV</td><td>#Para</td><td>CUDA Mem.</td><td>RTF</td></tr><tr><td>CosyVoice [1]</td><td>TTS</td><td>T+V</td><td>D</td><td>4.30</td><td> $- / -$ </td><td>46.67 / –</td><td>0.1902 / -</td><td>436.00M</td><td>2.05G</td><td>3.74</td></tr><tr><td>F5-TTS [4]</td><td>TTS</td><td>V</td><td>D</td><td>4.35</td><td>-1-</td><td>66.29 / -</td><td>0.1505 / –</td><td>300.00M</td><td>2.15G</td><td>6.15</td></tr><tr><td>ParaStyleTTS [3]</td><td>TTS</td><td>T</td><td>D</td><td>4.03</td><td>-1-</td><td>42.96 /-</td><td>0.1777 / -</td><td>52.51M</td><td>1.22G</td><td>0.03</td></tr><tr><td>IndexTTS [2]</td><td>TTS</td><td>V</td><td>D</td><td>4.42</td><td>-1-</td><td>71.19 /-</td><td>0.2548 / -</td><td>608.00M</td><td>1.53G</td><td>0.36</td></tr><tr><td>Vevo2 [8]</td><td>TTS+TTSV</td><td>V</td><td>D+C</td><td>4.30</td><td>3.42 / 0.11</td><td>75.11 / 88.09</td><td>0.1242 / 0.6242</td><td>872.00M</td><td>6.84G</td><td>14.85</td></tr><tr><td>DiffSinger [5]</td><td>TTSV</td><td>T</td><td>D</td><td></td><td>2.80 / -0.80</td><td>-/75.81</td><td>-/0.4580</td><td>26.74M</td><td>0.60G</td><td>0.34</td></tr><tr><td>StyleSinger [6]</td><td>TTSV</td><td>V</td><td>D</td><td></td><td>3.20 / -0.40</td><td>-/82.00</td><td>-/0.4856</td><td>42.00M</td><td>0.88G</td><td>0.36</td></tr><tr><td>TCSinger [7]</td><td>TTSV</td><td>V</td><td>D</td><td></td><td>2.40 / -0.95</td><td>-/87.53</td><td>-/0.5643</td><td>329.50M</td><td>1.97G</td><td>0.33</td></tr><tr><td>Vevo1.5 [15]</td><td>TTSV</td><td>V</td><td>C</td><td></td><td>3.33 / -0.74</td><td>-/86.55</td><td>-/0.7125</td><td>1468.43M</td><td>9.44G</td><td>9.83</td></tr><tr><td>Vevo2 [8]</td><td>TTS+TTSV</td><td>V</td><td>D+C</td><td>4.30</td><td>3.42 / 0.11</td><td>75.11 / 88.09</td><td>0.1242 / 0.6242</td><td>872.00M</td><td>6.84G</td><td>14.85</td></tr><tr><td>CookVoice</td><td>TTS+TTSV</td><td>T+V</td><td>D+C</td><td>3.98</td><td>3.40 / 0.28</td><td>91.65 / 95.00</td><td>0.7102 / 0.8425</td><td>43.51M</td><td>1.37G</td><td>0.04</td></tr></table>",
+        "bbox": [
+            163,
+            146,
+            835,
+            315
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "singing voice generation. One possible reason for the generally higher WERs in TTSV is that Whisper is primarily trained on large-scale speech data. Singing voices exhibit different prosodic patterns, including wider pitch variations and prolonged phonemes, which may increase recognition errors. CookVoice achieves comparable performance with existing baseline who is trained on substantially larger datasets. Its primary advantages lie in its stronger controllability and flexible support for different style and prosody control signals.",
+        "bbox": [
+            90,
+            341,
+            480,
+            455
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "5.2. RQ2: Controllability Analysis",
+        "text_level": 2,
+        "bbox": [
+            92,
+            472,
+            324,
+            485
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "As shown in Table 2, existing baselines typically support only a limited combination of style and prosody conditions. In contrast, CookVoice accommodates both text- and voice-based style control together with discrete prosody and continuous $F _ { 0 }$ control. These control signals are explicitly aligned with the acoustic representation at the frame level, enabling finergrained guidance throughout the generation process.",
+        "bbox": [
+            90,
+            497,
+            480,
+            586
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Compared with baselines under matched style–prosody settings, CookVoice delivers clear improvements. For TTS with text-based style and discrete prosody control, CookVoice improves S-SIM by 41.48% and F0-CORR by 121.10%, while reducing F0-RMSE by 5.53%. With voice-based style and discrete prosody control, CookVoice improves S-SIM by 16.46% and F0-CORR by 109.18%, while reducing F0-RMSE by 19.89%. These results suggest that CookVoice benefits from its explicit frame-level conditioning design. Outperforming existing voice cloning methods that rely primarily on autoregressive token prediction or voice-level style conditioning.",
+        "bbox": [
+            90,
+            590,
+            480,
+            728
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "A similar trend is observed for TTSV. Under text-based style and discrete note control, CookVoice improves SSIM by 13.11% and F0-CORR by 17.53%, while reducing F0-RMSE by 2.74%. Under voice-based style and continuous $F _ { 0 }$ control, it improves S-SIM by 7.84% and F0-CORR by 18.25%, while reducing F0-RMSE by 28.41%. The higher level of controllability of CookVoice can be attributed to the joint effect of its multimodal control interfaces and fine-grained frame-level conditioning. Together, these designs enable a broader range of controllable generation functions while improving both style preservation and prosody-following consistently across speech and singing voice generation.",
+        "bbox": [
+            90,
+            733,
+            482,
+            884
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "chart",
+        "img_path": "images/f0d8d2ef10c05ae9fd47cc4d495281913d5e05e6fc6771dbdf7d0b0c799e1c18.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) TTS"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            524,
+            335,
+            714,
+            406
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "chart",
+        "img_path": "images/5c21fa37093c05e8f23943076d222374374100fd61df2bc0ad2331a78bde7610.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) TTSV",
+            "Figure 2: Marginal effects ofdifferent style and prosody control signals on CookVoice’s performance. Redder indicate stronger performance, bluer indicate weaker performance."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            715,
+            335,
+            905,
+            405
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "5.3. RQ3: Effects of Different Control Signals",
+        "text_level": 2,
+        "bbox": [
+            519,
+            499,
+            825,
+            512
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "In this section, we analyze how different control signals affect the performance of CookVoice. Figure 2 summarizes the marginal effects of different style and prosody control signals. Each value represents the average normalized performance of one control source across its matched performance, a higher value indicates better performance. The results reveal effects from the style source and the prosody source.",
+        "bbox": [
+            519,
+            519,
+            910,
+            606
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Effect of the style control source. For TTS in Figure 2a, voicebased style conditioning consistently outperforms text-based conditioning across all evaluated metrics. The largest difference is observed in SSIM, where Voice achieves a normalized score of 0.932, compared with 0.199 for Text. Voice conditioning also produces better prosody consistency, perceptual quality, and intelligibility, achieving substantially higher scores for F0-CORR, MOS, and both Chinese and English WER. Voices provide richer acoustic information than natural language style prompts. It allows the model to preserve paralinguistic details such as timbre, emotion and age from the reference voice more accurately.",
+        "bbox": [
+            517,
+            607,
+            910,
+            756
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "As shown in figure 2b. Voice conditioning achieves the highest SSIM and improves both MOS and MC-MOS, confirming its advantage for accurate singing-style transfer. However, its effect on intelligibility is less consistent. Voice and Text have similar Chinese WER performance, while Text achieves a substantially better English WER score. Although voice references improve style preservation and perceptual quality, stronger acoustic style imitation does not necessarily improve lyric intelligibility, particularly for English singing.",
+        "bbox": [
+            519,
+            756,
+            910,
+            869
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Effect of the prosody control source. Continuous prosody signals $F _ { 0 }$ provides a clear advantage over discrete prosody signals in prosody-related metrics. For TTS, CONT achieves scores of 0.844 for F0-RMSE and 0.892 for F0-CORR, compared with 0.230 and 0.221 for DISC. It also improves MOS and WER, indicating that detailed frame-level pitch guidance benefits not only prosody following but also overall speech quality and intelligibility.",
+        "bbox": [
+            519,
+            869,
+            909,
+            883
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            90,
+            89,
+            480,
+            177
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "The advantage of continuous control is even more pronounced for TTSV. CONT substantially outperforms DISC in F0-RMSE, F0-CORR, MOS, MC-MOS, and Chinese WER, confirming that explicit frame-level $F _ { 0 }$ trajectories are effective for melody following and perceptual singing quality. However, unlike in TTS, DISC achieves higher S-SIM and better English WER performance in TTSV. One possible explanation is that the discrete prosody signal in TTSV consists of musical note, which already provide a structured representation of pitch, duration, and note boundaries that is closely aligned with the lyrics. This flexibility can help preserve the style and maintain clearer lyric articulation. Conversely, continuous signals contain detailed prosody trajectory from the reference voice. Which leads to an observable style-sim degradation under text-based style conditioning, where replacing discrete notes with continuous $F _ { 0 }$ reduces SSIM from 85.75% to 72.51%.",
+        "bbox": [
+            90,
+            175,
+            480,
+            375
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "5.4. RQ4: Effect of ODE Steps",
+        "text_level": 2,
+        "bbox": [
+            92,
+            386,
+            299,
+            399
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "We further analyze how performance is affected by the number of ODE solver steps, with detailed results provided in $\\mathsf { A p - }$ pendix C. Increasing the number of ODE steps generally improves style similarity and prosody fidelity, particularly under voice-based style conditioning and continuous prosody control.",
+        "bbox": [
+            90,
+            405,
+            480,
+            467
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Due to the high cost of collecting MOS and MC-MOS ratings, we evaluate these subjective metrics at coarser intervals, increasing the number of ODE steps by a factor of four, while the objective metrics are evaluated at each doubling of the step count. MOS continues to improve up to 16 steps before declining, whereas MC-MOS reaches its highest value at 4 steps and gradually decreases thereafter. Meanwhile, style similarity and $F _ { 0 }$ -based metrics generally stabilize between 4 and 8 steps, and intelligibility metrics such as WER, PhoER, and ProER achieve their best or near-best results at approximately 4 steps and may slightly degrade with further refinement. These results indicate that additional ODE steps can improve acoustic naturalness and prosodic details, but do not necessarily benefit melody consistency or linguistic content preservation.",
+        "bbox": [
+            90,
+            467,
+            480,
+            640
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Based on these observations, we suggest 4–8 ODE steps as the optimal operating range for CookVoice. Within this range, the generated voices maintain stable controllability, good perceptual quality, and intelligibility without incurring additional inference steps.",
+        "bbox": [
+            90,
+            640,
+            480,
+            703
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "5.5. RQ5: Efficiency Analysis",
+        "text_level": 2,
+        "bbox": [
+            92,
+            714,
+            292,
+            728
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Table 4 provides an integrated comparison of functional coverage, generation performance, controllability, and computational efficiency. The results reveal that existing systems typically optimize only a subset of these dimensions. Large-scale TTS models such as F5-TTS and IndexTTS achieve higher speech MOS scores than CookVoice, but are restricted to speech generation and require approximately 6.9× and 14.0× more parameters, respectively. Similarly, lightweight task-specific models such as ParaStyleTTS, DiffSinger, and StyleSinger provide competitive efficiency, but support only speech or singing voice generation and a limited set of control signals.",
+        "bbox": [
+            90,
+            733,
+            480,
+            870
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Vevo2 is the most directly comparable baseline because it supports both speech and singing voice generation. Vevo2 achieves higher TTS MOS and a marginally higher TTSV MOS than CookVoice. However, CookVoice obtains a higher MC-MOS and substantially stronger style and prosody controllability across both tasks. More importantly, CookVoice uses only 4.99% of the parameters, 20.03% of the CUDA memory, and 0.27% of the RTF required by Vevo2.",
+        "bbox": [
+            117,
+            869,
+            480,
+            882
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            519,
+            89,
+            909,
+            178
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "These comparisons indicate that the main advantage of CookVoice does not lie in maximizing a single task-specific quality metric. Instead, CookVoice provides a favorable tradeoff among functional coverage, fine-grained controllability, perceptual quality, and computational efficiency. With a single 43.51M-parameter model, it supports both TTS and TTSV, textand voice-based style conditioning, and discrete and continuous prosody control, while maintaining real-time generation with an RTF of 0.04.",
+        "bbox": [
+            519,
+            185,
+            910,
+            298
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "The compact model size and fast inference of CookVoice mainly stem from its streamlined architecture. By replacing autoregressive token prediction with a lightweight DiT-S generative backbone, CookVoice limits the model size to 43.51M parameters and avoids the sequential next-token decoding required by AR models. In addition, CookVoice employs flow matching, which requires only a small number of ODE solver steps, compared with conventional diffusion sampling processes that typically involve hundreds of iterative denoising steps [30]. These design choices reduce both model complexity and inference cost.",
+        "bbox": [
+            517,
+            305,
+            910,
+            444
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "6. Conclusion",
+        "text_level": 2,
+        "bbox": [
+            650,
+            464,
+            779,
+            480
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "In this paper, we present CookVoice, a unified framework for multimodal, multi-style, and multi-task human voice generation. By decomposing human voice into content, prosody, and style, CookVoice supports a wide range of speech and singing voice generation tasks within a single model, including TTS, TTSV, style-controllable generation, voice mimicry, and voice conversion. To enable fine-grained controllability, we design a flexible alignment strategy that expands different control signals to the level of the acoustic frame, allowing text, reference voice, discrete prosody, and continuous $F _ { 0 }$ contours to be combined in a unified generation process. Experimental results show that CookVoice achieves comparable generation quality to existing task-specific baselines while providing stronger style and prosody controllability, smaller model size and efficient inference speed.",
+        "bbox": [
+            519,
+            494,
+            910,
+            682
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "7. Limitation",
+        "text_level": 2,
+        "bbox": [
+            652,
+            702,
+            776,
+            718
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "CookVoice shows potential for unified and controllable human voice generation, several limitations remain. First, due to resource constraints, CookVoice has not yet been scaled up. The current model only use the DiT-S version of diffusion transformer (43.51M parameters) and is trained on 168 hours of data, which is still much smaller than large-scale voice generation systems. The scaling potential of CookVoice has not been fully explored. Another limitation lies in CookVoice mainly focuses on human voice generation. Its potential applicability to broader audio generation domains, such as music, instrumental sound, and general audio generation, has not yet been investigated.",
+        "bbox": [
+            519,
+            733,
+            910,
+            884
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "8. References",
+        "text_level": 2,
+        "bbox": [
+            221,
+            86,
+            349,
+            102
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "[1] Z. Du, Q. Chen, S. Zhang, K. Hu, H. Lu, Y. Yang, H. Hu, S. Zheng, Y. Gu, Z. Ma et al., “Cosyvoice: A scalable multilingual zero-shot text-to-speech synthesizer based on supervised semantic tokens,” arXiv preprint arXiv:2407.05407, 2024.",
+            "[2] W. Deng, S. Zhou, J. Shu, J. Wang, and L. Wang, “Indextts: An industrial-level controllable and efficient zero-shot text-to-speech system,” arXiv preprint arXiv:2502.05512, 2025.",
+            "[3] H. Lou, H.-Y. Paik, W. Hu, and L. Yao, “Parastyletts: Toward efficient and robust paralinguistic style control for expressive text-tospeech generation,” in Proceedings ofthe 34th ACM International Conference on Information and Knowledge Management, 2025, pp. 1979–1988.",
+            "[4] Y. Chen, Z. Niu, Z. Ma, K. Deng, C. Wang, J. JianZhao, K. Yu, and X. Chen, “F5-tts: A fairytaler that fakes fluent and faithful speech with flow matching,” in Proceedings of the 63rd Annual Meeting ofthe Associationfor Computational Linguistics (Volume 1: Long Papers), 2025, pp. 6255–6271.",
+            "[5] J. Liu, C. Li, Y. Ren, F. Chen, and Z. Zhao, “Diffsinger: Singing voice synthesis via shallow diffusion mechanism,” in Proceedings of the AAAI conference on artificial intelligence, vol. 36, no. 10, 2022, pp. 11 020–11 028.",
+            "[6] Y. Zhang, R. Huang, R. Li, J. He, Y. Xia, F. Chen, X. Duan, B. Huai, and Z. Zhao, “Stylesinger: Style transfer for out-ofdomain singing voice synthesis,” in Proceedings of the AAAI Conference on Artificial Intelligence, vol. 38, no. 17, 2024, pp. 19 597–19 605.",
+            "[7] Y. Zhang, Z. Jiang, R. Li, C. Pan, J. He, R. Huang, C. Wang, and Z. Zhao, “Tcsinger: Zero-shot singing voice synthesis with style transfer and multi-level style control,” in Proceedings ofthe 2024 Conference on Empirical Methods in Natural Language Processing, 2024, pp. 1960–1975.",
+            "[8] X. Zhang, J. Zhang, Y. Wang, C. Wang, Y. Chen, D. Jia, Z. Chen, and Z. Wu, “Vevo2: A unified and controllable framework for speech and singing voice generation,” IEEE Transactions on Audio, Speech and Language Processing, 2026.",
+            "[9] J. Kong, J. Kim, and J. Bae, “Hifi-gan: Generative adversarial networks for efficient and high fidelity speech synthesis,” Advances in neural information processing systems, vol. 33, pp. 17 022– 17 033, 2020.",
+            "[10] H. Lou, H. young Paik, W. Hu, and L. Yao, “Parameta: Towards learning disentangled paralinguistic speaking styles representations from speech,” in AAAI Conference on Artificial Intelligence, 2026. [Online]. Available: https://api.semanticscholar.org/CorpusID:284910281",
+            "[11] W. Peebles and S. Xie, “Scalable diffusion models with transformers,” in Proceedings ofthe IEEE/CVF international conference on computer vision, 2023, pp. 4195–4205.",
+            "[12] Y. Lipman, R. T. Chen, H. Ben-Hamu, M. Nickel, and M. Le, “Flow matching for generative modeling,” arXiv preprint arXiv:2210.02747, 2022.",
+            "[13] Y. Ren, Y. Ruan, X. Tan, T. Qin, S. Zhao, Z. Zhao, and T.-Y. Liu, “Fastspeech: Fast, robust and controllable text to speech,” Advances in neural information processing systems, vol. 32, 2019.",
+            "[14] L. Zhang, R. Li, S. Wang, L. Deng, J. Liu, Y. Ren, J. He, R. Huang, J. Zhu, X. Chen et al., “M4singer: A multi-style, multisinger and musical score provided mandarin singing corpus,” Advances in Neural Information Processing Systems, vol. 35, pp. 6914–6926, 2022.",
+            "[15] X. Zhang, X. Zhang, K. Peng, Z. Tang, V. Manohar, Y. Liu, J. Hwang, D. Li, Y. Wang, J. Chan, Y. Huang, Z. Wu, and M. Ma, “Vevo: Controllable zero-shot voice imitation with selfsupervised disentanglement,” in ICLR. OpenReview.net, 2025.",
+            "[16] J. Kim, J. Kong, and J. Son, “Conditional variational autoencoder with adversarial learning for end-to-end text-to-speech,” in International conference on machine learning. PMLR, 2021, pp. 5530–5540.",
+            "[17] K. Song, X. Tan, T. Qin, J. Lu, and T.-Y. Liu, “Mpnet: Masked and permuted pre-training for language understanding,” Advances in neural information processing systems, vol. 33, pp. 16 857– 16 867, 2020.",
+            "[18] A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, Ł. Kaiser, and I. Polosukhin, “Attention is all you need,” Advances in neural information processing systems, vol. 30, 2017.",
+            "[19] H. Lou, H.-y. Paik, S. Li, W. Hu, and L. Yao, “Generalized multilingual text-to-speech generation with language-aware style adap tation,” arXiv preprint arXiv:2504.08274, 2025.",
+            "[20] Y. Wang, R. Skerry-Ryan, D. Stanton, Y. Wu, R. J. Weiss, N. Jaitly, Z. Yang, Y. Xiao, Z. Chen, S. Bengio et al., “Tacotron: Towards end-to-end speech synthesis,” arXiv preprint arXiv:1703.10135, 2017.",
+            "[21] Databaker, “Chinese mandarin female corpus,” https://en. data-baker.com/datasets/freeDatasets/, 2020, accessed: 2023-04- 20.",
+            "[22] K. Ito and L. Johnson, “The lj speech dataset,” https://keithito. com/LJ-Speech-Dataset/, 2017.",
+            "[23] K. Zhou, B. Sisman, R. Liu, and H. Li, “Seen and unseen emotional style transfer for voice conversion with a new emotional speech dataset,” in ICASSP 2021-2021 IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP). IEEE, 2021, pp. 920–924.",
+            "[24] H. Cao, D. G. Cooper, M. K. Keutmann, R. C. Gur, A. Nenkova, and R. Verma, “Crema-d: Crowd-sourced emotional multimodal actors dataset,” IEEE transactions on affective computing, vol. 5, no. 4, pp. 377–390, 2014.",
+            "[25] P. Klumpp, T. Arias, P. A. Perez-Toro, E. Noeth, and J. Orozco-´ Arroyave, “Common phone: A multilingual dataset for robust acoustic modelling,” in Proceedings of the Thirteenth Language Resources and Evaluation Conference, 2022, pp. 763–768.",
+            "[26] Simon3000, “Genshin voice: A multi-lingual voice dataset from Genshin Impact,” https://huggingface.co/datasets/simon3000/ genshin-voice, 2025, hugging Face Datasets.",
+            "[27] Y. Zhang, C. Pan, W. Guo, R. Li, Z. Zhu, J. Wang, W. Xu, J. Lu, Z. Hong, C. Wang et al., “Gtsinger: A global multi-technique singing corpus with realistic music scores for all singing tasks,” Advances in Neural Information Processing Systems, vol. 37, pp. 1117–1140, 2024.",
+            "[28] A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey, and I. Sutskever, “Robust speech recognition via large-scale weak supervision,” in International conference on machine learning. PMLR, 2023, pp. 28 492–28 518.",
+            "[29] H. Lou, J. Wu, C. Huang, T. Yu, H.-y. Paik, W. Hu, and L. Yao, “Autosift: Automatic style sifting for controllable speech generation with arbitrary style infilling,” arXiv preprint arXiv:2607.12706, 2026.",
+            "[30] J. Ho, A. Jain, and P. Abbeel, “Denoising diffusion probabilistic models,” Advances in neural information processing systems, vol. 33, pp. 6840–6851, 2020."
+        ],
+        "bbox": [
+            100,
+            107,
+            478,
+            151
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "A. Related Work",
+        "text_level": 2,
+        "bbox": [
+            635,
+            712,
+            794,
+            727
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Autoregressive voice generation. Recent advances in neural voice generation have significantly improved the naturalness and expressiveness of synthesized speech. Representative systems such as CosyVoice [1] and IndexTTS [2] adopt autoregressive (AR) generation mechanisms to model acoustic token sequences. Using token-by-token prediction and large-scale training, these models can generate expressive high-quality speech. However, AR decoding also introduces several limitations for controllability. Since duration, rhythm, and prosody are implicitly determined by the generated token sequence, the generation process is difficult to interpret and hard to control at a fine temporal granularity. This becomes especially problematic when the target task requires explicit duration or pitch control, such as singing voice generation, prosody mimicry, and frame-level voice editing. In addition, AR generation usually suffers from slower inference due to its sequential decoding process.",
+        "bbox": [
+            517,
+            733,
+            910,
+            884
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            90,
+            89,
+            480,
+            139
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "NAR and controllable speech generation. NAR methods improve inference efficiency and temporal stability by introducing explicit or semi-explicit alignment mechanisms. For example, FastSpeech-style models rely on duration prediction and phoneme-level expansion to generate speech in parallel, while recent flow-matching or diffusion-based systems further improve acoustic quality through continuous generative modeling [4]. These methods provide better control over phonemelevel timing than AR models. However, most existing NAR speech generation systems are still designed for specific tasks, such as TTS, expressive TTS, or voice cloning. Their control interfaces are often limited to either text prompts, speaker references, or phoneme-level durations, making it difficult to flexibly combine content, style, prosody, and singing-related controls under a unified framework.",
+        "bbox": [
+            90,
+            140,
+            480,
+            326
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Singing voice generation. Singing voice generation requires more explicit temporal and melodic control than ordinary speech synthesis. Traditional singing voice synthesis systems, such as DiffSinger [5], usually rely on musical scores and note-level conditions to generate singing voices. More recent work introduces style control into singing voice generation. For example, StyleSinger [6] improves controllability by incorporating singing style information. However, such systems often assume a predefined relationship between lyrics, phonemes, and notes. In particular, binding notes directly with phonemes simplifies alignment, but it may not always reflect the flexible temporal structure of real singing, where one phoneme may span multiple notes or one note may correspond to multiple phonetic units. This type of restricted alignment improves tractability but limits flexible control in more general singing voice generation scenarios.",
+        "bbox": [
+            90,
+            325,
+            480,
+            525
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Unified voice generation. Recent unified voice generation models attempt to cover multiple voice generation tasks using a single model. For example, Vevo-style systems [15, 8] move toward unified speech and singing voice modeling. However, many of these systems still rely on AR decoding or use global reference conditions, such as utterance-level or sentence-level prosody references. While these designs are effective for general voice generation, they provide limited direct control over fine-grained temporal details. In particular, when content, style, notes, lexical tones, stresses, and continuous $F _ { 0 }$ contours are jointly involved, existing unified models still struggle to provide flexible frame-level controllability.",
+        "bbox": [
+            89,
+            525,
+            480,
+            676
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "B. Evaluation Metrics",
+        "text_level": 2,
+        "bbox": [
+            184,
+            688,
+            386,
+            703
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "This section provides detailed definitions of the evaluation metrics used in our experiments.",
+        "bbox": [
+            90,
+            709,
+            478,
+            736
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Word Error Rate (WER). WER measures word-level transcription errors between the generated audio and the groundtruth text. We first transcribe the generated audio using Whisper [28], and then compute the edit distance between the predicted word sequence and the reference word sequence:",
+        "bbox": [
+            90,
+            736,
+            480,
+            799
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/473becb73e36a711e0f733e8f96db066d3853609be48f2932cb87b1dbbeff394.jpg",
+        "text": "$$\n\\mathrm { W E R } = { \\frac { S + D + I } { N } } ,\\tag{6}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            215,
+            808,
+            356,
+            834
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "where $S , D ,$ and I denote the number of substitutions, deletions, and insertions, respectively, and N is the number of words in the reference text. Lower WER has better intelligibility.",
+        "bbox": [
+            90,
+            844,
+            480,
+            883
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Phoneme Error Rate (PhoER). PhoER measures content accuracy at the phoneme level. We convert both the recognized text and the ground-truth text into phoneme sequences using the same G2P module, and then compute the normalized edit distance:",
+        "bbox": [
+            517,
+            89,
+            909,
+            151
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3008a00e9b04a7ab1810a484409ae48a8ce1430a17c3e04444f14d5991845746.jpg",
+        "text": "$$\n\\mathrm { P h o E R } = \\frac { S _ { p } + D _ { p } + I _ { p } } { N _ { p } } ,\\tag{7}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            626,
+            147,
+            801,
+            174
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "where $S _ { p } , D _ { p } ,$ , and $I _ { p }$ denote phoneme-level substitutions, deletions, and insertions, and $N _ { p }$ is the number of phonemes in the reference sequence. A lower PhoER indicates more accurate pronunciation and content preservation.",
+        "bbox": [
+            519,
+            177,
+            909,
+            227
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Prosody Error Rate (ProER). ProER measures the error rate of discrete prosody tokens, such as Mandarin tones, English stresses, or note-related prosody labels. Similar to PhoER, we compute the normalized edit distance between the predicted and reference prosody-token sequences:",
+        "bbox": [
+            517,
+            225,
+            909,
+            290
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4a9f2fec23a57c8adbd83847925632ef2535311cafd1258f11a091b18f9e41f6.jpg",
+        "text": "$$\n\\mathrm { P r o E R } = \\frac { S _ { r } + D _ { r } + I _ { r } } { N _ { r } } ,\\tag{8}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            628,
+            296,
+            798,
+            322
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "where $S _ { r } , D _ { r }$ , and $I _ { r }$ denote substitution, deletion, and insertion errors in the prosody-token sequence, and $N _ { \\tau }$ is the number of reference prosody tokens. A lower ProER indicates better preservation of discrete prosodic information.",
+        "bbox": [
+            519,
+            328,
+            909,
+            378
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Style Similarity (S-SIM). S-SIM evaluates whether the generated voice matches the target style. We extract style embeddings from the generated audio and the target reference using a pretrained style encoder. The cosine similarity between the two embeddings is computed as:",
+        "bbox": [
+            517,
+            378,
+            910,
+            441
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/034c7bec3c24434a3de6cf8b4cbfd307d49d7eb6e5b5494755c96ad0a8bf553a.jpg",
+        "text": "$$\n\\begin{array} { r } { \\mathrm { S - S I M } = \\frac { \\mathbf { s } _ { g e n } ^ { \\top } \\mathbf { s } _ { r e f } } { \\left\\| \\mathbf { s } _ { g e n } \\right\\| _ { 2 } \\left\\| \\mathbf { s } _ { r e f } \\right\\| _ { 2 } } , } \\end{array}\\tag{9}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            625,
+            447,
+            805,
+            478
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "where ${ \\bf s } _ { g e n }$ and ${ \\bf s } _ { r e f }$ are the style embeddings of the generated and reference voices, respectively. A higher S-SIM indicates better style preservation.",
+        "bbox": [
+            519,
+            483,
+            909,
+            520
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "F0 Root Mean Square Error (F0-RMSE). F0-RMSE measures the absolute pitch difference between the generated and target F0 contours. We compute F0-RMSE over voiced frames where both generated and reference F0 values are valid:",
+        "bbox": [
+            519,
+            520,
+            909,
+            571
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/67a7ab6748a664e2812e6d1a71670b0e968c7e284c84b88aaa66927a123901ba.jpg",
+        "text": "$$\n\\mathrm { F 0 - R M S E } = \\sqrt { \\frac { 1 } { T _ { v } } \\sum _ { t = 1 } ^ { T _ { v } } \\left( f _ { t } ^ { g e n } - f _ { t } ^ { r e f } \\right) ^ { 2 } } ,\\tag{10}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            579,
+            579,
+            848,
+            619
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "where $f _ { t } ^ { g e n }$ and $f _ { t } ^ { r e f }$ are the generated and reference F0 values at frame t, and $T _ { v }$ is the number of valid voiced frames. A lower F0-RMSE indicates smaller absolute pitch deviation.",
+        "bbox": [
+            519,
+            627,
+            909,
+            667
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "F0 Pearson Correlation (F0-CORR). F0-CORR measures whether the generated pitch contour follows the same trend as the reference contour:",
+        "bbox": [
+            519,
+            665,
+            909,
+            703
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/b827cc96f2908778e7f616a652dd54ae004b6afed07e0b119884a966ce0270f6.jpg",
+        "text": "$$\n\\mathrm { F 0 - C O R R } = \\frac { \\sum _ { t = 1 } ^ { T _ { v } } \\big ( f _ { t } ^ { g e n } - \\bar { f } ^ { g e n } \\big ) \\big ( f _ { t } ^ { r e f } - \\bar { f } ^ { r e f } \\big ) } { \\sqrt { \\sum _ { t = 1 } ^ { T _ { v } } \\big ( f _ { t } ^ { g e n } - \\bar { f } ^ { g e n } \\big ) ^ { 2 } } \\sqrt { \\sum _ { t = 1 } ^ { T _ { v } } \\big ( f _ { t } ^ { r e f } - \\bar { f } ^ { r e f } \\big ) ^ { 2 } } } ,\\tag{11}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            519,
+            708,
+            924,
+            747
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "where $\\bar { f } ^ { g e n }$ and $\\bar { f } ^ { r e f }$ are the mean F0 values of the generated and reference contours. A higher F0-CORR indicates better preservation of pitch movement and prosodic trend.",
+        "bbox": [
+            519,
+            757,
+            909,
+            796
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Mean Opinion Score (MOS). MOS is used to evaluate perceptual naturalness and overall audio quality. Human listeners rate each generated sample on a scale from 1 to 5, where 1 indicates poor quality and 5 indicates excellent quality. The final MOS is the average score across all listeners and samples.",
+        "bbox": [
+            519,
+            795,
+            909,
+            857
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Melody Comparative MOS (M-CMOS). M-CMOS is used for singing voice evaluation. Listeners compare generated singing samples and judge which one better follows the target melody. This metric evaluates melody consistency from human perception, complementing objective F0-based metrics.",
+        "bbox": [
+            519,
+            857,
+            910,
+            883
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            90,
+            89,
+            480,
+            128
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "C. Signal Impact Analysis",
+        "text_level": 2,
+        "bbox": [
+            168,
+            140,
+            405,
+            156
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "We analyze the impact of the number of ODE solver steps under different sources of style and prosody control. Specifically, we compare text-based and voice-based style control, as well as discrete and continuous prosody control, on both TTS and TTSV tasks. We evaluate three aspects of generation quality: style similarity, prosody fidelity, and intelligibility.",
+        "bbox": [
+            90,
+            162,
+            480,
+            239
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "C.1. Style similarity",
+        "text_level": 2,
+        "bbox": [
+            92,
+            249,
+            231,
+            263
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "As shown in Fig. 3, style similarity generally increases as the number of ODE steps increases, and gradually converges around 4–8 steps. This suggests that most style-related information is formed in the early part of the generation trajectory, while further increasing the number of steps brings diminishing returns. We also observe that reference-voice-based style control consistently outperforms text-based style control. This is expected because reference voices contain richer speaker identity and paralinguistic information than text style descriptions. In addition, continuous prosody control generally achieves higher style similarity than discrete prosody tokens, indicating that dense frame-level control signals provide more detailed guidance during generation.",
+        "bbox": [
+            90,
+            269,
+            480,
+            432
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "C.2. Prosody fidelity",
+        "text_level": 2,
+        "bbox": [
+            92,
+            443,
+            235,
+            457
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "For prosody, we evaluate F0-RMSE and F0-Correlation, as shown in Fig. 4. F0-RMSE measures the absolute pitch deviation from the ground-truth contour, while F0-Correlation measures whether the generated pitch follows the overall trend of the target F0 trajectory. For F0-RMSE, the error generally decreases as the number of ODE steps increases, with voice-based style and continuous prosody control achieving better performance. This is also reasonable because the reference voice directly provides acoustic and pitch-related cues, while continuous F0 signals preserve more fine-grained pitch information than discrete tokens.",
+        "bbox": [
+            90,
+            463,
+            480,
+            600
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "A similar trend can be observed for F0-Correlation, where the correlation improves with more ODE steps and converges around 8 steps. However, the improvement for discrete prosody control is relatively limited, especially in the TTSV setting. One possible reason is that singing voice often follows a more constrained and stable melodic structure compared with speech. Therefore, discrete prosody tokens may already capture the coarse pitch movement, and increasing the number of ODE steps mainly improves acoustic details rather than substantially changing the global F0 correlation.",
+        "bbox": [
+            90,
+            600,
+            480,
+            726
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "C.3. Intelligibility",
+        "text_level": 2,
+        "bbox": [
+            92,
+            737,
+            216,
+            751
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "The intelligibility results are shown in Fig. 5. Different from style similarity and prosody fidelity, WER, PhoER, and ProER first decrease and reach their best performance at 4 ODE steps, but tend to increase when more ODE steps are used. This indicates that using too many ODE steps may over-refine acoustic, style, or prosodic details at the cost of linguistic clarity. In other words, a larger number of ODE steps does not always lead to better content preservation.",
+        "bbox": [
+            90,
+            757,
+            480,
+            857
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "We also observe that TTSV generally has higher error rates than TTS. This may be partly attributed to the evaluation model, since Whisper [28] is mainly trained and optimized for speech recognition rather than singing voice recognition. Moreover, singing voice naturally contains longer phoneme durations, stronger pitch variation, and melody-driven pronunciation changes, which can make recognition more difficult.",
+        "bbox": [
+            90,
+            857,
+            480,
+            883
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            519,
+            89,
+            909,
+            152
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Overall, these results suggest that different generation aspects prefer different numbers of ODE steps. Style similarity and prosody fidelity benefit from increasing ODE steps and usually converge around 4–8 steps, while intelligibility achieves the best trade-off at around 4 steps. Therefore, a small number of ODE steps provides a better balance between controllability, acoustic quality, and content preservation.",
+        "bbox": [
+            519,
+            151,
+            910,
+            239
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/303a59e80f48ab958b1aaf359540b65aa6be0ba330096555d99a8235161088d6.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) TTS"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            522,
+            250,
+            710,
+            349
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/29ab550022d44e549f9a8ecec0900113858ddb6920f737aefe26850a29d96eb1.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) TTSV",
+            "Figure 3: Style similarity under different numbers of ODE steps for TTS and TTSV."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            717,
+            250,
+            905,
+            349
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/5c3fa76cce3bdccab8f26f9750f3e853401b7771bca3fc829f7b46eed11e79ce.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) F0-RMSE on TTS"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            531,
+            437,
+            697,
+            531
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/3077a5fbd739a2701edba8834a98ddef9c92e01eaa0d3e74d73b115318d0471a.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) F0-RMSE on TTSV"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            737,
+            437,
+            890,
+            531
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/af1e3fa4e477d4abd59c5f930a08eea727dacd1ca6f3fb804ec3b3653e42dea5.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            531,
+            560,
+            697,
+            655
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/aa4255a0779546a8eae7dbccdc6132f73dcd36c068793f72b359ca2adcdaf804.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) F0-Correlation on TTS",
+            "(d) F0-Correlation on TTSV",
+            "Figure 4: Prosody fidelity under different numbers of ODE steps. F0-RMSE measures absolute pitch deviation, while F0- Correlation measures the consistency of the generated F0 contour with the target contour."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            737,
+            561,
+            890,
+            655
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "D. Task Definition",
+        "text_level": 2,
+        "bbox": [
+            630,
+            762,
+            798,
+            776
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "CookVoice is designed as a unified framework for speech and singing voice generation. Instead of building separate models for different tasks, we formulate a broad range of generation, conversion, editing, and mimicry tasks under a shared conditional generation function G(·). The key difference between tasks lies in the combination of control signals, including linguistic content, style conditions, lexical or musical prosody, and frame-level pitch contours.",
+        "bbox": [
+            519,
+            782,
+            910,
+            883
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "chart",
+        "img_path": "images/bb89700ca986da1052bf0d52c8f41c380393ef481e4b25cde3ff32371daffe6b.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) WER on TTS"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            95,
+            99,
+            282,
+            198
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/9c5211a0bb6422992052fd15eaa414aeb8edcd7908a6c6b6cf3c4e94c431ee3a.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) WER on TTSV"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            290,
+            101,
+            475,
+            199
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/61bebec17ec622bb37a06f3887d86504a47f9bacb42fa054af93d8e78c600f98.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) PhoER on TTS"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            95,
+            224,
+            280,
+            323
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/69da6e0eb872e3c70f636dd0489df81cd2c79ee7590149a2d3c6f873c5eb1970.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) PhoER on TTSV"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            290,
+            224,
+            475,
+            323
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/a70fcddb3966e755758671981b766674a064782c2e2940c89760b727cfc3a69c.jpg",
+        "content": "",
+        "chart_caption": [
+            "(e) ProER on TTS"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            94,
+            348,
+            282,
+            445
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/37505f9c92921695cff81de55bfb45b4973d4af2180d01d55d479af79adb4260.jpg",
+        "content": "",
+        "chart_caption": [
+            "(f) ProER on TTSV",
+            "Figure 5: Intelligibility under different numbers of ODE steps for TTS and TTSV. WER, PhoER, and ProER are used to evaluate word-level, phoneme-level, and prosody-token-level error rates, respectively."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            290,
+            347,
+            475,
+            445
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/85735f2b088fe435a46526449415d6878c75078b2f7640632dc92f3f35fd6a1d.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) MOS on TTS"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            95,
+            563,
+            284,
+            662
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/3b7a7e4f5089ee067d9d334eee5a83ff4660d0b80e00da21102fca980ca281e8.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b) MOS on TTSV"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            290,
+            563,
+            475,
+            662
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/c5b466df1b608d4d3e318e43737399e5f86385c2bd85611c38c2dbacf1a7c9e2.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) MC-MOS on TTSV",
+            "Figure 6: Human subjective listening test evaluation under different numbers of ODE steps. MOS measures overall naturalness, MC-MOS measures the melody accuracy ofthe generated singing voice."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            193,
+            687,
+            379,
+            785
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Specifically, X represents the phoneme derived from text or lyric to be generated, while $S _ { T }$ and $S _ { \\nu }$ denote style information provided by text descriptions and reference voices, respectively. Prosodic control can be provided at different granularities: $\\mathcal { P } _ { l e x }$ represents discrete lexical prosody such as tones or stresses, $\\mathcal { P } _ { n o t e }$ represents musical note-level conditions for singing voice generation, and $F _ { 0 }$ provides continuous frame-level pitch control. By flexibly combining these conditions, CookVoice can support multiple tasks within a single model, as summarized in Table 5.",
+        "bbox": [
+            519,
+            89,
+            909,
+            215
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "E. Terminology",
+        "text_level": 2,
+        "bbox": [
+            642,
+            225,
+            786,
+            242
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "To make the paper accessible to readers without a background in linguistics, speech processing, or music, we summarize the key terms used in CookVoice in Table 6. These terms cover linguistic content, prosody, music-related control signals, style control, and evaluation metrics.",
+        "bbox": [
+            519,
+            247,
+            909,
+            310
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "F. Supplementary Results",
+        "text_level": 2,
+        "bbox": [
+            598,
+            322,
+            831,
+            338
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "table",
+        "img_path": "images/f04e446a8919abf255dc09983251b25a780873466e489204c45de4b64696b10a.jpg",
+        "table_caption": [
+            "Table 5: Summary of generation tasks and control settings supported by CookVoice. X denotes phoneme/lyric content, $S \\tau$ and $S _ { \\nu }$ denote text-based and voice-based style conditions, $\\mathcal { P } _ { l e x }$ denotes lexical prosody such as tones or stresses, $\\mathcal { P } _ { n o t e }$ denotes musical note conditions, and $F _ { 0 }$ denotes F0 contour."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Task Name</td><td>Abbr.</td><td>Formulation</td><td>Description</td></tr><tr><td>Text-to-Speech</td><td>TTS</td><td> $\\mathcal { G } ( X , \\mathcal { P } _ { l e x } )$ </td><td>Generate a speech waveform from text content and lexical prosody.</td></tr><tr><td>Text Style-Controllable TTS</td><td>T-SC-TTS</td><td> $\\mathcal { G } ( S _ { T } , X , \\mathcal { P } _ { l e x } )$ </td><td>Generate speech conditioned on a natural language style description, such as emotion, age, gender, or speaking</td></tr><tr><td>Voice Style-Controllable TTS</td><td>V-SC-TTS</td><td> $\\mathcal { G } ( S \\nu , X , \\mathcal { P } _ { l e x } )$ </td><td>manner. Generate speech that preserves the text content while mimicking the global style or timbre of a reference voice.</td></tr><tr><td>Prosody-Controllable TTS</td><td>PC-TTS</td><td> ${ \\mathcal { G } } ( S , X , F _ { 0 } )$ </td><td>Generate speech with explicit frame-level prosody control from a reference  $F _ { 0 }$  contour while keeping the target con- tent and style.</td></tr><tr><td>Text-to-Singing Voice</td><td>TTSV</td><td> $\\mathcal { G } ( X , \\mathcal { P } _ { n o t e } )$ </td><td>Generate a singing voice from lyrics and musical notes.</td></tr><tr><td>Text Style-Controllable TTSV</td><td>T-SC- TTSV</td><td> $\\mathcal { G } ( S \\tau , X , \\mathcal { P } _ { n o t e } )$ </td><td>Generate singing voice from lyrics and notes while con- trolling singing style using a text prompt.</td></tr><tr><td>Voice Style-Controllable TTSV</td><td>V-SC- TTSV</td><td> $\\mathcal { G } ( S \\nu , X , \\mathcal { P } _ { n o t e } )$ </td><td>Generate singing voice from lyrics and notes while trans- ferring the style or timbre from a reference voice.</td></tr><tr><td>Prosody-Controllable TTSV</td><td>PC-TTSV</td><td> $\\mathcal { G } ( S , X , \\mathcal { P } _ { F _ { 0 } } )$ </td><td>Generate singing voice by following a continuous frame- level F0 contour, enabling fine-grained melody or prosody mimicry.</td></tr><tr><td>Voice Mimicry</td><td>VM</td><td> $\\mathcal { G } ( S \\nu , X , \\mathcal { P } _ { F _ { 0 } } )$ </td><td>Generate speech with new content while jointly mimick- ing the reference voice style and detailed prosodic trajec-</td></tr><tr><td>Voice Conversion</td><td>VC</td><td> $\\mathcal { G } ( S _ { \\nu } ^ { t a r } , X ^ { s r c } , \\mathcal { P } _ { F _ { 0 } } ^ { s r c } )$ </td><td>tory. Convert a source speech into a target voice style while pre- serving the source linguistic content and prosody.</td></tr><tr><td>Singing Voice Conversion</td><td>SVC</td><td> $\\mathcal { G } ( S _ { \\nu } ^ { t a r } , X ^ { s r c } , \\mathcal { P } _ { F _ { 0 } } ^ { s r c } )$ </td><td>Convert a source singing voice into a target singing style while preserving lyrics and melodic contour.</td></tr><tr><td>Speech Editing</td><td>SE</td><td> $\\mathcal { G } ( S , X ^ { e d i t } , \\mathcal { P } _ { F _ { 0 } } )$ </td><td>Edit the linguistic content or style of speech while main-</td></tr><tr><td>Singing Voice Editing</td><td>SVE</td><td> $\\mathcal { G } ( S , X ^ { e d i t } , \\mathcal { P } _ { n o t e / F _ { 0 } } )$ </td><td>taining the remaining prosodic structure. Edit lyrics, style, or melody-related controls in singing</td></tr><tr><td>Sketch-to-Voice</td><td>STV</td><td> $\\mathcal { G } ( S , X , \\mathcal { P } _ { F _ { 0 } } ^ { s k e t c h } )$ </td><td>voice generation. Generate speech or singing voice from a user-specified</td></tr><tr><td>Humming-To-Voice</td><td>HTV</td><td> $\\mathcal { G } ( S , X , \\mathcal { P } _ { F _ { 0 } } ^ { h u m m } )$ </td><td>coarse pitch sketch or manually controlled  $F _ { 0 }$  trajectory. Generate speech or singing voice from a user-specified humming  $\\bar { F } _ { 0 }$  contour.</td></tr></table>",
+        "bbox": [
+            95,
+            278,
+            905,
+            736
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "table",
+        "img_path": "images/699e3a7c5711f476fa7c49be08eae6fca986ab936d1406f9ae0f235075ab4112.jpg",
+        "table_caption": [
+            "Table 6: Terminology used in CookVoice. The table provides simplified explanations of linguistic, musical, control, and evaluation terms for non-expert readers."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Term</td><td>Category</td><td>Meaning in CookVoice</td></tr><tr><td>Human Voice Genera- tion (HVG)</td><td>General task</td><td>A broad task family that generates human speech or singing voice from control signals such as text, lyrics, notes, style prompts, reference voices, or pitch</td></tr><tr><td>Text-to-Speech (TTS)</td><td>Speech task</td><td>contours. Generate a spoken voice waveform from text or phoneme content.</td></tr><tr><td>Text-to-Singing Voice Singing task (TTSV)</td><td></td><td>Generate a singing voice waveform from lyrics and musical note information.</td></tr><tr><td>Voice Conversion (VC)</td><td>Conversion task</td><td>Convert a source speech voice into a target speaker or style while preserving the source content and prosody.</td></tr><tr><td>Singing Voice Conver- Conversion task sion (SVC)</td><td></td><td>Convert a source singing voice into a target singing voice style while preserv- ing lyrics and melody.</td></tr><tr><td>Phoneme</td><td>Linguistics</td><td>The basic sound unit of speech. For example, a word is converted into a se- quence of phonemes before being generated as speech or singing voice.</td></tr><tr><td>Grapheme-to-Phoneme (G2P)</td><td>Linguistics</td><td>A text processing module that converts written text or lyrics into phoneme sequences.</td></tr><tr><td>Lyrics</td><td>Music / linguistics</td><td>The textual content of a song. In CookVoice, lyrics are converted into phonemes and used as singing content.</td></tr><tr><td>Lexical prosody</td><td>Linguistics</td><td>Discrete pronunciation-related information attached to phonemes or words, such as Mandarin tones or English word stresses.</td></tr><tr><td>Tone</td><td>Linguistics</td><td>A pitch pattern that changes word meaning in tonal languages such as Man- darin Chinese. In CookVoice, tones are used as discrete prosody tokens for</td></tr><tr><td>Stress</td><td>Linguistics</td><td>speech. The emphasis placed on a syllable or word, often affecting loudness, duration, and pitch in English speech.</td></tr><tr><td>Prosody</td><td>Speech / music</td><td>The expressive pattern of voice, including pitch, rhythm, duration, stress, and intonation. Prosody controls how the content is spoken or sung.</td></tr><tr><td>Discrete prosody</td><td>Control signal</td><td>Symbolic prosody information such as tones, stresses, or MIDI notes. It pro- vides coarse but practical control without requiring reference audio.</td></tr><tr><td>Continuous prosody</td><td>Control signal</td><td>Frame-level acoustic prosody information, mainly represented by the continu-</td></tr><tr><td> $F _ { 0 }$ </td><td>Acoustics</td><td>ous Fo contour. It provides fine-grained pitch control. Fundamental frequency, corresponding to the perceived pitch of the voice.</td></tr><tr><td> $F _ { 0 }$  contour</td><td>Acoustics</td><td>Higher  $F _ { 0 }$  generally means a higher-pitched voice. A time-varying sequence of  $F _ { 0 }$  values that describes how pitch changes over</td></tr><tr><td>Waveform</td><td>Signal processing</td><td>time. CookVoice uses it for frame-level continuous prosody control. The raw audio signal represented as amplitude values over time. It is the final</td></tr><tr><td>Spectrogram</td><td>Signal processing</td><td>audio output that listeners hear. A time-frequency representation of audio. It shows how the frequency content of a waveform changes over time, and is commonly used as an intermediate</td></tr><tr><td>Frame</td><td>Signal processing</td><td>acoustic representation for voice generation. The smallest unit of slice in the spectrogram along temporal axis. A voice waveform is converted into a spectrogram with multiple frames along the tem-</td></tr><tr><td>Latent acoustic embed- Signal processing</td><td></td><td>poral axis, and CookVoice aligns content, style, and prosody to these acoustic frames for fine-grained control. A compressed acoustic feature extracted from the spectrogram. CookVoice</td></tr><tr><td>ding Frame-level alignment Model design</td><td></td><td>generates the target latent acoustic embedding, which is then converted back into a waveform by the decoder. A mechanism that expands different control signals to match the acoustic</td></tr><tr><td>Duration</td><td>Timing</td><td>frame length, allowing content, style, and prosody to be combined at each time step. The length of time a phoneme or note lasts. Duration determines how content</td></tr></table>",
+        "bbox": [
+            105,
+            172,
+            894,
+            829
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "table",
+        "img_path": "images/d7957243a438f07d5b9a7ea80678efafd03d434676ddde80b3b4b98e8e03e3e7.jpg",
+        "table_caption": [
+            "Table 6: Terminology used in CookVoice. The table provides simplified explanations of linguistic, musical, control, and evaluation termsfor non-expert readers. Continued."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Term</td><td>Category</td><td>Meaning in CookVoice</td></tr><tr><td>MIDI note</td><td>Music</td><td>A symbolic musical pitch representation used in singing voice generation. It specifies which note should be sung.</td></tr><tr><td>Note duration</td><td>Music</td><td>The length of a musical note, usually derived from the score or beat informa-</td></tr><tr><td>Beat</td><td>Music</td><td>tion. It controls how long a note is sustained in singing. A unit of musical timing. In CookVoice, beat information is used to compute</td></tr><tr><td>Melody</td><td>Music</td><td>relative note and phoneme durations for singing voice generation. The ordered pitch movement of singing. It is mainly controlled by musical</td></tr><tr><td>Humming</td><td>Music / control</td><td>notes or continuous  $F _ { 0 }$  contours. A user-provided vocal melody without full lyrics. CookVoice can use its ex- tracted 1  $F _ { 0 }$  contour as a prosody control signal.</td></tr><tr><td>Pitch sketch</td><td>User control</td><td>A manually specified or coarse pitch trajectory used to guide the generated speech or singing voice.</td></tr><tr><td>Style</td><td>Voice attribute</td><td>Global paralinguistic characteristics of a voice, such as speaker identity, tim- bre, emotion, age, gender, and speaking or singing manner.</td></tr><tr><td>Timbre</td><td>Voice attribute</td><td>The tone color or acoustic identity of a voice. Two voices can sing the same note but sound different because of different timbres.</td></tr><tr><td>Text style prompt</td><td>Style control</td><td>A natural language description of the desired voice style, such as “a female</td></tr><tr><td>Reference voice</td><td>Style control</td><td>speaking happily&quot;. An example speech or singing voice used to provide target voice style, timbre,</td></tr><tr><td>Text-based style</td><td>Style control</td><td>or speaker identity. Style information extracted from a natural language prompt. It provides</td></tr><tr><td>Voice-based style</td><td>Style control</td><td>semantic-level style control. Style information extracted from a reference voice. It provides more direct acoustic style and timbre control.</td></tr><tr><td>WER</td><td>Evaluation metric</td><td>Word Error Rate. It measures word-level content errors after transcribing gen-</td></tr><tr><td>PhoER</td><td>Evaluation metric</td><td>erated audio with an ASR system. Lower is better. Phoneme Error Rate. It measures phoneme-level pronunciation or content er-</td></tr><tr><td>ProER</td><td>Evaluation metric</td><td>rors. Lower is better. Prosody Error Rate. It measures errors in discrete prosody tokens such as tones</td></tr><tr><td>S-SIM</td><td>Evaluation metric</td><td>and stresses. Lower is better. Style Similarity. It measures how similar the generated voice style is to the</td></tr><tr><td>F0-RMSE</td><td>Evaluation metric</td><td>target style. Higher is better. Root mean square error between generated and target Fo contours. It measures</td></tr><tr><td>F0-CORR</td><td>Evaluation metric</td><td>absolute pitch deviation. Lower is better. Pearson correlation between generated and target Fo contours. It measures</td></tr><tr><td>MOS</td><td>Subjective metric</td><td>whether the pitch trend is preserved. Higher is better. Mean Opinion Score. Human listeners rate the naturalness or quality of gen-</td></tr><tr><td>M-CMOS</td><td>Subjective metric</td><td>erated audio, usually on a 1–5 scale. Melody Comparative MOS. Human listeners compare whether one singing sample follows the melody better than another.</td></tr></table>",
+        "bbox": [
+            105,
+            234,
+            894,
+            766
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "table",
+        "img_path": "images/d67da5ca829b2e01e730e11b40a66b5604a8a9c048d017fd41fc4f6e51012295.jpg",
+        "table_caption": [
+            "Table 7: Intelligibility and prosodic evaluation comparison on Chinese and English subsets. Word Error Rate (WER), Phoneme Error Rate (PhoER), Prosody Error Rate (ProER) ↓ indicates lower is better."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td rowspan=\"2\">Task</td><td rowspan=\"2\">Model</td><td colspan=\"3\">Chinese</td><td colspan=\"3\">English</td></tr><tr><td>WER</td><td>PhoER</td><td>ProER</td><td>WER</td><td>PhoER</td><td>ProER</td></tr><tr><td rowspan=\"10\">TTS</td><td>CosyVoice [1]</td><td> $8 . 6 2 \\pm 1 0 . 6 0$ </td><td> $3 . 4 8 \\pm 1 2 . 1 9$ </td><td> $2 . 6 3 \\pm 7 . 8 0$ </td><td> $4 . 4 6 \\pm 8 . 3 0$ </td><td> $3 . 9 3 \\pm 8 . 3 5$ </td><td> $2 . 6 5 \\pm 6 . 7 1$ </td></tr><tr><td>F5-TTS [4]</td><td> $5 . 2 3 \\pm 7 . 4 5$ </td><td> $0 . 4 7 \\pm 1 . 6 7$ </td><td> $0 . 6 3 \\pm 1 . 7 8$ </td><td> $2 . 3 4 \\pm 4 . 6 7$ </td><td> $1 . 6 3 \\pm 3 . 3 2$ </td><td> $0 . 9 8 \\pm 1 . 9 6$ </td></tr><tr><td>ParaStyleTTS [3]</td><td> $9 . 6 7 \\pm 8 . 2 5$ </td><td> $4 . 6 3 \\pm 6 . 7 0$ </td><td> $3 . 2 7 \\pm 6 . 5 4$ </td><td> $5 . 2 1 \\pm 6 . 9 5$ </td><td> $5 . 4 0 \\pm 7 . 4 2$ </td><td> $1 . 8 2 \\pm 2 . 8 0$ </td></tr><tr><td>IndexTTS [2]</td><td> $4 . 1 6 \\pm 6 . 6 3$ </td><td> $0 . 3 5 \\pm 1 . 6 0$ </td><td> $0 . 3 5 \\pm 1 . 6 0$ </td><td> $2 . 8 8 \\pm 6 . 0 4$ </td><td> $2 . 0 4 \\pm 5 . 2 6$ </td><td> $1 . 2 9 \\pm 4 . 0 7$ </td></tr><tr><td>Vevo2 [8]</td><td> $6 . 3 5 \\pm 6 . 7 3$ </td><td> $1 . 5 6 \\pm 2 . 9 3$ </td><td> $1 . 1 7 \\pm 2 . 6 2$ </td><td> $3 . 8 2 \\pm 6 . 4 7$ </td><td> $2 . 7 2 \\pm 6 . 0 1$ </td><td> $1 . 6 2 \\pm 4 . 3 3$ </td></tr><tr><td>CookVoice</td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td> $S \\tau + \\mathcal { P } _ { d i s c }$ </td><td> $9 . 4 8 \\pm 1 1 . 8 8$ </td><td> $4 . 2 2 \\pm 1 0 . 7 5$ </td><td> $3 . 7 9 \\pm 9 . 1 7$ </td><td> $6 . 0 7 \\pm 1 2 . 3 5$ </td><td> $5 . 8 0 \\pm 1 2 . 4 3$ </td><td> $3 . 0 5 \\pm 6 . 0 9$ </td></tr><tr><td> $S \\tau + \\mathcal { P } _ { c o n t }$ </td><td> $9 . 0 3 \\pm 1 0 . 9 8$ </td><td> $3 . 0 7 \\pm 8 . 6 5$ </td><td> $2 . 6 9 \\pm 6 . 7 4$ </td><td> $5 . 2 3 \\pm 8 . 7 6$ </td><td> $4 . 4 4 \\pm 8 . 8 5$ </td><td> $2 . 6 4 \\pm 5 . 2 0$ </td></tr><tr><td> $S _ { \\mathcal { V } } + \\mathcal { P } _ { d i s c }$ </td><td> $8 . 6 6 \\pm 1 0 . 1 4$ </td><td> $4 . 2 8 \\pm 9 . 6 6$ </td><td> $3 . 1 3 \\pm 6 . 9 7$ </td><td> $4 . 4 1 \\pm 7 . 4 0$ </td><td> $3 . 9 7 \\pm 7 . 2 1$ </td><td> $1 . 9 0 \\pm 3 . 5 0$ </td></tr><tr><td> $S _ { \\nu } + \\mathcal { P } _ { c o n t }$ </td><td> $8 . 1 3 \\pm 1 0 . 0 7$ </td><td> $3 . 7 8 \\pm 9 . 1 9$ </td><td> $3 . 1 7 \\pm 6 . 6 9$ </td><td> $4 . 1 9 \\pm 7 . 4 5$ </td><td> $3 . 7 7 \\pm 7 . 8 1$ </td><td> $1 . 4 7 \\pm 2 . 9 7$ </td></tr><tr><td rowspan=\"10\"></td><td>Ground Truth</td><td> $6 . 3 3 \\pm 9 . 3 3$ </td><td> $2 . 0 1 \\pm 5 . 4 6$ </td><td> $1 . 7 8 \\pm 4 . 9 9$ </td><td> $3 . 3 9 \\pm 7 . 0 7$ </td><td> $2 . 8 4 \\pm 7 . 1 4$ </td><td> $1 . 3 1 \\pm 3 . 5 8$ </td></tr><tr><td>DiffSinger [5] StyleSinger [6]</td><td> $1 7 . 7 9 \\pm 1 4 . 1 6$ </td><td> $1 6 . 4 3 \\pm 1 3 . 9 9$ </td><td> $1 7 . 0 4 \\pm 1 4 . 2 1$ </td><td></td><td></td><td></td></tr><tr><td>TCSinger [7]</td><td> $1 1 . 3 1 \\pm 7 . 6 8$   $9 . 8 8 \\pm 7 . 2 3 $ </td><td> $1 0 . 4 3 \\pm 8 . 8 7$ </td><td> $1 0 . 0 5 \\pm 7 . 5 4$ </td><td></td><td></td><td></td></tr><tr><td>Vevo1.5 [15]</td><td></td><td> $7 . 6 1 \\pm 6 . 1 5$ </td><td> $7 . 4 0 \\pm 6 . 2 6$ </td><td> $2 9 . 0 3 \\pm 1 9 . 3 1$ </td><td> $3 1 . 4 5 \\pm 2 1 . 8 5$ </td><td> $1 6 . 1 1 \\pm 1 7 . 3 3$ </td></tr><tr><td>Vevo2 [8]</td><td> $8 . 8 5 \\pm 1 1 . 0 9$ </td><td> $8 . 4 0 \\pm 1 0 . 9 2$ </td><td> $9 . 3 4 \\pm 9 . 4 3$ </td><td> $2 3 . 6 2 \\pm 1 4 . 6 7$ </td><td> $2 4 . 9 1 \\pm 1 5 . 1 7$ </td><td> $1 1 . 2 3 \\pm 8 . 0 4$ </td></tr><tr><td></td><td> $4 . 6 6 \\pm 6 . 0 4$ </td><td> $2 . 8 9 \\pm 4 . 9 6$ </td><td> $4 . 2 1 \\pm 5 . 0 0$ </td><td> $1 1 . 3 7 \\pm 9 . 8 0$ </td><td> $1 0 . 8 4 \\pm 9 . 6 1$ </td><td> $4 . 7 4 \\pm 4 . 4 8$ </td></tr><tr><td>CookVoice</td><td> $1 1 . 7 1 \\pm 1 0 . 4 4$ </td><td> $1 1 . 0 8 \\pm 1 1 . 7 9$ </td><td> $1 0 . 8 0 \\pm 8 . 9 6$ </td><td> $1 9 . 5 6 \\pm 1 4 . 4 7$ </td><td> $2 0 . 8 1 \\pm 1 5 . 7 1$ </td><td></td></tr><tr><td> $S _ { T } + \\mathcal { P } _ { d i s c }$ </td><td> $9 . 7 9 \\pm 9 . 2 6$ </td><td></td><td></td><td></td><td></td><td> $8 . 7 9 \\pm 6 . 7 2$ </td></tr><tr><td> $S \\tau + \\mathcal { P } _ { c o n t }$ </td><td></td><td> $9 . 8 2 \\pm 1 2 . 2 5$ </td><td> $8 . 9 2 \\pm 7 . 2 7$ </td><td> $2 1 . 1 0 \\pm 1 7 . 8 1$ </td><td> $2 2 . 1 7 \\pm 1 9 . 7 1$ </td><td> $1 0 . 0 5 \\pm 8 . 9 1$ </td></tr><tr><td> $S _ { \\mathcal { V } } + \\mathcal { P } _ { d i s c }$   $S _ { \\mathcal { V } } + \\mathcal { P } _ { c o n t }$ </td><td> $1 1 . 4 5 \\pm 9 . 1 4$   $1 0 . 0 1 \\pm 9 . 7 0$ </td><td> $1 1 . 1 5 \\pm 1 0 . 1 2$   $8 . 6 5 \\pm 1 1 . 9 9$ </td><td> $1 0 . 0 1 \\pm 7 . 9 3$   $8 . 7 8 \\pm 7 . 8 3$ </td><td> $2 2 . 5 3 \\pm 1 6 . 9 2$   $2 4 . 3 7 \\pm 1 7 . 2 3$ </td><td> $2 3 . 3 2 \\pm 1 9 . 2 0$   $2 4 . 6 8 \\pm 2 0 . 0 9$ </td><td> $1 0 . 5 3 \\pm 7 . 8 8$ </td></tr><tr><td>Ground Truth</td><td></td><td> $5 . 0 1 \\pm 4 . 7 6$ </td><td> $3 . 0 6 \\pm 5 . 3 3$ </td><td> $4 . 9 9 \\pm 5 . 9 8$ </td><td> $1 4 . 2 2 \\pm 1 2 . 9 3$  </td><td> $1 3 . 1 6 \\pm 1 0 . 9 2$ </td><td> $1 0 . 5 4 \\pm 6 . 7 0$   $7 . 2 6 \\pm 8 . 0 0$ </td></tr></table>",
+        "bbox": [
+            92,
+            312,
+            927,
+            690
+        ],
+        "page_idx": 15
+    }
+]
