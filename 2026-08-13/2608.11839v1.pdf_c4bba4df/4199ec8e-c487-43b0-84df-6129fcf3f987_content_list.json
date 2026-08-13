@@ -1,0 +1,2508 @@
+[
+    {
+        "type": "text",
+        "text": "AIR QUALITY STATION SIMULATION VIA LSTM AND ATTENTION-BASED MODELLING",
+        "text_level": 1,
+        "bbox": [
+            178,
+            119,
+            820,
+            167
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Alexander Kostadinov GATE Institute   \nSofia University “St Kliment Ohridski” 5 James Bourchier Blvd, 1164, Sofia   \nalexander.kostadinov@gate-ai.eu",
+        "bbox": [
+            191,
+            231,
+            462,
+            301
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Petar O. Hristov GATE Institute Sofia University “St Kliment Ohridski” 5 James Bourchier Blvd, 1164, Sofia petar.hristov@gate-ai.eu",
+        "bbox": [
+            544,
+            231,
+            807,
+            301
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Dessislava Petrova-Antonova GATE Institute   \nSofia University “St Kliment Ohridski”   \n5 James Bourchier Blvd, 1164, Sofia   \ndessislava.petrova@gate-ai.eu",
+        "bbox": [
+            367,
+            321,
+            629,
+            392
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "August 13, 2026",
+        "bbox": [
+            442,
+            426,
+            555,
+            441
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "ABSTRACT",
+        "text_level": 2,
+        "bbox": [
+            449,
+            459,
+            549,
+            476
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Poor air quality in urban areas is driven by a complex chain of processes and presents a significant public health concern. To better understand and control the mechanisms that determine air quality, cities deploy networks of measurement stations, and launch initiatives for collecting denser data about the concentration of pollutants in the atmosphere. Extracting insights from the stations relies on their reliable and uninterrupted operation. However, hardware is susceptible to faults and blackouts that may result in data unavailability, which affects the overall quality of analyses.",
+        "bbox": [
+            169,
+            493,
+            825,
+            579
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "In this paper, we present a deep-learning model, called SATADL, which can infer complex relations and output multiple-hour-ahead air-quality forecasts. The goal of the model is to simulate the measurements of an unresponsive station until its operation is restored. The architecture of the model, which allows it to extract information from different aspects of the data, is described in detail and a careful examination of all of its components is provided.",
+        "bbox": [
+            169,
+            582,
+            826,
+            654
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "We demonstrate the performance of SATADL on four sets of air quality stations from around the world, by using it to simulate the concentration of $\\mathrm { P M _ { 1 0 } }$ for periods of hypothetical failures of one of the measurement stations, lasting for as long as 48 hours. A selection of baseline and published deep learning models were trained and used as a benchmark. The results show that SATADL per forms better across different prediction windows, for both coefficient of determination and root mean squared error, demonstrating its suitability as a virtual proxy station.",
+        "bbox": [
+            169,
+            657,
+            826,
+            743
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Keywords Urban air quality · deep learning · spatio-temporal attention · simulation · LSTM",
+        "bbox": [
+            112,
+            762,
+            722,
+            777
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "1 Introduction",
+        "text_level": 2,
+        "bbox": [
+            114,
+            804,
+            254,
+            820
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "1.1 Background and motivation",
+        "text_level": 2,
+        "bbox": [
+            112,
+            840,
+            349,
+            856
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "The quality of urban air is driven by a sophisticated chain of processes of both anthropogenic and natural origin, among others. Air pollution has become a major problem worldwide and endangers the people’s health and the environment. Poor air quality leads to multiple diseases and complications Kampa and Castanas (2008), with an estimation of 6.7 million deaths globally, according to the World Health Organisation (WHO)<sup>1</sup>. Because of the complexity and severity of the problem, the WHO<sup>2</sup> is continually seeking ways to improve how risk assessments are conducted Forastiere et al. (2024).",
+        "bbox": [
+            111,
+            868,
+            885,
+            912
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "aside_text",
+        "text": "arXiv:2608.11839v1 [cs.LG] 12 Aug 2026",
+        "bbox": [
+            29,
+            352,
+            65,
+            799
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            111,
+            93,
+            883,
+            137
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Because air pollution is related to many factors of the urban design and development and because it has a significant impact on the liveability of cities, the quality of air is used as a natural progress indicator towards the transformation of urban areas into smart cities. In smart cities traditional infrastructure and public services are optimised through digital solutions, which in turn, enhances the quality of life for its residents and boosts economic efficiency. A driving concept for smart cities are the so-called urban digital twins Abdelrahman et al. (2025), which serve as digital replicas of different dimensions and processes of the city. One can argue that, for the reasons laid out above, an urban digital twin is in fact a digital twin for air quality!",
+        "bbox": [
+            111,
+            142,
+            885,
+            241
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "To address the dangers of poor air quality, municipalities around the world have established monitoring systems that measure the concentrations of pollutants, such as particulate matter no larger than 10 µm in aerodynamic diameter $\\left( \\mathrm { P M } _ { 1 0 } \\right)$ , nitrogen dioxide $\\mathrm { ( N O _ { 2 } ) }$ ), sulphur dioxide $\\mathrm { ( S O _ { 2 } ) }$ and others, as well as meteorological factors like atmospheric temperature and pressure, wind speed and direction, and rainfall intensity, which contribute to the dispersion of pollutants. Despite providing a reference for the concentration levels of different air pollutants , these systems, as any other piece of hardware are susceptible to technical issues, weather events, and power outages, that compromise their reliability as measurement devices. In addition, certified air quality stations are expensive equipment and are usually distributed at only a few carefully chosen locations, making each individual station critical to understanding the quality of air in the city.",
+        "bbox": [
+            111,
+            246,
+            885,
+            371
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "To translate monitoring into actionable insights, authorities need ways to analyse spatial, as well as past and future trends of pollutants, tasks which require the continuous availability and aggregation of data from all devices deployed in the city.",
+        "bbox": [
+            111,
+            376,
+            885,
+            419
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Despite the fact that a substantial amount of research has been devoted to data imputation methods, the development of models for real-time simulation of air quality stations during extended periods of hardware downtime, has not been addressed in the literature, to the best of the authors’ knowledge. Therefore, this paper, proposes a SpAtial-Temporal Attention Dual LSTM (SATADL) model, which can act as an accurate proxy for stations that are offline. This paper extends the work, analyses and validation presented in Kostadinov et al. (2025). SATADL is an encoder-decoder deep neural network comprised of the following modules:",
+        "bbox": [
+            111,
+            424,
+            885,
+            508
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• Spatial Module - The spatial module processes the input from the surrounding stations and dynamically captures their impact on the output. It comprises of a time feature embedding block that extract time information as features and a spatial attention block that assigns weights to each surrounding station’s input at every time step.",
+        "bbox": [
+            155,
+            520,
+            885,
+            577
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• Temporal Module - The temporal module processes the data from the offline station to extract local behaviour and patterns before the station shutoff. The module comprises of the same time feature embedding block, along with a temporal attention, that assigns weights to each time step in order to scale their impact on the output.",
+        "bbox": [
+            155,
+            580,
+            885,
+            637
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• Decoder - The decoder takes the outputs from the spatial and temporal modules and decodes them using two separate LSTM blocks, which are combined to produce the final output.",
+        "bbox": [
+            155,
+            640,
+            885,
+            671
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "1.2 Related work",
+        "text_level": 2,
+        "bbox": [
+            112,
+            690,
+            250,
+            705
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "The simulation of measurement stations requires some sort of modelling of the phenomena (e.g. pollutant emission, dispersion and absorption) deemed appropriate for generating insights. The topic of air quality analysis, processing and modelling has been widely researched in the last few decades Liao et al. (2021); Baklanov and Zhang (2020); Yu et al. (2024). Among the effort, forecasting pollutant concentrations takes centre stage. There are two main classes of approaches in use for forecasting air quality - first-principles models and data-driven models.",
+        "bbox": [
+            111,
+            717,
+            885,
+            787
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "First-principle models, also referred to as physics-based or mechanistic models, such as CMAQ Eder et al. (2006), CHIMERE Menut et al. (2013), WRF-Chem Chuang et al. (2011) and ADMS Righi et al. (2009), among others, model the spatial transport and deposition of different pollutants emitted from a variety of sources. To operate, physicsbased models rely on a string of predictions, for example from regional meteorological and air pollution models, and on synthetic data, for example aggregated emission inventories Burov and Brezov (2023) and low level-of-detail cadastre data. Because of their inability to directly ingest real-time measurement data, which reflects the complex local dynamics of air quality and their inherently larger operation scale, physics-based models may produce results of insufficient spatial and temporal resolution and accuracy Athira et al. (2018).",
+        "bbox": [
+            111,
+            792,
+            885,
+            851
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>1</sup>According to the official website of WHO, accessible at https://www.who.int/news-room/fact-sheets/detail/ambient-(outdoor)- air-quality-and-health",
+        "bbox": [
+            111,
+            858,
+            883,
+            885
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>2</sup>The interested reader is redirected to the “Estimating the Morbidity from Air Pollution and its Economic Costs (EMAPEC)” project by WHO.",
+        "bbox": [
+            111,
+            883,
+            883,
+            911
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_number",
+        "text": "2",
+        "bbox": [
+            491,
+            934,
+            504,
+            948
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            111,
+            93,
+            885,
+            151
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "In contrast to physics-based models, data-driven approaches seek to recreate the physics encoded in different types of observations, most commonly those of pollutant concentration and meteorological quantities. A widely used class within this family is that of statistical models which aim to learn spatial and temporal patterns and relationships in the data.",
+        "bbox": [
+            111,
+            156,
+            885,
+            213
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "As described in Kostadinov et al. (2025), autoregressive integrated moving average (ARIMA) and multiple linear regression (MLR) are two very common strategies employed for data-driven forecasting. Despite their popularity, many of these methods are linear in nature, i.e., they assume linear relationships within the time series data. In other words, they cannot be used to model complex non-linear data without extensive preprocessing or knowledge-based transformations. Additionally, these models face other limitations. For example, the standard ARIMA model is univariate and does not consider relations between variables. Variations, such as ARIMAX Jing et al. (2009), allow the inclusion of additional variables which have an effect on the forecasted time series. While ARIMAX models can incorporate exogenous variables, they require the values of these variables to be known in advance for accurate forecasting. In the context of air quality, future measured values are unknown and cannot be utilised.",
+        "bbox": [
+            111,
+            217,
+            885,
+            344
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Multiple linear regression can handle multiple variables and a key strength is its simple training process. It assumes independent and identically distributed (i.i.d.) residuals (the differences between actual and predicted values) which is important for making valid statistical inferences about the model’s parameters. $\\mathrm { N g }$ and Awang (2018) use meteorological factors and $\\mathrm { P M _ { 1 0 } }$ data from the previous day to forecast daily $\\mathrm { P M _ { 1 0 } }$ concentrations with MLR. In multi-step-ahead forecasting, the recursive nature of the predictions often leads to violating the i.i.d. assumption for the residuals. This is because errors in earlier predictions can propagate and accumulate in subsequent forecasts, making the residuals dependent and non-identically distributed. Combining the model’s inability to capture non-linear patterns with its sensitivity to the violation of statistical assumptions, limits its applicability to more complex multi-step-ahead forecasting tasks. While non-linear relationships can sometimes be addressed through domain-specific transformations or by embedding hard-coded basis functions into the model, such approaches require deep expert knowledge and may not generalize well, making them impractical or even infeasible in many real-world scenarios. As a result, standard MLR is routinely found inadequate for modelling the complex, dynamic behaviour observed in air quality time series.",
+        "bbox": [
+            111,
+            348,
+            885,
+            517
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Alternative to these methods is the use of techniques from machine learning (ML) and deep learning, which offer more flexible models with potentially higher predictive power. Support vector machines (SVM), Gaussian process regression (GPR) and ensemble methods, for example, random forest (RF) are powerful ML models capable of capturing the highly complex relations between various features and thus outperforming traditional statistical methods in timeseries modelling Cerqueira et al. (2022). Furthermore, ML models can adapt to changing conditions and exhibit greater robustness to noise and uncertainties often present in real-world data. Liu et al. (2017) use SVM to forecast one-step-ahead daily air quality index in Beijing using meteorological conditions and air pollutants. Wang et al. (2021) put forward a GPR model to forecast a variety of atmospheric pollutants. Under some moderate assumptions, these models provide a flexible measure of the uncertainty of the regression model itself, which is a valuable feature for sensor analysis, optimal placement and decision making. The authors explore ways to efficiently tune GPR models and find that they exhibit general applicability for air quality predictions. Ivanov et al. (2022) use RF to predict up to seven-steps-ahead daily $\\mathrm { P M _ { 1 0 } }$ concentrations in the city of Burgas, using meteorological conditions and the last daily $\\mathrm { P M _ { 1 0 } }$ measurement. In addition, they consider the days of the year and seasons in order to find seasonal dependencies.",
+        "bbox": [
+            111,
+            521,
+            885,
+            704
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "As the complexity of the monitored processes increases, modelling a faulty station would require methods more flexible than those in classical ML. The members of the family of deep learning are this natural candidates for the task.",
+        "bbox": [
+            112,
+            707,
+            885,
+            736
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Advancements in neural network (NN) architectures have allowed the development of promising models, which try to overcome many existing challenges in time-series forecasting. One type of NN, known as recurrent neural networks (RNN) has established itself as a potent solution to handling complex and long term relationships in time series. Among them, long short-term memory (LSTM), developed by Hochreiter and Schmidhuber $( 1 9 9 7 )$ has become the predominant choice, thanks to its solution of the vanishing gradient problem, encountered by other RNNs Bengio et al. (1994). Since their inception, LSTM have seen very wide usage in multiple fields, including air quality forecasting. For instance, Freeman et al. (2018) use an LSTM to predict 8-hour-average surface ozone, $\\mathrm { O _ { 3 } , }$ concentrations and forecast up to 9 steps ahead (72 hours) in Kuwait. Their model displays significantly better results compared to ARIMA. Zhou et al. (2019) experiment with different modifications of the LSTM with additional hidden layers and Euclidean-norm regularisation for multiple air pollutants. Unsurprisingly, the authors found that using a deeper architecture with more layers yields better results.",
+        "bbox": [
+            111,
+            741,
+            885,
+            896
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "page_number",
+        "text": "3",
+        "bbox": [
+            491,
+            934,
+            504,
+            948
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Despite being sufficient on their own for short term predictions, RNN-only models are not adequate for long-term forecasting. To overcome this limitation, researchers have increasingly explored hybrid architectures that combine the strengths of different models. Other types of NN such as convolutional neural networks (CNN) are capable of extracting important insights from multivariate data. This allows for the development of compound models which can forecast many steps ahead with low error rates, while taking into consideration past trends in a multivariable environment. These hybrid models often adopt an encoder-decoder architecture, inspired by sequence-to-sequence models Sutskever et al. (2014). In this framework, an encoder processes the input data and transforms it into a compact, informative representation. This encoded representation is then fed to a decoder, which generates the forecasted values for multiple time steps at a time. Several studies have successfully implemented such approaches. For example, Du et al. (2021) use an encoder-decoder architecture consisting of an encoder with multiple CNN layers and an LSTM decoder, to extract spatial and temporal features from air quality and meteorological data collected from multiple stations within Beijing, for multi-step-ahead forecasting of $\\mathrm { P M } _ { 2 . 5 }$ in the city. Similarly, Abirami and Chitra (2021) proposed an encoder-decoder model for multi-step ahead forecasting of various air pollutants in Delhi, based on a CNN encoder and an LSTM decoder. They divide the city into cells, separating the stations spatially, to form a spatio-temporal approach.",
+        "bbox": [
+            111,
+            93,
+            887,
+            304
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Another development in NN architectures is the attention mechanism whose purpose is to give relative weights to pieces of information, thus determining which piece has the strongest impact on the result. Including attention mechanisms improves the model’s ability to prioritize and focus on the most relevant features of the data, enabling it to better capture patterns and dependencies Niu et al. (2021). The attention weights are dynamically generated and vary based on the given input. Encoder-decoders with attention mechanisms have become powerful tools for air quality forecasting and are frequently used in the literature Feng et al. (2023); Shi et al. (2021); Su et al. (2023); Zou et al. (2021). Huang et al. (2021) use a spatio-attention embedded RNN to forecast hourly air quality index up to 24 step ahead by extracting spatial and temporal dependencies of air pollutants and meteorological conditions from multiple stations in Beijing, achieving good results in long-term forecasting.",
+        "bbox": [
+            111,
+            308,
+            885,
+            434
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "When it comes to data imputation efforts, Wardana et al. (2022) develop a convolutional autoencoder for a given air quality station by using available data from the surrounding stations. Kim et al. (2021) propose a model, based on feedforward networks only, to extract and reconstruct the trend, seasonality, bias and residuals from air quality time series. The model’s main advantage is that it can do data imputations at multiple locations at once. Zhou and Huang (2017) develop a multi-layer LSTM network, which iteratively learns to fill missing values in the given input sequences. They manage to outperform multiple other benchmark models on a Beijing air quality dataset. Yu et al. (2025) propose a combined model that imputes time series data and forecasts at the same time, demonstrating great results in multiple real-world datasets with missing data. The novel interpolation attention, successfully imputes missing periods by considering the available spatio-temporal data, which are then given to the other components for forecasting.",
+        "bbox": [
+            111,
+            438,
+            885,
+            565
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "However all of these methods fill gaps in existing, historical data, instead of providing a real-time proxy for a particular device. It must be noted, therefore, that even though both air quality simulation and forecasting are usually performed using data-driven modelling and machine learning architectures, their objectives and operational constraints differ fundamentally. Air quality forecasting aims to predict future pollutant concentrations at a given location using only information available up to the prediction time, under strict temporal causality constraints. In contrast, data-driven air quality simulation, as considered in this work, focuses on real-time generation of pollutant concentrations using measurements from neighbouring stations and auxiliary variables. The goal of simulation is not to anticipate future states, but to reconstruct the behaviour of an offline sensor in real time, thereby maintaining spatial data continuity during temporary station shutdowns. As a result, simulation models can use information from nearby stations at the same time step, when the local data is missing - information that would not be allowed in a forecasting setting - while still operating in real time. Confusing simulation with forecasting can therefore lead to incorrect assumptions, since treating station-replacement simulation as forecasting imposes unnecessary temporal constraints and misinterprets the purpose of the model. In this context, SATADL captures both historical and real-time relationships between pollutants across space and time and leverages these to not only impute missing data, but to build a virtual replacement of the defaulting station.",
+        "bbox": [
+            111,
+            569,
+            887,
+            779
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "The rest of the paper is structured as follows: Section 2 presents and formulates the problem SATADL seeks to address. The architecture of SATADL, which comprises spatial and temporal modules with attention mechanisms and LSTMs and allows it to produce stable continuous results, based on previous observations and present measurements from working neighbouring sites is also described in that section. We have opted for a detailed description to enable researchers to recreate the model and all presented results. Section 3 discuses the experimental setting, data cleaning, analysis and preprocessing, used during the validation of SATADL. Section 4 analyses the acquired results and shows descriptive comparisons between the proposed model and a selection of baseline and advanced models from literature. Finally, Section 5 provides the conclusion and the future direction of the research.",
+        "bbox": [
+            111,
+            782,
+            885,
+            896
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            58
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "page_number",
+        "text": "4",
+        "bbox": [
+            491,
+            934,
+            504,
+            946
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "image",
+        "img_path": "images/ca54d6e0c993b166bbde58403672c3cdd78ae4dd2949868a862a46e933b083a7.jpg",
+        "image_caption": [
+            "Figure 1: Model architecture diagram of SATADL."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            116,
+            89,
+            882,
+            363
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "2 Model development",
+        "text_level": 2,
+        "bbox": [
+            112,
+            430,
+            312,
+            446
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "In this work we expand on the proposed in Kostadinov et al. (2025) model, by upgrading some of its components and also going in finer detail of the model’s architectural design. This way we aim to provide the necessary detail for its design, while also conveying it in a replicable manner. To quickly recap - SpAtial-Temporal Attention Dual LSTM is an an encoder-decoder RNN model designed to simulate the real-time measurements of a given “target” station by integrating information from multiple surrounding “functioning“ stations and historical data. The encoder consists of two modules - spatial and temporal, each with an attention mechanism. The decoder consists of two LSTM blocks, that sequentially process each of the encoder’s modules outputs and combines them into a final result. An overview block diagram of SATADL is shown on Figure 1 and Sections 2.2 to 2.4 are dedicated to a detailed description of each of the modules.",
+        "bbox": [
+            111,
+            472,
+            885,
+            597
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "2.1 Problem formulation",
+        "text_level": 2,
+        "bbox": [
+            112,
+            628,
+            302,
+            642
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "We expand on the previous work, presented in Kostadinov et al. (2025). As a reminder to the reader, a quick setup of the problem and its formulation will be shown. Recall that we have a malfunctioned station called target that we aim to simulate with data from its historical measurements and present data from the other functioning stations. We can formally divide the time steps into two non-overlapping sets $\\mathcal { T } _ { p }$ and $\\mathcal { T } _ { f }$ , which represent the past time steps up to the stopping point and the present time steps, $| \\mathcal { T } _ { p } | = \\bar { P }$ and $\\left. \\mathcal { T } _ { f } \\right. = F$ . Our goal is to obtain a stable, continuous prediction for a chosen air pollutant at the target station, by combining the available sources of data from the different time intervals.",
+        "bbox": [
+            111,
+            660,
+            885,
+            758
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Additionally, we denote the data from the functioning stations as $\\pmb { \\mathcal { F } } \\in \\mathbb { R } ^ { F \\times N _ { f f } \\times N _ { s } }$ , where $N _ { f f }$ and $N _ { s }$ are the number of measured variables and number of stations, respectively. The past data from the target station is denoted as $\\pmb { \\mathcal { P } } \\in \\mathbb { R } ^ { P \\times N _ { f p } }$ , where $N _ { f p }$ also represents the number of measured variables, which could differ from $N _ { f } f$",
+        "bbox": [
+            111,
+            762,
+            883,
+            806
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "The last required components are the sets $\\pmb { \\mathcal { W } } _ { F } = \\{ \\boldsymbol { w } _ { i } \\} _ { i = P + 1 } ^ { P + F }$ and $\\mathcal { W } _ { P } = \\{ w _ { i } \\} _ { i = 1 } ^ { P }$ , where $w _ { i } = ( h _ { i } , d _ { i } , m _ { i } )$ for an arbitrary index $i ,$ and $h _ { i } \\in \\mathbb { N } _ { < 2 4 } , d _ { i } \\in \\mathbb { N } _ { < 7 } , m _ { i } \\in \\mathbb { N } _ { < 1 2 } ^ { - }$ are the hour in the day, day of the week and the month, respectively, for a given data point. We refer to these as timefeatures for simplicity.",
+        "bbox": [
+            112,
+            813,
+            883,
+            858
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "With all defined variables above and a model $f ,$ we obtain the simulated measurements for a chosen pollutant at the target station for all $\\mathcal { T } _ { f }$ time steps.",
+        "bbox": [
+            112,
+            863,
+            883,
+            892
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "In Table 1 we provide a brief table of notations:",
+        "bbox": [
+            112,
+            897,
+            429,
+            911
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "page_number",
+        "text": "5",
+        "bbox": [
+            493,
+            934,
+            504,
+            948
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "table",
+        "img_path": "images/3de1510555682ab24742bce750f6aa5c63faf5853878832ead019b1e62e6f0aa.jpg",
+        "table_caption": [
+            "Table 1: Nomenclature"
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Name</td><td>Description</td></tr><tr><td> $\\mathcal { T } _ { p }$ </td><td>The set of time steps before the present moment.</td></tr><tr><td> $\\dot { \\mathcal { T } _ { f } }$ </td><td>The set of time steps after the present moment.</td></tr><tr><td> $\\check { P }$ </td><td>The size of the set  $\\mathcal { T } _ { p } .$ </td></tr><tr><td> $F$   $\\mathcal { F }$ </td><td>The size of the set  $\\mathcal { T } _ { f }$  The multi-dimensional array containing the data for the surrounding</td></tr><tr><td> $\\mathcal { P }$ </td><td>stations at every time step from  $\\mathcal { T } _ { f } .$ </td></tr><tr><td> $N _ { f f }$ </td><td>The matrix containing the data for the target station at every time step from  $\\mathcal { T } _ { p } .$ </td></tr><tr><td> $N _ { s }$ </td><td>The number of features each surrounding station has. The number of surrounding stations.</td></tr><tr><td> $N _ { f p }$ </td><td>The number of features the target station has.</td></tr><tr><td> $w _ { F }$ </td><td>The matrix containing the timestamps when the surrounding measure-</td></tr><tr><td> $w _ { P }$ </td><td>ments are taken.</td></tr><tr><td></td><td>The matrix containing the timestamps when the target measurements are taken.</td></tr></table>",
+        "bbox": [
+            225,
+            108,
+            767,
+            335
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "image",
+        "img_path": "images/fd67bfad03918c5575328d28880684f760d7aecf611bdbabd41e20229f56bf31.jpg",
+        "image_caption": [
+            "Figure 2: The spatial module of SATADL."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            116,
+            356,
+            883,
+            627
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "2.2 Spatial module",
+        "text_level": 2,
+        "bbox": [
+            112,
+            680,
+            261,
+            695
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "As described in Kostadinov et al. (2025), the spatial module, which takes as input $w _ { F }$ and ${ \\mathcal F } ,$ is designed to capture the dependencies, existing between the surrounding, functioning stations. To do this, we use an additive attention mechanism, which assigns dynamic weights, according to the impact each station has on the prediction. We refer the interested reader to Bahdanau et al. (2016) for more details on additive attention. The target pollutant measurements $\\{ \\pi _ { 1 } , \\pi _ { 2 } , \\ldots , \\pi _ { N s } \\}$ of each station are subsequently multiplied by the resulting weights to obtain the spatial context, sc , at time step t. This process is repeated $\\bar { F }$ times. A diagramatic representation of the spatial module is shown in Figure 2. The module consists of the following key blocks:",
+        "bbox": [
+            111,
+            705,
+            885,
+            804
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "2.2.1 Time Feature Embedding",
+        "text_level": 2,
+        "bbox": [
+            112,
+            818,
+            346,
+            833
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Embedding is a method of transforming categorical values into vectors of numbers. This is done so that the data is transformed into a format suitable for deep learning models, while also trying to preserve the connection between the unique values. For our purpose we apply embedding to the timestamps of the data to help our model learn seasonal patterns (if any are present) and how the time of the measurement affects the results. In Kostadinov et al. (2025) the time feature embedding comprised three embedding layers, followed by a single pass through a linear layer, and concatenation. We decided to redesign the method in a way that it captures the seasonal and periodic patterns from the timestamps.Each time feature, $w _ { i } .$ , in the input sequence is embedded using three separate embedding layers, corresponding to $h _ { i } , d _ { i }$ and $m _ { i }$ , respectively. The embedded features are then passed through three separate linear layers. In order to achieve periodicity, we add positional encoding, denoted Pos, using sine and cosine transformations for the even and odd positions, respectively. Additionally, before applying the transformations we scale, based on the time feature’s period, τ",
+        "bbox": [
+            111,
+            842,
+            885,
+            912
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "page_number",
+        "text": "6",
+        "bbox": [
+            491,
+            934,
+            506,
+            948
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            111,
+            93,
+            885,
+            179
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "img_path": "images/76bdef5f97148acba527c1d009952b57f571623d55ee9eabea301986805ea2ca.jpg",
+        "text": "$$\n\\begin{array} { c } { { \\mathrm { P o s } ( 2 i ) = \\displaystyle \\sin \\left( \\frac { 2 \\pi i } { \\tau } \\right) } } \\\\ { { \\mathrm { P o s } ( 2 i + 1 ) = \\displaystyle \\cos \\left( \\frac { \\pi ( 2 i + 1 ) } { \\tau } \\right) } } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            385,
+            189,
+            607,
+            257
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "where τ changes based on the periodicity of each time feature (i.e. for the days of the week it is equal to seven). After all linear layers a rectified linear unit (ReLU) is applied.",
+        "bbox": [
+            111,
+            267,
+            883,
+            297
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "2.2.2 Spatial attention",
+        "text_level": 2,
+        "bbox": [
+            112,
+            315,
+            284,
+            330
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The spatial attention mechanism captures the dependency between the functioning stations and their influence on the predictions. In this way, the LSTM utilised in the decoder is enhanced by the resulting weights of the spatial attention and the weighted spatial features. Given the functioning stations’ measurements at time $t , \\mathbf { X } _ { t } ,$ we use a linear layer to expand the feature vector of each station $\\mathbf { x } _ { t , i } .$ .The expanded feature vector is concatenated with the extracted time feature embeddings and passed through another linear layer. Additionally, the previous hidden and cell states from the LSTM block (see Figure 1), responsible for the output from the spatial module $( \\mathbf { h } _ { t - 1 } , \\mathbf { c } _ { t - 1 } )$ are fed back in as a tuple. To make the dimensionality of the tuple consistent with the dimensionality of the concatenated measurements, the former are passed through a linear layer. Finally, the entire information is passed to the additive attention mechanism to produce weights for the influence and impact of each station for time step t. The target pollutant values, $\\pi _ { k } .$ for all station stations at time step t are multiplied with their respective attention weights, to form the spatial context $\\mathbf { _ { 8 } } c _ { t }$ After all linear layers, Gaussian error linear unit (GELU) activation is applied.",
+        "bbox": [
+            111,
+            340,
+            885,
+            494
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "2.3 Temporal module",
+        "text_level": 2,
+        "bbox": [
+            112,
+            513,
+            279,
+            529
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The temporal module of SATADL (Figure 3), as described in Kostadinov et al. (2025), captures the influence of past target-station measurements on future predictions, using $\\mathcal { P }$ and $w _ { P }$ as inputs. Time features are embedded and combined with the measurements, followed by a scaled dot-product attention mechanism Vaswani et al. (2017), that forms the temporal context, tc.",
+        "bbox": [
+            111,
+            541,
+            885,
+            598
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "2.3.1 Temporal attention",
+        "text_level": 2,
+        "bbox": [
+            112,
+            616,
+            302,
+            631
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The temporal attention operates differently than the spatial attention. Instead of finding relations and patterns between different stations, the goal of the temporal attention is to highlight significant moments in the past data from the target station and form a temporal context by assigning weighted scores to each time step. This helps the LSTM in the decoder to focus on relevant past moments, while diminishing the impact of those with little weight. Given the target station’s measurements, P, we expand them using a linear layer. After obtaining the result, it is concatenated with the time feature embeddings and passed into another linear layer. From the output we form query, key and value matrices, with the use of 3 separate linear layers and apply scaled dot product attention to extract the temporal context tc. After all linear layers we apply GELU.",
+        "bbox": [
+            111,
+            641,
+            885,
+            753
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "2.4 Decoder",
+        "text_level": 2,
+        "bbox": [
+            112,
+            772,
+            214,
+            787
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "After obtaining the temporal context, tc and spatial contexts, up to time $t , s c _ { 1 } , s c _ { 2 } , \\ldots , s c _ { t }$ , these are passed to the decoder, shown in Figure 4. The decoder combines a uni-directional LSTM (uLSTM) block, which extracts local temporal patterns, and a bi-directional LSTM (biLSTM) block, which processes spatial contexts to produce base values, $\\{ b _ { 1 } , b _ { 2 } , \\ldots , b _ { t } \\}$ for the target station. These base values, which represents the global pollutant level up to the current time step, only exist over $\\bar { \\mathcal { T } } _ { f }$ (after the target stations has ceased functioning) and so we assign them indices 1 to $F$ , for brevity. This is also reflected in Figure 4. When $t = F$ , the base values are combined with the output of the uLSTM block to produce the final predictions for the chosen pollutant $\\pi ^ { \\prime }$ (see Kostadinov et al. (2025) for additional detail).",
+        "bbox": [
+            111,
+            801,
+            885,
+            912
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "page_number",
+        "text": "",
+        "bbox": [
+            493,
+            934,
+            504,
+            948
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "image",
+        "img_path": "images/4e5508268526b1964bfa51bb5e1d2b418473d14caa02e7d6cc36276177f9426a.jpg",
+        "image_caption": [
+            "Figure 3: The temporal module of SATADL."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            192,
+            116,
+            807,
+            465
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "image",
+        "img_path": "images/09c7f84ea2fc45c2d83cd9a6f4d49917e991b737cd7be6aa4bde521fcab0de44.jpg",
+        "image_caption": [
+            "Figure 4: The decoder module of SATADL."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            194,
+            553,
+            802,
+            856
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            58
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "page_number",
+        "text": "8",
+        "bbox": [
+            493,
+            934,
+            504,
+            948
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "2.4.1 Uni-directional LSTM Block",
+        "text_level": 2,
+        "bbox": [
+            112,
+            93,
+            369,
+            108
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "After obtaining the temporal context tc from the temporal module, it is passed through an uLSTM. The final hidden and cell state (h and c) from the LSTM output are then concatenated and passed through a linear layer with sigmoid activation to produce a representation of the local patterns, which serve as a trend adjustment - how the data would shift in time, based on the local patterns.",
+        "bbox": [
+            111,
+            117,
+            885,
+            174
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "2.4.2 Bi-directional LSTM Block",
+        "text_level": 2,
+        "bbox": [
+            112,
+            188,
+            357,
+            202
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "This block works sequentially by adding each of the spatial contexts $\\mathbf { _ { 8 } } c _ { t }$ to the already extracted $s c _ { 1 } , s c _ { 2 } , \\ldots , s c _ { t - 1 }$ increasing the sequence length each time. Then, the newly formed sequence is passed to a biLSTM layer and the final hidden and cell states $( \\mathbf { h } _ { t }$ and $\\mathbf { c } _ { t }$ are obtained. $\\mathbf { h } _ { t }$ and $\\mathbf { c } _ { t }$ are concatenated and forwarded to a linear layer to produce a single value - the base predicted value for time step $t , b _ { t } .$ , which is appended to the previously obtained base values $b _ { 1 } , b _ { 2 } , \\dotsc , b _ { t - 1 }$ . The extracted $b _ { t }$ is also concatenated with the final spatial context for the next time step $t + 1$ allowing the decoder to directly incorporate the previous output into the next prediction step. In addition, the concatenated $\\mathbf { h } _ { t }$ and $\\mathbf { c } _ { t }$ are passed to the spatial module for subsequent time step as the new previous states. After obtaining all $b _ { k } , \\ k \\in \\{ t _ { P + 1 } , t _ { P + 2 } , \\ldots , t _ { P + F } \\}$ , they are concatenated and summed with the output of the uLSTM block to form the final prediction for the target pollutant, $\\pi ^ { \\prime }$",
+        "bbox": [
+            111,
+            212,
+            885,
+            338
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "3 Experimental setting",
+        "text_level": 2,
+        "bbox": [
+            112,
+            356,
+            323,
+            373
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "In this section we describe the collection, preprocessing and analysis of four data sets of air quality measurements, used to evaluate the performance of SATADL. The data sets, which come from the cities of Beijing Chen (2017), Hong Kong<sup>3</sup>, Sofia<sup>4</sup> and Delhi<sup>5</sup>, were chosen for their accessibility and relevance. We note that these datasets complement the analyses preseneted in Kostadinov et al. (2025), which only featured tests on air quality data from the city of Sofia.",
+        "bbox": [
+            111,
+            386,
+            885,
+            444
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "The Hong Kong data was extracted from the Hong Kong’s official Environmental Protection Department API, which was provided in Shi et al. (2021). The Delhi dataset was extracted from publicly available API on the official website of Central Pollution Control Board of India, provided in Abirami and Chitra (2021). Finally, the Sofia data was extracted from the publicly available API on the official website of the European Environmental Agency for Bulgaria, which has been used in Marinov et al. (2022). All stations were listed by the corresponding authority as being either urban or within a metropolitan area.",
+        "bbox": [
+            111,
+            449,
+            885,
+            534
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "3.1 Data overview",
+        "text_level": 2,
+        "bbox": [
+            112,
+            547,
+            254,
+            563
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "An overview, including the measured variables, measurement period, number of stations and each chosen target station is shown in Table 2. Each pollutant is measured in $\\mu \\mathrm { { g } / m ^ { 3 } }$ . The temperature (T) and dew point temperature (DPT) are measured in ${ } ^ { \\circ } \\mathrm { C } ,$ the relative humidity (RH) in percentages and wind speed (WS) and wind direction (WD) are measured in m $/ \\mathrm { s }$ and degrees from $0 ^ { \\circ }$ to 360<sup>◦</sup>, respectively. Finally, the rainfall (R) and pressure (P) are measured in mm and hPa. The choice of target station were chosen at random, because not all stations have detailed information about location, quality and other characteristics on which we can base our choice.",
+        "bbox": [
+            111,
+            574,
+            885,
+            659
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "table",
+        "img_path": "images/ca8abb72dc2acb3e1805751821d254ad000958c951e4bf545906763a4c216a6f.jpg",
+        "table_caption": [
+            "Table 2: Overview of the datasets."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Dataset</td><td>Number of stations</td><td>Measured air pollutants</td><td>Measured meteorological conditions</td><td>Period</td><td>Target station</td></tr><tr><td>Hong Kong</td><td>16</td><td> $\\mathrm { S O _ { 2 } } , \\mathrm { N O _ { 2 } } , \\mathrm { N O _ { 2 } } ,$   $\\mathrm { C O } , \\mathrm { O } _ { 3 } , \\mathrm { P M } _ { 2 . 5 } , \\mathrm { P M } _ { 1 0 }$ </td><td></td><td>2016-01-01- 2019-01-10</td><td>&quot;Central“</td></tr><tr><td>Delhi</td><td>9</td><td> $\\mathrm { N O , N O _ { 2 } , N O _ { 2 } , }$   $\\mathrm { C O } , \\mathrm { O } _ { 3 } , \\mathrm { P M } _ { 2 . 5 } , \\mathrm { P M } _ { 1 0 }$ </td><td></td><td>2019-01-01 - 2024-01-01</td><td>&quot;Pusa“</td></tr><tr><td>Sofia</td><td>5</td><td> $\\mathrm { S O _ { 2 } } , \\mathrm { N O } , \\mathrm { N O _ { 2 } } , \\mathrm { P M _ { 1 0 } }$ </td><td>T, WS, WD, RH</td><td>2015-10-01 - 2024-01-01</td><td>&quot;Nadezhda“</td></tr><tr><td>Beijing</td><td>13</td><td> $\\mathrm { S O _ { 2 } , N O _ { 2 } , C O , O _ { 3 } , }$   $\\mathrm { P M } _ { 2 . 5 } , \\mathrm { P M } _ { 1 0 }$ </td><td>T, P, R, DPT, WS</td><td>2013-01-01 - 2017-03-01</td><td>&quot;Huairou“</td></tr></table>",
+        "bbox": [
+            210,
+            695,
+            782,
+            820
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Initial screening of the data revealed that there are missing and negative values, as well as outliers.",
+        "bbox": [
+            112,
+            844,
+            758,
+            861
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "page_number",
+        "text": "9",
+        "bbox": [
+            491,
+            934,
+            504,
+            946
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>3</sup>https://cd.epic.epd.gov.hk/EPICDI/air/station/?lang=en",
+        "bbox": [
+            132,
+            869,
+            562,
+            885
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>4</sup>https://eea.government.bg/kav/",
+        "bbox": [
+            133,
+            883,
+            379,
+            898
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>5</sup>https://cpcb.nic.in/automatic-monitoring-data/",
+        "bbox": [
+            133,
+            897,
+            503,
+            912
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "table",
+        "img_path": "images/8c645bbc404b0bde8d6a5be5f96870ab4b7a52b8e87fb2ae104e845df7b9d740.jpg",
+        "table_caption": [
+            "Table 3 and Table 4 show the percentage of missing and negative values of the measured pollutants and the meteorological conditions, averaged over the datasets. Attributed which are not measured in a dataset are written as ‘not measured‘ (NM).",
+            "Table 3: Missing and negative values for air quality pollutants (in %)."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Dataset</td><td>CO</td><td>NO</td><td> $\\mathrm { N O _ { 2 } }$ </td><td> $\\mathrm { N O } _ { x }$ </td><td> $\\mathrm { O _ { 3 } }$ </td><td> $\\mathrm { P M _ { 1 0 } }$ </td><td> $\\mathrm { P M } _ { 2 . 5 }$ </td><td> $\\mathrm { S O _ { 2 } }$ </td></tr><tr><td>Hong Kong</td><td>45.76 / 0.01</td><td>NM</td><td>2.84 / 0.07</td><td>8.96 / 0.01</td><td>3.08 / 0.55</td><td>4.33 / 0.05</td><td>4.45 / 0.37</td><td>2.77 / 1.15</td></tr><tr><td>Sofia (EXEA)</td><td>NM</td><td>2.81 / 0.29</td><td>2.81 / 0.24</td><td>NM</td><td>NM</td><td>3.85 / 0.06</td><td>NM</td><td>1.33 / 0.20</td></tr><tr><td>Delhi</td><td>7.80 / 0.42</td><td>5.52 / 0.00</td><td>5.40 / 0.00</td><td>5.02 / 0.29</td><td>6.11 / 0.00</td><td>6.78 / 0.00</td><td>5.69 / 0.00</td><td>NM</td></tr><tr><td>Beijing</td><td>4.92 / 0.00</td><td>NM</td><td>2.88 / 0.00</td><td>NM</td><td>3.15 / 0.00</td><td>1.53 / 0.00</td><td>2.08 / 0.00</td><td>2.14 / 0.00</td></tr></table>",
+        "bbox": [
+            178,
+            174,
+            816,
+            239
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "table",
+        "img_path": "images/183bedc22fadb7796d85b60e742e424cbf3b5708fa6da6561857c8042bba1554.jpg",
+        "table_caption": [
+            "Table 4: Missing and negative values for meteorological conditions (in %)."
+        ],
+        "table_footnote": [
+            "\\*Negative temperature values are not reported here, as they are physically valid and not considered errors."
+        ],
+        "table_body": "<table><tr><td>Dataset</td><td> $\\mathrm { T ^ { * } }$ </td><td>RH</td><td>WS</td><td>WD</td><td>DPT</td><td>P</td><td>R</td></tr><tr><td>Sofia (EXEA)</td><td>2.46 /-</td><td>3.13 / 0.00</td><td>8.67 / 0.00</td><td>8.67 / 0.00</td><td>NM</td><td>NM</td><td>NM</td></tr><tr><td>Beijing</td><td>0.10/-</td><td>NM</td><td>0.08 / 2.64</td><td>NM</td><td>0.10 / 44.26</td><td>0.09 / 0.00</td><td>0.10 / 95.98</td></tr></table>",
+        "bbox": [
+            217,
+            292,
+            779,
+            337
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "In addition, deeper analysis in the Sofia dataset showed large periods in which measured pollutant concentrations are very similar in absolute value, but not exactly equal. These periods contain exclusively values that are much lower than those observed normally, while their difference is practically none. For instance, values of $\\mathrm { N O } _ { 2 } ,$ for the entire months of August through to October (red, dashed rectangle on Figure 5), have a mean of 1.76 and standard deviation of 0.33. We refer to the values of these periods as repeating values. The other datasets do not exhibit such anomalies.",
+        "bbox": [
+            111,
+            372,
+            885,
+            444
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "To address these problems we take the following steps:",
+        "bbox": [
+            112,
+            449,
+            478,
+            464
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "• Negative values, except those for temperature, were treated as missing.",
+        "bbox": [
+            155,
+            474,
+            640,
+            489
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "• Longer periods of repeating values were taken to indicate anomalous readings. Repeating values are marked as such based on a rolling-window standard deviation below a certain threshold. For rolling window we chose 24 hours and examined windows only when the available points were more than eight. To the best of our knowledge, such thresholds do not exist. Based on manual inspection and distribution analysis, we determined that a threshold of 1.0 is suitable for $\\mathrm { N O _ { 2 } }$ and $\\mathrm { P M _ { 1 0 } } ,$ while 0.75 works well for NO. For $S O _ { 2 } ,$ we did not observe any large windows of repeating values. For the rest of the pollutants, not measured at the Sofia stations, we also employed 1.0 threshold but did not observe any significant repeating periods. Such values were present in several measured pollutants and were treated as missing data.",
+        "bbox": [
+            155,
+            493,
+            885,
+            606
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "• Large gaps in the data were removed, with experiments conducted using intervals of twenty-four, twelve, four, and one hours. Based on our findings, the best results were achieved when intervals longer than four hours were classified as large and subsequently removed. For the remaining missing data points, linear interpolation was applied.",
+        "bbox": [
+            155,
+            609,
+            885,
+            665
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "• Features with the majority of data missing were excluded from consideration during model development. All other measured quantities are used as features for SATADL.",
+        "bbox": [
+            155,
+            670,
+            885,
+            699
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "The final step of data cleaning involved filtering the data to retain only the timestamps where measurements are available from all stations. For instance, if one station has missing data for a certain period of time, but another has data during this period, the corresponding timestamps from the latter are also removed to ensure consistency across all stations. This ensures that the dataset contains complete records for all stations for every timestamp used. In the future, we aim to explore more into detail scenarios where multiple stations are offline.",
+        "bbox": [
+            111,
+            709,
+            885,
+            780
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "By way of preprocessing the data, we apply transformation to all features, by scaling them in the range [0, 1] to ensure they are on a similar scale. Additionally, we extract the hour of the day, the day of the week and the month from the timestamp of the measurements and add them as separate features.",
+        "bbox": [
+            111,
+            785,
+            885,
+            829
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "3.2 Stationarity analyses",
+        "text_level": 2,
+        "bbox": [
+            112,
+            843,
+            302,
+            859
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "When working with time series, it is important to have stationarity, since it is a prerequisite to many forecasting algorithms Marinov et al. (2022). Moreover, non-stationary time series are prone to distribution shifts, making them unpredictable for statistical models that rely on patterns learned from historical data. Non-stationary time series need",
+        "bbox": [
+            111,
+            869,
+            885,
+            912
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "page_number",
+        "text": "10",
+        "bbox": [
+            488,
+            934,
+            511,
+            948
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "chart",
+        "img_path": "images/88745b814cb8286c4ceb4796c5ecb2e20cfda41657ecc733cc7101a5e69ad21d.jpg",
+        "content": "",
+        "chart_caption": [
+            "Figure 5: An example of continuous repeating values for $\\mathrm { N O _ { 2 } }$ at Pavlovo station."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            122,
+            92,
+            877,
+            330
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "to be stabilised during preprocessing. We conducted a stationarity check on the dataset using the augmented Dickey-Fuller test. There was no evidence suggesting statistically significant non-stationarity in any of the attributes in all data sets.",
+        "bbox": [
+            111,
+            383,
+            883,
+            426
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "3.3 Modelling environment and setup",
+        "text_level": 2,
+        "bbox": [
+            112,
+            443,
+            390,
+            458
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "The training process and experimentation were conducted on a Windows 11 machine, with Intel<sup>®</sup> Core<sup>™</sup> i7-1260P and NVIDIA T550 Laptop GPU. Python 3.12.6 was the main operating language including multiple packages. The data analysis, cleaning and pre-processing were done using Pandas, Numpy and Scipy. Metrics from scikit-learn were used and visualisation was concluded using Matplotlib and Seaborn.",
+        "bbox": [
+            111,
+            467,
+            885,
+            525
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "We used the proposed training setup as in Kostadinov et al. (2025) for all datasets. While there may exist better configurations for every unique dataset, we stopped at the best found for the Sofia dataset. The proposed model was developed using Pytorch. For training, the Adam optimiser was utilised with a learning rate of 0.001 and reduction on plateau of 0.5. The loss function is set to mean squared error. The prediction steps $\\bar { F }$ and past steps $P$ were chosen to be 12 hours and the number of epochs was set to 30. Additionally, a second round of experiments where $F$ is set to 48 hours was also conducted. In this way we want to test both short-term and long-term reliability of the simulated measurements. We chose the two values based on the missing periods and patterns, found in the datasets. The majority of periods of unavailable data are between two and eight hours, while gaps up to and larger than 48 hours were only observed in the Delhi and Sofia datasets. The number of functioning stations, $N _ { s }$ and the number of features in each station, $N _ { f f }$ , are set according to Table 2 and the subsequent data cleaning procedures. Each dataset is divided into training, validation and test sets with a ratio of 8:1:1. The full list of parameters of SATADL can be seen in Table 5. We used the same parameters for all datasets. We chose $\\mathrm { P M _ { 1 0 } }$ as our target pollutant, because it is measured across all station networks and carries regulatory significance. The chosen target stations can be seen in Table 2.",
+        "bbox": [
+            111,
+            530,
+            885,
+            712
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "4 Predictive results and discussion",
+        "text_level": 2,
+        "bbox": [
+            112,
+            729,
+            418,
+            744
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "To evaluate the performance of SATADL, in addition to the basic studies presented in Kostadinov et al. (2025), the model was compared to five different neural-network-based models:",
+        "bbox": [
+            111,
+            760,
+            883,
+            789
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "• LSTM: A single layer unidirectional long short-term memory neural network with a projection layer.",
+        "bbox": [
+            155,
+            799,
+            838,
+            815
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "• Attention-LSTM: A model proposed by Gangopadhyay et al. (2018), which uses stacked LSTM layers and attention mechanism to model time series.",
+        "bbox": [
+            155,
+            818,
+            883,
+            847
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "• Transformer: A sequence-to-sequence model developed by Vaswani et al. (2017) that uses self-attention and cross-attention mechanisms to efficiently model complex dependencies in sequential data.",
+        "bbox": [
+            155,
+            851,
+            883,
+            880
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "• CLR: A combined model of convolution, fully connected and recurrent layers for multivariate time series forecasting.",
+        "bbox": [
+            155,
+            883,
+            883,
+            911
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            58
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "page_number",
+        "text": "11",
+        "bbox": [
+            488,
+            934,
+            509,
+            948
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "table",
+        "img_path": "images/03f56321bdc343ddbbd30fae22f00c83df719f5c359e0040ad8da82cc4ff3a05.jpg",
+        "table_caption": [
+            "Table 5: SATADL Parameters"
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Description</td><td>Value</td></tr><tr><td>Size of the time features embedding</td><td>3</td></tr><tr><td>Size of the initial linear layer in the time features embedding</td><td>9</td></tr><tr><td>Size of the last linear layer in the time features embedding Size of hidden state in the bidirectional LSTM</td><td>1</td></tr><tr><td>Size of the linear layer, processing the spatial module input</td><td>20</td></tr><tr><td></td><td>18</td></tr><tr><td>Size of the linear layer, processing the temporal module input</td><td>18</td></tr><tr><td>Size of hidden state in the unidirectional LSTM</td><td>20</td></tr><tr><td>Number of layers in unidirectional LSTM</td><td>3</td></tr><tr><td>Number of layers in bidirectional LSTM</td><td>3</td></tr><tr><td>Dropout rate in the decoder</td><td>0.35</td></tr><tr><td>Dropout rate in the spatial and temporal modules</td><td>0.35</td></tr><tr><td>Size of Q, K and V in temporal attention mechanism</td><td>18</td></tr></table>",
+        "bbox": [
+            258,
+            112,
+            738,
+            304
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "• LSTNet: A model proposed by Lai et al. (2018) combining convolution and recurrent layers to extract shortterm local dependency patterns among variables and to discover long-term patterns for time series trends.",
+        "bbox": [
+            155,
+            333,
+            883,
+            363
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "In terms of model implementation, we used the transformer and LSTM models available in PyTorch, the attention-LSTM and LSTNet models from the authors of Gangopadhyay et al. (2018) and Lai et al. (2018), respectively and a custom code for the CLR. To provide a fair comparison between SATADL and the selected benchmark models, we developed spatio-temporal variants of each one, comprising two copies of the respective model, one in a spatial and one in a temporal block (similar to SATADL). This step is required due to the fact that for our problem we use data from different sources and different time horizons, which need to be handled separately and then combined into a final prediction.",
+        "bbox": [
+            111,
+            372,
+            885,
+            472
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "For clarification we refer to these models by the names of the underlying model from which they were constructed.   \nFor example, the spatio-temporal model consisting of two LSTM blocks is simply referred to as “LSTM”.",
+        "bbox": [
+            111,
+            476,
+            883,
+            506
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "All benchmark models were trained under the same conditions and a fixed random seed was chosen to eliminate performance variations due to non-deterministic parts of the training process. The coefficient of determination, $R ^ { 2 }$ and root mean squared error (RMSE) were chosen as evaluation metrics.",
+        "bbox": [
+            111,
+            510,
+            883,
+            554
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "We conducted a twelve-hour (F = 12) and a forty-eight-hour (F = 48) simulation experiments with all models to test the impact of the length of period in which the target station is offline. The time it takes to train each model in the two experiments is shown in Table 6.",
+        "bbox": [
+            111,
+            559,
+            885,
+            602
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "The remainder of this section discusses the results from each experiment in detail, including the performance of different models, in light of their associated computational expense.",
+        "bbox": [
+            111,
+            607,
+            885,
+            637
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "table",
+        "img_path": "images/09e4d80b051556c908f1ccb5b2db57d2b79b530648e4d98ede27ba9c5962d762.jpg",
+        "table_caption": [
+            "Table 6: Training time, in seconds, of the models considered in this study, for the 12-hour/48-hour experiments."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Model</td><td>Sofia</td><td>Hong Kong</td><td>Delhi</td><td>Beijing</td></tr><tr><td>LSTM Attention-LSTM</td><td>283/636 304/773 1162/2044</td><td>256/593 281/594 1063/1981</td><td>116/245 128/279</td><td>290/717 398/924</td></tr></table>",
+        "bbox": [
+            251,
+            674,
+            740,
+            784
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "4.1 Twelve-hour experiments",
+        "text_level": 2,
+        "bbox": [
+            112,
+            809,
+            333,
+            825
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "The average performance metrics of each model, across the data sets, for the twelve-hour experiment are shown in Figure 6. Since RMSE is dependent on the range of the $\\mathrm { P M _ { 1 0 } }$ values, which differ in the datasets, we show the scoring, relative to the RMSE of the worst-performing model.",
+        "bbox": [
+            111,
+            835,
+            883,
+            878
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "It can be seen in Figure 6 that most models are able to deal with short-term faults up to twelve hours with high $R ^ { 2 }$ and low RMSE. In all datasets SATADL achieves the best performance.",
+        "bbox": [
+            111,
+            882,
+            883,
+            912
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "page_number",
+        "text": "12",
+        "bbox": [
+            488,
+            934,
+            511,
+            948
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "chart",
+        "img_path": "images/49459dc20c73600b3083a08d93b171b60df96d21f530068e454a56013355e1f0.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            117,
+            90,
+            549,
+            329
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "chart",
+        "img_path": "images/2467669807a3a753b68d7b60161502e47383dd7d86da9407e6ce1a450d216474.jpg",
+        "content": "",
+        "chart_caption": [
+            "Figure 6: Root mean squared error (RMSE) and coefficient of determination $( R ^ { 2 } )$ results for the twelve-hour simula tions for each model in all datasets"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            555,
+            89,
+            880,
+            330
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Despite being the simplest model (see Table 6), the LSTM is able to provide good results in all four datasets. The model manages to achieve the third best result in the Beijing dataset, falling behind only SATADL and attention-LSTM.",
+        "bbox": [
+            111,
+            421,
+            883,
+            452
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "The transformer exhibits the weakest performance of all models. Over the Delhi data, the model only achieves $R ^ { 2 } =$ 0.17. The transformer also took the longest to train. This might be due to the model’s complex architecture and suitability for natural language tasks, rather than time series forecasting. Although variants, capable of dealing with time series data exist (for example the Informer model Zhou et al. (2021)), we decided to focus on models with RNN architectures, to provide a direct comparison against SATADL for the simulation task. In addition, the transformer like architectures are generally bigger (with more parameters), which makes them impractical for real-time station simulation in resource-limited scenarios. We leave an in-depth comparison with more recent transformer models for a future study.",
+        "bbox": [
+            111,
+            455,
+            885,
+            569
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "The attention-LSTM showed strong results across all datasets. In the Beijing and Hong Kong scenarios the model achieved the second best results, while in the Delhi and Sofia it ranked as the third best.",
+        "bbox": [
+            111,
+            573,
+            883,
+            602
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "The CLR and LSTNet models, which share many similarities in their architectures show mixed results. Both models contain convolutional layers that can capture local patterns. In some scenarios, for example in the Sofia data, the networks compete with SATADL for the best model, while in Beijing they fall behind the simple LSTM.",
+        "bbox": [
+            111,
+            607,
+            885,
+            651
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "To unpack the performance statistics, we show a comparison between SATADL and the second-best model in each data set for 19 twelve-hour simulations, chosen at random (with no temporal connection) and plotted, in Figure 7, over a continuous time axis. By choosing random periods, the models can be compared with minimal bias resulting from the choice of a particular period. In all experiments SATADL shows superior performance in capturing the qualitative nature of the observed data, compared to the runner-up models.",
+        "bbox": [
+            111,
+            656,
+            885,
+            727
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Due to their simpler architecture, LSTNet (Figure 7(a)) and CLR (Figure 7(c)) fail to catch small variations, instead smoothing the signals from Sofia and Delhi, respectively. The models also fail to catch sharp rises or falls in the time series. SATADL also outperforms Attention-LSTM, over the Beijing dataset, as seen in Figure 7(d). While both models capture the general dynamics of the signal, SATADL provides closer amplitude matching, reduced bias, and better adaptation to sudden changes. Although the attention-LSTM model is prone to producing smoother predictions, it does perform similar to SATADL under favourable conditions (Figure 7(b)) and shorter simulation periods. Overall SATADL performs better than all benchmark models capturing sharp changes within the time series well and following the overall trend of the prediction horizon, without considerable deviation from the actual values. This is mainly attributed to the attention mechanisms of SATADL, which are able to focus on such moments in the data. The temporal module which extracts local trends and carries them through the predictions also plays an important role. Additionally, thanks to the spatial module, SATADL manages to avoid the over smoothing, evident in the predictions of the other models. In this way, the obtained results follow the observed data both locally, one hour at a time, as well as globally, over the prediction horizon.",
+        "bbox": [
+            111,
+            731,
+            887,
+            912
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            40,
+            883,
+            58
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "page_number",
+        "text": "13",
+        "bbox": [
+            488,
+            934,
+            509,
+            948
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "chart",
+        "img_path": "images/0cc8cae7592c5de9eca95e6752f45bb7293108e2993d8354fd10550126dbc7ea.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            112,
+            90,
+            874,
+            175
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "chart",
+        "img_path": "images/0c537491b0026242eafd812e0bfa2f98b34c51c0492c8a9c543467c59f370f53.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a)"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            96,
+            198,
+            875,
+            284
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "chart",
+        "img_path": "images/c3611ab5c6e97485288c349f0d6572e310ddea7241806ade48f24bf0d52d02bd.jpg",
+        "content": "",
+        "chart_caption": [
+            "(b)"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            83,
+            304,
+            874,
+            388
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "chart",
+        "img_path": "images/a087986960cce3697d824a692ed44bd04b7f251211829eb501e8b3841bc402c6.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c)",
+            "(d)",
+            "Figure 7: Temporal comparison between observations (black, dotted line), SATADL predictions (green, solid line) and the second best model predictions (orange, solid line) in twelve hour simulations for (a) Sofia with LSTNet, (b) Hong Kong with attention-LSTM, (c) Delhi with CLR and (d) Beijing with attention-LSTM."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            112,
+            411,
+            875,
+            497
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "The performance gain of SATADL comes at the cost of it having the second to longest training time. Despite the unfavourable ordinal result, the difference between the fastest model (LSTM) and SATADL is just less than six minutes for substantially better results.",
+        "bbox": [
+            111,
+            606,
+            885,
+            648
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "4.2 Forty-eight-hour experiments",
+        "text_level": 2,
+        "bbox": [
+            112,
+            674,
+            362,
+            690
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "The forty-eight-hour experiment was conducted to test the performance of SATADL for periods of longer unavailability of the target stations and to examine the stability and behaviour of error propagation as the prediction horizon, F, grows.",
+        "bbox": [
+            111,
+            704,
+            883,
+            747
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Similar to the results in Section 4.1, Figure 8 shows $R ^ { 2 }$ and relative RMSE, averaged across predictions from hour 1 to hour 48.",
+        "bbox": [
+            111,
+            752,
+            883,
+            781
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Figure 8 clearly shows that none of the models performs well over the Delhi data, despite SATADL ranking highest in both metrics. This result likely comes from the impact of local patterns in the data, coupled with weak correlations between the target and surrounding stations. As the time between the last measured value at the target station and the prediction point increases, the prediction drifts away faster than in the other datasets.",
+        "bbox": [
+            111,
+            786,
+            885,
+            843
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "The performance of the LSTM and the LSTNet models suffers in comparison to the twelve-hour experiments, due to their simple architecture and inability to capture and retain local and global patterns.",
+        "bbox": [
+            111,
+            848,
+            883,
+            878
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "The transformer, which ranked last in performance during the twelve-hour experiments, exhibits a moderate improvement in the Beijing and Delhi datasets, likely due to its self-attention mechanism which decreases the error growth through the prediction. However, the training time of the model increases to nearly 35 minutes (as compared to approximately 20 minutes for SATADL).",
+        "bbox": [
+            111,
+            883,
+            883,
+            912
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "page_number",
+        "text": "14",
+        "bbox": [
+            488,
+            934,
+            511,
+            946
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "chart",
+        "img_path": "images/862a41f4ecab13f994f0316581742ed7f719b648cf5553f86f688677c3af01d1.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            117,
+            90,
+            545,
+            329
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "chart",
+        "img_path": "images/265fe8491d02d842335cddc4ef68e67c631b5e86ea0a26254d58838fd5eb9f43.jpg",
+        "content": "",
+        "chart_caption": [
+            "Figure 8: Root mean squared error (RMSE) and coefficient of determination $( R ^ { 2 } )$ results for the forty-eight-hour simulations for each model in all datasets"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            553,
+            90,
+            879,
+            330
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            111,
+            397,
+            883,
+            428
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "The results of the attention-LSTM also deteriorate, showing that, notwithstanding the good performance in the twelvehour simulations, its simple architecture is not suited for long-term simulation.",
+        "bbox": [
+            111,
+            433,
+            883,
+            462
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "The CLR again achieves mixed results. In the Hong Kong data set it ranks better on average RMSE than SATADL, while in the Delhi data the CLR performs the worst of all models. Excluding that, CLR takes a second place in terms of performance and with its relatively short training time is a good contender for a long-term simulation model.",
+        "bbox": [
+            111,
+            467,
+            883,
+            511
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Finally, SATADL achieves substantially better average $R ^ { 2 }$ scores in all forty-eight-hour scenarios. The model widens its lead in the Delhi and Sofia datasets. As shown in Table 6, the training time for SATADL remains high overall, but still within reasonable values to what may be required in the context of simulation under hourly measurements.",
+        "bbox": [
+            111,
+            513,
+            885,
+            559
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "4.3 Performance at specific hours",
+        "text_level": 2,
+        "bbox": [
+            112,
+            575,
+            362,
+            590
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "To gain an insight on the overall performance of SATADL and the benchmark models, past that offered by averaged measures, we chose four points from the long-horizon simulations, at 1, 6, 12, 24, 36 and 48 hours and analysed $\\mathrm { \\bar { \\it R } ^ { 2 } }$ and RMSE there. The results for each data set are presented in Figures 9 and 10, respectively.",
+        "bbox": [
+            111,
+            599,
+            883,
+            645
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "In the experiments over Sofia, Hong Kong, and Beijing, we do not see any unordinary patterns. All models gradually lose performance as the time progresses. There are some models (i.e. the transformer or LSTNet) which perform worse at hour 36 than 48, probably due to the daily periodic patterns. The transformer performs the worst in the first time steps, but thanks to its attention mechanism, the error propagation is kept under control as the time moves forward. A similar observation can be made about the attention-LSTM, which also appears to deliver stable results. This is unlike the LSTM and LSTNet models, which lack attention in their architecture and their metrics suffer the largest decrease. Although CLR does not have an attention block, it manages to achieve consistent results overall.",
+        "bbox": [
+            111,
+            648,
+            885,
+            747
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "SATADL combines the benefits of high accuracy in the early stages with low error propagation, which results in the best performance at each time step. Because of the combination of information from the functioning stations at each hour and the past data and its trend, SATADL can capture the global levels of the target pollutant, while preserving the local patterns detected at the target station. As simulation time progresses, the target station local patterns are gradually lost, but thanks to the feedback mechanism in the biLSTM in the decoder, which takes as context the produced base values, $\\{ b _ { 1 } , b _ { 2 } , \\ldots , b _ { t } \\}$ , and the evolution of the spatial context, $\\left\\{ s \\pmb { c } _ { 1 } , s \\pmb { c } _ { 2 } , \\ldots , s \\pmb { c } _ { t + 1 } \\right\\}$ , it regulates the impact of the surrounding stations without drastically losing the local patterns. Additionally, the attention in the spatial module automatically removes any noisy or weakly-contributing station measurements by giving them very low weights.",
+        "bbox": [
+            111,
+            752,
+            885,
+            866
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "In the Delhi experiments we see drastic differences across all models when comparing the recent time steps with the last step. All models are able to achieve $R ^ { 2 } \\ge 0 . 7 5$ , when predicting over the first hour. At later hours the models performances significantly deteriorate. The CLR, LSTM, LSTNet and attention-LSTM record worse results than the transformer, with the first two having negative $R ^ { 2 }$ and sharpy increased RMSE at the later time steps. The only model that achieves positive $R ^ { 2 }$ in the last time step is SATADL, although its results are also unsatisfactory. This shows that the stations in the Delhi dataset exhibit a strong local dependency, which is not captured well by the surrounding stations.",
+        "bbox": [
+            111,
+            869,
+            885,
+            912
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            58
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "page_number",
+        "text": "15",
+        "bbox": [
+            488,
+            934,
+            511,
+            948
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "chart",
+        "img_path": "images/567dfac0a3b5ad849adb87a4bcfc6160d92eaf9e74c9a50ef582b8dbcbe80532.jpg",
+        "content": "",
+        "chart_caption": [
+            "Figure 9: Detailed RMSE results for time steps 1, 6, 12, 24, 36 and 48 in the forty-eight hour simulations for every model in each dataset"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            116,
+            89,
+            879,
+            416
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            111,
+            488,
+            883,
+            545
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Overall, SATADL surpasses all benchmark models, delivering predictions that closely mirror real-world conditions and remain stable for up to 48 hours. This makes it a good alternative to offline physical air quality stations until they come back online. Furthermore, its compact size enables efficient deployment on edge sensor devices, with fast inference times. On average, the training takes longer than that for the other models, but it is not substantially longer. As a result, SATADL offers a reliable way to fill missing pollutant data by simulating it in real time.",
+        "bbox": [
+            111,
+            551,
+            885,
+            622
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Currently, one of the main limitations of SATADL is that it assumes that all surrounding stations operate while the target is not functioning. This may not be the case in real scenarios and we aim to experiment with multiple nonoperational stations in future work. Another limitation of SATADL is that as of now, the model can only work with time series data. Static data such as building and infrastructure, environment details as well as other factors could improve the obtained results, but this would reduce the usability of SATADL in areas where such data is not available.",
+        "bbox": [
+            111,
+            626,
+            885,
+            698
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "5 Conclusion and Future Work",
+        "text_level": 2,
+        "bbox": [
+            112,
+            723,
+            392,
+            739
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "In this paper we presented SATADL, a deep learning model based on attention and long short-term memory architectures, suitable for use as a virtual air quality proxy station, when the latter goes offline.",
+        "bbox": [
+            111,
+            758,
+            883,
+            789
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "With the help of separate spatial and temporal modules, SATADL is able to extract relevant information from the functional and target stations, respectively. This information is fed into a decoder, where approximations of the real measurements are extracted with the help of two LSTM blocks. The incorporation of attention blocks that assign weights dynamically, makes the model’s predictions more stable and results in larger gains between the proposed model and the benchmark ones, as the simulation horizon increases.",
+        "bbox": [
+            111,
+            794,
+            885,
+            864
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Using air quality data from multiple sources, different times and including different features, we performed detailed comparison between SATADL and some of the most popular deep learning models, use in air quality modelling. SATADL learns local and global patterns better, resulting in more stable and realistic behaviour of the simulated measurements and achieves better $R ^ { 2 }$ and RMSE results in both short- and long-term failure scenarios. This result explicitly addressed one of the future work points planned in Kostadinov et al. (2025), which this paper extends.",
+        "bbox": [
+            111,
+            868,
+            885,
+            912
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "page_number",
+        "text": "16",
+        "bbox": [
+            488,
+            934,
+            511,
+            948
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "chart",
+        "img_path": "images/543a54b2eea46a6c931f27b0c550c2b29d422c1993cec1e8c00eaec56ed78fb9.jpg",
+        "content": "",
+        "chart_caption": [
+            "Figure 10: Detailed $R ^ { 2 }$ results for time steps 1, 6, 12, 24, 36 and 48 in the forty-eight hour simulations for every model in each dataset"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            116,
+            88,
+            880,
+            416
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            111,
+            481,
+            883,
+            511
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "SATADL is a robust simulation model designed to address various scenarios involving data unavailability and sensor malfunctions in scenarios different to air quality modelling. For this reason, we presented the full model development procedure in the hope that others will be able to use the model in their own application-specific context.",
+        "bbox": [
+            111,
+            516,
+            885,
+            560
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "As part of the future work, we aim to integrate the model into a live data collection system to evaluate the ability of SATADL to simulate measurements in real time when a sensor fails. This will allow us to fill in missing values and ensure uninterrupted temporal coverage across all stations.",
+        "bbox": [
+            111,
+            564,
+            885,
+            608
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Additionally, we plan to enhance SATADL’s generalisation capabilities. As we stated in Section 4, the model assumes that all non-target stations are fully operational; however, in real-world conditions, multiple stations may be offline simultaneously. Our goal is to extend SATADL to handle such situations effectively and to assess how prediction accuracy is affected when one or more functioning stations are unavailable. The possibility of predicting multiple quantities of interest at a time is also important to generalising SATADL. A recent paper by Yu et al. (2025) introduces a spatio-temporal air quality prediction model which considers multi-granularity data sources. While currently not a topic of interest, we see this as a possible direction we can explore to provide more accurate predictions.",
+        "bbox": [
+            111,
+            612,
+            885,
+            712
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "In general, our main goals for the future of SATADL will focus on:",
+        "bbox": [
+            112,
+            715,
+            557,
+            732
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "• Integrating SATADL into a real-time air quality data collection pipeline.",
+        "bbox": [
+            155,
+            741,
+            648,
+            757
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "• Comparison against bigger transformer-based models.",
+        "bbox": [
+            155,
+            761,
+            531,
+            775
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "• Development of a more adaptive solution, that deals with time periods when multiple stations are nonoperational.",
+        "bbox": [
+            155,
+            779,
+            883,
+            808
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "• Development of a new module that can accept static data (such as road network or building infrastructure), that influences the result.",
+        "bbox": [
+            155,
+            810,
+            883,
+            839
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "• Experiment with multiple pollutant predictions.",
+        "bbox": [
+            155,
+            843,
+            486,
+            859
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Finally, we foresee the application of SATADL into scenarios more abstractly resembling physical sensor networks, for example, in increasing the reliability of heavily instrumented critical systems, which may require varying degrees of alterations to the model’s architecture",
+        "bbox": [
+            111,
+            868,
+            883,
+            912
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "page_number",
+        "text": "17",
+        "bbox": [
+            488,
+            934,
+            509,
+            948
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "6 Declaration of generative AI and AI-assisted technologies in the writing process",
+        "text_level": 2,
+        "bbox": [
+            112,
+            92,
+            810,
+            109
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "During the preparation of this work the authors used OpenAI’s ChatGPT in order to improve the readability of the text. All ideas, methods, experiments and result analysis, described in the research paper were studied and done by humans. ChatGPT was only used for writing more concise paragraphs to better convey the information. After using ChatGPT, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article.",
+        "bbox": [
+            111,
+            123,
+            885,
+            194
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "7 Data statement",
+        "text_level": 2,
+        "bbox": [
+            112,
+            213,
+            274,
+            229
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "All data will be made available on request.",
+        "bbox": [
+            112,
+            244,
+            395,
+            258
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "References",
+        "text_level": 2,
+        "bbox": [
+            112,
+            279,
+            210,
+            295
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "H. Mayer, Air pollution in cities, Atmospheric Environment 33 (1999) 4029–4037.",
+            "A. Kostadinov, P. O. Hristov, D. Petrova-Antonova, Advancing urban air quality forecasting: A deep learning approach for real-time monitoring in Sofia, in: Artificial Intelligence Applications and Innovations. AIAI 2025 IFIP WG 12.5 International Workshops, 2025, pp. 255–267.",
+            "S. Chen, Beijing Multi-Site Air Quality, UCI Machine Learning Repository, 2017. URL: https://archive.ics. uci.edu/dataset/501/beijing+multi+site+air+quality+data.",
+            "T. Gangopadhyay, S. Y. Tan, G. Huang, S. Sarkar, Temporal attention and stacked LSTMs for multivariate time series prediction, in: Proceedings of the IEEE International Conference on Machine Learning Applications (ICMLA), 2018.",
+            "H. Zhou, S. Zhang, J. Peng, S. Zhang, J. Li, H. Xiong, W. Zhang, Informer: Beyond efficient transformer for long sequence time-series forecasting, arXiv preprint, 2021. arXiv:2012.07436.",
+            "M. Kampa, E. Castanas, Human health effects of air pollution, Environmental Pollution 151 (2008) 362–367.",
+            "F. Forastiere, J. V. Spadaro, C. Ancona, Z. Jovanovic Andersen, I. Cozzi, S. Gumy, D. Loncar, P. Mudu, S. Medina, R. Perez Velasco, H. Walton, J. Zhang, M. Krzyzanowski, Choices of morbidity outcomes and concentration– response functions for health risk assessment of long-term exposure to air pollution, Environmental Epidemiology 8 (2024) e314.",
+            "M. Abdelrahman, E. Macatulad, B. Lei, M. Quintana, C. Miller, F. Biljecki, What is a Digital Twin anyway? Deriving the definition for the built environment from over 15,000 scientific publications, Building and Environment 274 (2025) 112748.",
+            "K. Liao, X. Huang, H. Dang, Y. Ren, S. Zuo, C. Duan, Statistical approaches for forecasting primary air pollutants: A review, Atmosphere 12 (2021) 686.",
+            "A. Baklanov, Y. Zhang, Advances in air quality modeling and forecasting, Global Transitions 2 (2020) 261–270.",
+            "B. Eder, D. Kang, R. Mathur, S. Yu, K. Schere, An operational evaluation of the Eta–CMAQ air quality forecast model, Atmospheric Environment 40 (2006) 4894–4905.",
+            "L. Menut, B. Bessagnet, D. Khvorostyanov, M. Beekmann, N. Blond, A. Colette, I. Coll, G. Curci, G. Foret, A. Hodzic, S. Mailler, F. Meleux, J.-L. Monge, I. Pison, G. Siour, S. Turquety, M. Valari, R. Vautard, M. G. Vivanco, CHIMERE 2013: A model for regional atmospheric composition modelling, Geoscientific Model Development 6 (2013) 981– 1028.",
+            "M.-T. Chuang, Y. Zhang, D. Kang, Application of WRF/Chem-MADRID for real-time air quality forecasting over the Southeastern United States, Atmospheric Environment 45 (2011) 6241–6250.",
+            "S. Righi, P. Lucialli, E. Pollini, Statistical and diagnostic evaluation of the ADMS-Urban model compared with an urban air quality monitoring network, Atmospheric Environment 43 (2009) 3850–3857.",
+            "A. Burov, D. Brezov, Transport emissions from Sofia’s streets – inventory, scenarios, and exposure setting, in: Environmental Protection and Disaster Risks, 2023, pp. 223–233.",
+            "V. Athira, P. Geetha, R. Vinayakumar, K. Soman, DeepAirNet: Applying recurrent networks for air quality prediction, Procedia Computer Science 132 (2018) 1394–1403.",
+            "A. A. Yammahi, Z. Aung, Forecasting the concentration of NO2 using statistical and machine learning methods: A case study in the UAE, Heliyon 9 (2023) e12584."
+        ],
+        "bbox": [
+            112,
+            303,
+            661,
+            318
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "page_number",
+        "text": "18",
+        "bbox": [
+            488,
+            934,
+            509,
+            948
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "P. Gopu, R. R. Panda, N. Nagwani, Time Series Analysis Using ARIMA Model for Air Pollution Prediction in Hyderabad City of India, Springer Singapore, 2021, pp. 47–56.",
+            "E. Marinov, D. Petrova-Antonova, S. Malinov, Time series forecasting of air quality: A case study of Sofia city, Atmosphere 13 (2022) 788.",
+            "D. Genc, C. Yesilyurt, G. Tuncel, Air pollution forecasting in Ankara, Turkey using air pollution index and its relation to assimilative capacity of the atmosphere, Environmental monitoring and assessment 166 (2009) 11–27.",
+            "F. Jing, S. Rui, C. Xiaoqin, L. Peiliang, The analysis to tertiary-industry with ARIMAX model, Journal of Mathematics Research 1 (2009) 156–163.",
+            "K. Ng, N. Awang, Multiple linear regression and regression with time series error models in forecasting PM10 concentrations in Peninsular Malaysia, Environmental Monitoring and Assessment 190 (2018) 63.",
+            "V. Cerqueira, L. Torgo, C. Soares, A case study comparing machine learning with statistical methods for time series forecasting: size matters, Journal of Intelligent Information Systems 59 (2022) 415–433.",
+            "B. Liu, A. Binaykia, P. C. Chang, M. K. Tiwari, C.-C. Tsao, Urban air quality forecasting based on multi-dimensional collaborative support vector regression (SVR): A case study of Beijing-Tianjin-Shijiazhuang, PLoS ONE 12 (2017) 1–17.",
+            "P. Wang, L. Mihaylova, R. Chakraborty, S. Munir, M. Mayfield, K. Alam, M. F. Khokhar, Z. Zheng, C. Jiang, H. Fang, A Gaussian process method with uncertainty quantification for air quality monitoring, Atmosphere 12 (2021) 1344.",
+            "A. Ivanov, S. Gocheva-Ilieva, M. Stoimenova-Minova, Random forest regression for statistical modeling and forecast ing of PM10, AIP Conference Proceedings 2522 (2022) 100005.",
+            "S. Hochreiter, J. Schmidhuber, Long short-term memory, Neural Computation 9 (1997) 1735–1780.",
+            "Y. Bengio, P. Simard, P. Frasconi, Learning long-term dependencies with gradient descent is difficult, IEEE Transactions on Neural Networks 5 (1994) 157–166.",
+            "B. S. Freeman, G. Taylor, B. Gharabaghi, J. The, Forecasting air quality time series using deep learning, Journal of´ the Air & Waste Management Association 68 (2018) 866–886.",
+            "Y. Zhou, F.-J. Chang, L.-C. Chang, I.-F. Kao, Y.-S. Wang, Explore a deep learning multi-output neural network for regional multi-step-ahead air quality forecasts, Journal of Cleaner Production 209 (2019) 134–145.",
+            "I. Sutskever, O. Vinyals, Q. V. Le, Sequence to sequence learning with neural networks, in: Advances in Neural Information Processing Systems, volume 27, 2014.",
+            "S. Du, T. Li, Y. Yang, S.-J. Horng, Deep air quality forecasting using hybrid deep learning framework, IEEE Transactions on Knowledge and Data Engineering 33 (2021) 2412–2424.",
+            "S. Abirami, P. Chitra, Regional air quality forecasting using spatiotemporal deep learning, Journal of Cleaner Production 283 (2021) 125341.",
+            "Z. Niu, G. Zhong, H. Yu, A review on the attention mechanism of deep learning, Neurocomputing 452 (2021) 48–62.",
+            "Y. Feng, J.-S. Kim, J.-W. Yu, K.-C. Ri, S.-J. Yun, I.-N. Han, Z. Qi, X. Wang, Spatiotemporal informer: A new approach based on spatiotemporal embedding and attention for air quality forecasting, Environmental Pollution 336 (2023) 122402.",
+            "G. Shi, Y. Leung, J. S. Zhang, T. Fung, F. Du, Y. Zhou, A novel method for identifying hotspots and forecasting air quality through an adaptive utilization of spatio-temporal information of multiple factors, Science of The Total Environment 759 (2021) 143513.",
+            "I.-F. Su, Y.-C. Chung, C. Lee, P.-M. Huang, Effective PM2.5 concentration forecasting based on multiple spatial–temporal GNN for areas without monitoring stations, Expert Systems with Applications 234 (2023) 121074.",
+            "X. Zou, J. Zhao, D. Zhao, B. Sun, Y. He, S. Fuentes, Air quality prediction based on a spatiotemporal attention mechanism, Mob. Inf. Syst. 2021 (2021) 6630944:1–6630944:12.",
+            "Y. Huang, J. J.-C. Ying, V. S. Tseng, Spatio-attention embedded recurrent neural network for air quality prediction, Knowledge-Based Systems 233 (2021) 107416.",
+            "I. N. K. Wardana, J. W. Gardner, S. A. Fahmy, Estimation of missing air pollutant data using a spatiotemporal convolutional autoencoder, Neural Computing and Applications 34 (2022) 16129–16154.",
+            "T. Kim, J. Kim, W. Yang, H. Lee, J. Choo, Missing value imputation of time-series air-quality data via deep neural networks, International Journal of Environmental Research and Public Health 18 (2021) 12213.",
+            "J. Zhou, Z. Huang, Recover missing sensor data with iterative imputing network, 2017. arXiv:1711.07878."
+        ],
+        "bbox": [
+            112,
+            93,
+            883,
+            123
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            58
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "page_number",
+        "text": "19",
+        "bbox": [
+            488,
+            934,
+            511,
+            948
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "D. Bahdanau, K. Cho, Y. Bengio, Neural machine translation by jointly learning to align and translate, 2016. arXiv:1409.0473.",
+            "A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, L. u. Kaiser, I. Polosukhin, Attention is all you need, in: Advances in Neural Information Processing Systems, volume 30, 2017.",
+            "X. Wang, H. Zhang, Y. Zhang, M. Wang, J. Song, T. Lai, M. Khushi, Learning nonstationary time-series with dynamic pattern extractions, IEEE Transactions on Artificial Intelligence 3 (2022) 778–787.",
+            "G. Lai, W.-C. Chang, Y. Yang, H. Liu, Modeling long- and short-term temporal patterns with deep neural networks, in: The 41st International ACM SIGIR Conference on Research & Development in Information Retrieval, 2018, p. 95–104.",
+            "Y. yue Chu, J. Yao, D. wen Qiao, Z. yu Zhang, C. yong Zhong, L. juan Tang, Three-hourly PM2.5 and O3 concentrations prediction based on time series decomposition and lstm model with attention mechanism, Atmospheric Pollution Research 14 (2023) 101879.",
+            "Chengqing Yu, Fei Wang, Yilun Wang, Zezhi Shao, Tao Sun, Di Yao, Yongjun Xu, MGSFformer: A Multi-Granularity Spatiotemporal Fusion Transformer for air quality prediction, Information Fusion 113 (2025) 102607.",
+            "Yu, Chengqing, Wang, Fei, Shao, Zezhi, Qian, Tangwen, Zhang, Zhao, Wei, Wei, An, Zhulin, Wang, Qi, Xu, Yongjun IEEE Transactions on Knowledge and Data Engineering, GinAR+: A Robust End-to-End Framework for Multi variate Time Series Forecasting With Missing Values, (2025), 37, 8, 4635-4648.",
+            "Yu, Chengqing, Tan, Jingi, , Cheng, Yihan, Mi, Xiwei Stochastic Environmental Research and Risk Assessment, Data analysis and preprocessing techniques for air quality prediction: a survey, (2024), 38, 6, 2095-2117."
+        ],
+        "bbox": [
+            112,
+            93,
+            882,
+            122
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "header",
+        "text": "A PREPRINT - AUGUST 13, 2026",
+        "bbox": [
+            607,
+            41,
+            883,
+            56
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "page_number",
+        "text": "20",
+        "bbox": [
+            486,
+            933,
+            511,
+            948
+        ],
+        "page_idx": 19
+    }
+]

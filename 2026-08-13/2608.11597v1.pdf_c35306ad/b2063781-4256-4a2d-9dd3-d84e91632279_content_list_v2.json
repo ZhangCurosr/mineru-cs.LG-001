@@ -1,0 +1,4189 @@
+[
+    [
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "IoT-Enabled Autonomous Maritime Navigation in Smart Ports: A Curriculum-Guided Shared Policy Learning Framework"
+                    }
+                ],
+                "level": 1
+            },
+            "bbox": [
+                96,
+                70,
+                900,
+                172
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Yuqing Lin, Rangya Zhang, Kum Fai Yuen"
+                    }
+                ]
+            },
+            "bbox": [
+                334,
+                183,
+                661,
+                200
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Abstract—As smart port infrastructures increasingly rely on autonomous maritime devices enabled by the Internet of Things (IoT), ensuring reliable onboard navigation intelligence has become a critical challenge for safe and scalable operations in congested waterways. This paper investigates onboard autonomous navigation for such IoT devices under partial observability and dense traffic conditions. A curriculum-guided reinforcement learning framework with a shared recurrent policy is developed to enhance temporal reasoning, deployment scalability, and robustness of edge-level decision-making. Centralized training is adopted as an offline design-time strategy, while all navigation actions are executed fully onboard, consistent with IoT edge intelligence paradigms. Extensive simulations in multiple realistic port environments demonstrate that the proposed approach improves navigation reliability, collision avoidance, and training stability compared with standard baseline methods, and generalizes effectively to previously unseen high-density scenarios. The results indicate that curriculum-guided shared learning provides a practical solution for scalable deployment of IoTenabled autonomous maritime devices in smart port operations."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                251,
+                493,
+                505
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Index Terms—IoT-enabled autonomous navigation, Edge intelligence, Curriculum-guided reinforcement learning, Scalable deployment, Safety-critical navigation"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                508,
+                493,
+                550
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "I. INTRODUCTION AND RELATED WORK"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                140,
+                564,
+                428,
+                578
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "surface vehicles for inspection, logistics, and traffic support in modern smart ports. Major global hubs such as Singapore, Los Angeles, and Rotterdam have actively invested in datadriven port management, IoT-based vessel monitoring, and autonomous navigation trials. Representative initiatives include Singapore’s autonomous navigation programs integrated with the national Vessel Traffic Information System, Los Angeles data-driven berth optimization and vessel traffic management platforms, and Rotterdam’s IoT-enabled vessel monitoring and autonomous vessel testing facilities [1]–[3]. In such IoTenabled port environments, autonomous surface vehicles are expected to operate safely and reliably in congested waterways while relying primarily on onboard sensing and decision intelligence."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                582,
+                493,
+                824
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "A fundamental challenge in this context lies in the design of robust onboard navigation intelligence that can function under partial observability, dense traffic, and dynamic environmental disturbances, without assuming continuous communication or global situational awareness. Reliable collision avoidance and regulation-compliant navigation are therefore critical capabilities for the large-scale deployment of IoT-enabled autonomous maritime devices in smart port operations."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                824,
+                493,
+                854
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                503,
+                250,
+                923,
+                343
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "A. Onboard Decision Intelligence for Autonomous Maritime IoT Devices"
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                364,
+                923,
+                395
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Deep Reinforcement Learning (DRL) has emerged as a powerful paradigm for onboard sequential decision-making in dynamic and uncertain environments, and has been increasingly adopted in intelligent IoT-enabled autonomous systems for real-time control and decision intelligence [4], [5]. In maritime autonomous navigation, DRL has been applied to a variety of tasks including trajectory tracking, heading control, disturbance rejection, and collision avoidance [6]–[10]. Early applications primarily focused on single-vessel scenarios or simplified interaction settings, demonstrating the feasibility of learning-based controllers as alternatives to classical control methods such as Proportional–Integral–Derivative or Model Predictive Control [11]–[13]. Actor–Critic methods, including A2C and A3C, have further enabled stable learning under stochastic disturbances and partial observability [6], [14], [15]."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                400,
+                924,
+                627
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "As autonomous maritime IoT devices are increasingly deployed in congested and dynamic port environments, reliable onboard decision intelligence becomes critical for safe and scalable operation [16], particularly when navigation must handle complex multi-vessel encounters governed by international regulations such as the International Regulations for Preventing Collisions at Sea (COLREGs) [17], [18]. Many existing approaches embed COLREGs compliance through handcrafted reward terms or heuristic penalties [19]–[21], which may constrain adaptability when onboard agents are exposed to diverse traffic patterns and environmental conditions. Recent works have explored more structured reward formulations and attention-based architectures to improve robustness and interpretability [22], [23], yet generalization to realistic, highdensity port operations remains challenging."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                627,
+                923,
+                854
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To address partial observability and improve temporal reasoning, DRL-based edge intelligence has been widely explored in IoT-enabled autonomous systems for sequential decisionmaking under uncertainty [24]. In particular, recurrent neural networks such as Long Short-Term Memory (LSTM) and Gated Recurrent Units (GRU) have been integrated into DRL policies to capture temporal dependencies and infer latent environmental states. Recurrent variants of Proximal Policy Optimization (PPO) have demonstrated improved stability and memory-aware decision-making in sequential navigation tasks [25], [26]. In maritime contexts, recurrent PPO-based approaches have shown promising performance in regulationaware navigation and collision avoidance under dense traffic conditions [27]–[29]. These studies indicate that shared recurrent policy structures can support robust onboard navigation intelligence across diverse deployment scenarios."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                854,
+                923,
+                945
+            ]
+        },
+        {
+            "type": "page_footnote",
+            "content": {
+                "page_footnote_content": [
+                    {
+                        "type": "text",
+                        "content": "Yuqing Lin and Kum Fai Yuen are with the School of Civil and Environmental Engineering, Nanyang Technological University, Singapore (e-mail: yuqing003@e.ntu.edu.sg; kumfai.yuen@ntu.edu.sg)."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                862,
+                491,
+                898
+            ]
+        },
+        {
+            "type": "page_footnote",
+            "content": {
+                "page_footnote_content": [
+                    {
+                        "type": "text",
+                        "content": "Corresponding author: Kum Fai Yuen."
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                931,
+                299,
+                945
+            ]
+        },
+        {
+            "type": "page_footnote",
+            "content": {
+                "page_footnote_content": [
+                    {
+                        "type": "text",
+                        "content": "Rangya Zhang is with the School of Mechanical and Aerospace Engineering, Nanyang Technological University, Singapore (e-mail: rangya002@e.ntu.edu.sg)."
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                897,
+                491,
+                933
+            ]
+        },
+        {
+            "type": "page_aside_text",
+            "content": {
+                "page_aside_text_content": [
+                    {
+                        "type": "text",
+                        "content": "arXiv:2608.11597v1 [cs.RO] 12 Aug 2026"
+                    }
+                ]
+            },
+            "bbox": [
+                29,
+                352,
+                63,
+                800
+            ]
+        },
+        {
+            "type": "page_header",
+            "content": {
+                "page_header_content": [
+                    {
+                        "type": "text",
+                        "content": "JOURNAL OF LAT<sub>E</sub>X CLASS FILES, VOL. 14, NO. 8, AUGUST 2015"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                29,
+                418,
+                42
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "1"
+                    }
+                ]
+            },
+            "bbox": [
+                911,
+                30,
+                919,
+                41
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                73,
+                69,
+                493,
+                222
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "B. Curriculum Learning for Robust Onboard Navigation"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                75,
+                243,
+                464,
+                258
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Curriculum Learning (CL) improves sample efficiency, training stability, and generalization by gradually increasing task difficulty during learning [30], [31]. Common strategies include designer-specified curricula [32], self-paced progression [33], and automatically generated curricula such as reverse curriculum learning [34]. CL has been widely adopted in robotics and navigation to mitigate sparse rewards and accelerate convergence in high-dimensional environments."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                263,
+                493,
+                383
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In intelligent IoT-enabled robotic and autonomous systems, curriculum-based training has shown strong potential in improving robustness and adaptability under real-world uncertainty [35]. In maritime and marine robotics, similar curriculum-based approaches have demonstrated effectiveness in enhancing DRL-driven trajectory planning, obstacle avoidance under environmental disturbances, and regulation-aware navigation behaviors [36]–[38]. These studies suggest that progressive exposure to increasingly complex navigation scenarios enables onboard agents to acquire safer and more conservative behaviors. However, CL remains underexplored for autonomous surface vessels operating in congested port environments, particularly in conjunction with recurrent policy learning and explicit regulatory constraints. Moreover, existing approaches often rely on heuristic reward shaping rather than embedding navigation regulations directly into the environment and learning process."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                385,
+                493,
+                642
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "C. Contributions and Scope of This Work"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                75,
+                664,
+                362,
+                679
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Motivated by the above limitations, this paper focuses on enhancing the onboard decision intelligence of IoT-enabled autonomous surface vehicles through curriculum-guided policy learning. Rather than proposing a new reinforcement learning algorithm, we aim to develop a practical and scalable training framework for robust deployment in smart port environments. The main contributions of this work are summarized as follows:"
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                684,
+                493,
+                805
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• A shared recurrent policy learning framework for IoTenabled edge devices, enabling robust onboard decisionmaking under partial observability and dense traffic conditions without relying on continuous cloud communication."
+                    }
+                ]
+            },
+            "bbox": [
+                89,
+                808,
+                491,
+                883
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• A curriculum-guided training strategy that progressively exposes the policy to increasing encounter complexity, supporting stable acquisition of safety- and regulationaware navigation behaviors."
+                    }
+                ]
+            },
+            "bbox": [
+                89,
+                883,
+                491,
+                945
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• An integrated treatment of safety-critical navigation rules, embedding COLREGs as hard regulatory constraints within the IoT environment and reward formulation to ensure compliant edge-level operations."
+                    }
+                ]
+            },
+            "bbox": [
+                519,
+                69,
+                921,
+                130
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Extensive evaluation across multiple geographically distinct smart port scenarios, demonstrating the deployment scalability and generalization of the shared policy under diverse traffic densities and disturbances."
+                    }
+                ]
+            },
+            "bbox": [
+                519,
+                130,
+                923,
+                189
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The remainder of this paper is organized as follows. Section II introduces the proposed curriculum-guided recurrent policy learning framework, including observation, action, and reward design. Section III presents the simulation environments and experimental setup. Section IV reports experimental results and analysis, and Section V concludes the paper with future research directions."
+                    }
+                ]
+            },
+            "bbox": [
+                501,
+                191,
+                923,
+                297
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "II. METHODOLOGY"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                640,
+                313,
+                785,
+                327
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "A. Problem Formulation"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                503,
+                330,
+                678,
+                347
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We consider onboard autonomous navigation for IoTenabled autonomous surface vehicles operating in congested port environments under partial observability. Each device relies solely on local sensing and onboard decision intelligence to avoid collisions and reach designated targets while complying with navigation regulations. The navigation task is formulated as a POMDP [39]:"
+                    }
+                ]
+            },
+            "bbox": [
+                501,
+                349,
+                923,
+                457
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\mathcal { P } = \\langle \\boldsymbol { S } , \\boldsymbol { \\mathcal { A } } , \\boldsymbol { \\Omega } , \\mathcal { T } , \\mathcal { O } , \\mathcal { R } , \\gamma \\rangle ,\\tag{1}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/adec0da768aedd1157d62a0930a5300f5f8a3ffc64213b0965e6a8bcd458fa9b.jpg"
+                }
+            },
+            "bbox": [
+                619,
+                463,
+                805,
+                479
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "s"
+                    },
+                    {
+                        "type": "text",
+                        "content": "denotes the set of true environmental states, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathcal { A }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "the set of possible actions, Ω the set of possible observations, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathcal { T } ( s ^ { \\prime } | s , a )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "the transition function, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathcal { O } ( o | s , a )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "the observation function, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathcal { R } ( s , a )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "the reward function, and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\gamma"
+                    },
+                    {
+                        "type": "text",
+                        "content": "the discount factor."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                486,
+                923,
+                560
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The objective is to learn a stochastic policy "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\pi _ { \\boldsymbol { \\theta } } ( a | \\boldsymbol { o } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "that maps partial observations to control actions and maximizes the expected discounted return [40]:"
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                561,
+                923,
+                608
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\mathbb { E } _ { \\pi _ { \\theta } } \\left[ \\sum _ { { t = 0 } } ^ { \\infty } \\gamma ^ { t } \\mathcal { R } ( s _ { t } , a _ { t } ) \\right] ,\\tag{2}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/5b120317e2a3ce6fc0cf0978155f09a16eabac5339acf42b34c0da1234e3cc4a.jpg"
+                }
+            },
+            "bbox": [
+                629,
+                611,
+                795,
+                654
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\pi _ { \\boldsymbol { \\theta } } ( a | \\boldsymbol { o } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "denotes the policy distribution over actions given observation "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "o , \\mathcal { R } ( s _ { t } , a _ { t } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is the reward obtained at time "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "t ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\gamma \\in [ 0 , 1 )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "balances short- and long-term rewards. The expectation is taken over trajectories generated by following "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\pi _ { \\theta }"
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                657,
+                923,
+                733
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In realistic port operations, autonomous maritime IoT devices operate under uncertainty and partial observability due to limited sensor range, occlusions, limited communication bandwidth, and environmental disturbances such as currents and wind [25], [41]. Each device relies on onboard sensors "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( \\mathrm { e . g . }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "radar, LiDAR, proximity sensors) without access to the full global state; real-time synchronization is typically hindered by limited communication bandwidth in remote or congested IoT environments. This motivates the POMDP formulation as interaction patterns must be inferred from local observations."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                733,
+                923,
+                883
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To improve robustness under partial observability, we adopt a shared recurrent policy learning approach, in which a single policy network is reused across identical devices deployed in shared environments. Reuse of policies enables efficient model deployment at scale while maintaining fully onboard execution. Recurrent LSTM units are integrated into the policy to capture temporal dependencies and infer latent environmental states from observation histories."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                883,
+                923,
+                945
+            ]
+        },
+        {
+            "type": "page_header",
+            "content": {
+                "page_header_content": [
+                    {
+                        "type": "text",
+                        "content": "JOURNAL OF LAT X CLASS FILES, VOL. 14, NO. 8, AUGUST 2015"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                29,
+                418,
+                42
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "2"
+                    }
+                ]
+            },
+            "bbox": [
+                910,
+                31,
+                921,
+                41
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                73,
+                69,
+                493,
+                130
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "B. Shared Recurrent PPO Architecture"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                75,
+                152,
+                343,
+                167
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To enable robust onboard collision avoidance for IoTenabled autonomous surface vehicles operating in congested port environments, we adopt PPO as the underlying learning framework due to its stability and effectiveness in continuous control tasks. A shared recurrent policy is trained offline using experience collected from multiple autonomous surface vehicles operating in parallel simulation environments, and subsequently deployed onboard each device for independent execution. This shared-policy design facilitates efficient model reuse across identical platforms and improves training stability under diverse initial conditions and encounter scenarios. CL is employed during training to progressively increase task complexity, enhancing learning efficiency and policy generalization."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                172,
+                493,
+                385
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To address partial observability arising from limited sensor range and occlusions caused by surrounding vessels and obstacles, LSTM units are embedded within both the actor and critic networks. This recurrent design enables the policy to capture temporal dependencies and infer latent environmental states from observation histories, which is consistent with the POMDP formulation of the navigation task."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                385,
+                493,
+                491
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The overall architecture, illustrated in Fig. 1, integrates recurrent policy learning with fully onboard execution to handle dynamic and partially observable maritime environments. During deployment, each autonomous surface vehicle operates solely based on local observations, including radarbased detection of static and dynamic obstacles (buoys and other vessels), relative coordinates to the navigation target, normalized distances to environmental boundaries, relative positions of nearby vessels, and ego-motion variables. The continuous action space consists of commanded yaw rate and forward surge velocity."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                491,
+                493,
+                656
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Observations are processed sequentially through an LSTM layer to maintain an internal hidden state over time. The LSTM output is passed through fully connected layers to generate the parameters of a Gaussian action distribution, from which continuous control actions are sampled. This architecture enables temporal reasoning and improves decision robustness under uncertainty. During training, experience trajectories from multiple simulated vehicles are aggregated to update the shared policy parameters. Both actor and critic networks share the same recurrent backbone, consisting of an LSTM layer followed by two linear layers, with the actor outputting Gaussian policy parameters and the critic estimating the state value function. PPO with a clipped surrogate objective is adopted to ensure stable policy updates, while Generalized Advantage Estimation is used to reduce variance in advantage computation."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                657,
+                493,
+                898
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "By combining a shared recurrent policy with curriculumguided training, the proposed framework supports robust onboard decision-making under partial observability and dense traffic conditions, while remaining scalable for deployment across multiple IoT-enabled autonomous surface vehicles operating in realistic port environments."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                898,
+                493,
+                945
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/86d220f254d1e754e3d6a3952c191b9ddc31590b9515898f469491c7dc558340.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Fig. 1: Framework of the proposed onboard recurrent policy learning approach for IoT-enabled autonomous surface vehicles. The policy is trained offline and executed fully onboard using local observations."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                508,
+                69,
+                916,
+                347
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                501,
+                452,
+                923,
+                498
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "C. Observation and Action Space"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                504,
+                537,
+                738,
+                553
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Onboard autonomous navigation for IoT-enabled autonomous surface vehicles requires informative yet partial perception of surrounding traffic and obstacles under realistic sensor constraints. The observation space is designed to capture both geometric layout and dynamic environmental information while accounting for limitations such as finite radar range and occlusion. Radar-based perception discretizes the sensing field into angular sectors, with each sector encoding the normalized distance and bearing to the nearest detected object. All quantities are expressed in the body-fixed frame to ensure rotational invariance and normalized according to sensor and velocity limits. Temporal consistency across observations is preserved through the use of an LSTM-based policy, which is essential for decision-making under POMDP conditions."
+                    }
+                ]
+            },
+            "bbox": [
+                501,
+                564,
+                923,
+                791
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To structure onboard situational awareness, an anisotropic elliptical ship domain with direction-dependent radii "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "R _ { \\mathrm { f o r e } } , R _ { \\mathrm { a f t } } , R _ { \\mathrm { p o r t } } , R _ { \\mathrm { s t a r b } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is adopted to reflect varying clearance priorities in different directions (Fig. 2) [42], [43]. This domain serves as a perception and safety abstraction that adapts with vessel orientation and supports regulation-aware risk assessment compatible with COLREGs-based reward design. Within this representation, each device perceives its own kinematic state, navigation goal, surrounding traffic vessels with heterogeneous control behaviors, and static obstacles. The resulting observation vector is defined as:"
+                    }
+                ]
+            },
+            "bbox": [
+                501,
+                794,
+                923,
+                945
+            ]
+        },
+        {
+            "type": "page_header",
+            "content": {
+                "page_header_content": [
+                    {
+                        "type": "text",
+                        "content": "JOURNAL OF LAT<sub>E</sub>X CLASS FILES, VOL. 14, NO. 8, AUGUST 2015"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                29,
+                418,
+                41
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "3"
+                    }
+                ]
+            },
+            "bbox": [
+                911,
+                30,
+                919,
+                40
+            ]
+        }
+    ],
+    [
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/3f20feca513464e505cf6dbfd939d8b8f0805049657227f903a0e473ee86cd3f.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Fig. 2: Ship perception model and onboard observation structure."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                111,
+                69,
+                464,
+                306
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                73,
+                369,
+                460,
+                386
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\begin{array} { r l } & { \\underbrace { \\left[ \\underbrace { x _ { o } , z _ { o } , v _ { o x } , v _ { o z } } _ { \\mathrm { O w n ~ s h i p } } , \\underbrace { x _ { t } , z _ { t } } _ { \\mathrm { G o a l } } , \\underbrace { x _ { a _ { 1 } } , z _ { a _ { 1 } } , x _ { u _ { 1 } } , z _ { u _ { 1 } } , . . . , } _ { \\mathrm { S u r r o u n d i n g ~ v e s s e l s } } , \\underbrace { x _ { \\cdot } , \\tilde { y } _ { \\cdot } , \\tilde { y } _ { \\cdot } , \\tilde { y } _ { \\cdot } } _ { \\mathrm { G o a l } } , \\underbrace { x _ { \\cdot } , \\tilde { y } _ { \\cdot } , \\tilde { y } _ { \\cdot } } _ { \\mathrm { S u r r o u n d i n g ~ v e s s e l s } } , \\right. } _ { \\mathrm { R a d a r ~ o b s t a c l e s } } } \\end{array}\\tag{3}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/070afd8c8908cc0fc2de47a1961441c4a36e23ee07277247745df9ae8ac16213.jpg"
+                }
+            },
+            "bbox": [
+                124,
+                392,
+                442,
+                463
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where all positions and velocities are expressed relative to the own ship, and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( d _ { i } , \\theta _ { i } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "denote radar-derived obstacle ranges and bearings."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                467,
+                491,
+                513
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "For motion control, a simplified three-degree-of-freedom (3- DOF) kinematic model in the horizontal plane is adopted, including surge "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "u ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "sway "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "v ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and yaw rate r, while neglecting vertical-plane dynamics to reduce modeling complexity [44]. The body-fixed reference frame is centered at the vessel’s center of mass G, with heading angle ψ defined relative to the global frame (Fig. 3). The continuous two-dimensional action space is defined as:"
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                513,
+                493,
+                635
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "[ \\mathrm { a n g u l a r } _ { z } , \\ \\mathrm { l i n e a r } _ { x } ] = [ r , \\ u ]\\tag{4}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/f077e3f013dab1dd1ad3a2d8f3a70fb93f19960de62162e217fbed9939a24df4.jpg"
+                }
+            },
+            "bbox": [
+                187,
+                641,
+                379,
+                659
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where linear<sub>x</sub> corresponds to the commanded surge velocity and angular to the yaw rate. This high-level action abstraction decouples decision-making from low-level actuation details such as propeller thrust and rudder dynamics, enabling efficient onboard policy learning and robust generalization under environmental disturbances. The resulting control interface supports a range of navigation behaviors, including trajectory tracking, maneuvering in constrained waterways, and regulation-compliant collision avoidance."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                665,
+                493,
+                803
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "D. Reward Shaping Strategy"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                75,
+                820,
+                274,
+                835
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To support robust onboard decision-making for IoT-enabled autonomous surface vehicles operating in congested port environments, we design a composite reward that balances navigation efficiency, safety preservation, and regulation-aware risk mitigation. Rather than encoding explicit maneuvering rules, the reward function provides continuous guidance signals derived from geometric relationships, proximity risk, and encounter context, enabling effective learning under partial observability."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                838,
+                493,
+                946
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/16ee03d4e25823eb3eb75a13641cb8367c7daf9bb50b0368960b17af15ef6a38.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Fig. 3: 3-DOF kinematic model and onboard action space."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                529,
+                74,
+                895,
+                310
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                501,
+                363,
+                921,
+                393
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The overall reward consists of four dense components, heading alignment "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "r _ { \\mathrm { y a w } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", distance progress "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "r _ { \\mathrm { d i s t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", regulationaware interaction "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "r _ { \\mathrm { r e g } } ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", and proximity-based safety penalty r<sub>prox</sub>, supplemented by sparse terminal rewards."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                395,
+                923,
+                455
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "a) Heading alignment: This term encourages progress toward the navigation target by aligning the vessel’s heading with the desired bearing:"
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                457,
+                923,
+                502
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "r _ { \\mathrm { y a w } } = \\cos ( \\psi - \\psi _ { d } ) ,\\tag{5}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/083942ab9cfb125012656fb3ac499099a265fb459ced4ece251f328f8b6f7cfe.jpg"
+                }
+            },
+            "bbox": [
+                640,
+                515,
+                784,
+                531
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\psi"
+                    },
+                    {
+                        "type": "text",
+                        "content": "denotes the current heading and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\psi _ { d }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "the bearing toward the target."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                542,
+                921,
+                574
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "b) Distance progress: To promote efficient navigation, distance progress is rewarded as:"
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                575,
+                921,
+                607
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "r _ { \\mathrm { d i s t } } = \\lambda _ { \\mathrm { d i s t } } \\cdot ( \\mathrm { D i s t } _ { t - 1 } - \\mathrm { D i s t } _ { t } ) ,\\tag{6}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/b128ccac81d76fe9f392f279ab3be63f07a56b05daa9f2e916c895db453da3c6.jpg"
+                }
+            },
+            "bbox": [
+                606,
+                618,
+                818,
+                636
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\lambda _ { \\mathrm { d i s t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is a scaling coefficient and Dist<sub>t</sub> denotes the normalized distance to the target at time t."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                647,
+                921,
+                678
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "c) Regulation-aware interaction reward: To incorporate maritime navigation regulations as part of onboard risk assessment [45], [46], a regulation-aware interaction reward "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "r _ { \\mathrm { r e g } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is activated when surrounding traffic vessels enter the anisotropic ship domain of the own vessel (Fig. 2). The ship domain is parameterized by direction-dependent radii "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "R _ { \\mathrm { f o r e } } , R _ { \\mathrm { a f t } } , R _ { \\mathrm { p o r t } } ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "R _ { \\mathrm { s t a r b } } ."
+                    },
+                    {
+                        "type": "text",
+                        "content": ", providing a continuous representation of encounter proximity and relative geometry."
+                    }
+                ]
+            },
+            "bbox": [
+                501,
+                679,
+                923,
+                801
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Encounter contexts are categorized based on relative bearing and domain location (Fig. 4), and each context is associated with a signed shaping signal that reflects relative collision risk and navigational responsibility:"
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                801,
+                923,
+                862
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Head-on encounters emphasize lateral separation."
+                    }
+                ]
+            },
+            "bbox": [
+                519,
+                866,
+                874,
+                881
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Crossing encounters differentiate between yielding and stand-on responsibilities."
+                    }
+                ]
+            },
+            "bbox": [
+                519,
+                881,
+                921,
+                911
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Overtaking encounters emphasize longitudinal clearance."
+                    }
+                ]
+            },
+            "bbox": [
+                519,
+                911,
+                921,
+                926
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Parallel navigation emphasizes safe lateral spacing."
+                    }
+                ]
+            },
+            "bbox": [
+                519,
+                928,
+                887,
+                943
+            ]
+        },
+        {
+            "type": "page_header",
+            "content": {
+                "page_header_content": [
+                    {
+                        "type": "text",
+                        "content": "JOURNAL OF LAT X CLASS FILES, VOL. 14, NO. 8, AUGUST 2015"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                30,
+                419,
+                41
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "4"
+                    }
+                ]
+            },
+            "bbox": [
+                910,
+                31,
+                921,
+                40
+            ]
+        }
+    ],
+    [
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/54c71a46fb45fedaf920602526deaa68113f8df3bdbd23cd5ca42335677bd4c1.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Fig. 4: Regulation-aware encounter sectors in the anisotropic ship domain."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                99,
+                73,
+                468,
+                321
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The total regulation-aware reward aggregates contributions from all surrounding traffic vessels:"
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                387,
+                491,
+                419
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\begin{array} { r l } { \\displaystyle r _ { \\mathrm { r e g } } = \\sum _ { j \\in \\mathcal { T } } \\left( \\mathcal { T } _ { \\mathrm { h e a d - o n } } ( j ) f _ { \\mathrm { h e a d - o n } } + \\mathcal { T } _ { \\mathrm { c r o s s - g i v e } } ( j ) f _ { \\mathrm { c r o s s - g i v e } } \\right. } & { } \\\\ { \\displaystyle \\left. + \\mathcal { T } _ { \\mathrm { o v e r t a k e } } ( j ) f _ { \\mathrm { o v e r t a k e } } + \\mathcal { T } _ { \\mathrm { c r o s s - s t a n d } } ( j ) f _ { \\mathrm { c r o s s - s t a n d } } \\right. } & { } \\\\ { \\displaystyle \\left. + \\mathcal { T } _ { \\mathrm { p a r a l l e l } } ( j ) f _ { \\mathrm { p a r a l l e l } } \\right) , } \\end{array}\\tag{7}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/6c6fe3a9941951f33c3f5b390d3817d6108e4f37b4c077221ef8a941f84d0a5e.jpg"
+                }
+            },
+            "bbox": [
+                81,
+                425,
+                462,
+                496
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where T denotes the set of surrounding traffic vessels detected within sensing range."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                501,
+                490,
+                531
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "d) Proximity-based safety penalty: To discourage unsafe proximity, a continuous penalty is applied when the distance d to a nearby vessel falls below a minimum safety threshold d<sub>min</sub>:"
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                532,
+                491,
+                592
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "r _ { \\mathrm { p r o x } } = \\left\\{ \\begin{array} { l l } { - \\lambda _ { \\mathrm { p r o x } } \\left( 1 - \\frac { d } { d _ { \\mathrm { m i n } } } \\right) , } & { d < d _ { \\mathrm { m i n } } , } \\\\ { 0 , } & { \\mathrm { o t h e r w i s e } . } \\end{array} \\right.\\tag{8}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/8e293c56167cbae3ead1e4872b2c7ab013d0650302d35151dbd894b4a8a2e512.jpg"
+                }
+            },
+            "bbox": [
+                140,
+                590,
+                421,
+                631
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "e) Terminal rewards: Sparse terminal rewards reflect task completion and safety outcomes:"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                638,
+                491,
+                669
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Successful arrival at the navigation target: +1.0."
+                    }
+                ]
+            },
+            "bbox": [
+                91,
+                671,
+                437,
+                686
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Collision or violation of navigable boundaries: −1.0."
+                    }
+                ]
+            },
+            "bbox": [
+                91,
+                686,
+                467,
+                702
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Episode timeout without reaching the target: −0.6."
+                    }
+                ]
+            },
+            "bbox": [
+                91,
+                702,
+                454,
+                717
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "f) Final reward: The per-step reward is computed as:"
+                    }
+                ]
+            },
+            "bbox": [
+                104,
+                719,
+                475,
+                736
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "r _ { t } = r _ { \\mathrm { y a w } } + r _ { \\mathrm { d i s t } } + r _ { \\mathrm { r e g } } + r _ { \\mathrm { p r o x } } .\\tag{9}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/c97b1c16e30a09908c91c18159516bafeb166f1969852ea4fb953f2707968341.jpg"
+                }
+            },
+            "bbox": [
+                178,
+                746,
+                388,
+                761
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "This reward formulation integrates geometric guidance, safety margins, and regulation-aware risk cues into a unified onboard shaping strategy, enabling sample-efficient learning and robust navigation under dense traffic and partial observability without relying on explicit rule execution."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                767,
+                491,
+                845
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "E. CL Strategy"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                75,
+                864,
+                184,
+                880
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Training autonomous surface vehicles for reliable onboard navigation in congested port environments with static obstacles and dynamic surrounding traffic presents challenges in convergence, safety preservation, and generalization. To address these issues, we adopt a hybrid CL strategy that combines designerspecified task staging [30] with self-paced progression driven by policy performance [33]. Task difficulty is gradually increased by adjusting environmental and operational conditions, and policy advancement occurs only when predefined proficiency criteria are satisfied. This structured learning process improves sample efficiency, convergence stability, and robustness for onboard decision-making under partial observability."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                883,
+                493,
+                945
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                501,
+                69,
+                923,
+                190
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Each curriculum stage varies along three key dimensions:"
+                    }
+                ]
+            },
+            "bbox": [
+                521,
+                190,
+                916,
+                205
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Deployment Scale: Training begins with a single autonomous device operating independently, and progressively increases the number of simultaneously deployed devices. This allows the shared policy to mature under increasing traffic density while preserving fully onboard decision-making without explicit coordination."
+                    }
+                ]
+            },
+            "bbox": [
+                521,
+                208,
+                923,
+                297
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Traffic Interaction Complexity: Early stages involve simple or limited surrounding traffic. Later stages introduce heterogeneous autonomous surface vehicles executing randomized regulation-consistent behaviors (e.g., headon, overtaking, crossing, and parallel encounters), increasing encounter diversity and improving robustness to unseen traffic patterns."
+                    }
+                ]
+            },
+            "bbox": [
+                519,
+                297,
+                923,
+                404
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Environmental Complexity: Static obstacle density, navigational constraints, and environmental disturbances (e.g., wind and current) are gradually increased to better approximate real-world operating conditions and enhance adaptability."
+                    }
+                ]
+            },
+            "bbox": [
+                519,
+                404,
+                923,
+                479
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Table I summarizes the curriculum structure. Stage 1 (Port of Los Angeles) focuses on isolated interaction learning under a deterministic traffic configuration. Stage 2 (Port of Singapore) introduces moderate traffic variability through randomized encounter scenarios. Stage 3 (Port of Rotterdam) exposes the policy to dense and heterogeneous traffic conditions to promote generalization under realistic operational complexity. Curriculum progression is triggered by either a fixed number of training episodes or performance thresholds (e.g., success rate ≥ 80% over a moving evaluation window)."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                482,
+                923,
+                632
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "This staged training strategy enables stable policy devel opment under safety-critical and partially observable conditions, while providing a systematic framework for evaluating onboard navigation performance across increasingly realistic and complex port environments."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                632,
+                923,
+                709
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "III. SIMULATION ENVIRONMENT"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                594,
+                724,
+                833,
+                739
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "A. Platform Overview"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                504,
+                744,
+                661,
+                760
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The simulation framework is implemented using Unity ML-Agents, which provides a flexible 3D physics-based environment for training and evaluating onboard decision policies. The Unity PhysX engine enables realistic vessel dynamics, collision handling, and motion modeling, while high-fidelity rendering supports accurate scenario representation."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                763,
+                923,
+                854
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Each autonomous surface device is equipped with simulated maritime sensing capabilities, including radar-like proximity sensing for obstacle and traffic detection, lidar-style range measurements for spatial awareness, and relative goal-position inputs for navigation. These complementary sensing modalities allow the onboard policy to perceive local surroundings and make informed navigation decisions under dynamic traffic and environmental uncertainty. Vessel motion is modeled using a simplified differential thrust scheme, where the policy outputs continuous commands for angular velocity and forward propulsion that are mapped to left and right thruster forces within physical constraints. The vessel model incorporates inertia, turning delay, and velocity-dependent dynamics, making navigation and collision avoidance non-trivial. Boundary interactions and buoyancy effects are handled by the underlying physics engine."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                854,
+                923,
+                945
+            ]
+        },
+        {
+            "type": "page_header",
+            "content": {
+                "page_header_content": [
+                    {
+                        "type": "text",
+                        "content": "JOURNAL OF LAT X CLASS FILES, VOL. 14, NO. 8, AUGUST 2015"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                30,
+                418,
+                41
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "5"
+                    }
+                ]
+            },
+            "bbox": [
+                910,
+                30,
+                921,
+                41
+            ]
+        }
+    ],
+    [
+        {
+            "type": "table",
+            "content": {
+                "image_source": {
+                    "path": "images/0ac87546c1ab644bfec1db7a6b075436e0b070fa1fa64bdd856c19f4de51c584.jpg"
+                },
+                "table_caption": [
+                    {
+                        "type": "text",
+                        "content": "TABLE I: Curriculum stages with progressively increasing difficulty and randomized ASV encounters per episode. Stage 1 corresponds to the Port of Los Angeles (open and sparse traffic), Stage 2 to the Port of Singapore (semi-structured and high-traffic), and Stage 3 to the Port of Rotterdam (hybrid, complex transitions)."
+                    }
+                ],
+                "table_footnote": [],
+                "html": "<table><tr><td colspan=\"5\">Stage 1: Port of Los Angeles</td><td colspan=\"5\">Stage 2: Port of Singapore</td><td colspan=\"5\">Stage 3: Port of Rotterdam</td></tr><tr><td>USVs</td><td></td><td>ASVs Encounter Obstacles Types</td><td></td><td>Weather</td><td>USVs</td><td>ASVs Encounter</td><td>Types</td><td>Obstacles</td><td>Weather</td><td>USVs</td><td>ASVs Encounter Types</td><td></td><td>Obstacles</td><td>Weather</td></tr><tr><td>1</td><td>0</td><td>None</td><td>Sparse</td><td>None</td><td>2</td><td>2</td><td>Crossing / Over- taking / Parallel (random)</td><td>Head-on / Moderate</td><td>None</td><td>4+</td><td>4+ ized)</td><td>Mixed en- counters (random-</td><td>Dense</td><td>Wind + Waves</td></tr><tr><td>1</td><td>1</td><td>Head-on / Crossing 1 Over- taking 1 Parallel</td><td>Sparse</td><td>None</td><td>2</td><td>4 1</td><td>Head-on / Crossing Over- taking 1 Parallel (random)</td><td>Dense</td><td>Waves</td><td></td><td></td><td></td><td></td><td></td></tr></table>",
+                "table_type": "complex_table",
+                "table_nest_level": 1
+            },
+            "bbox": [
+                86,
+                64,
+                908,
+                261
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                73,
+                338,
+                493,
+                489
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "A shared recurrent PPO policy with LSTM memory is used to enable sequential decision-making under partial observability. The shared policy allows consistent deployment across multiple autonomous devices while preserving fully onboard execution without requiring explicit coordination, supporting robust navigation across diverse operational scenarios."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                489,
+                493,
+                582
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "B. Scenario Design"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                75,
+                599,
+                215,
+                614
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To enhance generalization and real-world robustness for onboard autonomous navigation, we adopt a staged curriculum learning (CL) framework across three representative port environments of increasing operational complexity: Los Angeles (open water, low traffic), Singapore Pasir Panjang (semistructured, dense traffic), and Rotterdam (hybrid layout with complex transitions). Task difficulty is progressively increased across stages, allowing the onboard policy to mature in handling collision avoidance, regulation-aware navigation, and adaptive behavior under diverse maritime conditions. Progression between stages is governed by either a fixed episode budget or performance thresholds."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                618,
+                493,
+                799
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "a) Stage 1: LA Port (Open, Low-Traffic Waters): A simplified offshore environment inspired by the Port of Los Angeles with low traffic density and large maneuvering space (Fig. 5). A single surrounding traffic vessel executes a deterministic regulation-consistent encounter (e.g., head-on, crossing, overtaking, or parallel), enabling the autonomous device to develop stable navigation and energy-efficient maneuvering in a controlled setting."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                799,
+                493,
+                920
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/ca05416dc13a4276cb468f478d5a8808d35cb435175f29b49fe8b6168846bce6.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(a) LA port waters from OpenSeaMap."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                504,
+                338,
+                707,
+                479
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/35fa5aa968e92d7a99f5b7a58fe3c4c7b8ec1ae68e1adfbdf7725fa3a878b7fd.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(b) Simulation training environment based on LA port layout."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                720,
+                371,
+                918,
+                479
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/d23d641efa3a7aeeabcdd93e2c92701cba59994fdabdb152d016db0a2a94d41d.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Fig. 5: Mapping real-world maritime structure to simulation at the port of Los Angeles."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                506,
+                566,
+                707,
+                710
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/c7a13c34205853021a3aa5a702d408055c31a54acbb80f05970f3bd64b9be110.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(a) Singapore port waters from OpenSeaMap."
+                    },
+                    {
+                        "type": "text",
+                        "content": "(b) Simulation training environment based on Singapore port layout."
+                    },
+                    {
+                        "type": "text",
+                        "content": "Fig. 6: Mapping real-world maritime structure to simulation at the Port of Singapore."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                720,
+                589,
+                918,
+                696
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "b) Stage 2: Singapore Port (Semi-Structured, Dense Traffic): A constrained fairway environment based on the Pasir Panjang Container Terminal (Fig. 6), featuring narrow channels and increased traffic density. Two surrounding traffic vessels with randomized regulation-consistent behaviors are introduced, exposing the onboard policy to more complex interaction patterns under congested navigational constraints."
+                    }
+                ]
+            },
+            "bbox": [
+                501,
+                808,
+                923,
+                914
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "c) Stage 3: Rotterdam Port (Hybrid, Complex Transitions): A hybrid environment modeled after the Port of"
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                915,
+                923,
+                945
+            ]
+        },
+        {
+            "type": "page_header",
+            "content": {
+                "page_header_content": [
+                    {
+                        "type": "text",
+                        "content": "JOURNAL OF LAT<sub>E</sub>X CLASS FILES, VOL. 14, NO. 8, AUGUST 2015"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                29,
+                418,
+                41
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "6"
+                    }
+                ]
+            },
+            "bbox": [
+                910,
+                30,
+                921,
+                41
+            ]
+        },
+        {
+            "type": "page_footnote",
+            "content": {
+                "page_footnote_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>0</sup>https://map.openseamap.org"
+                    }
+                ]
+            },
+            "bbox": [
+                88,
+                930,
+                246,
+                945
+            ]
+        }
+    ],
+    [
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/edc8c053bb9797f407cb21da691d7efc0ed4ef3302ae1cb7e31284722dcebf27.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(a) Rotterdam port waters from OpenSeaMap."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                76,
+                103,
+                276,
+                199
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/e8dd552f4346b1ea223104398371bcfcfffbad759cda73097cc94f004000e299.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(b) Simulation training environment based on Rotterdam port layout."
+                    },
+                    {
+                        "type": "text",
+                        "content": "Fig. 7: Mapping real-world maritime structure to simulation at the port of Rotterdam."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                290,
+                68,
+                490,
+                186
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Rotterdam (Fig. 7) containing both narrow channels and open basins. Multiple autonomous surface devices operate concurrently within dense and heterogeneous traffic, where surrounding vessels follow randomized regulation-consistent encounter patterns. This stage introduces complex traffic merging, environmental disturbances, and long-horizon decision challenges, promoting robust policy generalization under realistic operational conditions."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                297,
+                493,
+                417
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Table I summarizes the curriculum structure. Across stages, scripted surrounding vessels generate diverse and realistic encounter conditions, enabling the onboard policy to progressively adapt from low-risk scenarios to dense and uncertain traffic environments. This geography-informed curriculum design supports scalable and transferable onboard navigation suitable for deployment in diverse real-world port settings."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                417,
+                493,
+                525
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "C. Training Process and Parameters"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                75,
+                546,
+                328,
+                561
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The training framework in Figure 8 employs a hybrid CL strategy to incrementally expose agents to progressively challenging multi-vessel navigation scenarios. Three stages of increasing complexity are used: (1) open, low-traffic waters in Los Angeles, (2) semi-structured, high-traffic port approaches in Singapore, and (3) hybrid port layouts in Rotterdam with narrow waterways, high vessel density, complex traffic transitions, and environmental disturbances (wind and waves). A curriculum scheduler monitors success rates and advances to the next stage once proficiency thresholds are met, ensuring stable skill acquisition."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                565,
+                493,
+                733
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "At the beginning of each episode, a curriculum scheduler selects the training environment within a Unity-based maritime simulator containing static obstacles, dynamic surrounding vessels following regulation-consistent trajectories, and stochastic environmental disturbances. Each autonomous surface device receives multimodal observations, including relative goal position, radar-like proximity sensing, and lidarbased range measurements. Observations are normalized and temporally stacked to form a sequential state representation for onboard decision-making."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                733,
+                493,
+                883
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The proposed policy follows a shared recurrent PPO architecture, consisting of a multilayer perceptron encoder and an LSTM module to capture temporal dependencies under partial observability. The actor head outputs Gaussian-distributed steering and propulsion commands, while the critic head estimates state values for policy optimization. A single shared policy is trained and then consistently deployed across multiple autonomous devices, enabling scalable onboard execution without requiring explicit coordination."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                883,
+                491,
+                945
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/591b3107d9cff78a5b0828c2dda4c28a25be558fb716b36f2a0762e1dd5d1421.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Fig. 8: Training process of curriculum-guided shared recurrent PPO."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                517,
+                66,
+                910,
+                345
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                503,
+                412,
+                923,
+                487
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Training proceeds iteratively through parallel trajectory collection, reward evaluation using a composite shaping function (navigation efficiency, regulation-aware safety, and collision avoidance), and PPO updates based on generalized advantage estimation and a clipped surrogate objective. Performance indicators such as navigation success rate, collision frequency, and regulation-compliance score determine curriculum progression, allowing the policy to gradually adapt to increasingly complex operational conditions. Training is executed asynchronously using the PPO trainer in Unity ML-Agents, and key hyperparameters are summarized in Table II."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                488,
+                923,
+                655
+            ]
+        },
+        {
+            "type": "table",
+            "content": {
+                "image_source": {
+                    "path": "images/1386bf46bd2800c1b8459e53b318f0620fb00acf102df057ad75db0c663d9f4d.jpg"
+                },
+                "table_caption": [
+                    {
+                        "type": "text",
+                        "content": "TABLE II: Key PPO hyperparameters used during training with Unity ML-Agents."
+                    }
+                ],
+                "table_footnote": [],
+                "html": "<table><tr><td>Hyperparameter</td><td>Value</td></tr><tr><td>Batch size</td><td>2048 steps</td></tr><tr><td>Buffer size</td><td>40960</td></tr><tr><td>Learning rate</td><td> $3 \\times 1 0 ^ { - 4 }$ </td></tr><tr><td>Discount factor (γ)</td><td>0.99</td></tr><tr><td>GAE lambda</td><td>0.95</td></tr><tr><td>PPO clip range</td><td>0.2</td></tr><tr><td>LSTM hidden size</td><td>128</td></tr><tr><td>Number of environments</td><td>8 parallel simulations</td></tr><tr><td>Total training steps</td><td>5 million</td></tr></table>",
+                "table_type": "simple_table",
+                "table_nest_level": 1
+            },
+            "bbox": [
+                568,
+                662,
+                859,
+                781
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "IV. EXPERIMENTS AND RESULTS"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                593,
+                845,
+                833,
+                859
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "A. Algorithm Comparison"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                503,
+                864,
+                686,
+                880
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "All experiments are run on a workstation with an NVIDIA RTX 4080 GPU and Intel i7 CPU. Each training run lasts 5M interaction steps (6–8 hours), using Unity ML-Agents with 8 parallel environments. The curriculum progresses through three port scenarios: Stage 1 (Los Angeles) features openwater navigation with static obstacles; Stage 2 (Singapore) introduces congested harbor traffic with multiple COLREGscompliant vessels; Stage 3 (Rotterdam) adds hybrid layouts with wind, waves, dense traffic, and complex docking. Agents advance to the next stage upon achieving an 80% success rate over 100 evaluation episodes."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                883,
+                923,
+                946
+            ]
+        },
+        {
+            "type": "page_header",
+            "content": {
+                "page_header_content": [
+                    {
+                        "type": "text",
+                        "content": "JOURNAL OF LAT X CLASS FILES, VOL. 14, NO. 8, AUGUST 2015"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                30,
+                418,
+                41
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "7"
+                    }
+                ]
+            },
+            "bbox": [
+                911,
+                31,
+                921,
+                41
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                73,
+                69,
+                493,
+                174
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We compare the proposed shared recurrent PPO framework against three representative learning paradigms: (1) DDPG [47], a deterministic off-policy method without curriculum or recurrence; (2) SAC [48], an entropy-regularized off-policy method without memory; and (3) standard PPO, trained without curriculum learning or recurrence. These baselines evaluate how different learning paradigms influence onboard navigation reliability and scalability for IoT-enabled autonomous devices."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                174,
+                493,
+                310
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To ensure fair comparison, all algorithms share identical observation, action, reward formulation, and network capacity. Differences arise only from learning paradigm (on/off-policy), recurrent memory, and curriculum scheduling. The objective is not to outperform algorithmic state-of-the-art, but to validate the effectiveness of a deployable shared onboard policy framework under realistic maritime IoT conditions."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                310,
+                493,
+                416
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "As shown in Fig. 9, the proposed PPO demonstrates more stable convergence and higher final performance under complex traffic conditions, validating the effectiveness of shared recurrent policy learning for onboard navigation. SAC learns rapidly in early stages but plateaus in complex scenarios due to the absence of memory and curriculum exposure. Standard PPO converges slower and achieves lower final performance, while DDPG exhibits unstable learning under partial observability."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                417,
+                493,
+                553
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Table III confirms these trends across metrics. In Stage 1, all methods perform well, though SR-PPO achieves the highest success (96.2%) and lowest collisions (2.1%). In Stage 2, traffic complexity widens the gap: SR-PPO maintains strong performance with 90.5% success and 4.0% collisions, slightly ahead of SAC and clearly more stable than PPO and DDPG. In Stage 3, under dense interactions and disturbances, SR-PPO continues to demonstrate robust behavior with 85.6% success and 6.3% collisions. SAC and PPO degrade under increasing complexity, while DDPG shows the weakest performance. Generalization scores follow a similar trend, with SR-PPO consistently achieving strong performance across stages."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                553,
+                493,
+                734
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Therefore, curriculum learning and recurrent policy design improve the robustness, safety, and reliability of onboard navigation under partial observability. While SAC remains competitive in simpler environments, the absence of recurrence and curriculum limits its performance in complex scenarios. The results highlight the effectiveness of shared onboard policy learning for scalable and reliable autonomous navigation in IoT-enabled maritime environments."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                734,
+                493,
+                857
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "B. Ablation Study Results"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                75,
+                878,
+                254,
+                893
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "We evaluate the contribution of each core component through ablation studies, selectively removing or modifying elements of the proposed framework. Figure 10 summarizes performance across navigation effectiveness, safety, and regulation compliance. The first six configurations are trained using the full curriculum and evaluated in Stage 3, while the last three are trained and evaluated solely within Stage 1, Stage 2, or Stage 3 to analyze the effect of curriculum progression."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                898,
+                493,
+                945
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/2a090c15fd4ff5f71b9c3236dab386b44940b6db18436b9ff117d189d305cf1e.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Fig. 9: Convergence comparison of onboard navigation policies under curriculum training."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                549,
+                69,
+                877,
+                219
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/1a45f795c2b16a005559409e99438d61db2a1a9477da6316e5789c2ec23afc16.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Fig. 10: Ablation study of key design choices. Metrics for the first six configurations are averaged in Stage 3. The last three configurations are trained and evaluated independently in Stage 1, 2, or 3 to examine CL benefits."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                508,
+                279,
+                916,
+                631
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                501,
+                731,
+                923,
+                806
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Success Rate (%): The proposed method achieves the highest overall success rate, improving by approximately 10– 15% compared to Individual-policy PPO and No-Curriculum PPO. Reward-ablation variants (COLREGs-only or Distanceonly) show moderate degradation (6–12%), while Stage 3- only training experiences over 20% reduction, indicating the importance of shared policy learning and staged curriculum exposure for reliable onboard navigation."
+                    }
+                ]
+            },
+            "bbox": [
+                501,
+                808,
+                923,
+                929
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Collision Rate (%): The proposed model maintains the lowest collision frequency. Individual-policy PPO increases collisions by approximately 40%, while No-Curriculum PPO significantly increases risk. Training directly in Stage 3 without curriculum results in substantially higher collision rates, demonstrating reduced stability under complex traffic conditions."
+                    }
+                ]
+            },
+            "bbox": [
+                519,
+                929,
+                923,
+                945
+            ]
+        },
+        {
+            "type": "page_header",
+            "content": {
+                "page_header_content": [
+                    {
+                        "type": "text",
+                        "content": "JOURNAL OF LAT X CLASS FILES, VOL. 14, NO. 8, AUGUST 2015"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                29,
+                418,
+                42
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "8"
+                    }
+                ]
+            },
+            "bbox": [
+                910,
+                30,
+                921,
+                41
+            ]
+        }
+    ],
+    [
+        {
+            "type": "table",
+            "content": {
+                "image_source": {
+                    "path": "images/fd7f145e43fa1bb969f6a943ded94ae4550869908272a72f0502cab64c241bd8.jpg"
+                },
+                "table_caption": [
+                    {
+                        "type": "text",
+                        "content": "TABLE III: Performance comparison of onboard navigation policies across three IoT-enabled port environments."
+                    }
+                ],
+                "table_footnote": [],
+                "html": "<table><tr><td>Algorithm</td><td>Success Rate (%)</td><td>Collision Rate (%)</td><td>Min. Passing Dist. (m)</td><td>Episode Dura- tion (steps)</td><td>Generalization Score (%)</td></tr><tr><td colspan=\"6\">Stage 1: Los Angeles (Open Water)</td></tr><tr><td>Proposed PPO</td><td> $9 6 . 2 \\pm 2 . 1 $ </td><td> $2 . 1 \\pm 1 . 0$ </td><td> $2 . 2 \\pm 0 . 4$ </td><td> $8 2 . 4 \\pm 6 . 7$ </td><td> $9 1 . 3 \\pm 3 . 2 $ </td></tr><tr><td>SAC</td><td> $9 4 . 1 \\pm 2 . 8 $ </td><td> $2 . 3 \\pm 1 . 4$ </td><td> $2 . 2 \\pm 0 . 4$ </td><td> $8 0 . 5 \\pm 7 . 1 $ </td><td> $8 9 . 4 \\pm 4 . 2 $ </td></tr><tr><td>DDPG</td><td> $8 7 . 9 \\pm 4 . 5$ </td><td> $8 . 9 \\pm 3 . 1$ </td><td> $2 . 5 \\pm 0 . 7$ </td><td> $1 0 2 . 3 \\pm 1 0 . 1 $ </td><td> $7 6 . 2 \\pm 6 . 3$ </td></tr><tr><td>PPO</td><td> $9 0 . 6 \\pm 3 . 8$ </td><td> $6 . 4 \\pm 2 . 9$ </td><td> $2 . 8 \\pm 0 . 5$ </td><td> $9 3 . 7 \\pm 7 . 9$ </td><td> $8 1 . 1 \\pm 4 . 6$ </td></tr><tr><td colspan=\"6\">Stage 2: Singapore (High Traffic)</td></tr><tr><td>Proposed PPO</td><td> $9 0 . 5 \\pm 3 . 3 $ </td><td> $4 . 0 \\pm 1 . 8$ </td><td> $2 . 8 \\pm 0 . 3$ </td><td> $9 6 . 7 \\pm 7 . 5$ </td><td> $8 8 . 9 \\pm 3 . 9$ </td></tr><tr><td>SAC</td><td> $8 7 . 3 \\pm 4 . 1$ </td><td> $4 . 2 \\pm 3 . 1$ </td><td> $2 . 7 \\pm 0 . 5$ </td><td> $1 0 0 . 2 \\pm 8 . 6$ </td><td> $8 0 . 6 \\pm 5 . 5$ </td></tr><tr><td>DDPG</td><td> $6 8 . 5 \\pm 5 . 7 $ </td><td> $2 1 . 3 \\pm 6 . 4$ </td><td> $2 . 1 \\pm 0 . 6$ </td><td> $1 2 6 . 1 \\pm 1 1 . 8$ </td><td> $6 0 . 9 \\pm 7 . 3$ </td></tr><tr><td>PPO</td><td> $8 3 . 7 \\pm 4 . 6$ </td><td> $1 2 . 1 \\pm 4 . 3$ </td><td> $2 . 5 \\pm 0 . 5$ </td><td> $1 0 8 . 5 \\pm 8 . 6 $ </td><td> $7 4 . 4 \\pm 6 . 1$ </td></tr><tr><td colspan=\"6\">Stage 3: Rotterdam (Hybrid Conditions)</td></tr><tr><td>Proposed PPO</td><td> $8 5 . 6 \\pm 4 . 0$ </td><td> $6 . 3 \\pm 2 . 2$ </td><td> $3 . 5 \\pm 0 . 4$ </td><td> $1 0 9 . 9 \\pm 9 . 1 $ </td><td> $8 5 . 2 \\pm 4 . 7$ </td></tr><tr><td>SAC</td><td> $7 8 . 2 \\pm 6 . 2$ </td><td> $1 8 . 1 \\pm 5 . 4$ </td><td> $2 . 5 \\pm 0 . 6$ </td><td> $1 2 1 . 8 \\pm 1 0 . 4$ </td><td> $6 9 . 8 \\pm 7 . 9$ </td></tr><tr><td>DDPG</td><td> $5 5 . 7 \\pm 7 . 1$ </td><td> $3 4 . 5 \\pm 7 . 3$ </td><td> $1 . 9 \\pm 0 . 5$ </td><td> $1 3 9 . 6 \\pm 1 2 . 7$ </td><td> $4 9 . 3 \\pm 8 . 4$ </td></tr><tr><td>PPO</td><td> $7 0 . 2 \\pm 5 . 7$ </td><td> $1 6 . 8 \\pm 4 . 7$ </td><td> $2 . 4 \\pm 0 . 5$ </td><td> $1 2 3 . 1 \\pm 9 . 4$ </td><td> $6 6 . 7 \\pm 7 . 4$ </td></tr></table>",
+                "table_type": "complex_table",
+                "table_nest_level": 1
+            },
+            "bbox": [
+                178,
+                64,
+                815,
+                347
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                73,
+                398,
+                493,
+                489
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Min. Passing Distance (m): The proposed method maintains the largest safety margins, approximately 25% higher than reward-ablation variants. No-Curriculum and Stage-isolated models tend to generate more aggressive trajectories with reduced safety buffers."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                489,
+                491,
+                564
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Episode Duration: The proposed policy completes navigation tasks efficiently while maintaining safety. Individualpolicy PPO and Distance-only variants require up to 15% longer durations, whereas Stage 3-only training shows the slowest convergence (exceeding 120 steps), indicating unstable decision-making under complex conditions."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                564,
+                493,
+                655
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Regulation Compliance:"
+                    }
+                ]
+            },
+            "bbox": [
+                91,
+                655,
+                259,
+                670
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Head-On Right Turn Rate (Rule 14): Proposed method achieves substantially higher compliance compared to Stage 3-only training."
+                    }
+                ]
+            },
+            "bbox": [
+                89,
+                671,
+                491,
+                717
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Overtake Clearance Rate (Rule 13): Composite reward and proposed method maintain stable clearance margins, while Distance-only shows noticeable degradation."
+                    }
+                ]
+            },
+            "bbox": [
+                89,
+                717,
+                491,
+                762
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Crossing Right Yield Rate (Rule 15): Proposed approach maintains consistently higher compliance than non-composite reward variants and Stage 3-only training."
+                    }
+                ]
+            },
+            "bbox": [
+                91,
+                762,
+                493,
+                808
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Parallel Safe Distance Rate: Highest safety margins are maintained by proposed method and composite reward models, while other variants show reduced separation distances."
+                    }
+                ]
+            },
+            "bbox": [
+                91,
+                808,
+                493,
+                867
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Taken together, the combination of shared recurrent policy learning, staged curriculum training, and composite reward design improves the robustness, safety, and reliability of onboard navigation under partial observability. These results further support the effectiveness of shared onboard policy learning for scalable and dependable autonomous navigation in IoTenabled maritime environments."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                868,
+                493,
+                946
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                503,
+                398,
+                921,
+                430
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "C. Behavioral Analysis and Generalization Insights"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                503,
+                454,
+                859,
+                470
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To evaluate the effect of CL and the impact of the LSTMbased shared recurrent PPO architecture on agent behavior, we visualize representative trajectories from the Stage 1 (1vs4) LA port scenario (Fig. 11). The USV navigates from the Start Zone (bottom-left, red dashed box) to the End Zone (top-center, red dashed box) under four COLREGs-defined encounters. Trajectory colors indicate interaction types, with the light blue vessel as the ego USV (Own Ship), white vessels as ASVs (Target Ships), white dashed arrows as ASV planned paths, and solid colored lines as USV motions. Only one start–end configuration is shown for clarity; actual experiments randomize both."
+                    }
+                ]
+            },
+            "bbox": [
+                501,
+                474,
+                923,
+                656
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The pink line shows the baseline without interference. The orange trajectory (crossing, Rule 15) depicts the OS yielding to starboard when the TS is detected on its right front quarter, adjusting speed/heading to pass astern. The green trajectory (overtaking, Rule 13) shows the OS approaching from behind (< 22.5<sup>◦</sup>) and maneuvering around the TS with a safe passing side. The blue trajectory (head-on, Rule 14) involves both vessels altering course to starboard at a 5–10<sup>◦</sup> approach. The purple trajectory (parallel) maintains lateral distance with minimal deviation. Stage 1’s low-traffic setting allows gradual acquisition of fundamental collision-avoidance behaviors, where parallel interactions cause minimal deviation, headon and crossing require larger adjustments, and overtaking produces the most substantial detours."
+                    }
+                ]
+            },
+            "bbox": [
+                501,
+                656,
+                923,
+                869
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Stage 2 increases complexity with two busy terminals, multiple buoys, stationary workboats, and dynamic ASVs selecting two distinct COLREGs encounters per episode. In 2vs2 (Fig. 12a), USVs generally maintain smooth paths, with overtaking resolved by starboard course changes and parallel encounters showing minimal deviation. Head-on maneuvers involve early right turns, and crossing cases prompt gradual mid-path adjustments. In 2vs4 (Fig. 12b), higher density leads to greater baseline deviations. Overtaking requires larger lateral shifts, crossing triggers earlier turns, head-on cases still resolve via rightward avoidance but with larger detours, and parallel encounters sometimes drift due to cumulative avoidance."
+                    }
+                ]
+            },
+            "bbox": [
+                501,
+                868,
+                923,
+                946
+            ]
+        },
+        {
+            "type": "page_header",
+            "content": {
+                "page_header_content": [
+                    {
+                        "type": "text",
+                        "content": "JOURNAL OF LAT<sub>E</sub>X CLASS FILES, VOL. 14, NO. 8, AUGUST 2015"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                29,
+                419,
+                42
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "9"
+                    }
+                ]
+            },
+            "bbox": [
+                910,
+                30,
+                921,
+                41
+            ]
+        }
+    ],
+    [
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/c44c88b25b5c72dd3c6d22ac8e15426cb1c70058193d23600277fcee316353b8.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Fig. 11: Representative onboard navigation trajectories under four COLREGs encounter conditions in the Stage 1 LA port scenario. Pink: baseline without interaction; light blue: ego USV; white: target vessels (ASVs); dashed arrows: ASV planned paths; solid lines: USV trajectories."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                119,
+                68,
+                447,
+                273
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                73,
+                386,
+                493,
+                506
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Comparisons show that traffic density consistently increases path deviation and prompts earlier avoidance in 2vs4. Overtaking produces the largest offsets, crossing is resolved earlier in denser traffic, and parallel/head-on remain structured but less precise."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                506,
+                493,
+                582
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Stage 3 (4vs4, 6vs6, 12vs12) in Rotterdam adds narrow waterways, dense multi-vessel interactions, and wave/wind disturbances. In 4vs4 (Fig. 13a), all four encounter types show early avoidance, with deviations shaped by narrow-channel constraints. In 6vs6 (Fig. 13b), pre-emptive avoidance persists but trajectories align closer to baseline, indicating adaptability. Parallel nearly matches the baseline, and head-on/overtaking are smoother with maintained clearance. The 12vs12 case (Fig. 13c) tests generalization in highly congested, disturbed waters. Agents anticipate conflicts early, maintain separation bands in multi-crossings, and preserve regulation compliance with reduced oscillations. Shared recurrent PPO with CL enables coordinated, temporally aware navigation robust to density and disturbances."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                582,
+                493,
+                794
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Building on trajectory insights, aggregated metrics (Fig. 14) assess robustness, safety, and rule compliance across stages. Stage 1 yields >96% success with <2.5% collisions and nearperfect regulation compliance. Stage 2 sustains ∼90% success in 2vs2 but drops to 87.3% in 2vs4, with increased collisions and longer episodes. Rule compliance also declines slightly under higher density. Stage 3 shows moderate success drop (83.5% → 80.1%) but improved minimum passing distances and consistent COLREGs adherence, reflecting stable, safe behavior under maximum complexity."
+                    }
+                ]
+            },
+            "bbox": [
+                73,
+                794,
+                493,
+                946
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/ab88b6089ebf45434658c00efab81e539e3d9a663b0fd645d70e20250faa8af5.jpg"
+                },
+                "image_caption": [],
+                "image_footnote": []
+            },
+            "bbox": [
+                581,
+                69,
+                844,
+                239
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/ff2b511a59784ddee40bf68075d29c4c400fe73885c991dc3ebe37a5570746bc.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(a) 2vs2 scenario with moderate traffic, illustrating stable onboard navigation and COLREGs-compliant maneuvers."
+                    },
+                    {
+                        "type": "text",
+                        "content": "(b) 2vs4 dense-traffic scenario illustrating robust onboard navigation under dynamic multi-vessel interactions."
+                    },
+                    {
+                        "type": "text",
+                        "content": "Fig. 12: Stage 2 onboard navigation trajectories under varying traffic densities, demonstrating stable COLREGs-compliant behavior and adaptive path adjustment."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                583,
+                285,
+                844,
+                455
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "These observations provide several practical insights: (1) staged training in realistic port simulations supports progressive learning of safe navigation behaviors prior to deployment; (2) quantitative COLREGs-related metrics can serve as useful indicators for evaluating navigation reliability; (3) performance degradation under high-density traffic highlights the importance of adaptive safety margins and conservative maneuvering; and (4) curriculum-guided training combined with behavioral evaluation can improve the robustness and reliability of autonomous maritime navigation in complex operational environments."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                579,
+                923,
+                747
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "V. CONCLUSION"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                651,
+                760,
+                776,
+                773
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "This paper presented a curriculum-guided DRL framework for reliable onboard navigation of IoT-enabled maritime autonomous surface vehicles in complex port environments. The proposed approach is built on a shared recurrent PPO architecture under a centralized training and decentralized execution paradigm. By incorporating temporal memory through LSTM and staged curriculum progression, the learned policy achieves stable, regulation-aware navigation under varying traffic densities and environmental disturbances."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                779,
+                923,
+                915
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Behavioral analysis shows that the learned policy develops consistent navigation strategies, including early conflict anticipation, smooth overtaking, structured head-on avoidance, and stable separation in multi-vessel interactions. These behaviors persist in progressively complex port scenarios and under environmental disturbances, indicating that the policy captures transferable navigation patterns rather than scenario-specific behaviors. Experimental results demonstrate stable performance across stages, maintaining high navigation success, low collision frequency, and consistent regulation-compliant behavior under increasing complexity."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                915,
+                923,
+                945
+            ]
+        },
+        {
+            "type": "page_header",
+            "content": {
+                "page_header_content": [
+                    {
+                        "type": "text",
+                        "content": "JOURNAL OF LAT<sub>E</sub>X CLASS FILES, VOL. 14, NO. 8, AUGUST 2015"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                29,
+                419,
+                41
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "10"
+                    }
+                ]
+            },
+            "bbox": [
+                905,
+                30,
+                921,
+                41
+            ]
+        }
+    ],
+    [
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/3f832ce2bb1b00dc42588e359f8e6acd303fd7ca3630c686fd5baeb9445b9502.jpg"
+                },
+                "image_caption": [],
+                "image_footnote": []
+            },
+            "bbox": [
+                151,
+                69,
+                416,
+                207
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/464f21add75aee8f766a3ad3afa5083a3a5668fd6cddcbb4bd16bf8e3170a02a.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(a) 4vs4 scenario in the Rotterdam port, showing stable onboard navigation in narrow-channel conditions."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                151,
+                241,
+                415,
+                305
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/bf475c70b9358b0b6cd004df0258051d56881558298ecb585f2e1d3a388f4e70.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "(b) 6vs6 scenario with increased multi-vessel interactions and environmental disturbances, illustrating adaptive onboard navigation behavior."
+                    },
+                    {
+                        "type": "text",
+                        "content": "(c) 12vs12 high-density scenario demonstrating robust onboard navigation under complex and dynamic traffic conditions."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                151,
+                351,
+                415,
+                486
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/8dce291b584e56262b9b5a06084cd239d1ebe5fbb5eafa80b83357288c6bae06.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Fig. 13: Stage 3 onboard navigation trajectories in the Rotterdam port. Narrow channels, dense interactions, and environmental disturbances require early avoidance and conservative navigation behavior."
+                    },
+                    {
+                        "type": "text",
+                        "content": "Fig. 14: Heatmap of performance metrics across CL stages."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                80,
+                621,
+                493,
+                767
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                73,
+                824,
+                493,
+                945
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                503,
+                69,
+                764,
+                83
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The results highlight the effectiveness of shared recurrent policy learning combined with curriculum-guided training to improve the robustness, safety, and reliability of onboard navigation under partial observability. The use of quantitative regulation-related metrics provides interpretable indicators for evaluating navigation behavior, while staged simulation environments enable systematic assessment of policy robustness across varying operational conditions."
+                    }
+                ]
+            },
+            "bbox": [
+                503,
+                83,
+                923,
+                204
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Future work will explore improving robustness through richer multi-modal sensing, including vision and radar fusion [49], expanding scenario diversity to improve generalization across broader operational conditions [50], [51], and investigating limited communication strategies for improved coordination in dense traffic [52], [53]. Incorporating prior knowledge or imitation learning [54], [55] can further improve training efficiency and safety in unfamiliar scenarios. In addition, hardware-in-the-loop and real-world validation will be investigated to assess real-time performance and deployment robustness, further bridging the gap between simulation and practical autonomous maritime systems."
+                    }
+                ]
+            },
+            "bbox": [
+                501,
+                205,
+                923,
+                387
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "REFERENCES"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                665,
+                401,
+                763,
+                415
+            ]
+        },
+        {
+            "type": "list",
+            "content": {
+                "list_type": "reference_list",
+                "list_items": [
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[1] Maritime and Port Authority of Singapore, “Maritime digitalisation playbook,” 2025, accessed: 2025-01. [Online]. Available: https://www.mpa.gov.sg/maritime-singapore/innovation-and-r-d/ maritime-digitalisation-playbook"
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[2] Port of Los Angeles, “Port of los angeles strategic plan 2018–2022,” 2018, accessed: 2025-07-17. [Online]. Available: https://kentico.portoflosangeles.org/getmedia/ 6ac20c8e-f574-44a8-b28e-da8683b41cf6/Strategic-Plan-2018-2022"
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[3] Port of Rotterdam, “Artificial intelligence in the port,” 2025, accessed: 2025-01. [Online]. Available: https://www.portofrotterdam. com/en/port-future/innovation/artificial-intelligence-port"
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[4] Z. Chang, S. Liu, X. Xiong, Z. Cai, and G. Tu, “A survey of recent advances in edge-computing-powered artificial intelligence of things,” IEEE Internet of Things Journal, vol. 8, no. 18, pp. 13 849–13 875, 2021."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[5] X. Wei, J. Zhao, L. Zhou, and Y. Qian, “Broad reinforcement learning for supporting fast autonomous iot,” IEEE Internet of Things Journal, vol. 7, no. 8, pp. 7010–7020, 2020."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[6] G. Wen, C. P. Chen, S. S. Ge, H. Yang, and X. Liu, “Optimized adaptive nonlinear tracking control using actor–critic reinforcement learning strategy,” IEEE transactions on industrial informatics, vol. 15, no. 9, pp. 4969–4977, 2019."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[7] J. Duan, Y. Guan, S. E. Li, Y. Ren, Q. Sun, and B. Cheng, “Distributional soft actor-critic: Off-policy reinforcement learning for addressing value estimation errors,” IEEE transactions on neural networks and learning systems, vol. 33, no. 11, pp. 6584–6598, 2021."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[8] Y. Zeng, G. Liang, Q. Liu, E. Rodriguez, J. Pou, H. Jie, X. Liu, X. Zhang, J. Kotturu, and A. Gupta, “Multi-agent soft actor-critic aided active disturbance rejection control of dc solid-state transformer,” IEEE Transactions on Industrial Electronics, vol. 72, no. 1, pp. 492–503, 2024."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[9] Y. Zhao, F. Han, D. Han, X. Peng, W. Zhao, and G. Xia, “A port water navigation solution based on priority sampling sac: Taking yantai port environment as an example,” Robotics and Autonomous Systems, vol. 188, p. 104956, 2025."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[10] S. Hao, W. Guan, Z. Cui, and Z. Xi, “Intelligent navigation system for unmanned surface vessel based on rrt* and sac,” in 2023 IEEE International Conference on Unmanned Systems (ICUS). IEEE, 2023, pp. 707–712."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[11] C. Bao, P. Wang, R. He, and G. Tang, “Autonomous trajectory planning method for hypersonic vehicles in glide phase based on ddpg algorithm,” Proceedings of the Institution of Mechanical Engineers, Part G: Journal of Aerospace Engineering, vol. 237, no. 8, pp. 1855–1867, 2023."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[12] Y. Du, X. Zhang, Z. Cao, S. Wang, J. Liang, F. Zhang, and J. Tang, “An optimized path planning method for coastal ships based on improved ddpg and dp,” Journal of Advanced Transportation, vol. 2021, no. 1, p. 7765130, 2021."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "bbox": [
+                513,
+                421,
+                921,
+                468
+            ]
+        },
+        {
+            "type": "page_header",
+            "content": {
+                "page_header_content": [
+                    {
+                        "type": "text",
+                        "content": "JOURNAL OF LAT X CLASS FILES, VOL. 14, NO. 8, AUGUST 2015"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                30,
+                418,
+                41
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "11"
+                    }
+                ]
+            },
+            "bbox": [
+                905,
+                30,
+                919,
+                41
+            ]
+        }
+    ],
+    [
+        {
+            "type": "list",
+            "content": {
+                "list_type": "reference_list",
+                "list_items": [
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[13] J. Xue, M. He, J. Chen, B. Dong, and Y. Zheng, “Improved ddpg based on enhancing decision evaluation for path planning in high-density environments,” Expert Systems with Applications, vol. 279, p. 127378, 2025."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[14] X. Tang, Y. Yang, T. Liu, X. Lin, K. Yang, and S. Li, “Path planning and tracking control for parking via soft actor-critic under non-ideal scenarios,” IEEE/CAA Journal of Automatica Sinica, vol. 11, no. 1, pp. 181–195, 2023."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[15] Z. Ye, D. Zhang, Z.-G. Wu, and H. Yan, “A3c-based intelligent eventtriggering control of networked nonlinear unmanned marine vehicles subject to hybrid attacks,” IEEE Transactions on Intelligent Transportation Systems, vol. 23, no. 8, pp. 12 921–12 934, 2021."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[16] X. Liu, J. Yu, J. Wang, and Y. Gao, “Resource allocation with edge computing in iot networks via machine learning,” IEEE Internet of Things Journal, vol. 7, no. 4, pp. 3415–3426, 2020."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[17] Y. Niu, F. Zhu, M. Wei, Y. Du, and P. Zhai, “A multi-ship collision avoidance algorithm using data-driven multi-agent deep reinforcement learning,” Journal of marine science and engineering, vol. 11, no. 11, p. 2101, 2023."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[18] Z. Cui, W. Guan, X. Zhang, and C. Zhang, “Autonomous navigation decision-making method for a smart marine surface vessel based on an improved soft actor–critic algorithm,” Journal of Marine Science and Engineering, vol. 11, no. 8, p. 1554, 2023."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[19] S. Guo, X. Zhang, Y. Du, Y. Zheng, and Z. Cao, “Path planning of coastal ships based on optimized dqn reward function,” Journal of Marine Science and Engineering, vol. 9, no. 2, p. 210, 2021."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[20] W. Wang, X. Luo, Y. Li, and S. Xie, “Unmanned surface vessel obstacle avoidance with prior knowledge-based reward shaping,” Concurrency and Computation: Practice and Experience, vol. 33, no. 9, p. e6110, 2021."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[21] X. Lin, P. Szenher, Y. Huang, and B. Englot, “Distributional reinforcement learning based integrated decision making and control for autonomous surface vehicles,” IEEE Robotics and Automation Letters, 2024."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[22] Z. Cui, W. Guan, X. Zhang, and G. Zhang, “Autonomous collision avoidance decision-making method for usv based on atl-td3 algorithm,” Ocean Engineering, vol. 312, p. 119297, 2024."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[23] X. Sun, G. Li, Z. Liu, L. Zhang, H. Yu, D. Song, and Q. J. Wu, “Path planning algorithm for unmanned surface vessels based on colregs and meta-td3,” Ocean Engineering, vol. 334, p. 121580, 2025."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[24] F. Wu, Y. Chen, X. Chen, W. Fan, and Y. Liu, “An adaptive dual prediction scheme based on edge intelligence,” IEEE Internet of Things Journal, vol. 7, no. 10, pp. 9481–9493, 2020."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[25] K. Zheng, X. Zhang, C. Wang, M. Zhang, and H. Cui, “A partially observable multi-ship collision avoidance decision-making model based on deep reinforcement learning,” Ocean & Coastal Management, vol. 242, p. 106689, 2023."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[26] Z. Rongcai, X. Hongwei, and Y. Kexin, “Autonomous collision avoidance system in a multi-ship environment based on proximal policy optimization method,” Ocean Engineering, vol. 272, p. 113779, 2023."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[27] R. Zhang, X. Qin, M. Pan, S. Li, and H. Shen, “Adaptive temporal reinforcement learning for mapping complex maritime environmental state spaces in autonomous ship navigation,” Journal of Marine Science and Engineering, vol. 13, no. 3, p. 514, 2025."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[28] Z. Cui, W. Guan, and X. Zhang, “A collision avoidance decision-making method for multiple marine autonomous surface ships based on p3dl-ppo algorithm,” Journal of Marine Science and Technology, vol. 30, no. 1, pp. 205–223, 2025."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[29] R. Sawada, K. Sato, and T. Majima, “Automatic ship collision avoidance using deep reinforcement learning with lstm in continuous action spaces,” Journal of Marine Science and Technology, vol. 26, no. 2, pp. 509–524, 2021."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[30] S. Narvekar, B. Peng, M. Leonetti, J. Sinapov, M. E. Taylor, and P. Stone, “Curriculum learning for reinforcement learning domains: A framework and survey,” Journal of Machine Learning Research, vol. 21, no. 181, pp. 1–50, 2020."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[31] R. Portelas, L. Denoyer, A. Dumur, S. Lamprier, and A. Pere, “Teacher algorithms for curriculum learning of deep rl in continuous environments,” in Advances in Neural Information Processing Systems, vol. 33, 2020, pp. 13 002–13 015."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[32] T. Matiisen, A. Oliver, T. Cohen, and J. Schulman, “Teacher–student curriculum learning,” IEEE transactions on neural networks and learning systems, vol. 31, no. 9, pp. 3732–3740, 2019."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[33] Z. Ren, D. Dong, H. Li, and C. Chen, “Self-paced prioritized curriculum learning with coverage penalty in deep reinforcement learning,” IEEE transactions on neural networks and learning systems, vol. 29, no. 6, pp. 2216–2226, 2018."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[34] C. Florensa et al., “Reverse curriculum generation for reinforcement learning,” arXiv preprint arXiv:1707. backward, 2017."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[35] P. Huang, L. Zeng, X. Chen, K. Luo, Z. Zhou, and S. Yu, “Edge robotics: Edge-computing-accelerated multirobot simultaneous localization and mapping,” IEEE Internet of Things Journal, vol. 9, no. 15, pp. 14 087– 14 102, 2022."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[36] Ł. Marchel, R. Kot, P. Szymak, and P. Piskur, “Model-based auv path planning using curriculum learning and deep reinforcement learning on a simplified electronic navigation chart,” Applied Sciences, vol. 15, no. 11, p. 6081, 2025."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[37] S. T. Havenstrøm, A. Rasheed, and O. San, “Deep reinforcement learning controller for 3d path following and collision avoidance by autonomous underwater vehicles,” Frontiers in Robotics and AI, vol. 7, p. 566037, 2021."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[38] Y. Weng, J. Pajarinen, R. Akrour, T. Matsuda, J. Peters, and T. Maki, “Reinforcement learning based underwater wireless optical communication alignment for autonomous underwater vehicles,” IEEE Journal of Oceanic Engineering, vol. 47, no. 4, pp. 1231–1245, 2022."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[39] M. T. Spaan, “Partially observable markov decision processes,” in Reinforcement learning: State-of-the-art. Springer, 2012, pp. 387–414."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[40] H. Kurniawati, “Partially observable markov decision processes and robotics,” Annual Review ofControl, Robotics, and Autonomous Systems, vol. 5, no. 1, pp. 253–277, 2022."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[41] Y. Ding and H. Zhu, “Risk-sensitive markov decision processes of usv trajectory planning with time-limited budget,” Sensors, vol. 23, no. 18, p. 7846, 2023."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[42] R. Szlapczynski and J. Szlapczynska, “Review of ship safety domains: Models and applications,” Ocean Engineering, vol. 145, pp. 277–289, 2017."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[43] N. Wang, “An intelligent spatial collision risk based on the quaternion ship domain,” The Journal of Navigation, vol. 63, no. 4, pp. 733–749, 2010."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[44] T. I. Fossen, Handbook of Marine Craft Hydrodynamics and Motion Control. John Wiley & Sons, 2011."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[45] W. Naeem, G. W. Irwin, and A. Yang, “Colregs-based collision avoidance strategies for unmanned surface vehicles,” Mechatronics, vol. 22, no. 6, pp. 669–678, 2012."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[46] Y. Kuwata, M. T. Wolf, D. Zarzhitsky, and T. L. Huntsberger, “Safe maritime autonomous navigation with colregs, using velocity obstacles,” IEEE Journal ofOceanic Engineering, vol. 39, no. 1, pp. 110–119, 2013."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[47] T. P. Lillicrap, J. J. Hunt, A. Pritzel, N. Heess, T. Erez, Y. Tassa, D. Silver, and D. Wierstra, “Continuous control with deep reinforcement learning,” arXiv preprint arXiv:1509.02971, 2015."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[48] T. Haarnoja, A. Zhou, P. Abbeel, and S. Levine, “Soft actor-critic: Offpolicy maximum entropy deep reinforcement learning with a stochastic actor,” International Conference on Machine Learning (ICML), 2018."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[49] B. R. Kiran, I. Sobh, V. Talpaert, P. Mannion, A. A. Al Sallab, S. Yogamani, and P. Perez, “Deep reinforcement learning for autonomous´ driving: A survey,” IEEE transactions on intelligent transportation systems, vol. 23, no. 6, pp. 4909–4926, 2021."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[50] J. Tobin, R. Fong, A. Ray, J. Schneider, W. Zaremba, and P. Abbeel, “Domain randomization for transferring deep neural networks from simulation to the real world,” in 2017 IEEE/RSJ international conference on intelligent robots and systems (IROS). IEEE, 2017, pp. 23–30."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[51] X. B. Peng, M. Andrychowicz, W. Zaremba, and P. Abbeel, “Sim-to-real transfer of robotic control with dynamics randomization,” in 2018 IEEE international conference on robotics and automation (ICRA). IEEE, 2018, pp. 3803–3810."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[52] J. Foerster, I. A. Assael, N. De Freitas, and S. Whiteson, “Learning to communicate with deep multi-agent reinforcement learning,” Advances in neural information processing systems, vol. 29, 2016."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[53] C. Zhu, M. Dastani, and S. Wang, “A survey of multi-agent deep reinforcement learning with communication,” Autonomous Agents and Multi-Agent Systems, vol. 38, no. 1, p. 4, 2024."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[54] A. Hussein, M. M. Gaber, E. Elyan, and C. Jayne, “Imitation learning: A survey of learning methods,” ACM Computing Surveys (CSUR), vol. 50, no. 2, pp. 1–35, 2017."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[55] M. Zhou, J. Luo, J. Villella, Y. Yang, D. Rusu, J. Miao, W. Zhang, M. Alban, I. Fadakar, Z. Chen et al., “Smarts: Scalable multi-agent reinforcement learning training school for autonomous driving,” arXiv preprint arXiv:2010.09776, 2020."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "bbox": [
+                76,
+                71,
+                490,
+                116
+            ]
+        },
+        {
+            "type": "page_header",
+            "content": {
+                "page_header_content": [
+                    {
+                        "type": "text",
+                        "content": "JOURNAL OF LAT<sub>E</sub>X CLASS FILES, VOL. 14, NO. 8, AUGUST 2015"
+                    }
+                ]
+            },
+            "bbox": [
+                75,
+                30,
+                418,
+                41
+            ]
+        },
+        {
+            "type": "page_number",
+            "content": {
+                "page_number_content": [
+                    {
+                        "type": "text",
+                        "content": "12"
+                    }
+                ]
+            },
+            "bbox": [
+                905,
+                30,
+                921,
+                40
+            ]
+        }
+    ]
+]
