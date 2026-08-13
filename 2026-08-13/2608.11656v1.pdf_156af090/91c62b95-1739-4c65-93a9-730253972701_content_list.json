@@ -1,0 +1,2884 @@
+[
+    {
+        "type": "text",
+        "text": "Continuous-Latent Predictive Modeling with Semantic Alignment for EEG-Language Foundation Models",
+        "text_level": 1,
+        "bbox": [
+            150,
+            118,
+            846,
+            161
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Myeong-Ju Cho<sup>1</sup>, Hye-Bin Shin<sup>1</sup>, Seo-Hyun Lee<sup>1</sup>, Seong-Whan Lee<sup>2,†</sup>",
+        "bbox": [
+            209,
+            174,
+            790,
+            193
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "<sup>1</sup> Department of Brain and Cognitive Engineering, Korea University, Seoul, Republic of Korea <sup>2</sup> Department of Artificial Intelligence, Korea University, Seoul, Republic of Korea {mj\\_cho, hb\\_shin, seohyunlee, sw.lee}@korea.ac.kr",
+        "bbox": [
+            189,
+            195,
+            810,
+            239
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Abstract",
+        "text_level": 2,
+        "bbox": [
+            250,
+            273,
+            315,
+            287
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Recent advances in EEG foundation models have demonstrated the potential of large-scale pretraining to enable generalizable neural decoding across subjects, recording environments, and datasets. However, dominant pretraining paradigms face key challenges: masked autoencoding tends to prioritize low-level signal reconstruction over task-relevant semantics, while autoregressive modeling creates a mismatch between continuous neural dynamics and discrete token spaces. To address these challenges, new strategies are needed to efectively align continuous EEG representations with natural-language semantics and enable their integration with large language models. Accordingly, we propose Brain Latent Predictive Model (BLPM), an EEG–language foundation model that reformulates heterogeneous EEG decoding tasks as a continuous semantic embedding prediction problem. BLPM introduces a Continuous EEG Latent Predictive (CELP) encoder that learns transferable representations through latent target prediction. Building on these representations, a Multi-Query Semantic Decomposition (MQSD) module extracts task-relevant information and aligns continuous EEG representations with textual semantics within a shared latent space according to their semantic relationships. Experiments across multiple benchmarks demonstrate consistent generalization performance across diverse tasks, establishing continuous latent semantic prediction as an efective paradigm for EEG-language foundation models.",
+        "bbox": [
+            99,
+            296,
+            464,
+            626
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Introduction",
+        "text_level": 2,
+        "bbox": [
+            225,
+            647,
+            338,
+            662
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Foundation models have achieved remarkable advances across diverse modalities, including vision (Oquab et al. 2024), language (Radford et al. 2019), and speech (Radford et al. 2023). Their integration with pretrained large language models (LLMs) has further advanced multimodal learning and expanded their applications to healthcare domains such as clinical diagnosis (Dai et al. 2026) and biosignal analysis (Gu et al. 2026). Motivated by these innovative advances, electroencephalography (EEG) decoding research has increasingly shifted from task-specific models toward universal foundation models designed to generalize across diferent subjects, recording environments, and datasets. This transition has been driven by self-supervised learning (SSL) on large-scale unlabeled EEG data, enabling EEG foundation models to learn transferable representations that can be applied to diverse downstream tasks within a single unified model (Jiang, Zhao, and Lu 2024; Wang et al. 2025). Despite this progress, existing approaches still retain several fundamental limitations.",
+        "bbox": [
+            81,
+            667,
+            480,
+            863
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            516,
+            273,
+            915,
+            343
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Prior studies on EEG foundation models mainly learn universal representations through masked signal reconstruction (Wang et al. 2025; Zhou et al. 2026; El Ouahidi et al. 2025), masked discrete token prediction (Jiang, Zhao, and Lu 2024; Pradeepkumar et al. 2026; Ma et al. 2026), or autoregressive next-token prediction (Jiang et al. 2025; Yang et al. 2025; Wang et al. 2026). Their training and evaluation rely predominantly on reconstruction and prediction objectives defined either in the input space or in discrete representation spaces.",
+        "bbox": [
+            516,
+            343,
+            915,
+            484
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Among these paradigms, masked autoencoding (He et al. 2022) tends to focus on reconstructing low-level signal structures. The learned representations can remain sensitive to fine-grained waveform characteristics, noise, and subjectspecific variability (Wu et al. 2024). Moreover, they do not explicitly organize EEG representations around task-relevant semantic concepts or directly align them with the semantic space of pretrained LLMs. Consequently, strong reconstruction performance does not necessarily guarantee semantically rich and language-compatible EEG representations that generalize across heterogeneous EEG decoding tasks.",
+        "bbox": [
+            516,
+            484,
+            915,
+            638
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Meanwhile, LLMs are inherently designed to model discrete token sequences, such as text. Therefore, converting continuous EEG embeddings into discrete neural tokens and modeling them through autoregressive next-token prediction has been established as a prominent paradigm for integrating EEG signals with LLMs (Jiang et al. 2025; Yang et al. 2025; Wang et al. 2026). While this formulation enables the use of established sequence-modeling frameworks, quantizing continuous neural dynamics into a finite codebook may discard discriminative patterns that are critical for distinguishing task-relevant neural states (Cui et al. 2026; Zhai et al. 2026). Moreover, converting all neural information into discrete tokens and optimizing for next-token prediction can also create an unnecessary representational bottleneck (Zheng et al. 2025). Autoregressive modeling is well suited for text generation, but it may not be the most appropriate learning objective when the primary goal is discriminative EEG decoding guided by semantic understanding. These limitations motivate alternative approaches that directly learn semantic structure in continuous latent spaces without being constrained by discrete tokenization or an autoregressive next-token prediction objective.",
+        "bbox": [
+            514,
+            638,
+            915,
+            890
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "aside_text",
+        "text": "arXiv:2608.11656v1 [cs.LG] 12 Aug 2026",
+        "bbox": [
+            29,
+            353,
+            63,
+            800
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>†</sup>Corresponding author",
+        "bbox": [
+            104,
+            875,
+            245,
+            890
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            81,
+            69,
+            480,
+            125
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "To address these challenges, we propose the Brain Latent Predictive Model (BLPM), a non-generative and nonautoregressive EEG–language foundation model that reformulates heterogeneous EEG decoding tasks as a continuous semantic embedding prediction problem in a shared latent space. Rather than directly reconstructing raw EEG waveforms, BLPM employs a Continuous EEG Latent Predictive (CELP) Encoder that predicts latent representations of target EEG segments from contextual EEG observations, thereby reducing excessive dependence on low-level waveform details and subject-specific variations while learning transferable representations that capture higher-level neurophysiological structures. BLPM then connects the learned continuous EEG representations to a text semantic embedding space without converting EEG signals into discrete neural tokens. To this end, we introduce a Multi-Query Semantic Decomposition (MQSD) module, which uses multiple language-guided semantic queries to extract complementary task-relevant information from each EEG representation. This semantic information is then integrated with the continuous EEG embeddings to predict the embedding of the corresponding answer in a shared latent space. The predicted embedding is matched against the embeddings of candidate answers, allowing the model to select the answer that is semantically most compatible with the EEG representation. This design enables distinct semantic factors contained within the same EEG segment to be selectively accessed according to the given task, thereby reformulating heterogeneous EEG decoding tasks within a unified latent semantic prediction framework.",
+        "bbox": [
+            81,
+            125,
+            482,
+            540
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "The main contributions of this paper are as follows:",
+        "bbox": [
+            99,
+            539,
+            441,
+            554
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• We propose BLPM, an EEG-language foundation model that aligns continuous EEG representations with language semantics through semantic embedding prediction in a latent space. This formulation enables unified EEG decoding without discrete neural tokenization or autoregressive generation.",
+        "bbox": [
+            89,
+            556,
+            480,
+            641
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• We introduce the CELP encoder, which learns universal EEG representations by predicting target latent representations from contextual EEG observations. Its latent predictive objective promotes higher-level abstraction without directly reconstructing low-level details.",
+        "bbox": [
+            89,
+            641,
+            480,
+            713
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• We present the MQSD module, which decomposes continuous EEG representations into multiple task-relevant semantic queries with language-derived semantic guidance. Combined with multi-task instruction tuning and semantic answer matching, it reformulates heterogeneous EEG decoding tasks as unified latent semantic prediction problems.",
+        "bbox": [
+            89,
+            713,
+            480,
+            811
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "• We systematically evaluate BLPM using standardized benchmarks to enable fair comparisons and demonstrate its robust performance. These results support continuous latent semantic prediction as an efective paradigm for EEG-language foundation models.",
+        "bbox": [
+            89,
+            813,
+            480,
+            883
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Methods",
+        "text_level": 2,
+        "bbox": [
+            674,
+            66,
+            756,
+            83
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "In this section, we introduce BLPM, a continuous latent predictive EEG–language foundation model that aligns EEG representations with natural language semantics in a shared latent space. As illustrated in Figure 1, BLPM comprises three main components: (1) a CELP encoder for learning universal continuous EEG representations; (2) a Language-Guided MQSD module for aligning EEG representations with language semantics; and (3) a multi-task instructiontuning framework with semantic answer matching for unified EEG decoding.",
+        "bbox": [
+            514,
+            84,
+            915,
+            227
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Continuous EEG Latent Predictive Encoder",
+        "text_level": 2,
+        "bbox": [
+            516,
+            234,
+            859,
+            250
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Input Formulation. Given input EEG data X<sub>EEG</sub> ∈ $\\mathbb { R } ^ { \\pmb { \\xi } \\times T }$ , we divide each channel into non-overlapping segments of length L, obtaining $X \\in \\mathbb { R } ^ { C \\times P \\times L }$ , where C is the number of channels, T is the number of temporal samples, and $P = \\lfloor T / L \\rfloor$ is the number of segments per channel. Each segment $\\boldsymbol { x _ { c , p } } \\in \\mathbb { R } ^ { L }$ where $c \\in \\{ 1 , \\ldots , C \\}$ and $p \\in \\{ 1 , \\ldots , \\mathbf { \\bar { P } } \\}$ is treated as an individual EEG token, resulting in a total sequence of $N = C \\times P$ tokens.",
+        "bbox": [
+            514,
+            252,
+            915,
+            364
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Patch Embedding. Each EEG token $x _ { c , p } \\in \\mathbb { R } ^ { L }$ is mapped into a d-dimensional latent vector through a dual-branch patch embedding module. The temporal branch applies 1D convolutional layers to the segment to capture local temporal dynamics, while the spectral branch computes the fast Fourier transform (FFT) of $x _ { c , p }$ and projects its magnitude spectrum into the same d-dimensional space via a linear layer. The temporal and spectral embeddings are additively fused to form spatio-temporal patch embeddings $Z \\in \\mathbb { R } ^ { \\check { C } \\times P \\times d }$ A depthwise convolutional positional encoding is then applied across the channel and temporal dimensions to inject spatio-temporal positional information. Finally, the channel and temporal dimensions are flattened into a single token dimension, producing the position-encoded token embeddings $\\tilde { Z } \\in \\mathbb { R } ^ { N \\times d }$",
+        "bbox": [
+            514,
+            368,
+            915,
+            580
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Joint Latent Predictive Pretraining. The CELP Encoder is trained with a latent predictive pretraining scheme inspired by the joint-embedding predictive architecture (JEPA) (Assran et al. 2023). The scheme consists of an online encoder, a target encoder, and an embedding predictor.",
+        "bbox": [
+            514,
+            584,
+            915,
+            657
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Structured Multi-Block Masking. To preserve the intrinsic structure ofEEG signals, the CELP encoder applies multiblock masking over the channel-time EEG token sequence. The visible mask $M _ { v }$ defines the observable context tokens, while the prediction masks $\\{ M _ { p } \\}$ define structured target regions to be inferred. In practice, the target masks include temporal-span masks and channel-block masks, encouraging the model to exploit temporal continuity, channel-wise dependencies, and inter-token context.",
+        "bbox": [
+            514,
+            661,
+            915,
+            789
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Online Encoder. The online encoder $f _ { \\theta }$ takes the visible subset of token embeddings $\\tilde { \\mathbf { Z } } _ { M _ { \\iota } }$ as input and encodes them into visible latent representations $\\mathbf { H } _ { v } \\mathbf { : }$",
+        "bbox": [
+            516,
+            792,
+            913,
+            837
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6a6b48f418325d93d7c6a6f69bf1f2559338db17a004c73c1595eab7c2b1ab83.jpg",
+        "text": "$$\n\\mathbf { H } _ { v } = f _ { \\theta } ( \\tilde { \\mathbf { Z } } _ { M _ { v } } ) .\\tag{1}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            658,
+            840,
+            771,
+            858
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Unlike masked autoencoding, which reconstructs masked segments, the CELP encoder predicts masked targets in the latent space from visible tokens. This design encourages the model to learn abstract semantic representations rather than relying on reconstruction objectives that are sensitive to lowlevel noise and fluctuations.",
+        "bbox": [
+            516,
+            859,
+            915,
+            890
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "image",
+        "img_path": "images/4418207b80d968d1bd8d22a37b817f3806c6f6104244144cbb643510fa6b945d.jpg",
+        "image_caption": [
+            "Figure 1: Overall framework of the BLPM. Stage 1 trains the CELP encoder through continuous latent representation prediction. Stage 2 aligns continuous EEG representations with natural-language semantics through language-guided multi-query decomposition, while Stage 3 performs instruction-conditioned answer embedding prediction and semantic matching."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            89,
+            66,
+            908,
+            372
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            81,
+            457,
+            480,
+            513
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Target Encoder. The target encoder $f _ { \\bar { \\theta } }$ processes the full EEG token sequence and provides latent targets at masked prediction positions. At training step k, the target encoder parameters <sup>¯</sup>θ are updated using the exponential moving average (EMA) of the online encoder parameters θ with a momentum coeficient $m _ { k }$",
+        "bbox": [
+            81,
+            520,
+            480,
+            604
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6a245a1c5f3de76f289e64ef0cd26bb5451cb079deac5553e6fe974f32371398.jpg",
+        "text": "$$\n\\bar { \\theta } ^ { ( k ) }  m _ { k } \\bar { \\theta } ^ { ( k - 1 ) } + ( 1 - m _ { k } ) \\theta ^ { ( k ) } .\\tag{2}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            161,
+            609,
+            398,
+            628
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "This EMA encoder provides stable latent prediction targets and helps mitigate representation collapse during pretraining.",
+        "bbox": [
+            81,
+            636,
+            478,
+            666
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Embedding Predictor. For each prediction mask $M _ { p } ,$ the embedding predictor $g _ { \\phi }$ estimates the masked latent representations from the visible context and learnable mask queries:",
+        "bbox": [
+            81,
+            672,
+            480,
+            729
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "equation",
+        "img_path": "images/01b0db980d4f390f136e9031ff0ea0e931d3640c34cbd920b247e0d383798eb7.jpg",
+        "text": "$$\n\\hat { \\mathbf { H } } _ { M _ { p } } = g _ { \\phi } \\left( \\mathbf { H } _ { v } , \\mathbf { m } + \\mathbf { p } _ { M _ { p } } \\right) .\\tag{3}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            181,
+            731,
+            380,
+            750
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "where m is a learnable mask token and $\\mathbf { p } _ { M _ { p } }$ denotes the positional representation of the masked target positions. Once pretraining is completed, the online encoder is used as the pretrained EEG encoder backbone.",
+        "bbox": [
+            81,
+            752,
+            480,
+            810
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Latent Predictive Objective. The training objective is defined in the latent space rather than the input space. Let $\\mathbf { H } _ { t } = f _ { \\bar { \\theta } } ( \\tilde { \\mathbf { Z } } )$ denote the target latent representations obtained from the target encoder. The target representations are normalized along the feature dimension and used as prediction targets. The CELP encoder is optimized with a Smooth L1 loss over masked positions:",
+        "bbox": [
+            81,
+            816,
+            480,
+            890
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            514,
+            455,
+            913,
+            484
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "equation",
+        "img_path": "images/76b888b7b4b727a38a04309f921dd90ad21d62f418cee93e843500c0cdca505d.jpg",
+        "text": "$$\n\\mathcal { L } _ { \\mathrm { C E L P } } = \\frac { 1 } { \\left| \\mathcal { M } \\right| } \\sum _ { M _ { p } \\in \\mathcal { M } } \\frac { 1 } { \\left| M _ { p } \\right| } \\sum _ { i \\in M _ { p } } \\rho \\left( \\hat { \\mathbf { h } } _ { i } , \\mathrm { L N } ( \\mathbf { h } _ { t , i } ) \\right) .\\tag{4}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            527,
+            489,
+            875,
+            526
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "where $\\rho ( \\cdot , \\cdot )$ denotes the Smooth L1 loss, M is the set of prediction masks, $\\hat { \\mathbf { h } } _ { i }$ and $\\mathbf { h } _ { t , i }$ denote the predicted and target latent vectors at position i, and $\\mathrm { L N } ( \\bar { \\cdot } )$ represents layer normalization.",
+        "bbox": [
+            514,
+            532,
+            915,
+            592
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "After pretraining, the CELP encoder is applied to the token embeddings $\\tilde { \\mathbf { Z } } ,$ and the output sequence is reshaped into continuous EEG embeddings:",
+        "bbox": [
+            514,
+            592,
+            915,
+            636
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4db5ce0c7a172ffb6688d8759eb9d9ebe77069ff5e24b1a1912272e31ebb5933.jpg",
+        "text": "$$\n\\mathbf { H } _ { \\mathrm { E E G } } = \\mathrm { r e s h a p e } \\left( f _ { \\theta } ( \\tilde { \\mathbf { Z } } ) \\right) \\in \\mathbb { R } ^ { C \\times P \\times d } .\\tag{5}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            578,
+            641,
+            849,
+            665
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Multi-Query Semantic Alignment",
+        "text_level": 2,
+        "bbox": [
+            516,
+            674,
+            781,
+            690
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "In this stage, we freeze the CELP encoder and align its continuous EEG embeddings with natural-language semantics using the Language-Guided Multi-Query Semantic Decomposition (MQSD) module and Language-Initialized Semantic Embedding Predictor. The goal of this stage is to predict natural-language semantic representations in a semantic embedding space from continuous EEG representations.",
+        "bbox": [
+            514,
+            693,
+            915,
+            805
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Continuous EEG Representations. The frozen CELP encoder provides continuous EEG embeddings H ∈ $\\mathbb { R } ^ { C \\times P \\times d }$ . We flatten the channel-time dimensions into a token sequence:",
+        "bbox": [
+            514,
+            809,
+            915,
+            867
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3c8b301e543faea0f7a8d846f5a03b2094995679e45725f2ae9d9760e23a2d77.jpg",
+        "text": "$$\n\\mathbf { h } = \\mathrm { F l a t t e n } \\left( \\mathbf { H } _ { \\mathrm { E E G } } \\right) \\in \\mathbb { R } ^ { N \\times d } .\\tag{6}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            606,
+            872,
+            823,
+            890
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The EEG token sequence h serves directly as the key and value for the multi-query cross-attention, retaining its original feature space prior to projection.",
+        "bbox": [
+            81,
+            68,
+            480,
+            113
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Language-Guided Semantic Queries. To interpret the EEG representations from complementary perspectives, MQSD introduces a fixed set of M semantic queries. These queries correspond to task-relevant EEG factors, including temporal dynamics, spectral characteristics, spatial relationships, and morphological patterns. Each semantic query is tokenized and embedded using the input embedding layer of the LLM. The m-th query is represented by a padded sequence of language token embeddings $\\mathbf { Q } _ { m } \\mathbf { \\bar { \\Psi } } \\in \\mathbb { R } ^ { \\mathbf { \\bar { L } } _ { \\operatorname* { m a x } } \\times d _ { \\mathrm { L M } } }$ where $L _ { \\mathrm { m a x } }$ is the maximum query length. A corresponding attention mask is used to exclude padding tokens.",
+        "bbox": [
+            81,
+            117,
+            480,
+            272
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Multi-Query EEG Decomposition. Each semantic query sequence independently attends to the continuous EEG tokens through semantic query cross-attention:",
+        "bbox": [
+            81,
+            279,
+            480,
+            321
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4855eee8d0da8742383db1ea822ca4e922a90559133aba7ff79a719dbb50616d.jpg",
+        "text": "$$\n\\begin{array} { c } { { \\mathbf { R } _ { m } = \\mathrm { C r o s s A t t n } ( { \\mathbf { Q } _ { m } , \\mathbf { h } , \\mathbf { h } } ) , } } \\\\ { { \\tilde { \\mathbf { s } } _ { m } = \\mathrm { P o o l } _ { \\mathrm { t o k } } ( { \\mathbf { R } _ { m } } ) . } } \\end{array}\\tag{7}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            178,
+            329,
+            383,
+            363
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Here, $\\mathbf { R } _ { m } \\in \\mathbb { R } ^ { L _ { \\operatorname* { m a x } } \\times d }$ indicates the query-conditioned EEG representations associated with the language tokens of the m-th semantic query. The operator $\\mathrm { P o o l } _ { \\mathrm { t o k } }$ performs masked mean pooling over the language-token dimension, yielding an intermediate semantic summary $\\widetilde { \\\\mathbf { s } } _ { m } \\in \\mathbb { R } ^ { d }$",
+        "bbox": [
+            81,
+            371,
+            480,
+            443
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Finally, each semantic summary is projected into the hidden dimension of the LLM using the linear projector $P _ { h }$ :",
+        "bbox": [
+            81,
+            441,
+            478,
+            472
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/39cfa02dd7cb14c80fa2da8363f42d3efa75e5c92d175d15a5bbeb9a9bf812ae.jpg",
+        "text": "$$\n\\mathbf { s } _ { m } = P _ { h } ( \\tilde { \\mathbf { s } } _ { m } ) \\in \\mathbb { R } ^ { d _ { \\mathrm { L M } } } .\\tag{8}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            199,
+            478,
+            361,
+            496
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "The semantic summaries obtained from all M queries are collected as",
+        "bbox": [
+            81,
+            503,
+            480,
+            532
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f129ce2b3316d90a50f484c03756a244d8c5f47e067008d384c0e81a2358c730.jpg",
+        "text": "$$\n\\mathbf { S } _ { q } = [ \\mathbf { s } _ { 1 } ; \\mathbf { s } _ { 2 } ; \\ldots ; \\mathbf { s } _ { M } ] \\in \\mathbb { R } ^ { M \\times d _ { \\mathrm { L M } } } .\\tag{9}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            163,
+            537,
+            398,
+            558
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "This decomposition allows the model to extract complementary semantic summaries from the same continuous EEG embeddings rather than compressing all the information into a single global representation.",
+        "bbox": [
+            81,
+            564,
+            480,
+            621
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Language-Initialized Semantic Embedding Predictor. To preserve fine-grained information alongside the semantic summaries, the continuous EEG embeddings are also projected into the LLM embedding space via a token projector $P _ { u } \\colon$",
+        "bbox": [
+            81,
+            627,
+            480,
+            696
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c6c3859e88d6a70b228e0018aeb36b02a510424e6b42a6e9b89e31321cdbf139.jpg",
+        "text": "$$\n\\mathbf { u } = P _ { u } ( \\mathbf { h } ) \\in \\mathbb { R } ^ { N \\times d _ { \\mathrm { L M } } } .\\tag{10}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            199,
+            695,
+            361,
+            713
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "The multi-query semantic summaries $\\mathbf { S } _ { q }$ and projected EEG embeddings u are then concatenated and fed into the semantic embedding predictor:",
+        "bbox": [
+            81,
+            717,
+            480,
+            760
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c3b3ba109e30386742c2bb17eedff49cd289e7c8df5d6e7917dce6b24feb8884.jpg",
+        "text": "$$\n\\mathbf { H } = G ( [ \\mathbf { S } _ { q } ; \\mathbf { u } ] ) .\\tag{11}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            222,
+            766,
+            338,
+            784
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "where G indicates the semantic embedding predictor. The projected EEG embeddings preserve fine-grained token-level EEG information, while $\\mathbf { S } _ { q }$ provides language-guided semantic summaries. Although G consists of pretrained LLM decoder layers, we use a bidirectional attention mask instead of a causal mask to predict semantic embeddings rather than to generate the next token.",
+        "bbox": [
+            81,
+            791,
+            480,
+            890
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We extract the contextualized hidden states corresponding to the M semantic-query summaries:",
+        "bbox": [
+            514,
+            69,
+            913,
+            98
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1479889bd73619035d8baea0e583ec5e0c1784092c0fad27c920d16f60ba90ec.jpg",
+        "text": "$$\n\\mathbf { H } _ { q } = \\mathbf { H } _ { 1 : M } .\\tag{12}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            668,
+            102,
+            761,
+            118
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We then obtain the predictive representation by mean pooling over the semantic-query states:",
+        "bbox": [
+            514,
+            122,
+            913,
+            152
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/56f00c28842edcdc893fb45f09114ccf07f1d98fcd0bb4bb9c5c7d037d1ed324.jpg",
+        "text": "$$\n\\mathbf { h } _ { \\mathrm { p r e d } } = \\mathrm { P o o l } _ { \\mathrm { q r y } } ( \\mathbf { H } _ { q } ) = \\frac { 1 } { M } \\sum _ { m = 1 } ^ { M } \\mathbf { H } _ { q , m } .\\tag{13}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            578,
+            156,
+            849,
+            198
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "The pooled representation is mapped into the text embedding space:",
+        "bbox": [
+            514,
+            202,
+            913,
+            231
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6fa5a14dd9a655782c0fc3633f804a7c5d44b1562fc80532b964b049a62d174a.jpg",
+        "text": "$$\n{ \\bf z } _ { e } = \\mathrm { n o r m } \\left( P _ { e } ( { \\bf h } _ { \\mathrm { p r e d } } ) \\right) .\\tag{14}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            629,
+            229,
+            797,
+            246
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "where $P _ { e }$ is the prediction head, and norm(·) denotes L2 normalization.",
+        "bbox": [
+            516,
+            247,
+            913,
+            276
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Natural-Language Semantic Targets. For the text branch, each class label $y$ is expressed as natural-language text $\\ell _ { y }$ representing its class semantics. The semantic text is encoded using a pretrained text embedding model:",
+        "bbox": [
+            516,
+            281,
+            915,
+            339
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/35862bae679cc71eb6d66c7b4621539538418a9756ebd6ea96ac6192a59b34a1.jpg",
+        "text": "$$\n\\begin{array} { r } { \\mathbf { z } _ { y } = \\mathrm { n o r m } \\left( E _ { \\mathrm { t e x t } } ( \\ell _ { y } ) \\right) . } \\end{array}\\tag{15}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            630,
+            343,
+            799,
+            359
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "This maps labels from heterogeneous EEG tasks into a shared natural-language semantic embedding space.",
+        "bbox": [
+            514,
+            363,
+            913,
+            393
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Semantic Alignment Objective. We optimize the model using a bidirectional multi-positive contrastive objective. The similarity between the i-th predicted EEG-conditioned embedding $\\mathbf { z } _ { e , i }$ and the $j \\cdot$ -th target semantic embedding $\\mathbf { z } _ { y , j }$ is computed as",
+        "bbox": [
+            514,
+            398,
+            913,
+            469
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/5711d16df8e5849e2bc8bdf78027a2e78c362c73bc0936b4f01bf7f619225d9d.jpg",
+        "text": "$$\nA _ { i j } = \\mathbf { z } _ { e , i } ^ { \\top } \\mathbf { z } _ { y , j } / \\tau .\\tag{16}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            655,
+            468,
+            776,
+            486
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "where $\\tau$ is a temperature parameter, and both $\\mathbf { z } _ { e }$ and $\\mathbf { z } _ { y }$ are L2-normalized embeddings in the shared semantic space. The final objective is a symmetric InfoNCE loss:",
+        "bbox": [
+            516,
+            487,
+            915,
+            530
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4ba0d5dbd4d9d04b4b7910016378803905a65755c28362ffbe8a5089efbbd06d.jpg",
+        "text": "$$\n\\mathcal { L } _ { \\mathrm { a l i g n } } = \\frac { 1 } { 2 } [ \\mathcal { L } _ { e  t } + \\mathcal { L } _ { t  e } ] .\\tag{17}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            619,
+            535,
+            810,
+            563
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Samples sharing the same semantic text are treated as positives, preventing samples with the same class semantics from being used as false negatives.",
+        "bbox": [
+            514,
+            565,
+            915,
+            609
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Multi-task Instruction Tuning with Semantic Embedding Prediction",
+        "text_level": 2,
+        "bbox": [
+            516,
+            618,
+            864,
+            650
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We perform multi-task instruction tuning to adapt BLPM to diverse downstream datasets under a unified semantic prediction framework. Instead of autoregressively generating answer tokens, BLPM predicts the semantic embedding of the target answer in a single forward pass.",
+        "bbox": [
+            514,
+            652,
+            915,
+            724
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Instruction-Conditioned Semantic Prediction. Given the multi-query semantic summaries $\\mathbf { S } _ { q }$ and projected EEG tokens u obtained in the previous stage, the task instruction $s _ { k }$ is tokenized and embedded using the input embedding layer of the pretrained language model:",
+        "bbox": [
+            514,
+            728,
+            915,
+            799
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/38a1bcb6998e23292dcf46251038f3cb39b3ff08deb08bc2ad3aca00107450e9.jpg",
+        "text": "$$\n\\mathbf { T } _ { k } = { \\mathrm { E m b e d } } _ { \\mathrm { L M } } ( s _ { k } ) .\\tag{18}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            637,
+            804,
+            790,
+            820
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "The instruction embeddings are concatenated with the EEG tokens and semantic summaries, and then processed by the non-causal LLM as a semantic predictor:",
+        "bbox": [
+            514,
+            824,
+            913,
+            867
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/139c010aff0d0efca603161b80b082f1dc8f1a051c55d262788b5f33037b8c74.jpg",
+        "text": "$$\n\\mathbf { H } ^ { ( k ) } = G \\left( [ \\mathbf { T } _ { k } ; \\mathbf { S } _ { q } ; \\mathbf { u } ] \\right) .\\tag{19}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            629,
+            872,
+            799,
+            890
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "The predicted answer embedding is obtained from the contextualized semantic-query states using the same query-level pooling employed in the semantic alignment stage:",
+        "bbox": [
+            81,
+            68,
+            480,
+            113
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/8b69b907d2cdd97b362eff5c04bbc5545c7c0ff21400fd4d5ea516683fdc071b.jpg",
+        "text": "$$\n\\hat { \\mathbf { z } } = \\mathrm { n o r m } \\left( P _ { a } \\left( \\mathrm { P o o l } _ { \\mathrm { q r y } } ( \\mathbf { H } _ { q } ^ { ( k ) } ) \\right) \\right) .\\tag{20}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            158,
+            117,
+            400,
+            143
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "where $\\mathbf { H } _ { q } ^ { ( k ) }$ denotes the contextualized hidden states corresponding to the M semantic-query summaries, and $P _ { a }$ is the shared answer prediction head. This formulation conditions semantic prediction on the task instruction while preserving a shared prediction architecture across tasks.",
+        "bbox": [
+            81,
+            152,
+            480,
+            227
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Instruction Tuning Objective. Each target label y is associated with the natural-language semantic text $\\ell _ { y }$ and its corresponding target embedding $\\mathbf { z } _ { y } .$ . The model is optimized using the bidirectional multi-positive InfoNCE objective (Lee et al. 2022) to align the predicted answer embedding zˆ with $\\mathbf { z } _ { y } .$ . Samples with the same answer semantics are treated as positive pairs.",
+        "bbox": [
+            81,
+            232,
+            480,
+            330
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Inference by Semantic Matching. During inference, the candidate answer texts for task k are encoded using the pretrained text embedding model (Vera et al. 2025) and projected into the shared semantic embedding space. The predicted label is selected by semantic matching within the task-specific candidate set:",
+        "bbox": [
+            81,
+            335,
+            480,
+            420
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6d4ddce25aefbb88e5ec71d5dc8e6e7c76745a18ff3b1962d5befe81c08b06d7.jpg",
+        "text": "$$\n\\hat { y } = \\arg \\operatorname* { m a x } _ { c \\in { \\mathcal { C } } _ { k } } \\hat { \\mathbf { z } } ^ { \\top } { \\mathbf { z } } _ { c } .\\tag{21}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            214,
+            419,
+            348,
+            443
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "where $\\mathcal { C } _ { k }$ denotes the candidate label set for task k, and $\\mathbf { z } _ { c }$ is the embedding of the natural-language semantic text $\\ell _ { c }$ representing candidate label c. This formulation unifies heterogeneous EEG tasks within a shared semantic space without relying on discrete tokenization and autoregressive next-token prediction.",
+        "bbox": [
+            81,
+            446,
+            480,
+            531
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Experimental Setup",
+        "text_level": 2,
+        "bbox": [
+            194,
+            542,
+            369,
+            560
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Datasets and Benchmarks",
+        "text_level": 2,
+        "bbox": [
+            83,
+            563,
+            289,
+            579
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Pretraining. BLPM is pretrained on the Temple University Hospital EEG Corpus (TUEG) (Obeid and Picone 2016), a large-scale publicly available clinical EEG dataset comprising 69,652 recordings from 14,987 subjects, with a total of 27,062 hours of recordings.",
+        "bbox": [
+            81,
+            582,
+            480,
+            652
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Downstream Tasks. To assess the generalization ability of BLPM across diverse EEG applications, we conduct experiments on seven representative downstream tasks. The tasks include mental workload classification (COG-BCI (Hinss et al. 2023)), mental stress detection (Mental Arithmetic (Zyma et al. 2019)), abnormal detection (TUAB (Lopez et al. 2015)), event type classification (TUEV (Harati et al. 2015)), motor imagery classification (PhysioNet-MI (Schalk 2009)), emotion recognition (FACED (Chen et al. 2023)), and sleep staging (HMC (Alvarez-Estevez and Rijsman 2022)).",
+        "bbox": [
+            81,
+            659,
+            482,
+            800
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Evaluation Benchmark. We use NeuralBench (Banville et al. 2026), a unified framework for benchmarking models of brain activity to evaluate model performance systematically and fairly across various downstream tasks and datasets. NeuralBench provides standardized evaluation protocols, enabling consistent comparisons across datasets, tasks, and model architectures. Unless otherwise specified, we follow the standard benchmark settings for task formulations, data splits, preprocessing, and evaluation metrics.",
+        "bbox": [
+            81,
+            804,
+            482,
+            890
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            514,
+            69,
+            915,
+            113
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Implementation Details",
+        "text_level": 2,
+        "bbox": [
+            516,
+            121,
+            702,
+            137
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Data Preprocessing. For pretraining, we apply a standardized preprocessing pipeline (Wang et al. 2025) with several modifications. Recordings shorter than five minutes are removed, the first and last minutes of each recording are discarded, and standard channels from the international 10-20 system are retained. The signals are then band-pass filtered at 0.3-75 Hz, notch filtered at 60 Hz, resampled to 200 Hz, and split into non-overlapping 30-second segments. Segments with absolute amplitudes exceeding 100 $\\mu \\mathrm { V }$ are excluded. The resulting EEG segments are used for self-supervised latent predictive pretraining. For each task dataset, we use NeuralSet (King et al. 2026) and NeuralBench (Banville et al. 2026) to reproduce the preprocessing pipelines originally used for each baseline model. Since pretrained models depend on specific input distributions and signal statistics, we use model-specific preprocessing.",
+        "bbox": [
+            514,
+            140,
+            915,
+            364
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Baseline Models. We compare BLPM against seven representative EEG decoding models under the same standardized evaluation framework. The baseline models are grouped into two categories based on their training strategies. The first category includes task-specific EEG decoding models, namely EEGNet (Lawhern et al. 2018) and EEGConformer (Song et al. 2023). EEGNet is a compact convolutional model for EEG classification, and EEGConformer integrates local convolutional encoding with Transformer-based global dependency modeling. The second category consists of EEG foundation models, including BIOT (Yang, Westover, and Sun 2023), LaBraM (Jiang, Zhao, and Lu 2024), CBraMod (Wang et al. 2025), REVE (El Ouahidi et al. 2025), and LUNA (Döner et al. 2025). These models learn universal EEG representations through large-scale pretraining and are adapted separately to each downstream dataset. In contrast, BLPM is trained under a unified multi-task setting and performs instruction-conditioned semantic embedding prediction across all seven downstream tasks.",
+        "bbox": [
+            514,
+            367,
+            916,
+            633
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Evaluation Metrics. We assess performance using diferent evaluation metrics for multiclass and binary classification settings. For multiclass classification, we report Balanced Accuracy, Cohen’s Kappa, and Weighted F1-score. For binary classification, we use Balanced Accuracy, AUPRC, and AUROC.",
+        "bbox": [
+            514,
+            637,
+            915,
+            723
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Training & Environment Settings. All experiments were conducted using four NVIDIA GeForce RTX 3090 GPUs with Python 3.12.13 and PyTorch 2.6. The best-performing checkpoint for each model was selected based on validationset performance and subsequently evaluated on the test set. We report the mean and standard deviation over five independent runs with diferent seeds.",
+        "bbox": [
+            514,
+            728,
+            915,
+            828
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "LLM Backbone. Unlike prior studies that adopt the GPT-2 (Jiang et al. 2025; Yang et al. 2025) or the Qwen 2.5 series (Wang et al. 2026), we employ Llama 3.2-1B-Instruct (Grattafiori et al. 2024) as our language model backbone.",
+        "bbox": [
+            514,
+            832,
+            915,
+            890
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "table",
+        "img_path": "images/3bfccacb3d8d46338612f79a50b687f20570c506a8a2e40b1e44e25407280bdc.jpg",
+        "table_caption": [],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Task</td><td>Paradigm Method</td><td></td><td>COG-BCI</td><td>Mental Arithmetic</td><td>TUAB</td><td>TUEV</td><td>PhysioNet-MI</td><td>FACED</td><td>HMC</td></tr><tr><td rowspan=\"6\">Single-Task</td><td rowspan=\"3\">Task-Spec.</td><td>EEGNet</td><td> $5 9 . 8 \\pm 1 . 5$ </td><td> $5 1 . 0 \\pm 2 . 1$ </td><td> $7 9 . 9 \\pm 0 . 4$ </td><td> $4 2 . 4 \\pm 1 . 5$ </td><td> $5 8 . 3 \\pm 0 . 5$ </td><td> $2 3 . 4 \\pm 0 . 7$ </td><td> $7 0 . 9 \\pm 0 . 8$ </td></tr><tr><td>EEGConformer</td><td> $5 8 . 8 \\pm 2 . 1$ </td><td> $6 1 . 4 \\pm 7 . 9$ </td><td> $7 9 . 0 \\pm 0 . 4$ </td><td> $4 6 . 6 \\pm 3 . 3$ </td><td> $5 7 . 0 \\pm 1 . 1$ </td><td> $2 9 . 0 \\pm 0 . 5$ </td><td> $7 2 . 3 \\pm 1 . 6$ </td></tr><tr><td>BIOT</td><td> $4 2 . 2 \\pm 5 . 9$ </td><td> $6 3 . 7 \\pm 4 . 3$ </td><td> $7 5 . 7 \\pm 0 . 2$ </td><td> $3 9 . 2 \\pm 4 . 2$ </td><td> $3 0 . 8 \\pm 2 . 2$ </td><td> $1 1 . 2 \\pm 0 . 3$ </td><td> $7 1 . 5 \\pm 1 . 1$ </td></tr><tr><td rowspan=\"4\">Foundation.</td><td>LaBraM</td><td> $6 4 . 5 \\pm 3 . 8$ </td><td> $6 7 . 2 \\pm 5 . 9$ </td><td> $7 7 . 2 \\pm 1 . 5$ </td><td> $5 2 . 5 \\pm 1 . 4$ </td><td> $5 9 . 3 \\pm 0 . 7$ </td><td> $2 6 . 8 \\pm 0 . 9$ </td><td> $7 5 . 3 \\pm 0 . 9$ </td></tr><tr><td>CBraMod</td><td> $6 1 . 3 \\pm { 0 . 8 }$ </td><td> $7 0 . 7 \\pm 1 . 8$ </td><td> $\\underline { { 8 0 . 9 \\pm 0 . 3 } }$ </td><td> $5 2 . 0 \\pm 1 . 0$ </td><td> $5 6 . 6 \\pm 1 . 2$ </td><td> $2 9 . 4 \\pm 1 . 5$ </td><td> $7 6 . 0 \\pm 0 . 9$ </td></tr><tr><td>REVE</td><td> $6 7 . 4 \\pm 0 . 8$ </td><td> ${ \\underline { { 7 3 . 3 \\pm 3 . 8 } } }$ </td><td> $7 8 . 1 \\pm 1 . 5$ </td><td> ${ \\underline { { 5 5 . 3 \\pm 3 . 5 } } }$ </td><td> ${ \\bf 6 9 . 4 \\pm 0 . 9 }$ </td><td> $3 2 . 0 \\pm 1 . 2$ </td><td> ${ 7 6 . 5 \\pm 0 . 8 }$ </td></tr><tr><td>LUNA</td><td> $6 7 . 0 \\pm 1 . 6$ </td><td> $6 8 . 8 \\pm 2 . 4$ </td><td> $8 0 . 2 \\pm 0 . 6$ </td><td> $\\overline { { 4 9 . 7 \\pm 2 . 8 } }$ </td><td> $6 1 . 7 \\pm 0 . 6$ </td><td> $2 9 . 3 \\pm 1 1 . 8$ </td><td> $7 4 . 8 \\pm 0 . 8$ </td></tr><tr><td>Multi-Task Latent-Pred.</td><td></td><td>BLPM (Ours)</td><td> ${ \\bf 6 9 . 1 \\pm 1 . 4 }$ </td><td> $7 5 . 4 \\pm 2 . 1$ </td><td> ${ \\bf 8 2 . 3 \\pm 0 . 2 }$ </td><td> ${ \\bf 5 7 . 2 \\pm 1 . 1 }$ </td><td> $6 8 . 2 \\pm 0 . 7$ </td><td> ${ \\bf 3 4 . 3 \\pm 0 . 6 }$ </td><td> ${ \\bf 7 7 . 1 \\pm 0 . 6 }$ </td></tr></table>",
+        "bbox": [
+            83,
+            65,
+            915,
+            227
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "table",
+        "img_path": "images/05071cfa589518efbac0a1262ea6cd90d869f8f6e60b56ab33f24b19bbdba42b.jpg",
+        "table_caption": [
+            "Table 1: Balanced Accuracy (B-Acc, %) comparison across seven downstream datasets. The best and second-best results are marked in bold and underlined, respectively.",
+            "Table 2: Performance comparison on the COG-BCI, Mental Arithmetic, and TUEV datasets across multiple evaluation metrics. The best and second-best results are marked in bold and underlined, respectively."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td rowspan=\"2\">Task</td><td rowspan=\"2\">Paradigm Method</td><td rowspan=\"2\"></td><td colspan=\"3\">COG-BCI</td><td colspan=\"3\">Mental Arithmetic</td><td colspan=\"3\">TUEV</td></tr><tr><td>B-Acc</td><td>Kappa</td><td>F1-W</td><td>B-Acc</td><td>AUPRC</td><td>AUROC</td><td>B-Acc</td><td>Kappa</td><td>F1-W</td></tr><tr><td rowspan=\"6\">Single-Task</td><td>Task-Spec.</td><td>EEGNet EEGConformer</td><td>59.8±1.5</td><td>39.6±2.3</td><td>58.9±1.4</td><td>51.0±2.1</td><td>50.5±2.6</td><td>50.3±4.3</td><td>42.4±1.5</td><td>27.1±2.2</td><td>39.1±2.6</td></tr><tr><td></td><td></td><td>58.8±2.1</td><td>38.2±3.1</td><td>51.2±2.4</td><td>61.4±7.9</td><td>63.2±9.2</td><td>64.6±12.3</td><td>46.6±3.3</td><td>32.3±2.0</td><td>41.4±1.1</td></tr><tr><td rowspan=\"5\">Foundation.</td><td>BIOT</td><td>42.2±5.9</td><td>13.4±8.9</td><td>38.1±10.7</td><td>63.7±4.3</td><td>65.6±4.5</td><td>70.9±4.6</td><td>39.2±4.2</td><td>29.1±5.2</td><td>42.6±5.3</td></tr><tr><td>LaBraM</td><td>64.5±3.8</td><td>46.7±5.8</td><td>61.2±6.2</td><td>67.2±5.9</td><td>77.4±4.4</td><td>81.4±3.7</td><td>52.5±1.4</td><td>36.6±4.2</td><td>48.9±4.2</td></tr><tr><td>CBraMod</td><td>61.3±0.8 41.9±1.2</td><td></td><td>59.7±1.7</td><td>70.7±1.8 72.7±1.6</td><td></td><td> $7 8 . 1 { \\pm } 2 . 3 $ </td><td>52.0±1.0</td><td></td><td>39.2±3.550.8±3.6</td></tr><tr><td>REVE</td><td>67.4±0.8</td><td>51.1±1.2</td><td>67.3±1.1</td><td>73.3±3.8</td><td>84.6±1.7</td><td> $\\underline { { 8 5 . 3 \\pm 2 . 2 } }$ </td><td>55.3±3.5</td><td>48.3±3.5</td><td>57.7±2.9</td></tr><tr><td>LUNA</td><td>67.0±1.6</td><td>50.5±2.4 52.3±1.1</td><td>65.8±2.1</td><td>68.8±2.4 68.2±1.2 75.4±2.1</td><td>69.8±3.1 85.2±1.4</td><td> $7 6 . 1 \\pm 2 . 9$  86.1±1.7</td><td>49.7±2.8 57.2±1.1</td><td>35.2±4.7 50.1±1.8</td><td>47.9±3.3 59.3±1.5</td></tr><tr><td</table>",
+        "bbox": [
+            84,
+            281,
+            911,
+            464
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "We adapt the model using low-rank adaptation (LoRA) (Hu et al. 2022) applied to the linear projection layers, enabling parameter-eficient adaptation.",
+        "bbox": [
+            81,
+            534,
+            480,
+            578
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Experimental Results",
+        "text_level": 2,
+        "bbox": [
+            187,
+            589,
+            375,
+            606
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Performance on Downstream Tasks",
+        "text_level": 2,
+        "bbox": [
+            83,
+            611,
+            362,
+            626
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "To provide a comprehensive evaluation of downstream performance, we conduct experiments on seven representative tasks. The quantitative balanced accuracy results for all downstream tasks are summarized in Table 1. Table 2 reports results for COG-BCI, Mental Arithmetic, and TUEV across multiple evaluation metrics.",
+        "bbox": [
+            81,
+            630,
+            480,
+            715
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Performance Comparison with Baselines. As shown in Table 1 and Table 2, BLPM demonstrates strong generalization capabilities across heterogeneous EEG decoding tasks.",
+        "bbox": [
+            81,
+            720,
+            480,
+            763
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Comparison with Task-Specific Models: BLPM consistently outperforms the task-specific baselines, EEGNet and EEGConformer, across all seven downstream tasks, with substantial performance gains on most datasets, even though these baselines are trained specifically for each task. In particular, BLPM achieves performance improvements of 14.0%, 10.6%, and 9.9% over the best-performing task-specific baseline on Mental Arithmetic, TUEV, and PhysioNet-MI, respectively. These substantial performance gains indicate that",
+        "bbox": [
+            81,
+            763,
+            482,
+            891
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "BLPM generalizes more efectively across diverse downstream tasks with heterogeneous signal characteristics than task-specific models.",
+        "bbox": [
+            514,
+            534,
+            915,
+            577
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Comparison with EEG Foundation Models: BLPM also demonstrates stronger performance than existing foundation models, which have shown robust performance across various downstream tasks. Compared with the strongest EEG foundation model baseline on each dataset, BLPM achieves a higher balanced accuracy on six datasets. Specifically, BLPM achieves a balanced accuracy of 34.3% on FACED, 75.4% on Mental Arithmetic, and 57.2% on TUEV, outperforming REVE, the strongest EEG foundation model baseline, by 2.3%, 2.1%, and 1.9%, respectively. BLPM also increases performance on COG-BCI, TUAB, and HMC by 1.7%, 1.4%, and 0.6%. These results show that BLPM consistently provides robust performance across nearly all downstream tasks spanning diverse EEG paradigms. On PhysioNet-MI, BLPM achieves the second-best performance with a balanced accuracy of 68.2%, trailing REVE by only 1.2%, while outperforming the next strongest foundation model baseline, LUNA by 6.5%. Remarkably, BLPM achieves these improvements using a unified multi-task model, whereas the competing foundation models are separately fine-tuned on individual datasets. These overall performance gains indicate that continuous latent prediction and language-guided semantic decomposition learn transferable representations and efectively align them with task-relevant semantics across heterogeneous neural decoding tasks. Furthermore, these results suggest that representing discrete texts as continuous semantic representations in a shared embedding space and aligning them with EEG representations enables the model to generalize across datasets without separately optimized task-specific prediction heads.",
+        "bbox": [
+            514,
+            583,
+            916,
+            891
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            81,
+            69,
+            482,
+            181
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Ablation Studies",
+        "text_level": 2,
+        "bbox": [
+            83,
+            191,
+            217,
+            207
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "To systematically evaluate the contributions of the key architectural components and training strategies in BLPM, we conducted comprehensive ablation studies on the TUEV, FACED, and HMC datasets. The detailed results are presented in Table 3.",
+        "bbox": [
+            81,
+            210,
+            480,
+            282
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Efect of the Pretraining Objective. To examine the efectiveness of latent prediction for EEG pretraining, we compare embedding-space prediction with input-space reconstruction by replacing our latent prediction objective with a masked reconstruction objective. As shown in Table 3(a), the masked reconstruction variant achieves balanced accuracies of 54.63%, 32.71%, and 76.84% on TUEV, FACED, and HMC, respectively. In contrast, our model achieves superior performance across all three datasets, with balanced accuracies of 57.18%, 34.29%, and 77.10%, corresponding to improvements of up to 2.55%p. These results demonstrate that latent representation prediction captures task-relevant EEG dynamics more efectively than masked autoencoding-based approaches, which are more susceptible to noisy, low-level signal variations.",
+        "bbox": [
+            81,
+            289,
+            482,
+            500
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Efect of the EEG-Language Semantic Alignment. To validate the efect of EEG-language semantic alignment, we remove the alignment stage between EEG representations and language-derived semantic embeddings while retaining the remaining components of the framework. As shown in Table 3(b), eliminating the alignment stage reduces performance from 57.18 to 52.02 on TUEV, from 34.29 to 27.38 on FACED and from 77.10 to 72.17 on HMC, with the largest decrease of 6.91% observed on FACED. These results demonstrate that the alignment stage plays an important role in bridging the modality gap between EEG and language representations, thereby facilitating the integration of continuous neural signals and textual semantic information.",
+        "bbox": [
+            81,
+            506,
+            482,
+            689
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Efect of the Multi-Query Semantic Decomposition. We compare the proposed MQSD module with two simplified alternatives. As shown in Table 3(c), the global-pooling variant directly averages the projected EEG tokens without semantic queries. In contrast, Table 3(d) uses randomly initialized learnable queries with the same query-based aggregation structure as MQSD, but without language-derived semantic guidance. The global-pooling variant achieves balanced accuracies of 55.61%, 32.54%, and 75.02%, while the learnable-query variant achieves 56.36%, 33.48%, and 76.58% on TUEV, FACED, and HMC, respectively. The full model with the MQSD module in Table 3(f) further improves performance to 57.18%, 34.29%, and 77.10%. These results demonstrate that MQSD decomposes EEG representations into multiple semantically guided components, enabling the model to capture complementary neural patterns that are not fully preserved by global pooling or generic learnable queries.",
+        "bbox": [
+            81,
+            693,
+            482,
+            891
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "table",
+        "img_path": "images/d0135751cb1ff6187d7c10802b8472061686eeed8e185180f5360b5de424b2d9.jpg",
+        "table_caption": [
+            "Table 3: Ablation study on TUEV, FACED, and HMC. Rows (a)–(e) each difer from the full model (f) in a single component: Pretrain, the pretraining objective (Recon., masked reconstruction; CELP, our latent prediction); Align., the EEGlanguage semantic alignment stage; Query, the query mechanism (GP, global pooling; LQ, generic learnable queries; MQSD, our multi-query semantic decomposition); Pred., the prediction target (Token, autoregressive token generation; Embed., semantic embedding prediction)."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td rowspan=\"2\">ID</td><td colspan=\"4\">Model Configuration</td><td colspan=\"3\">B-Acc (%)</td></tr><tr><td>Pretrain</td><td>Align.</td><td>Query</td><td>Pred.</td><td>TUEV</td><td>FACED</td><td>HMC</td></tr><tr><td>(a)</td><td>Recon.</td><td>√</td><td>MQSD</td><td>Embed.</td><td>54.63</td><td>32.71</td><td>76.84</td></tr><tr><td>(b)</td><td>CELP</td><td>×</td><td>MQSD</td><td>Embed.</td><td>52.02</td><td>27.38</td><td>72.17</td></tr><tr><td>(c)</td><td>CELP</td><td>√</td><td>GP</td><td>Embed.</td><td>55.61</td><td>32.54</td><td>75.02</td></tr><tr><td>(d)</td><td>CELP</td><td>√</td><td>LQ</td><td>Embed.</td><td>56.36</td><td>33.48</td><td>76.58</td></tr><tr><td>(e)</td><td>CELP</td><td>√</td><td>MQSD</td><td>Token</td><td>55.27</td><td>32.92</td><td>75.96</td></tr><tr><td>(f)</td><td>CELP</td><td>√</td><td>MQSD</td><td>Embed.</td><td>57.18</td><td>34.29</td><td>77.10</td></tr></table>",
+        "bbox": [
+            516,
+            68,
+            913,
+            198
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            514,
+            363,
+            915,
+            421
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Efect of the Semantic Embedding Prediction. To evaluate the efect of the semantic prediction target, we replace continuous semantic embedding prediction with autoregressive next-token prediction in the token space while retaining the remaining components of the framework. Specifically, the autoregressive variant predicts the class-specific answer token according to its conditional likelihood, whereas our approach predicts a continuous semantic embedding corresponding to the target class. As shown in Table 3(e), the token-prediction variant achieves balanced accuracies of 55.27%, 32.92%, and 75.96% on TUEV, FACED, and HMC, respectively. In comparison, the full BLPM in Table 3(f) achieves 57.18%, 34.29%, and 77.10%, corresponding to improvements of 1.91%, 1.37%, and 1.14%, respectively. These results indicate that predicting continuous semantic embeddings provides a more efective supervision signal for EEG decoding tasks than generating discrete answer tokens based on conditional likelihood, as it focuses on aligning EEG representations with natural-language semantics rather than optimizing the generation probabilities of token forms.",
+        "bbox": [
+            514,
+            425,
+            916,
+            707
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Conclusion",
+        "text_level": 2,
+        "bbox": [
+            665,
+            717,
+            766,
+            732
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "In this paper, we introduce BLPM, a continuous latent predictive EEG–language foundation model that reformulates heterogeneous EEG decoding as a semantic embedding prediction problem. By replacing discrete tokenization and autoregressive modeling with continuous semantic prediction, BLPM aligns EEG representations with language semantics in a continuous latent space rather than a discrete token space. Across diverse EEG benchmarks, BLPM demonstrates strong performance on heterogeneous neural decoding tasks. These results support continuous latent prediction as an efective modeling paradigm for universal EEG decoding.",
+        "bbox": [
+            514,
+            736,
+            916,
+            891
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "Alvarez-Estevez, D.; and Rijsman, R. 2022. Haaglanden Medisch Centrum sleep staging database. PhysioNet. Version 1.1.",
+            "Assran, M.; Duval, Q.; Misra, I.; Bojanowski, P.; Vincent, P.; Rabbat, M.; LeCun, Y.; and Ballas, N. 2023. Self-supervised learning from images with a joint-embedding predictive architecture. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, 15619–15629.",
+            "Banville, H.; d’Ascoli, S.; Dahan, S.; Rapin, J.; Careil, M.; Benchetrit, Y.; Lévy, J.; Panchavati, S.; Ratouchniak, A.; Cascardi, E.; et al. 2026. NeuralBench: A unifying framework to benchmark neuroAI models. arXiv preprint arXiv:2605.08495.",
+            "Chen, J.; Wang, X.; Huang, C.; Hu, X.; Shen, X.; and Zhang, D. 2023. A large finer-grained afective computing EEG dataset. Scientific Data, 10(1): 740.",
+            "Cui, M.; Chen, T.; Jiao, Y.; Wang, Y.; Xie, L.; Pan, Y.; and Mainardi, L. 2026. BrainRVQ: A high-fidelity EEG foundation model via dual-domain residual quantization and hierarchical autoregression. arXiv preprint arXiv:2602.16951.",
+            "Dai, D.; Chen, P.; Ekbote, C.; and Liang, P. 2026. Qoqmed: Building multimodal clinical foundation models with domain-aware grpo training. Advances in Neural Information Processing Systems, 38: 37406–37453.",
+            "Döner, B.; Ingolfsson, T. M.; Benini, L.; and Li, Y. 2025. LUNA: Eficient and topology-agnostic foundation model for EEG signal analysis. In The Thirty-ninth Annual Conference on Neural Information Processing Systems.",
+            "El Ouahidi, Y.; Lys, J.; Thölke, P.; Farrugia, N.; Pasdeloup, B.; Gripon, V.; Jerbi, K.; and Lioi, G. 2025. REVE: A Foundation Model for EEG—Adapting to Any Setup with Large-Scale Pretraining on 25,000 Subjects. In Advances in Neural Information Processing Systems, volume 38.",
+            "Grattafiori, A.; Dubey, A.; Jauhri, A.; Pandey, A.; Kadian, A.; Al-Dahle, A.; Letman, A.; Mathur, A.; Schelten, A.; Vaughan, A.; et al. 2024. The llama 3 herd of models. arXiv preprint arXiv:2407.21783.",
+            "Gu, W.; Tianming, L.; Zhang, Q.; Ye, M.; Shen, X.; Chen, W.; Li, Y.; Zhang, Y.; Hong, J.; liang Lu, B.; and Zheng, W.-L. 2026. CerebraGloss: Instruction-tuning a large visionlanguage model for fine-grained clinical EEG interpretation. In The Fourteenth International Conference on Learning Representations.",
+            "Harati, A.; Golmohammadi, M.; Lopez, S.; Obeid, I.; and Picone, J. 2015. Improved EEG event classification using differential energy. In 2015 IEEE Signal Processing in Medicine and Biology Symposium (SPMB), 1–4. IEEE.",
+            "He, K.; Chen, X.; Xie, S.; Li, Y.; Dollár, P.; and Girshick, R. 2022. Masked autoencoders are scalable vision learners. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, 16000–16009.",
+            "Hinss, M. F.; Jahanpour, E. S.; Somon, B.; Pluchon, L.; Dehais, F.; and Roy, R. N. 2023. Open multi-session and multi-task EEG cognitive dataset for passive brain-computer interface applications. Scientific Data, 10(1): 85.",
+            "Hu, E. J.; Shen, Y.; Wallis, P.; Allen-Zhu, Z.; Li, Y.; Wang, S.; Wang, L.; and Chen, W. 2022. LoRA: Low-rank adaptation of large language models. In International Conference on Learning Representations.",
+            "Jiang, W.-B.; Wang, Y.; Lu, B.-L.; and Li, D. 2025. NeuroLM: A universal multi-task foundation model for bridging the gap between language and EEG signals. In The Thirteenth International Conference on Learning Representations.",
+            "Jiang, W.-B.; Zhao, L.; and Lu, B.-L. 2024. Large brain model for learning generic representations with tremendous EEG data in BCI. In The Twelfth International Conference on Learning Representations.",
+            "King, J.-R.; Bel, C.; Evanson, L.; Gadonneix, J.; Houhamdi, S.; Lévy, J.; Raugel, J.; Revilla, A. S.; Zhang, M.; Bonnaire, J.; et al. 2026. NeuralSet: A high-performing python package for neuro-AI. arXiv preprint arXiv:2605.03169.",
+            "Lawhern, V. J.; Solon, A. J.; Waytowich, N. R.; Gordon, S. M.; Hung, C. P.; and Lance, B. J. 2018. EEGNet: A compact convolutional neural network for EEG-based brain– computer interfaces. Journal ofNeural Engineering, 15(5): 056013.",
+            "Lee, J.; Kim, J.; Shon, H.; Kim, B.; Kim, S. H.; Lee, H.; and Kim, J. 2022. Uniclip: Unified framework for contrastive language-image pre-training. In Advances in Neural Information Processing Systems, volume 35, 1008–1019.",
+            "Li, J.; Chen, J.; Shen, F.; Yang, J.; Li, J.; Yuan, Z.; Cheng, B.; Li, M.; and Yang, Y. 2026. Assembling the mind’s mosaic: Towards EEG semantic intent decoding. In The Fourteenth International Conference on Learning Representations.",
+            "Liu, R.; Chen, Z.; Pengshu; You, W.; Huang, Z.-A.; Wu, J.; and Tan, K. 2026. MindMix: A multimodal foundation model for auditory perception decoding via deep neural-acoustic alignment. In The Fourteenth International Conference on Learning Representations.",
+            "Lopez, S.; Suarez, G.; Jungreis, D.; Obeid, I.; and Picone, J. 2015. Automated identification of abnormal adult EEGs. In 2015 IEEE Signal Processing in Medicine and Biology Symposium (SPMB), 1–5. IEEE.",
+            "Ma, J.; Wu, F.; Lin, Q.; Xing, Y.; Liu, C.; Jia, Z.; and Feng, M. 2026. CodeBrain: Bridging decoupled tokenizer and multi-scale architecture for EEG foundation model. In The Fourteenth International Conference on Learning Representations.",
+            "Obeid, I.; and Picone, J. 2016. The temple university hospital EEG data corpus. Frontiers in Neuroscience, 10: 196.",
+            "Oquab, M.; Darcet, T.; Moutakanni, T.; Vo, H.; Szafraniec, M.; Khalidov, V.; Fernandez, P.; Haziza, D.; Massa, F.; El-Nouby, A.; et al. 2024. Dinov2: Learning robust visual features without supervision. Transactions on Machine Learning Research Journal.",
+            "Pradeepkumar, J.; Chen, Z.; and Sun, J. 2026. Neural signals generate clinical notes in the wild. arXiv preprint arXiv:2601.22197.",
+            "Pradeepkumar, J.; Piao, X.; Chen, Z.; and Sun, J. 2026. Tokenizing single-channel EEG with time-frequency motif learning. In International Conference on Learning Representations, volume 2026, 36611–36637."
+        ],
+        "bbox": [
+            83,
+            85,
+            480,
+            128
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "header",
+        "text": "References",
+        "bbox": [
+            232,
+            66,
+            331,
+            83
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "Radford, A.; Kim, J. W.; Xu, T.; Brockman, G.; McLeavey, C.; and Sutskever, I. 2023. Robust speech recognition via large-scale weak supervision. In Proceedings of the 40th International Conference on Machine Learning, volume 202, 28492–28518. PMLR.",
+            "Radford, A.; Wu, J.; Child, R.; Luan, D.; Amodei, D.; Sutskever, I.; et al. 2019. Language models are unsupervised multitask learners. OpenAI Blog, 1(8): 9.",
+            "Schalk, G. 2009. EEG motor movement/imagery dataset. PhysioNet. Version 1.0.0.",
+            "Song, Y.; Zheng, Q.; Liu, B.; and Gao, X. 2023. EEG Conformer: Convolutional transformer for EEG decoding and visualization. IEEE Transactions on Neural Systems and Rehabilitation Engineering, 31: 710–719.",
+            "Vera, H. S.; Dua, S.; Zhang, B.; Salz, D.; Mullins, R.; Panyam, S. R.; Smoot, S.; Naim, I.; Zou, J.; Chen, F.; et al. 2025. Embeddinggemma: Powerful and lightweight text representations. arXiv preprint arXiv:2509.20354.",
+            "Wang, G.; Liu, W.; He, Y.; Xu, C.; Ma, L.; and Li, H. 2024. EEGPT: Pretrained Transformer for Universal and Reliable Representation of EEG Signals. In Advances in Neural Information Processing Systems.",
+            "Wang, H.; Yang, W.; Shen, S.; and Li, Y. 2026. KAST-BAR: Knowledge-anchored semantically-dynamic topology brain autoregressive modeling for universal neural interpretation. arXiv preprint arXiv:2605.13133.",
+            "Wang, J.; Zhao, S.; Luo, Z.; Zhou, Y.; Jiang, H.; Li, S.; Li, T.; and Pan, G. 2025. CBraMod: A criss-cross brain foundation model for EEG decoding. In The Thirteenth International Conference on Learning Representations.",
+            "Wu, D.; Li, S.; Yang, J.; and Sawan, M. 2024. Neuro-bert: Rethinking masked autoencoding for self-supervised neurological pretraining. IEEE Journal of Biomedical and Health Informatics, 30(2): 970–980.",
+            "Yang, C.; Westover, M. B.; and Sun, J. 2023. BIOT: Biosignal transformer for cross-data learning in the wild. In Advances in Neural Information Processing Systems, volume 36, 78240–78260.",
+            "Yang, W.; Yan, W.; Liu, W.; Ma, Y.; and Li, Y. 2025. THD-BAR: Topology hierarchical derived brain autoregressive modeling for EEG generic representations. In Advances in Neural Information Processing Systems.",
+            "Zhai, L.; Ding, H.; Lin, M.; Zhao, C.; Wang, F.; Wang, G.; Zhi, W.; and Xi, W. 2026. VP-VAE: Rethinking vector quantization via adaptive vector perturbation. arXiv preprint arXiv:2602.17133.",
+            "Zheng, J.; Jia, H.; LI, M.; Zheng, Y.; Zeng, Y.; Gao, Y.; and Liang, C. 2026. Learning brain representation with hierarchical visual embeddings. In The Fourteenth International Conference on Learning Representations.",
+            "Zheng, P.; Wang, J.; Chang, Y.; Yu, Y.; Ma, R.; and Wu, Z. 2025. Rethinking discrete tokens: Treating them as conditions for continuous autoregressive image synthesis. In Proceedings of the IEEE/CVF International Conference on Computer Vision, 17390–17400.",
+            "Zhou, Y.; Wu, J.; Ren, Z.; Yao, Z.; Lu, W.; Peng, K.; Zheng, Q.; Song, C.; Ouyang, W.; and Gou, C. 2026. CSBrain: A cross-scale spatiotemporal brain foundation model for EEG decoding. In Advances in Neural Information Processing Systems.",
+            "Zyma, I.; Tukaev, S.; Seleznov, I.; Kiyono, K.; Popov, A.; Chernykh, M.; and Shpenkov, O. 2019. Electroencephalograms during mental arithmetic task performance. Data, 4(1): 14."
+        ],
+        "bbox": [
+            83,
+            69,
+            478,
+            138
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "A Related Work",
+        "text_level": 2,
+        "bbox": [
+            202,
+            66,
+            361,
+            83
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Conventional EEG Decoding Methods",
+        "text_level": 2,
+        "bbox": [
+            83,
+            87,
+            380,
+            103
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Conventional EEG decoding methods predominantly relied on supervised learning to extract task-relevant features from labeled EEG data. EEGNet (Lawhern et al. 2018) introduced a compact convolutional architecture employing depthwise and separable convolutions to eficiently capture temporal and spatial EEG features. EEGConformer (Song et al. 2023) combined convolutional feature extraction with transformerbased self-attention to jointly model local patterns and longrange temporal dependencies. Despite their efectiveness, these models are generally trained for specific tasks and datasets and depend heavily on labeled data, while much of the available EEG data remains unlabeled. These limitations have motivated the development of EEG foundation models that learn generalizable representations from large-scale unlabeled EEG data.",
+        "bbox": [
+            81,
+            106,
+            482,
+            315
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "EEG Foundation Models",
+        "text_level": 2,
+        "bbox": [
+            83,
+            327,
+            279,
+            342
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Early EEG foundation models sought to learn transferable representations from heterogeneous EEG datasets with varying electrode configurations, sampling rates, and signal lengths. BIOT (Yang, Westover, and Sun 2023), for example, enabled cross-dataset pretraining through channel-wise tokenization that accommodated diverse montages and sampling rates. Subsequent studies have primarily adopted three approaches: masked autoencoding, discrete neural tokenization, and autoregressive modeling. These approaches are not mutually exclusive and have often been combined within a single framework.",
+        "bbox": [
+            81,
+            344,
+            480,
+            501
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Masked Autoencoding. Universal EEG representations are commonly learned by masking portions of the input and reconstructing raw EEG signals, latent representations, or discrete tokens. EEGPT (Wang et al. 2024) employed a dual self-supervised pretraining objective that combined masked EEG reconstruction with spatio-temporal representation alignment to learn robust and generalizable EEG representations. CBraMod (Wang et al. 2025) proposed a crisscross transformer designed to separately model spatial and temporal dependencies among EEG patches through parallel attention mechanisms and pretrained it using masked EEG reconstruction. CSBrain (Zhou et al. 2026) introduced cross-scale spatio-temporal tokenization to aggregate multiscale neural patterns within temporal windows and anatomical brain regions, along with structured sparse attention to model long-range dependencies across windows and regions. It was pretrained by reconstructing masked EEG segments. REVE (El Ouahidi et al. 2025) introduced a 4D spatiotemporal positional encoding scheme to accommodate arbitrary electrode configurations and signal lengths. It was pretrained using spatio-temporal block masking and masked raw EEG reconstruction on a large-scale heterogeneous EEG corpus.",
+        "bbox": [
+            81,
+            506,
+            482,
+            827
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Discrete Neural Tokenization. EEG signals can also be quantized into discrete neural tokens that provide compact representations of continuous EEG embeddings and serve as prediction targets during pretraining. LaBraM (Jiang, Zhao, and Lu 2024) introduced a vector-quantized neural tokenizer trained via Fourier-spectrum prediction to encode continuous EEG channel patches into discrete neural codes. NeuroLM (Jiang et al. 2025) and THD-BAR (Yang et al. 2025) similarly learned discrete EEG tokenizers and further combined them with autoregressive modeling. CodeBrain (Ma et al. 2026) introduced a TFDual-Tokenizer that quantized joint time-frequency EEG embeddings using separate temporal and frequency codebooks, together with a multi-scale architecture that captured sparse long-range dependencies through structured global convolution and local intra-patch dependencies through sliding-window attention. During pretraining, the model predicted the temporal and frequency token indices of masked EEG patches.",
+        "bbox": [
+            81,
+            832,
+            480,
+            890
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            514,
+            69,
+            915,
+            265
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Autoregressive Modeling. Building on discrete neural tokenization, recent models learn causal dependencies among EEG tokens and integrate the token sequences into autoregressive generative models. NeuroLM (Jiang et al. 2025) learned a text-aligned neural tokenizer through vectorquantized temporal-frequency prediction and integrated the resulting neural tokens into an LLM through multi-channel autoregressive pretraining and multi-task instruction tuning. THD-BAR (Yang et al. 2025) introduced a brain topology hierarchy and developed a topology-hierarchical VQ-VAE for multi-scale discrete EEG tokenization, followed by autoregressive pretraining based on next-scale-time prediction. KAST-BAR (Wang et al. 2026) combined topologypreserving discrete EEG tokenization with expert-level semantic profiles generated from physiological features and jointly pretrained textual knowledge and discrete EEG tokens using next-token prediction.",
+        "bbox": [
+            514,
+            272,
+            915,
+            510
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Cross-Modal Alignment and LLM Integration",
+        "text_level": 2,
+        "bbox": [
+            516,
+            521,
+            875,
+            537
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Recent studies have extended brain-signal representation learning by aligning neural signals with semantic representations from linguistic, visual, and acoustic modalities. Brain-Mosaic (Li et al. 2026) introduced semantic intent decoding, which decomposed EEG and sEEG signals into compositional semantic units and reconstructed natural-language descriptions from the decoded intents. MindMix (Liu et al. 2026) aligned EEG representations with neural-acoustic features to support transferable decoding across auditory perception tasks. Hierarchical visual alignment (Zheng et al. 2026) mapped brain signals to multi-scale visual embeddings extracted from complementary pretrained visual encoders, preserving both high-level semantic information and fine-grained visual details.",
+        "bbox": [
+            514,
+            541,
+            915,
+            736
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Beyond cross-modal representation alignment, recent studies have integrated neural signals directly into pretrained language models or multimodal LLMs for generative interpretation. In the clinical domain, CerebraGloss (Gu et al. 2026) treated EEG waveforms as visual inputs and instruction-tuned a pretrained vision-language model on paired EEG images and clinical text for fine-grained clinical EEG interpretation. CELM (Pradeepkumar, Chen, and Sun 2026) connected a long-context EEG encoder with an LLM through sequence-aware alignment, enabling clinical report generation directly from long-duration EEG recordings. Collectively, these studies demonstrate the potential of cross-modal alignment and pretrained language models for semantically grounding neural representations. However, most existing approaches rely on modality-specific paired data or generative decoding, whereas BLPM aligns EEG representations with language through a shared semantic space using language-derived supervision without autoregressive text generation.",
+        "bbox": [
+            514,
+            736,
+            915,
+            891
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            81,
+            69,
+            482,
+            181
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "B Dataset details and Preprocessing",
+        "text_level": 2,
+        "bbox": [
+            120,
+            193,
+            442,
+            210
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "We evaluate BLPM on seven downstream datasets spanning four NeuralBench (Banville et al. 2026) task categories— clinical, sleep, internal-state, and BCI decoding. Table S1 summarizes their recording configurations; they difer widely in electrode montage, sampling rate, and scale, providing a heterogeneous evaluation setting for cross-task and crossdataset generalization.",
+        "bbox": [
+            81,
+            212,
+            480,
+            310
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "• Clinical — TUAB (Lopez et al. 2015): binary normal/abnormal EEG classification from the Temple University Hospital Abnormal corpus.",
+        "bbox": [
+            89,
+            314,
+            480,
+            358
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "• Clinical — TUEV (Harati et al. 2015): six-class EEG event-type classification from the Temple University Hospital Event corpus.",
+        "bbox": [
+            91,
+            359,
+            480,
+            404
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "• Sleep — HMC (Alvarez-Estevez and Rijsman 2022): five-class sleep-stage classification over 30-second epochs from the Haaglanden Medisch Centrum sleep database.",
+        "bbox": [
+            89,
+            405,
+            480,
+            460
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "• Internal state — COG-BCI (Hinss et al. 2023): threeclass mental workload classification.",
+        "bbox": [
+            91,
+            463,
+            478,
+            492
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "• Internal state — Mental Arithmetic (Zyma et al. 2019): binary mental stress detection.",
+        "bbox": [
+            89,
+            494,
+            478,
+            522
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "• Internal state — FACED (Chen et al. 2023): nine-class emotion recognition using 32-channel EEG recordings elicited by afective video stimuli.",
+        "bbox": [
+            91,
+            525,
+            480,
+            568
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "• BCI — PhysioNet-MI (Schalk 2009): four-class motorimagery classification from 64-channel EEG.",
+        "bbox": [
+            89,
+            569,
+            478,
+            599
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "All datasets are processed and evaluated using a unified pipeline implemented with NeuralSet (King et al. 2026), including signal preprocessing, window extraction, and subject-level data partitioning.",
+        "bbox": [
+            81,
+            603,
+            480,
+            660
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "The following paragraphs provide detailed descriptions of each dataset, including its participants, recording configuration, and task formulation.",
+        "bbox": [
+            81,
+            659,
+            480,
+            702
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "TUAB. TUAB is a large-scale clinical EEG dataset used for binary abnormal EEG detection (Lopez et al. 2015). Each clinical EEG recording is labeled as either normal or abnormal based on interpretations provided by clinical EEG experts. The task evaluates whether a model can identify pathological or otherwise abnormal patterns in routine clinical EEG recordings.",
+        "bbox": [
+            81,
+            708,
+            480,
+            806
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Following the preprocessing protocol used in our experiments, we retain 16 channels with most recordings sampled at 256 Hz. The signals are divided into non-overlapping 5-s windows. We follow the oficial TUAB partition: recordings in the oficial evaluation subset are used exclusively as the test set. The remaining oficial training data are divided at the subject level, with 20% of the training subjects assigned to validation using random state 33. This preserves the oficial test set while preventing recordings from the same patient from appearing in both training and validation subsets.",
+        "bbox": [
+            81,
+            805,
+            480,
+            890
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            514,
+            69,
+            915,
+            127
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "TUEV. TUEV is a clinical EEG event dataset used to classify pathological events and common non-cerebral patterns in clinical EEG recordings (Harati et al. 2015). We use the standard six event categories: spike-and-sharp wave (SPSW), generalized periodic epileptiform discharge (GPED), periodic lateralized epileptiform discharge (PLED), eye movement (EYEM), artifact (ARTF), and background activity (BCKG). The first three categories represent clinically relevant epileptiform patterns, whereas the remaining categories represent eye movements, artifacts, and background EEG activity.",
+        "bbox": [
+            514,
+            132,
+            915,
+            286
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Following our experimental preprocessing, 16 EEG channels are retained and all signals are resampled to 120 Hz. Event-centered EEG segments are extracted using 3-s windows with a 1-s stride, resulting in a 2-s overlap, and are assigned one of the six event labels. We use the oficial TUEV evaluation partition as the test set. The oficial development data are divided at the subject level into training and validation subsets, with 20% of development subjects assigned to validation using random state 33. Consequently, no patient is shared across the training, validation, and test subsets.",
+        "bbox": [
+            514,
+            286,
+            915,
+            428
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "HMC. The Haaglanden Medisch Centrum (HMC) sleep staging database is a clinical polysomnography dataset used for automatic sleep-stage classification from whole-night recordings (Alvarez-Estevez and Rijsman 2022). It contains 151 recordings acquired from a heterogeneous clinical population referred for the assessment of sleep disorders.",
+        "bbox": [
+            514,
+            434,
+            915,
+            518
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "All channels were resampled to 200 Hz. Sleep stages were manually annotated in non-overlapping 30-s epochs according to standard clinical sleep-scoring guidelines. The original database provides five stage labels: Wake, N1, N2, N3, and REM. Recordings are divided at the subject level into training, validation, and test subsets, with validation and test ratios of 0.2 using random state 33. Prior to epoch extraction, long wake periods occurring before the first sleep epoch and after the last sleep epoch are limited to a maximum of 30 minutes.",
+        "bbox": [
+            514,
+            518,
+            915,
+            645
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "COG-BCI. COG-BCI is a multi-session cognitive EEG dataset developed for passive brain-computer interface research and cognitive-state decoding (Hinss et al. 2023). The full dataset contains recordings from 29 participants collected across three sessions while they performed four cognitive tasks: MATB-II, N-back, psychomotor vigilance, and Flanker tasks. In this study, we use the MATB-II recordings for three-class mental workload classification, corresponding to easy, medium, and dificult workload conditions.",
+        "bbox": [
+            514,
+            651,
+            915,
+            779
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "The EEG signals were originally recorded from 64 channels at 500 Hz and resampled to 120 Hz. Following the NeuralBench workload protocol, only the MATBeasy, MATBmed, and MATBdiff conditions are retained. Each continuous task recording is divided into non-overlapping 5- s windows, and incomplete windows are discarded. Subjects are divided into disjoint training, validation, and test sets, with validation and test ratios of 0.2.",
+        "bbox": [
+            514,
+            777,
+            915,
+            890
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "table",
+        "img_path": "images/f063fdaaa9394b35dfbfb9cb18977da07c200e75eff1038f655741cb409673aa.jpg",
+        "table_caption": [
+            "Table S1: The seven downstream datasets, grouped by NeuralBench task category. #Channels: number of EEG electrodes; Rate: native sampling rate; Duration: window length fed to the model; #Subjects / #Samples: participant and labelled-segment counts (rounded to thousands, k); #Classes: number of target labels."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Category</td><td>Task</td><td>Dataset</td><td></td><td>#Channels Rate Duration #Subjects #Samples #Classes</td><td></td><td></td><td></td><td></td></tr><tr><td rowspan=\"2\">Clinical</td><td>Pathology detection</td><td>TUAB</td><td>16</td><td>256 Hz</td><td>5s</td><td>2,383</td><td>409k</td><td>2</td></tr><tr><td>Clinical event detection</td><td>TUEV</td><td>16</td><td>250 Hz</td><td>3s</td><td>370</td><td>112k</td><td>6</td></tr><tr><td>Sleep</td><td>Sleep stage classification</td><td>HMC</td><td>4</td><td>256 Hz</td><td>30s</td><td>151</td><td>137k</td><td>5</td></tr><tr><td rowspan=\"3\"></td><td>Mental workload classification COG-BCI</td><td></td><td>64</td><td>500 Hz</td><td>5s</td><td>29</td><td>15.4k</td><td>3</td></tr><tr><td>Internal state Mental stress detection</td><td>Mental Arithmetic</td><td>20</td><td>500 Hz</td><td>5s</td><td>36</td><td>1.7k</td><td>2</td></tr><tr><td>Emotion classification</td><td>FACED</td><td>32</td><td>250Hz</td><td>5s</td><td>123</td><td>10.3k</td><td>9</td></tr><tr><td>BCI</td><td>Motor imagery classification</td><td>PhysioNet-MI</td><td>64</td><td>160 Hz</td><td>4s</td><td>109</td><td>9.8k</td><td>4</td></tr></table>",
+        "bbox": [
+            84,
+            68,
+            911,
+            242
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Mental Arithmetic. The Mental Arithmetic dataset is a cognitive EEG dataset used to distinguish resting-state brain activity from activity recorded during mental arithmetic (Zyma et al. 2019). It contains recordings from 36 healthy participants under two conditions: a resting background condition and a mental serial-subtraction condition.",
+        "bbox": [
+            81,
+            323,
+            480,
+            409
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "The EEG signals were acquired from 20 scalp channels at 500 Hz and resampled to 200 Hz. During the original data collection, a 0.5-Hz high-pass filter, a 45-Hz low-pass filter, and a 50-Hz power-line notch filter were applied. The released data include artifact-free resting and mentalarithmetic recordings selected through expert visual inspection. Following NeuralBench (Banville et al. 2026), the signals are divided into non-overlapping 5-s windows. Subjects are assigned to mutually exclusive training, validation, and test subsets, with validation and test ratios of 0.2 using random state 33. Class weights are estimated from the training data to address class imbalance.",
+        "bbox": [
+            81,
+            410,
+            480,
+            579
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "FACED. FACED is an afective EEG dataset designed for fine-grained emotion recognition from neural responses elicited by emotional video stimuli (Chen et al. 2023). It contains EEG recordings from 123 participants who watched 28 video clips covering nine emotion categories: amusement, inspiration, joy, tenderness, anger, fear, disgust, sadness, and neutral emotion. EEG signals were recorded from 32 channels, with the original acquisition rate difering between the two data-collection cohorts (250 or 1000 Hz), and were provided after downsampling to 250 Hz.",
+        "bbox": [
+            81,
+            593,
+            480,
+            734
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Following the NeuralBench emotion-recognition formulation, only the last 30 s of each video presentation are retained, and the selected signals are divided into non-overlapping 5-s windows, with up to six segments extracted per video clip. Each window is assigned the emotion category associated with the corresponding video clip. The dataset is divided into mutually exclusive training, validation, and test subjects using a subject-disjoint split. The validation and test ratios are both set to 0.2, using random state 33. Class weights are computed from the training subset to mitigate the substantia imbalance among emotion categories.",
+        "bbox": [
+            81,
+            736,
+            482,
+            890
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "PhysioNet-MI. PhysioNet-MI is a motor imagery EEG dataset used to classify imagined movements of diferent body parts (Schalk 2009). It contains 64-channel EEG recordings collected from 109 participants using the BCI2000 system. Participants performed both motor execution and motor imagery tasks involving the left fist, right fist, both fists, and both feet. In this work, only motor imagery trials are used, resulting in a four-class motor imagery classification task.",
+        "bbox": [
+            514,
+            323,
+            915,
+            449
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "The EEG signals were acquired at 160 Hz and resampled to 120 Hz. Following the NeuralBench motor imagery protocol, only events whose annotations correspond to motor imagery are retained, while motor execution events are excluded. A single 4-s EEG segment is extracted from each imagery trial onset without sliding-window overlap. Subjects S088, S092, and S100 are excluded according to the NeuralBench dataset configuration. Because PhysioNet-MI does not provide an oficial machine-learning train/test partition, the remaining subjects are divided into subject-disjoint training, validation, and test sets. The validation and test ratios are both 0.2, using random state 33.",
+        "bbox": [
+            514,
+            449,
+            915,
+            617
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "C Baseline Models",
+        "text_level": 2,
+        "bbox": [
+            627,
+            633,
+            803,
+            648
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "We compare BLPM against two widely adopted supervised models and five recent foundation models for EEG representation learning. For all pretrained baselines, we initialize the encoder using the publicly released pretrained checkpoint and adapt the model to each downstream dataset with a task-specific classification head. The task-specific models are trained from scratch under the same downstream evaluation protocol.",
+        "bbox": [
+            514,
+            655,
+            915,
+            770
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Task-specific Models",
+        "text_level": 2,
+        "bbox": [
+            516,
+            782,
+            681,
+            799
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "EEGNet. EEGNet (Lawhern et al. 2018) is a compact convolutional neural network architecture designed to generalize across diferent EEG-based brain-computer interface paradigms. It first applies temporal convolutions to learn frequency-selective filters and then uses depthwise spatial convolutions to capture channel-specific spatial patterns. A subsequent separable convolution combines the learned temporal and spatial features while maintaining a small number of trainable parameters. Given its computational eficiency and broad applicability, we include EEGNet as a representative lightweight task-specific baseline.",
+        "bbox": [
+            514,
+            804,
+            915,
+            890
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            81,
+            69,
+            480,
+            140
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "EEGConformer. EEGConformer (Song et al. 2023) combines convolutional feature extraction with transformerbased sequence modeling. Its convolution module uses temporal and spatial convolutions to obtain local EEG features and partitions the resulting feature map into temporal tokens. These tokens are then processed by multi-head self-attention layers to model long-range dependencies across time. A fully connected classification head maps the resulting representation to the downstream label space. We train EEGConformer separately on each target dataset as a supervised baseline.",
+        "bbox": [
+            81,
+            145,
+            480,
+            286
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Foundation Models",
+        "text_level": 2,
+        "bbox": [
+            83,
+            295,
+            238,
+            310
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "BIOT. BIOT (Yang, Westover, and Sun 2023) is a linear transformer-based model developed for cross-dataset learning from heterogeneous biosignals. To accommodate diferences in channel configurations, sequence lengths, and missing observations, BIOT independently divides each signal channel into fixed-duration segments and rearranges the resulting segments into a unified token sequence. Channel and relative positional embeddings retain the spatial and temporal identity of individual tokens, while a linear transformer models their interactions with reduced computational complexity. We use its pretrained biosignal encoder and optimize a task-specific classification head for each downstream task.",
+        "bbox": [
+            81,
+            313,
+            480,
+            481
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "LaBraM. LaBraM (Jiang, Zhao, and Lu 2024) is a largescale EEG foundation model trained using discrete neural tokenization and masked EEG modeling. Raw EEG recordings are divided into channel-wise temporal patches, and a vector-quantized neural tokenizer maps each continuous patch to a discrete neural code. The transformer encoder is subsequently pretrained to recover the neural codes of masked patches from the visible context. Temporal and spatial embeddings allow the model to process recordings with diferent durations and electrode configurations. For downstream evaluation, we fine-tune the pretrained LaBraM encoder together with a task-specific classification head.",
+        "bbox": [
+            81,
+            486,
+            480,
+            655
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "CBraMod. CBraMod (Wang et al. 2025) introduces a criss-cross transformer for learning structured spatiotemporal EEG representations. Instead of flattening all channel and temporal patches into a single sequence, its transformer blocks apply spatial and temporal attention in parallel, explicitly accounting for the heterogeneous dependencies along the two dimensions. CBraMod further uses asymmetric conditional positional encoding to generate inputdependent positional information for EEG recordings with varying channel arrangements. The model is pretrained on the Temple University Hospital EEG Corpus using masked patch reconstruction and is subsequently fine-tuned for individual downstream tasks.",
+        "bbox": [
+            81,
+            659,
+            480,
+            842
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "REVE. REVE (El Ouahidi et al. 2025) is an EEG foundation model designed to transfer across heterogeneous recording systems and electrode layouts. Each EEG channel is divided into temporal patches, which are augmented with a four-dimensional spatio-temporal positional encoding derived from the three-dimensional electrode coordinates and temporal positions. During pretraining, contiguous regions are masked across the spatial and temporal dimensions, and a decoder reconstructs the missing raw EEG segments. REVE is pretrained on more than 60,000 hours of EEG collected from 92 datasets and approximately 25,000 participants. We adapt the released pretrained encoder to each target dataset using the corresponding downstream classification head.",
+        "bbox": [
+            81,
+            845,
+            480,
+            890
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            514,
+            69,
+            915,
+            210
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "LUNA. LUNA (Döner et al. 2025) is a topology-agnostic EEG foundation model that maps variable electrode configurations into a fixed-size latent representation. Learned latent queries attend to the available channel features through cross-attention, thereby compressing an arbitrary number of electrodes into a common latent space. Temporal transformer blocks operate on this unified representation rather than directly on all channel-time pairs, making the computational cost scale linearly with the number of input channels. LUNA is pretrained on more than 21,000 hours of EEG using masked patch reconstruction. For downstream tasks, we fine-tune the pretrained encoder and an attached task-specific prediction head.",
+        "bbox": [
+            514,
+            215,
+            915,
+            398
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "D Experimental Settings",
+        "text_level": 2,
+        "bbox": [
+            602,
+            411,
+            828,
+            429
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "BLPM is trained in three stages. In Stage 1, the CELP encoder is pretrained using a 12-layer transformer with a hidden dimension of 384 and six attention heads. The predictor consists of six transformer layers with the same hidden dimension. Pretraining uses Smooth L1 loss with multiblock masking, where the context-mask scale ranges from 0.75 to 1.0, the prediction-mask scale ranges from 0.15 to 0.30, and the target union ratio ranges from 0.40 to 0.60. The model is optimized with AdamW using a batch size of 128, a peak learning rate of $5 \\times 1 0 ^ { - 5 }$ , and a cosine schedule with five warmup epochs. The momentum coeficient of the target encoder is gradually increased from 0.996 to 1.0.",
+        "bbox": [
+            516,
+            434,
+            915,
+            602
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "In Stage 2, semantic alignment is performed with task- and class-balanced sampling. We use a batch size of 64, AdamW optimization, a peak learning rate of $1 \\times 1 0 ^ { - 4 }$ , and a warmupcosine learning rate schedule. Training is conducted for 20 epochs with a temperature of 0.07 and gradient clipping of 1.0.",
+        "bbox": [
+            516,
+            601,
+            915,
+            684
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "In Stage 3, downstream multi-task instruction tuning is performed using task- and class-balanced sampling with a batch size of 64. The model is optimized for five epochs using AdamW with a peak learning rate of $5 \\times 1 0 ^ { - 4 }$ and a minimum learning rate of $5 \\times 1 0 ^ { - 5 }$ . LoRA is applied to the $\\mathtt { q \\_ p r o } \\mathtt { j }$ and $\\mathtt { v \\_ p r o } \\mathtt { j }$ modules with rank 8, scaling factor 16, and dropout 0.05.",
+        "bbox": [
+            516,
+            684,
+            915,
+            782
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Tables S2–S4 provide the complete hyperparameter settings for the three training stages.",
+        "bbox": [
+            516,
+            781,
+            913,
+            811
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "E Evaluation Metrics",
+        "text_level": 2,
+        "bbox": [
+            616,
+            825,
+            815,
+            840
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "We evaluate binary classification using balanced accuracy, AUPRC, and AUROC, and multi-class classification using balanced accuracy, Cohen’s κ, and the weighted F1-score.",
+        "bbox": [
+            516,
+            845,
+            915,
+            890
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "table",
+        "img_path": "images/751c1c3ec80eda2590d84836423228a4397e91a8da6042dc4d1d1534b6f9f640.jpg",
+        "table_caption": [
+            "Table S2: Hyperparameters for CELP encoder pretraining."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Hyperparameters</td><td>CELP Encoder</td></tr><tr><td>Encoder dimension</td><td>384</td></tr><tr><td>Encoder depth</td><td>12</td></tr><tr><td>Attention heads</td><td>6</td></tr><tr><td>MLP ratio</td><td>4</td></tr><tr><td>Dropout</td><td>0.1</td></tr><tr><td>Predictor dimension</td><td>384</td></tr><tr><td>Predictor depth</td><td>6</td></tr><tr><td>Pretraining loss</td><td>Smooth L1</td></tr><tr><td>Masking strategy</td><td>Multiblock</td></tr><tr><td>Context block scale</td><td>0.75-1.0</td></tr><tr><td>Prediction block scale</td><td>0.15–0.30</td></tr><tr><td>Target union ratio</td><td>0.40–0.60</td></tr><tr><td>EMA momentum</td><td>0.996 → 1.0</td></tr><tr><td>Batch size</td><td>128</td></tr><tr><td>Peak learning rate</td><td> $5 \\times 1 0 ^ { - 5 }$ </td></tr><tr><td>Minimum learning rate Learning rate scheduler</td><td> $1 \\times 1 0 ^ { - 5 }$ </td></tr><tr><td></td><td>Warmup + cosine</td></tr><tr><td>Optimizer</td><td>AdamW</td></tr><tr><td>Adam  $\\beta$ </td><td>(0.9, 0.95)</td></tr><tr><td>Weight decay</td><td>0.05</td></tr><tr><td>Total epochs</td><td>30</td></tr><tr><td>Warmup epochs</td><td>5</td></tr><tr><td>Gradient clipping</td><td>0.5</td></tr></table>",
+        "bbox": [
+            125,
+            65,
+            437,
+            414
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Metrics for Binary Classification",
+        "text_level": 2,
+        "bbox": [
+            83,
+            463,
+            338,
+            479
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Balanced Accuracy (B-Acc). Balanced accuracy assigns equal importance to the positive and negative classes and is therefore suitable for evaluating classification performance under class imbalance. It is defined as the average of the true-positive rate and the true-negative rate:",
+        "bbox": [
+            81,
+            481,
+            480,
+            553
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/838eb0e8f8b9cbf8bc33e515229f9410c5b791e3d57c7010a37c9d6f7c19b48f.jpg",
+        "text": "$$\n\\mathrm { B - A c c } = \\frac { 1 } { 2 } \\left( \\frac { \\mathrm { T P } } { \\mathrm { T P + F N } } + \\frac { \\mathrm { T N } } { \\mathrm { T N + F P } } \\right) ,\\tag{22}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            148,
+            554,
+            413,
+            588
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "where TP, TN, FP, and FN denote the numbers of truepositive, true-negative, false-positive, and false-negative predictions, respectively. Unlike conventional accuracy, balanced accuracy is less afected by skewed class distributions.",
+        "bbox": [
+            81,
+            590,
+            480,
+            648
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Area Under the Precision-Recall Curve (AUPRC). The precision-recall curve characterizes the trade-of between precision and recall as the classification threshold varies. Precision and recall are defined as",
+        "bbox": [
+            81,
+            652,
+            480,
+            709
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/b9008fc037b88ef39552f66e7c6ff708b4bbe129cd5ec0e116be3a3a50c3f3a4.jpg",
+        "text": "$$\n\\mathrm { P r e c i s i o n } = { \\frac { \\mathrm { T P } } { \\mathrm { T P } + \\mathrm { F P } } } , \\qquad \\mathrm { R e c a l l } = { \\frac { \\mathrm { T P } } { \\mathrm { T P } + \\mathrm { F N } } } .\\tag{23}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            106,
+            709,
+            428,
+            741
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "AUPRC summarizes the area under this curve and evaluates the model’s ability to identify positive samples while limiting false-positive predictions across diferent thresholds. Because precision and recall do not explicitly depend on the number of true-negative samples, AUPRC is particularly informative for imbalanced classification problems in which the positive class is rare.",
+        "bbox": [
+            81,
+            742,
+            480,
+            842
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Area Under the Receiver Operating Characteristic Curve (AUROC). The receiver operating characteristic curve represents the relationship between the true-positive rate and the false-positive rate as the classification threshold varies. These quantities are defined as",
+        "bbox": [
+            81,
+            845,
+            480,
+            890
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "table",
+        "img_path": "images/8523f17f4ae6696b15492eb0933218bc0bacb468baececcd6bac242fb1523771.jpg",
+        "table_caption": [],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Hyperparameters</td><td>Semantic Alignment</td></tr><tr><td>Task sampling Class sampling</td><td>Yes</td></tr><tr><td>Batch size</td><td>Yes 64</td></tr><tr><td>Peak learning rate</td><td> $1 \\times 1 0 ^ { - 4 }$ </td></tr><tr><td>Learning rate scheduler</td><td>Warmup + cosine</td></tr><tr><td>Optimizer</td><td>AdamW</td></tr><tr><td>Adam β</td><td>(0.9,0.95)</td></tr><tr><td>Weight decay</td><td>0.05</td></tr><tr><td>Total epochs</td><td>20</td></tr><tr><td>Warmup ratio</td><td>0.05</td></tr><tr><td>Gradient clipping</td><td>1.0</td></tr><tr><td>Temperature</td><td>0.07</td></tr></table>",
+        "bbox": [
+            547,
+            65,
+            883,
+            261
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "table",
+        "img_path": "images/ebea6612c70faa1e2abcc7de6a29d2b761b7bbe30de9225ad60a379a284bb42f.jpg",
+        "table_caption": [
+            "Table S3: Hyperparameters for semantic alignment.",
+            "Table S4: Hyperparameters for downstream multi-task instruction tuning."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Hyperparameters</td><td>Instruction Tuning</td></tr><tr><td>Task sampling Class sampling</td><td>Yes</td></tr><tr><td>Batch size</td><td>Yes 64</td></tr><tr><td>Peak learning rate Minimum learning rate</td><td> $5 \\times 1 0 ^ { - 4 }$   $5 \\times 1 0 ^ { - 5 }$ </td></tr><tr><td>Learning rate scheduler</td><td>Cosine</td></tr><tr><td>Optimizer</td><td>AdamW</td></tr><tr><td>Adam  $\\beta$ </td><td>(0.9,0.95)</td></tr><tr><td>Weight decay</td><td>0.1</td></tr><tr><td>Total epochs</td><td></td></tr><tr><td></td><td>5</td></tr><tr><td>Warmup ratio</td><td>0.1</td></tr><tr><td>Gradient clipping</td><td>1.0</td></tr><tr><td>LoRA rank / alpha / dropout</td><td>8 / 16 / 0.05</td></tr><tr><td>LoRA target modules</td><td> $\\mathsf { q \\_ p r o j , v \\_ p r o j }$ </td></tr></table>",
+        "bbox": [
+            539,
+            303,
+            893,
+            525
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            514,
+            594,
+            913,
+            625
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/8e12d3d66f4f02a04b53ca236ca465b2980b7cdeb8d6f61222259b692e5436d6.jpg",
+        "text": "$$\n\\mathrm { T P R } = \\frac { \\mathrm { T P } } { \\mathrm { T P } + \\mathrm { F N } } , \\qquad \\mathrm { F P R } = \\frac { \\mathrm { F P } } { \\mathrm { T N } + \\mathrm { F P } } .\\tag{24}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            573,
+            630,
+            856,
+            662
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "AUROC summarizes the area under this curve and measures the model’s ability to discriminate between positive and negative samples across all classification thresholds. An AUROC of 1.0 indicates perfect discrimination, whereas an AUROC of 0.5 corresponds to chance-level discrimination.",
+        "bbox": [
+            514,
+            669,
+            915,
+            741
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Metrics for Multi-class Classification",
+        "text_level": 2,
+        "bbox": [
+            516,
+            751,
+            803,
+            767
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Balanced Accuracy (B-Acc). Balanced accuracy evaluates classification performance by assigning equal importance to all classes, regardless of their sample frequencies. For a multi-class classification problem with C classes, it is computed as the macro-average of the class-wise recall:",
+        "bbox": [
+            514,
+            772,
+            915,
+            843
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/bc680e3d16685441f0f32662ac7155e710d598f7eee819bffa40022f9d95da71.jpg",
+        "text": "$$\n\\mathbf { B - A c c } = \\frac { 1 } { C } \\sum _ { c = 1 } ^ { C } \\frac { \\mathbf { T P } _ { c } } { \\mathbf { T P } _ { c } + \\mathbf { F N } _ { c } } ,\\tag{25}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            614,
+            852,
+            813,
+            892
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "where $\\mathrm { T P } _ { c }$ and $\\mathrm { F N } _ { c }$ denote the numbers of true-positive and false-negative predictions for class c, respectively. Unlike conventional accuracy, balanced accuracy is less afected by class imbalance because each class contributes equally to the final score.",
+        "bbox": [
+            81,
+            68,
+            480,
+            140
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Cohen’s Kappa Coeficient (κ). Cohen’s kappa coeficient measures the agreement between predicted and groundtruth labels while accounting for the agreement expected by chance. It is defined as",
+        "bbox": [
+            81,
+            150,
+            480,
+            207
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/cbd913fe2aff5e40e42f02dff60eb0146b9ac6dafa167db542207d39807e0de2.jpg",
+        "text": "$$\n\\kappa = { \\frac { p _ { o } - p _ { e } } { 1 - p _ { e } } } ,\\tag{26}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            232,
+            215,
+            330,
+            246
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "where $p _ { o }$ denotes the observed agreement and $p _ { e }$ denotes the expected agreement by chance based on the marginal label distributions. A value of $\\kappa = 1$ indicates perfect agreement, whereas $\\kappa = 0$ corresponds to chance-level agreement. Negative values indicate agreement below the level expected by chance.",
+        "bbox": [
+            81,
+            255,
+            480,
+            339
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Weighted F1-Score (F1-W). The F1-score for class c is defined as the harmonic mean of its precision and recall:",
+        "bbox": [
+            81,
+            349,
+            480,
+            381
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/9470377e0009d4cc700d6dd873169ac40aaa0ab551647fc9ef5b87235f01f453.jpg",
+        "text": "$$\n\\mathrm { F } 1 _ { c } = \\frac { 2 \\mathrm { P r e c i s i o n } _ { c } \\mathrm { R e c a l l } _ { c } } { \\mathrm { P r e c i s i o n } _ { c } + \\mathrm { R e c a l l } _ { c } } .\\tag{27}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            181,
+            388,
+            377,
+            422
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "The weighted F1-score is then computed by averaging the class-wise F1-scores according to the number of samples in each class:",
+        "bbox": [
+            81,
+            429,
+            480,
+            473
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/08ce8a7f655394207c6ded57f86c7909691564c7fde8ae90cc51e82cbb11d25c.jpg",
+        "text": "$$\n\\mathrm { F 1 - W } = \\sum _ { c = 1 } ^ { C } \\frac { n _ { c } } { N } \\mathrm { F } 1 _ { c } ,\\tag{28}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            209,
+            474,
+            351,
+            516
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "where $n _ { c }$ denotes the number of ground-truth samples belonging to class c, and $\\begin{array} { r } { N = \\sum _ { c = 1 } ^ { C } n _ { c } } \\end{array}$ denotes the total number of samples. This weighting gives greater influence to classes with larger sample sizes.",
+        "bbox": [
+            81,
+            523,
+            480,
+            584
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "F Algorithms",
+        "text_level": 2,
+        "bbox": [
+            214,
+            599,
+            348,
+            617
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "BLPM relies on self-supervised pretraining of the encoder (Algorithm 1) and instruction-conditioned inference via semantic matching (Algorithm 2). We detail the design of each component below.",
+        "bbox": [
+            81,
+            625,
+            480,
+            683
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "CELP Encoder Pretraining",
+        "text_level": 2,
+        "bbox": [
+            83,
+            698,
+            299,
+            714
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Each iteration performs one gradient update of the online encoder $f _ { \\theta }$ and predictor $g _ { \\phi } .$ , followed by an EMA update of the target encoder $f _ { \\bar { \\theta } } .$ Three key architectural choices underpin this strategy. First, the targets originate from the momentum encoder under a stop-gradient operation rather than from $f _ { \\theta }$ itself; this asymmetry helps prevent trivial representation collapse. Second, the loss is a Smooth- $. L _ { 1 }$ discrepancy computed over layer-normalized latents, ensuring the model avoids overfitting to high-frequency waveform details. Third, the predictor is exclusively used to solve the maskedprediction task and is discarded post-pretraining, yielding a streamlined encoder for downstream applications.",
+        "bbox": [
+            81,
+            722,
+            480,
+            890
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "code",
+        "sub_type": "algorithm",
+        "code_caption": [],
+        "code_footnote": [],
+        "code_body": "Algorithm 1: CELP self-supervised pretraining   \nInput: EEG corpus $x ;$ online/target encoders $f _ { \\theta } , f _ { \\bar { \\theta } } ;$   \npredictor $g _ { \\phi } ;$ momentum schedule $\\{ m _ { k } \\}$   \nOutput: Pretrained encoder $f _ { \\theta }$   \n1: $\\bar { \\theta }  \\theta$   \n2: for $k = 1$ to $K$ do   \n3: Sample batch $X \\sim { \\mathcal { X } } ;$ embed tokens (temporal +   \nspectral) → Z<sup>˜</sup>   \n4: Draw visible mask $\\mathcal { M } _ { v } ,$ , prediction-mask set $\\mathcal { M } =$   \n$\\{ \\mathcal { M } _ { p } \\}$ {structured multi-block}   \n5: $H _ { v } \\gets f _ { \\theta } ( \\tilde { Z } _ { \\mathcal { M } _ { v } } )$ {online: visible only}   \n6: $H _ { t } \\gets \\mathrm { s g } \\big ( \\mathrm { L N } ( f _ { \\bar { \\theta } } ( \\tilde { Z } ) ) \\big )$ {target: full seq, stop-grad}   \n7: $\\hat { H } _ { \\mathcal { M } _ { p } } \\gets g _ { \\phi } ( H _ { v } , \\mathbf { m } + p _ { \\mathcal { M } _ { p } } )$ {predict masked latents}   \n8: $\\begin{array} { r l r } { \\mathcal { L } } & { { }  } & { \\frac { 1 } { | \\mathcal { M } | } \\sum _ { \\mathcal { M } _ { p } \\in \\mathcal { M } } \\frac { 1 } { | \\mathcal { M } _ { p } | } \\sum _ { i \\in \\mathcal { M } _ { p } } \\rho ( \\hat { h } _ { i } , h _ { t , i } ) } \\end{array}$   \n{Smooth $L _ { 1 } \\}$   \n9: Update $( \\theta , \\phi )$ via $\\nabla { \\mathcal L } ; ~ \\bar { \\theta } \\gets m _ { k } \\bar { \\theta } + ( 1 - m _ { k } ) \\theta$   \n{EMA}   \n10: end for   \n11: return $f _ { \\theta }$ {discard $g _ { \\phi } \\}$",
+        "bbox": [
+            516,
+            65,
+            915,
+            375
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "code",
+        "sub_type": "algorithm",
+        "code_caption": [],
+        "code_footnote": [],
+        "code_body": "Algorithm 2: Inference by semantic matching   \nInput: EEG $\\overline { { X _ { \\mathrm { E E G } } } } ;$ task k with instruction $s _ { k }$ and candidate   \nlabels $\\mathcal { C } _ { k }$ (with verbalizations $\\{ \\ell _ { c } \\} ) ;$ frozen encoder $f _ { \\boldsymbol { \\theta } } ;$   \nsemantic projector $P _ { h } ;$ EEG token projector $P _ { u } ;$ queries   \n$\\lbrace Q _ { m } \\rbrace _ { m = 1 } ^ { M } ;$ predictor G; head $P _ { a } ;$ text encoder $E _ { \\mathrm { t e x t } }$   \nOutput: Predicted label yˆ   \n1: $H _ { \\mathrm { E E G } }  \\mathrm { r e s h a p e } \\big ( f _ { \\theta } ( \\tilde { Z } ( X _ { \\mathrm { E E G } } ) ) \\big )$   \n2: h ← Flatten(H<sub>EEG</sub>)   \n3: for m = 1 to M do   \n4: $\\tilde { s } _ { m } \\gets \\mathrm { P o o l } _ { \\mathrm { t o k } } \\big ( \\mathrm { C r o s s A t t n } ( Q _ { m } , h , h ) \\big )$   \n5: $s _ { m } \\gets P _ { h } ( \\tilde { s } _ { m } )$ {project semantic summary into LM   \nspace}   \n6: end for   \n7: $S _ { q } \\gets [ s _ { 1 } ; \\ldots ; s _ { M } ]$   \n8: $\\bar { u + P _ { u } } ( h )$ {project EEG tokens into LM space}   \n9: $T _ { k } \\gets \\mathrm { E m b e d } _ { \\mathrm { L M } } ( s _ { k } )$   \n10: $H ^ { ( k ) } \\gets G ( [ T _ { k } ; S _ { q } ; u ] )$   \n11: $H _ { q } ^ { ( k ) } \\gets H _ { \\mathrm { q u e r y } } ^ { ( k ) }$ {states at semantic-query positions}   \n12: zˆ ← norm $\\big ( P _ { a } ( \\mathrm { P o o l } _ { \\mathrm { q r y } } ( H _ { q } ^ { ( k ) } ) ) \\big )$ {answer embedding}   \n13: for each label $c \\in \\mathcal { C } _ { k } ^ { \\mathrm { ~ ~ } }$ do   \n14: $z _ { c } \\gets \\mathrm { n o r m } ( E _ { \\mathrm { t e x t } } ( \\ell _ { c } ) )$ {verbalized label}   \n15: end for   \n16: yˆ ← arg max<sub>c∈C</sub> zˆ<sup>⊤</sup>z<sub>c</sub>   \n17: return yˆ",
+        "bbox": [
+            516,
+            387,
+            913,
+            761
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Inference by semantic matching",
+        "text_level": 2,
+        "bbox": [
+            516,
+            786,
+            766,
+            803
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Inference for each EEG sample is executed via a single forward pass through the EEG-conditioned prediction model without autoregressive generation. The frozen encoder and multi-query module generate a unified answer embedding zˆ; each candidate label is encoded using the frozen text encoder, and the final prediction corresponds to the nearest label under cosine similarity. This formulation provides two key advantages: the candidate set $\\mathcal { C } _ { k }$ serves as an input, allowing the model to accommodate diferent candidate label sets without adding task-specific classification heads; furthermore, since scoring relies solely on dot-product operations against label embeddings, the computational overhead of decoding is negligible.",
+        "bbox": [
+            514,
+            804,
+            915,
+            890
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            81,
+            69,
+            482,
+            167
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "G Additional Results on Downstream Tasks Abnormal Detection",
+        "text_level": 2,
+        "bbox": [
+            84,
+            179,
+            473,
+            214
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Results on TUAB. Table S5 presents the abnormal EEG detection performance on the TUAB dataset. BLPM achieves the best results across all three metrics, with a B-Acc of 82.32%, an AUPRC of 89.71%, and an AUROC of 90.36%. Compared with CBraMod, the strongest baseline, BLPM improves B-Acc, AUPRC, and AUROC by 1.42, 1.06, and 1.52 percentage points, respectively. Abnormal EEG patterns can vary substantially not only across disease types but also according to the physiological and pathological characteristics of individual patients. Continuous semantic embedding prediction allows these heterogeneous abnormal patterns to be organized around the semantics of abnormality within a shared embedding space. This demonstrates that such semantic organization can contribute to a more stable separation of diverse abnormal EEG recordings from normal EEG activity.",
+        "bbox": [
+            81,
+            217,
+            482,
+            428
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Motor Imagery Classification",
+        "text_level": 2,
+        "bbox": [
+            83,
+            438,
+            313,
+            453
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Results on PhysioNet-MI. Table S6 presents the motor imagery classification results on PhysioNet-MI. BLPM achieves a B-Acc of68.22%, Cohen’s κ of57.85%, and F1-W of 68.35%, ranking second across all three metrics. BLPM follows REVE by 1.18, 1.08, and 0.97 percentage points in B-Acc, Cohen’s $\\kappa ,$ and F1-W, respectively, demonstrating consistently competitive performance across all three metrics. In particular, BLPM substantially outperforms the taskspecific models, improving B-Acc by 9.97 percentage points over EEGNet and by 11.20 percentage points over EEGConformer. Motor imagery classification requires distinguishing subtle class-dependent changes in sensorimotor activity, including spatially distributed cortical responses and variations in oscillatory dynamics associated with diferent imagined movements. These patterns can also vary considerably across subjects, making it important to preserve fine-grained neural diferences while learning representations that remain consistent across individuals. The strong performance of BLPM suggests that continuous semantic embedding prediction can retain these discriminative sensorimotor characteristics and organize heterogeneous neural responses corresponding to the same imagined movement around a shared class-level representation. This enables BLPM to efectively distinguish diferent motor imagery classes despite substantial inter-subject variability while maintaining performance comparable to the strongest baseline.",
+        "bbox": [
+            81,
+            455,
+            482,
+            818
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Emotion Recognition",
+        "text_level": 2,
+        "bbox": [
+            83,
+            828,
+            251,
+            843
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Results on FACED. Table S7 indicates the emotion recognition performance on the FACED dataset. BLPM achieves the best results across all three metrics, with a B-Acc of",
+        "bbox": [
+            81,
+            845,
+            482,
+            890
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "34.32%, a Cohen’s κ of 24.21%, and an F1-W of 33.07%. Compared with REVE, the strongest baseline, BLPM improves B-Acc, Cohen’s κ, and F1-W by 2.29, 0.31, and 1.24 percentage points, respectively. Emotion recognition on FACED is particularly challenging because it requires distinguishing among nine emotion categories whose EEG responses may exhibit subtle and overlapping afective patterns. Despite this fine-grained nine-class setting, BLPM consistently outperforms the competing models. Rather than relying solely on conventional task-specific classification boundaries, BLPM structures neural patterns associated with diferent afective states according to the semantic relationships among emotion categories, thereby learning more discriminative and transferable representations for fine-grained emotion recognition.",
+        "bbox": [
+            514,
+            68,
+            915,
+            279
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Sleep Staging",
+        "text_level": 2,
+        "bbox": [
+            516,
+            289,
+            629,
+            306
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Results on HMC. Table S8 presents the sleep staging performance on the HMC dataset. BLPM achieves the best results across all three metrics, with a B-Acc of 77.12%, Cohen’s κ of 69.07%, and F1-W of 76.98%. Compared with the strongest baseline for each metric, BLPM improves B-Acc by 0.58 percentage points over REVE, while improving Cohen’s κ and F1-W by 1.36 and 1.79 percentage points over LaBraM, respectively. Sleep staging requires distinguishing between sleep stages that exhibit gradual transitions and partially overlapping electrophysiological characteristics. Nevertheless, BLPM consistently achieves strong and balanced performance across stages. These results indicate that BLPM efectively organizes stage-related neural patterns in its representation space, enabling it to distinguish subtle diferences between sleep states without relying on a task-specific classification head.",
+        "bbox": [
+            514,
+            308,
+            915,
+            531
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "H Visualization Results",
+        "text_level": 2,
+        "bbox": [
+            606,
+            545,
+            825,
+            560
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "To qualitatively examine the efect of semantic alignment, we visualize the learned representations using t-SNE. We analyze both the global distribution across all downstream datasets and the class-level structure within representative tasks to assess how semantic alignment reshapes the representation space at both the dataset and class levels.",
+        "bbox": [
+            514,
+            564,
+            915,
+            650
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Global Representation Visualization",
+        "text_level": 2,
+        "bbox": [
+            516,
+            661,
+            799,
+            676
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Figure S1 compares the distributions of samples from the seven downstream datasets in the input space, the pretrained EEG representation space, and the aligned semantic embedding space. In the input space, samples from diferent datasets are broadly intermixed, reflecting substantial heterogeneity in recording configurations and signal characteristics. The pretrained CELP encoder produces a more structured distribution, although considerable overlap remains among datasets. After semantic alignment, samples from the same dataset form more coherent regions, while the distributions of diferent datasets become more systematically organized in the shared embedding space. These observations illustrate how semantic alignment changes the organization of the learned representation space while preserving datasetspecific characteristics.",
+        "bbox": [
+            514,
+            680,
+            916,
+            890
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "table",
+        "img_path": "images/1e4ea8da9effc89531b8cff6caf303c0f6c986f63c09d1679f3254172644c828.jpg",
+        "table_caption": [],
+        "table_footnote": [],
+        "table_body": "<table><tr><td colspan=\"2\">Model</td><td>B-Acc</td><td>AUPRC</td><td>AUROC</td></tr><tr><td colspan=\"5\">Task-specific models (trained from scratch)</td></tr><tr><td colspan=\"2\">EEGNet (Lawhern et al. 2018)</td><td> $7 9 . 8 6 { \\pm } 0 . 3 6 $ </td><td> $8 7 . 7 1 { \\scriptstyle \\pm 0 . 4 4 }$ </td><td> $8 7 . 8 1 { \\pm } 0 . 3 3 $ </td></tr><tr><td colspan=\"2\">EEGConformer (Song et al. 2023)</td><td> $7 8 . 9 7 { \\scriptstyle \\pm 0 . 4 3 }$ </td><td> $8 7 . 5 5 { \\pm } 0 . 5 0 $ </td><td> $8 7 . 3 8 { \\pm } 0 . 5 1 $ </td></tr><tr><td colspan=\"5\">EEG foundation models (finetuned with a task-specific head)</td></tr><tr><td colspan=\"2\">BIOT (Yang, Westover, and Sun 2023)</td><td> $7 5 . 6 \\bar { 9 } \\pm 0 . 2 4$ </td><td> $8 0 . 0 7 { \\pm } 1 . 5 3 $ </td><td> $8 2 . 1 9 { \\pm } 0 . 6 9$ </td></tr><tr><td colspan=\"2\">LaBraM (Jiang, Zhao, and Lu 2024)</td><td> $7 7 . 2 3 { \\pm } 1 . 4 9$ </td><td> $8 2 . 4 8 { \\pm } 1 . 2 3 $ </td><td> $8 4 . 2 2 { \\pm } 1 . 3 5 $ </td></tr><tr><td colspan=\"2\">CBraMod (Wang et al. 2025)</td><td> $8 0 . 9 0 { \\pm } 0 . 2 6 $ </td><td> $8 8 . 6 5 { \\pm } 0 . 3 6 $ </td><td> $8 8 . 8 4 { \\pm } 0 . 3 0 $ </td></tr><tr><td colspan=\"2\">REVE (El Ouahidi et al. 2025)</td><td> $\\overline { { 7 8 . 1 3 \\pm 1 . 5 1 } }$ </td><td> $\\overline { { 8 0 . 5 7 { \\pm } 2 . 0 0 } }$ </td><td> $\\overline { { 8 3 . 1 0 { \\pm } 1 . 7 2 } }$ </td></tr><tr><td colspan=\"2\">LUNA (Döner et al. 2025)</td><td> $8 0 . 1 9 { \\pm } 0 . 6 0$ </td><td> $8 8 . 3 7 { \\pm } 0 . 4 9$ </td><td> $8 8 . 3 6 { \\pm } 0 . 3 3 $ </td></tr><tr><td colspan=\"5\">Unified model (a single model for all tasks, no task-specific head) BLPM (Ours)  $\\mathbf { 8 } 2 . 3 2 { \\pm } \\mathbf { 0 . } 2 3 $   $\\mathbf { 8 9 . 7 1 } { \\pm } \\mathbf { 0 . 3 1 }$   $\\mathbf { 9 0 . 3 6 { \\pm 0 . 5 8 } }$ </td></tr></table>",
+        "bbox": [
+            214,
+            64,
+            781,
+            260
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "table",
+        "img_path": "images/54e5fe7135e417bedd16aeba74828db81627f7a586869c3fec0de81a5b34a3f5.jpg",
+        "table_caption": [
+            "Table S5: Abnormal detection results on TUAB, reported as mean ± standard deviation over five seeds. All metrics are reported as percentages (%). The best and second-best results are marked in bold and underlined, respectively.",
+            "Table S6: Motor imagery classification results on PhysioNet-MI, reported as mean ± standard deviation over five seeds. All metrics are reported as percentages (%). The best and second-best results are marked in bold and underlined, respectively."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Model</td><td>B-Acc</td><td> $\\mathbf { C o h e n ^ { \\prime } s } \\kappa$ </td><td>F1-W</td></tr><tr><td colspan=\"4\">Task-specific models (trained from scratch)</td></tr><tr><td>EEGNet (Lawhern et al. 2018)</td><td> $5 8 . 2 5 { \\scriptstyle \\pm 0 . 4 6 }$ </td><td> $4 4 . 3 4 { \\pm } 0 . 6 1$ </td><td> $5 7 . 6 5 { \\pm } 0 . 5 6 $ </td></tr><tr><td>EEGConformer (Song et al. 2023)</td><td> $5 7 . 0 2 { \\pm } 1 . 0 8 $ </td><td> $4 3 . 0 5 { \\pm } 1 . 7 1 $ </td><td> $5 7 . 0 5 { \\pm } 1 . 1 0 $ </td></tr><tr><td colspan=\"4\">EEG foundation models (finetuned with a task-specific head)</td></tr><tr><td>BIOT (Yang, Westover, and Sun 2023)</td><td> $3 0 . 7 \\bar { 7 } \\pm 2 . 2 3$ </td><td> $7 . 6 9 { \\pm } 2 . 9 8 $ </td><td> $2 9 . 8 1 { \\pm } 2 . 1 7 $ </td></tr><tr><td>LaBraM (Jiang, Zhao, and Lu 2024)</td><td> $5 9 . 3 3 { \\pm } 0 . 7 3 $ </td><td> $4 7 . 7 4 { \\pm } 1 . 5 1 $ </td><td> $6 1 . 0 6 { \\pm } 1 . 2 5$ </td></tr><tr><td>CBraMod (Wang et al. 2025)</td><td> $5 6 . 6 1 { \\pm } 1 . 2 1 $ </td><td> $4 0 . 9 5 { \\pm } 1 . 0 8 $ </td><td> $5 5 . 3 5 { \\pm } 1 . 1 2 $ </td></tr><tr><td>REVE (El Ouahidi et al. 2025)</td><td> $\\mathbf { 6 9 . 4 0 { \\pm } 0 . 9 2 }$ </td><td> ${ \\pm } \\mathbf { 8 . 9 3 { \\pm } 1 . 8 7 }$ </td><td> ${ \\bf 6 9 . 3 2 \\pm 1 . 2 1 }$ </td></tr><tr><td>LUNA (Döner et al. 2025)</td><td> $6 1 . 7 2 { \\scriptstyle \\pm 0 . 6 2 }$ </td><td> $4 9 . 3 7 { \\pm } 1 . 4 9$ </td><td> $6 1 . 9 5 { \\pm } 1 . 2 1 $ </td></tr><tr><td colspan=\"4\">Unified model (a single model for all tasks, no task-specific head)</td></tr><tr><td>BLPM (Ours)</td><td> $6 8 . 2 2 { \\scriptstyle \\pm 0 . 7 1 } $ </td><td> $\\underline { { 5 7 . 8 5 } } \\pm 1 . 2 3 $ </td><td> $6 8 . 3 5 { \\pm } 1 . 1 2 \\ $ </td></tr></table>",
+        "bbox": [
+            214,
+            313,
+            781,
+            507
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Task-Specific Representation Visualization",
+        "text_level": 2,
+        "bbox": [
+            83,
+            574,
+            415,
+            589
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Figure S2 visualizes the representations before and after semantic alignment for three representative tasks: clinica event classification on TUEV, motor imagery classification on PhysioNet-MI, and sleep-stage classification on HMC. Before alignment, samples from diferent classes are substantially intermixed across all three tasks. After alignment, the representations exhibit clearer class-dependent organization, with samples from the same class forming more coherent regions. Although partial overlap remains between physiologically or morphologically related classes, the overall distributions indicate that semantic alignment enhances class-discriminative structure across heterogeneous EEG decoding tasks.",
+        "bbox": [
+            81,
+            592,
+            482,
+            775
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "table",
+        "img_path": "images/0a80cc601eee0c75f6fa1b6f7b0d415db43b5c28e62f570cf0c3024d8ab8a88c.jpg",
+        "table_caption": [
+            "Table S7: Emotion recognition results on FACED, reported as mean ± standard deviation over five seeds. All metrics are reported as percentages (%). The best and second-best results are marked in bold and underlined, respectively."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Model</td><td>B-Acc</td><td> $\\mathbf { C o h e n ^ { \\prime } s } \\kappa$ </td><td>F1-W</td></tr><tr><td colspan=\"4\">Task-specific models (trained from scratch)</td></tr><tr><td>EEGNet (Lawhern et al. 2018)</td><td> $2 3 . 3 6 { \\pm } 0 . 6 9$ </td><td> $1 3 . 4 8 { \\pm } 0 . 7 8$ </td><td> $2 2 . 1 0 { \\pm } 0 . 7 4$ </td></tr><tr><td>EEGConformer (Song et al. 2023)</td><td> $2 9 . 0 1 { \\pm } 0 . 5 2 $ </td><td> $1 9 . 6 5 { \\pm } 0 . 5 9 $ </td><td> $2 7 . 5 1 { \\pm } 0 . 6 2 $ </td></tr><tr><td colspan=\"4\">EEG foundation models (finetuned with a task-specific head)</td></tr><tr><td>BIOT (Yang, Westover, and Sun 2023)</td><td> $1 1 . 2 1 { \\pm } 0 . 2 9$ </td><td> $0 . 2 2 { \\pm } 0 . 7 2$ </td><td> $8 . 2 9 { \\pm } 1 . 9 1$ </td></tr><tr><td>LaBraM (Jiang, Zhao, and Lu 2024)</td><td> $2 6 . 8 4 { \\pm } 0 . 9 4$ </td><td> $1 8 . 0 1 { \\pm } 1 . 3 0 $ </td><td> $2 6 . 5 6 { \\pm } 1 . 5 3 $ </td></tr><tr><td>CBraMod (Wang et al. 2025)</td><td> $2 9 . 4 1 { \\pm } 1 . 5 2 $ </td><td> $2 1 . 3 6 { \\pm } 1 . 1 3$ </td><td> $2 9 . 2 3 { \\pm } 0 . 8 9$ </td></tr><tr><td>REVE (El Ouahidi et al. 2025)</td><td> $\\underline { { 3 2 . 0 3 \\pm 1 . 2 3 } }$ </td><td> $2 3 . 9 0 { \\pm } 0 . 9 9 $ </td><td> $3 1 . 8 3 { \\pm } 1 . 1 8 $ </td></tr><tr><td>LUNA (Döner et al. 2025)</td><td> $2 9 . 3 0 { \\pm } 1 1 . 7 6$ </td><td> $2 2 . 3 7 { \\pm } 1 . 5 0 $ </td><td> $\\overline { { 3 0 . 2 2 \\pm 1 . 4 2 } }$ </td></tr><tr><td colspan=\"4\">Unified model (a single model for all tasks, no task-specific head)</td></tr><tr><td>BLPM (Ours)</td><td> $\\mathbf { 3 4 . 3 2 \\pm 0 . 6 1 }$ </td><td> $\\pm \\mathbf { 4 . 2 1 } \\pm \\mathbf { 0 . 3 1 }$ </td><td> ${ \\bf 3 3 . 0 7 \\pm 1 . 2 2 }$ </td></tr></table>",
+        "bbox": [
+            209,
+            84,
+            785,
+            279
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "table",
+        "img_path": "images/c896cca19ab073b0f8b51e643a6a50ab1d977b9cbede491f07caf0a577b4405e.jpg",
+        "table_caption": [
+            "Table S8: Sleep staging results on HMC, reported as mean ± standard deviation over five seeds. All metrics are reported as percentages (%). The best and second-best results are marked in bold and underlined, respectively."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Model</td><td>B-Acc</td><td>Cohen&#x27;s κ</td><td>F1-W</td></tr><tr><td colspan=\"4\">Task-specific models (trained from scratch)</td></tr><tr><td>EEGNet (Lawhern et al. 2018)</td><td> $7 0 . 8 9 { \\pm } 0 . 8 1$ </td><td> $5 9 . 2 2 { \\pm } 2 . 0 1 $ </td><td> $6 6 . 8 9 { \\pm } 2 . 0 8$ </td></tr><tr><td>EEGConformer (Song et al. 2023)</td><td> $7 2 . 2 9 { \\pm } 1 . 6 1 $ </td><td> $6 1 . 6 7 { \\pm } 1 . 4 8$ </td><td> $6 8 . 5 9 { \\pm } 1 . 6 2 $ </td></tr><tr><td colspan=\"4\">EEG foundation models (finetuned with a task-specific head)</td></tr><tr><td>BIOT (Yang, Westover, and Sun 2023)</td><td> $7 1 . 5 \\dot { 4 } \\pm 1 . 1 2$ </td><td> $6 2 . 4 1 { \\pm } 2 . 1 6$ </td><td> $7 0 . 5 1 { \\pm } 1 . 8 5 $ </td></tr><tr><td>LaBraM (Jiang, Zhao, and Lu 2024)</td><td> $7 5 . 3 4 { \\pm } 0 . 8 9$ </td><td> $6 7 . 7 1 { \\pm } 1 . 2 1 $ </td><td> $7 5 . 1 9 { \\pm } 1 . 0 7$ </td></tr><tr><td>CBraMod (Wang et al. 2025)</td><td> $7 6 . 0 1 { \\scriptstyle \\pm 0 . 9 2 }$ </td><td> $\\overline { { 6 6 . 5 6 { \\pm } 0 . 8 9 } }$ </td><td> $\\overline { { 7 3 . 3 4 \\pm 0 . 7 3 } }$ </td></tr><tr><td>REVE (El Ouahidi et al. 2025)</td><td> $7 6 . 5 4 { \\scriptstyle \\pm 0 . 8 4 }$ </td><td> $6 7 . 1 0 { \\pm } 1 . 1 0 $ </td><td> $7 4 . 7 9 { \\pm } 1 . 2 4 $ </td></tr><tr><td>LUNA (Döner et al. 2025)</td><td> $7 4 . 8 2 { \\pm } 0 . 8 1$ </td><td> $6 6 . 3 9 { \\pm } 1 . 1 4$ </td><td> $7 3 . 8 1 { \\scriptstyle \\pm 0 . 9 1 }$ </td></tr><tr><td colspan=\"4\">Unified model (a single model for all tasks, no task-specific head)</td></tr><tr><td>BLPM (Ours)</td><td> ${ \\bf 7 7 . 1 2 \\pm 0 . 6 4 }$ </td><td> ${ \\bf 6 9 . 0 7 \\pm 1 . 8 5 }$ </td><td> $\\mathbf { 7 6 . 9 8 { \\scriptstyle \\pm 0 . 6 7 } }$ </td></tr></table>",
+        "bbox": [
+            214,
+            364,
+            781,
+            560
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/b90825a7291f7b73b9b318957b0abf791a0267b13a561238f6287047de0f0492.jpg",
+        "image_caption": [
+            "Figure S1: Global t-SNE visualization across the seven downstream datasets."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            89,
+            647,
+            908,
+            837
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "image",
+        "img_path": "images/2ea02fcfaed1a6bb6369069293e14894bf4c23c282c86f7375cf0d81b3d254f8.jpg",
+        "image_caption": [
+            "Figure S2: Task-specific t-SNE visualizations for TUEV, PhysioNet-MI, and HMC. The left and right columns show the representation distributions before and after semantic alignment, respectively."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            168,
+            141,
+            826,
+            770
+        ],
+        "page_idx": 18
+    }
+]
