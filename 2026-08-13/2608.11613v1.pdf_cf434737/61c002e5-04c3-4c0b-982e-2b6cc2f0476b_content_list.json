@@ -1,0 +1,3968 @@
+[
+    {
+        "type": "text",
+        "text": "Highlights",
+        "text_level": 2,
+        "bbox": [
+            66,
+            68,
+            181,
+            91
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "A Local Sinkhorn Framework for Conditional Distribution Reconstruction of Multidimensional Random Fields",
+        "text_level": 2,
+        "bbox": [
+            66,
+            102,
+            930,
+            137
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Mingtao Xia, Qijing Shen",
+        "bbox": [
+            66,
+            145,
+            264,
+            163
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "• We propose a scalable local entropically regularized optimal transport framework to train stochastic neural networks for learning random fields.",
+        "bbox": [
+            93,
+            188,
+            930,
+            221
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "• We derive generalization error bounds that reveal how our proposed framework could eficiently learn multidimensional random fields.",
+        "bbox": [
+            93,
+            231,
+            930,
+            264
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "• Our proposed approach accurately reconstructs stochastic random fields and dynamical systems and outperforms several machine-learning-based benchmark approaches in uncertainty quantification.",
+        "bbox": [
+            93,
+            273,
+            930,
+            308
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "aside_text",
+        "text": "arXiv:2608.11613v1 [cs.LG] 12 Aug 2026",
+        "bbox": [
+            33,
+            342,
+            73,
+            822
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "A Local Sinkhorn Framework for Conditional Distribution Reconstruction of Multidimensional Random Fields",
+        "text_level": 1,
+        "bbox": [
+            66,
+            66,
+            814,
+            121
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Mingtao Xia<sup>a,b,∗</sup>, Qijing Shen<sup>c</sup>",
+        "bbox": [
+            66,
+            137,
+            343,
+            156
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "<sup>a</sup>School ofMathematics, University ofBirmingham, Watson Building, Edgbaston, Birmingham, B15 2TT, United Kingdom",
+        "bbox": [
+            66,
+            169,
+            790,
+            184
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "<sup>b</sup>Department ofMathematics, University ofHouston, 3551 Cullen Blvd, Houston, 77204, Texas, United States",
+        "bbox": [
+            66,
+            185,
+            718,
+            199
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "<sup>c</sup>Nufield Department ofMedicine, University ofOxford, United Kingdom, Old Road Campus, Oxford, OX3 7BN, United Kingdom",
+        "bbox": [
+            66,
+            200,
+            834,
+            215
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "A R T I C L E I N F O",
+        "text_level": 2,
+        "bbox": [
+            68,
+            235,
+            229,
+            250
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Keywords: Random Field Reconstruction Sinkhorn Divergence Uncertainty Quantification Stochastic Neural Network Scientific Machine Learning",
+        "bbox": [
+            66,
+            262,
+            250,
+            340
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "A BS T R AC T",
+        "text_level": 2,
+        "bbox": [
+            367,
+            237,
+            490,
+            252
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "In this paper, we propose a local Sinkhorn divergence framework for conditional distribution reconstruction of multidimensional random fields. By utilizing the debiased Sinkhorn divergence, our proposed approach develops a diferentiable and computationally eficient local distribution matching objective to train stochastic neural networks (SNNs). Furthermore, we establish theoretical generalization error estimates for our local Sinkhorn divergence framework, which explicitly characterizes the trade-of between approximation bias and statistical eficiency controlled by the regularization parameter and reveals how our proposed local Sinkhorn divergence loss function can be eficiently applied to learning multidimensional random field models. The proposed framework provides a scalable alternative to exact local optimal transport for conditional distribution reconstruction, ofering a practical compromise between geometric fidelity, statistical eficiency, and computational scalability for uncertainty quantification and probabilistic scientific machine learning. Through various numerical examples, we compare our proposed local Sinkhorn divergence framework with other loss functions to train SNNs and with other machine-learning-based uncertainty quantification frameworks, demonstrating that the proposed local Sinkhorn divergence framework achieves an efective balance between reconstruction accuracy and computational eficiency while maintaining good scalability for multidimensional stochastic systems.",
+        "bbox": [
+            365,
+            262,
+            931,
+            481
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "1. Introduction",
+        "text_level": 2,
+        "bbox": [
+            66,
+            529,
+            220,
+            547
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "The identification of random fields from observational data has become an increasingly important topic in uncertainty quantification, stochastic modeling, and scientific machine learning. Many physical and engineering systems, including porous media flow, turbulent transport, groundwater dynamics, and biological processes, are inherently afected by uncertain parameters or random forcing, leading to stochastic responses that cannot be adequately characterized by deterministic models alone [13, 33, 25]. Consequently, instead of predicting only the conditional expectation, it is often desirable to reconstruct the entire conditional probability distribution of the stochastic solution, thereby providing a more comprehensive description of uncertainty propagation. However, the primary challenge is usually not learning the conditional mean, but accurately reconstructing the multidimensional conditional distributions in a computationally scalable manner.",
+        "bbox": [
+            64,
+            552,
+            931,
+            698
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Recent advances in machine learning have enabled data-driven approximations of multidimensional stochastic systems without requiring explicit knowledge of the underlying governing equations. Various deep generative models, including conditional variational autoencoders (CVAEs), generative adversarial networks (GANs), conditional normalizing flows (CNFs), and difusion models, have demonstrated remarkable capability in learning complex probability distributions from data [17, 14, 22, 16]. Nevertheless, for stochastic random field reconstruction, the learned distributions should preserve the geometric structure of probability measures associated with nearby physical states. This requirement naturally motivates the use of optimal transport (OT), whose Wasserstein metric provides a physically meaningful distance between probability distributions and has recently attracted increasing attention in scientific machine learning [29, 20]. Compared with divergence-based discrepancies, such as the Kullback–Leibler divergence or maximum mean discrepancy [15], Wasserstein distances remain informative even when two probability measures have disjoint supports and provide meaningful gradients during optimization [2, 20]. These advantages have motivated numerous OT-based machine learning methods, including Wasserstein GANs, gradient-flow formulations, and OT regularization for scientific computing [10, 2]. However, the exact computation of Wasserstein distances requires solving a large-scale linear programming problem whose complexity grows rapidly with sample size, making repeated evaluations during neural network training prohibitively expensive. Our recent work introduced a local squared Wasserstein-2 $( W _ { 2 } )$ framework for random field reconstruction, in which neighboring samples associated with nearby input states were compared through local optimal transport distances. By exploiting the locality of conditional distributions, the method was shown to accurately reconstruct stochastic fields from sparse observations while preserving important geometric structures of the underlying probability measures [31]. However, the local squared $W _ { 2 }$ distance relies on repeatedly solving exact optimal transport problems during neural network training. As the number of neighborhood evaluations and samples increases, the computational cost becomes the dominant bottleneck, significantly limiting scalability for multidimensional stochastic systems and large datasets. Additionally, the generalization error bound may deteriorate when the squared $W _ { 2 }$ distance between two probability measures is estimated using empirical probability measures, particularly in high-dimensional settings.",
+        "bbox": [
+            62,
+            698,
+            933,
+            877
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>∗</sup>Corresponding author",
+        "bbox": [
+            91,
+            885,
+            237,
+            898
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_footnote",
+        "text": "xiamingtao97@g.ucla.edu (M. Xia); qijing.shen@ndm.ox.ac.uk (Q. Shen) ORCID(s): 0000-0002-2116-4712 (M. Xia); 0009-0009-6685-0861 (Q. Shen)",
+        "bbox": [
+            95,
+            898,
+            612,
+            925
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            948,
+            426,
+            963
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_number",
+        "text": "Page 1 of 19",
+        "bbox": [
+            834,
+            947,
+            930,
+            963
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            62,
+            72,
+            933,
+            283
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Recently, Cuturi introduced entropic regularization of optimal transport, leading to the Sinkhorn algorithm that dramatically accelerates OT computations while remaining fully diferentiable [6]. Subsequently, Feydy et al. proposed the Sinkhorn divergence, which removes the entropic bias and interpolates smoothly between the exact Wasserstein distance and kernel-based maximum mean discrepancy [8]. The Sinkhorn divergence has since been successfully applied to generative modeling, Bayesian inference, and scientific machine learning because of its computational eficiency and stable gradient properties [12, 8]. Furthermore, through introducing an extra entropic regularization term, the generalization error when estimating the Sinkhorn divergence using the empirical measures may not deteriorate with the dimensionality of the associated random variables [12].",
+        "bbox": [
+            62,
+            283,
+            933,
+            412
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Motivated by these developments, this work develops a local Sinkhorn-divergence framework for conditional distribution reconstruction of stochastic fields. Building upon our previous local $W _ { 2 }$ formulation, the proposed approach replaces the expensive exact OT computation with Sinkhorn divergence, resulting in substantially improved computational eficiency while preserving the local geometric information of conditional probability distributions. The proposed local Sinkhorn divergence bridges exact optimal transport and kernel-based distribution matching by introducing an entropic regularization that provides a controllable bias while significantly improving computational eficiency and statistical scalability. Owing to the diferentiability and favorable numerical stability of Sinkhorn divergence, the resulting learning framework is considerably more eficient in reconstructing conditional distributions of the to-be-learned random fields. Furthermore, we shall show from both theoretical and empirical aspects that incorporating the regularization term could lead to improved accuracy when reconstructing multidimensional random field models using empirical distributions. Numerical experiments on stochastic Darcy flow and multidimensional stochastic FitzHugh–Nagumo (FHN) systems demonstrate that the proposed approach achieves reconstruction accuracy comparable to that of the exact Wasserstein formulation while significantly reducing the overall training cost.",
+        "bbox": [
+            62,
+            412,
+            933,
+            622
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The main contributions of this work are summarized as follows.",
+        "bbox": [
+            91,
+            621,
+            568,
+            637
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "• We extend our recent local optimal transport framework for random field reconstruction from the exact Wasserstein distance to the debiased Sinkhorn divergence, leading to a computationally eficient, scalable, and fully diferentiable local distribution matching method for training SNNs to reconstruct random fields.",
+        "bbox": [
+            91,
+            650,
+            931,
+            700
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "• We provide a theoretical analysis of the proposed local Sinkhorn formulation by combining the neighborhood approximation error with the regularization and statistical convergence properties of empirical Sinkhorn divergence. The resulting generalization bounds reveal how the local Sinkhorn divergence may partially alleviate the curse of dimensionality through introducing an entropic regularization term.",
+        "bbox": [
+            91,
+            708,
+            931,
+            776
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "• Through various numerical examples, we demonstrate that the proposed local Sinkhorn divergence provides an efective compromise between approximation accuracy and computational eficiency and outperforms several machine-learning-based uncertainty quantification benchmarks, making it particularly suitable for multidimensional uncertainty quantification problems.",
+        "bbox": [
+            91,
+            784,
+            931,
+            850
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The remainder of this paper is organized as follows. Section 2 introduces the proposed local Sinkhorn divergence framework together with its theoretical analysis and generalization error bounds. Section 3 presents three numerical examples, including one-dimensional conditional distribution reconstruction, stochastic Darcy flow, and stochastic FHN systems, where the proposed method is compared with several local distribution matching losses and existing machine-learning benchmark approaches. Finally, Section 4 concludes the paper with a summary of the main findings and discusses several directions for future research. Frequently used notations throughout this paper are summarized in Table 1.",
+        "bbox": [
+            62,
+            862,
+            933,
+            929
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "page_number",
+        "text": "Page 2 of 19",
+        "bbox": [
+            834,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "table",
+        "img_path": "images/b1ef0864a88da8c8dfba9541a5ed3e3a30675e3864b142ab4f07c2b3ad25e0c5.jpg",
+        "table_caption": [
+            "Frequently used notations throughout this paper."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Notation</td><td>Description</td></tr><tr><td> $\\boldsymbol { x } \\in \\boldsymbol { D }$ </td><td>Input variable.</td></tr><tr><td> $D \\subseteq \\mathbb { R } ^ { n }$ </td><td>Input domain.</td></tr><tr><td> $N$ </td><td>Total number of training samples.</td></tr><tr><td> $\\omega \\left( { \\hat { \\omega } } \\right)$ </td><td>Random variable representing uncertainty.</td></tr><tr><td> $\\pmb { y } ( \\pmb { x } , \\omega ) \\in \\mathbb { R } ^ { d }$ </td><td>Target random field.</td></tr><tr><td> $\\hat { \\pmb { y } } ( \\pmb { x } , \\hat { \\omega } ) \\in \\mathbb { R } ^ { d }$ </td><td>Reconstructed random field.</td></tr><tr><td> $\\mu _ { x }$ </td><td>Conditional probability distribution of  ${ \\pmb y } ( { \\pmb x } , \\omega )$ </td></tr><tr><td> $\\hat { \\mu } _ { x }$ </td><td>Conditional probability distribution of  $\\hat { \\pmb { y } } ( \\pmb { x } , \\hat { \\omega } ) .$ </td></tr><tr><td> $\\mu _ { x , \\delta } ^ { \\mathrm { e } }$ </td><td>Empirical δ-neighborhood measure associated with  ${ \\mathbf y } ( { \\mathbf x } , \\omega )$  (details given in Section 2).</td></tr><tr><td> $\\hat { \\mu } _ { x , \\delta } ^ { \\mathrm { e } }$ </td><td>Empirical δ-neighborhood measure associated with  $\\hat { \\mathbf { y } } ( \\mathbf { x } , \\hat { \\omega } )$  (details given in Section 2).</td></tr><tr><td> $\\delta$ </td><td>Neighborhood radius.</td></tr><tr><td> $\\nu$ </td><td>Probability measure on the input domain.</td></tr><tr><td> $\\nu ^ { \\mathsf { e } }$ </td><td>Empirical measure induced by the observed inputs.</td></tr><tr><td> $W _ { 2 } ^ { 2 } ( \\mu , \\hat { \\mu } )$ </td><td>Squared  $W _ { 2 }$  一 distance between the two probability measures  $\\mu , { \\hat { \\mu } } .$ </td></tr><tr><td> $S _ { \\varepsilon } ( \\mu , \\hat { \\mu } )$ </td><td>Debiased Sinkhorn divergence between the two probability measures  $\\mu , { \\hat { \\mu } } .$ </td></tr><tr><td> $\\varepsilon$ </td><td>Sinkhorn regularization parameter.</td></tr><tr><td> $\\overline { { \\mathcal { W } } } _ { 2 }$ </td><td>Averaged squared Wasserstein discrepancy.</td></tr><tr><td> $\\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\mathsf { e } }$ </td><td>Averaged empirical local Sinkhorn divergence.</td></tr></table>",
+        "bbox": [
+            125,
+            110,
+            873,
+            452
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            64,
+            479,
+            931,
+            528
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "2. A local Sinkhorn divergence method for conditional distribution reconstruction of random fields",
+        "text_level": 2,
+        "bbox": [
+            66,
+            548,
+            869,
+            586
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "In this section, we formally introduce the random field model we reconstruct and the local Sinkhorn divergence framework we propose. Consider the reconstruction of conditional probability distributions from scattered observations. Let",
+        "bbox": [
+            64,
+            591,
+            930,
+            638
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/33b06b96f31b6833ccd376069f0034c1d2920bf442febbc2ad890d99183bff3b.jpg",
+        "text": "$$\n\\begin{array} { r } { \\pmb { y } _ { \\pmb { x } } = f ( \\pmb { x } , \\omega ) , \\qquad \\pmb { x } \\in \\mathcal { D } \\subset \\mathbb { R } ^ { n } , } \\end{array}\\tag{2.1}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            652,
+            356,
+            669
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "be the unknown random field to be reconstructed, where $\\omega ~ \\in ~ \\Omega$ denotes the underlying random variable and $f : \\mathcal { D } \\times \\Omega \\to \\mathbb { R } ^ { d }$ is an unknown stochastic mapping. For each input location �, only realizations of the random response $y ( \\pmb { x } , \\omega )$ are available, while the conditional probability measure of ${ \\pmb y } ( { \\pmb x } ; \\omega )$ , denoted as $\\mu _ { x } .$ , is unknown.",
+        "bbox": [
+            64,
+            683,
+            931,
+            731
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Our objective is to construct an approximation",
+        "bbox": [
+            91,
+            731,
+            441,
+            747
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/02dbbd5565fbcdcc4f75329fd29a903af0fd8e2b140b4a2eadcd471e70a553a6.jpg",
+        "text": "$$\n\\hat { \\mathbf { y } } _ { x } = \\hat { f } ( \\mathbf { x } , \\hat { \\omega } ) , \\qquad \\mathbf { x } \\in \\mathcal { D } ,\\tag{2.2}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            760,
+            314,
+            777
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "where $\\hat { f }$ is another stochastic mapping, and $\\hat { \\omega } \\in \\hat { \\Omega }$ is another random variable. The goal is to match the distribution of �(�; �) using the distribution of $\\hat { \\mathbf { y } } ( \\mathbf { x } ; \\hat { \\omega } )$ , denoted by $\\hat { \\mu } _ { x }$ for every $\\boldsymbol { x } \\in \\boldsymbol { D }$",
+        "bbox": [
+            64,
+            789,
+            930,
+            823
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We employ a stochastic neural network (SNN) similar to our previous work [31] as the approximate random field model $\\hat { f }$ in Eq. (2.2). The structure of the SNN is described in Fig. 1. Unlike deterministic neural networks, the SNN contains random parameters (as the random variable ̂� in Eq. (2.2)) sampled during forward propagation, enabling the model to generate multiple realizations for the same input location. Furthermore, it is proved in [32, Appendix H] that this SNN can approximate any random field model under an averaged squared $W _ { 2 }$ metric, subject to nonrestrictive assumptions.",
+        "bbox": [
+            62,
+            822,
+            931,
+            920
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            43,
+            696,
+            59
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "page_number",
+        "text": "Page 3 of 19",
+        "bbox": [
+            834,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            946,
+            426,
+            962
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "First, we briefly review the Sinkhorn divergence between two probability measures. Let $\\ b { y } , \\hat { \\ b { y } } \\in \\mathbb { R } ^ { n }$ be two random variables satisfying:",
+        "bbox": [
+            64,
+            72,
+            931,
+            105
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/51b19f806a6afd39e705178f8197a85c9b120d877251667161b0cf6f7e429989.jpg",
+        "text": "$$\n\\begin{array} { r } { \\mathbb { E } \\big [ \\| \\pmb { y } \\| ^ { 2 } \\big ] < \\infty , \\qquad \\mathbb { E } \\big [ \\| \\hat { \\pmb { y } } \\| ^ { 2 } \\big ] < \\infty . } \\end{array}\\tag{2.3}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            115,
+            373,
+            137
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Throughout this paper, $\\| \\cdot \\|$ denotes the $\\ell ^ { 2 }$ norm of a vector. The probability distributions of � and $\\hat { \\pmb { y } }$ are denoted by $\\mu$ and $\\hat { \\mu } ,$ respectively. Let",
+        "bbox": [
+            64,
+            148,
+            930,
+            181
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/7880a8544f6247fe15048b0b0c142de195b7d5d0957fd6f24c612514ab6cf9d8.jpg",
+        "text": "$$\nc ( y , \\hat { y } ) = \\| y - \\hat { y } \\| ^ { 2 }\\tag{2.4}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            192,
+            257,
+            211
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "be the quadratic transportation cost. The entropically regularized optimal transport cost is defined as:",
+        "bbox": [
+            64,
+            222,
+            812,
+            239
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/44b7caf6e4bfef4e666f936a73af46fb0e074efbc2b6f0dea76b0e978b1b8cc0.jpg",
+        "text": "$$\nW _ { \\varepsilon } ^ { 2 } ( \\mu , \\hat { \\mu } ) = \\operatorname* { m i n } _ { \\pi \\in \\Pi ( \\mu , \\hat { \\mu } ) } \\left\\{ \\int _ { \\mathbb { R } ^ { n } \\times \\mathbb { R } ^ { n } } c ( { \\pmb y } , \\hat { \\pmb y } ) \\mathrm { d } \\pi ( { \\pmb y } , \\hat { \\pmb y } ) + \\varepsilon \\mathrm { K L } ( \\pi \\parallel \\mu \\otimes \\hat { \\mu } ) \\right\\} ,\\tag{2.5}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            249,
+            626,
+            287
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "where $\\Pi ( \\mu , \\hat { \\mu } )$ denotes the set of probability measures on $\\mathbb { R } ^ { n } \\times \\mathbb { R } ^ { n }$ whose marginals are $\\mu$ and $\\hat { \\mu } ,$ respectively. In Eq. (2.5),",
+        "bbox": [
+            64,
+            296,
+            931,
+            330
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/80f27f3e7536e5eff14d6793c4dd7b7da21b26e62f387ad52fefbe9d7292af4e.jpg",
+        "text": "$$\n\\operatorname { K L } ( \\pi \\parallel \\mu \\otimes { \\hat { \\mu } } ) = \\int _ { \\mathbb { R } ^ { n } \\times \\mathbb { R } ^ { n } } \\log \\left( { \\frac { \\mathrm { d } \\pi } { \\mathrm { d } ( \\mu \\otimes { \\hat { \\mu } } ) } } \\right) \\mathrm { d } \\pi\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            340,
+            457,
+            377
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "denotes the Kullback–Leibler divergence of � with respect to the product measure $\\mu \\otimes { \\hat { \\mu } } .$ , provided that $\\pi \\ll \\mu \\otimes { \\hat { \\mu } } ;$ otherwise, $\\operatorname { K L } ( \\pi \\parallel \\mu \\otimes { \\hat { \\mu } } ) = + \\infty$ , and $\\varepsilon > 0$ is the entropic regularization parameter.",
+        "bbox": [
+            64,
+            386,
+            930,
+            419
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Unlike the classical Wasserstein distance, the regularized transport cost does not vanish when $\\mu = \\hat { \\mu }$ . To remove this entropic bias, the Sinkhorn divergence is defined as",
+        "bbox": [
+            64,
+            419,
+            930,
+            451
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3b79e8f9a94dd8d8266c67d989146bc475fe171d1845402194b291d47a8941ae.jpg",
+        "text": "$$\nS _ { \\varepsilon } ( \\mu , \\hat { \\mu } ) = W _ { \\varepsilon } ^ { 2 } ( \\mu , \\hat { \\mu } ) - \\frac { 1 } { 2 } W _ { \\varepsilon } ^ { 2 } ( \\mu , \\mu ) - \\frac { 1 } { 2 } W _ { \\varepsilon } ^ { 2 } ( \\hat { \\mu } , \\hat { \\mu } ) .\\tag{2.6}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            462,
+            488,
+            493
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "The Sinkhorn divergence in $\\operatorname { E q . } \\left( 2 . 6 \\right)$ is symmetric, non-negative, diferentiable with respect to the empirical samples, and satisfies $S _ { \\varepsilon } ( \\mu , \\mu ) = 0 ;$ ; furthermore, the Sinkhorn divergence converges to the Wasserstein distance as $\\varepsilon \\ \\to \\ 0$ while remaining diferentiable and computationally tractable, whereas choosing � → ∞ recovers the maximum mean discrepancy [8]. Yet, the Sinkhorn divergence is more computationally eficient through introducing an additional regularizing term in Eq. (2.5) while preserving the advantage of the squared $W _ { 2 }$ distance for comparing two probability measures.",
+        "bbox": [
+            62,
+            501,
+            931,
+            598
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "To simplify the subsequent analysis, we introduce the following assumptions.",
+        "bbox": [
+            91,
+            598,
+            667,
+            615
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Assumption 2.1. Assume that the uncertainty model ${ \\pmb y } _ { \\pmb x }$ and the approximation model $\\hat { y } _ { x }$ in Eqs. (2.1) and (2.2) satisfy the following conditions.",
+        "bbox": [
+            64,
+            623,
+            930,
+            657
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "1. Both random fields are uniformly bounded, i.e., there exists $M _ { 0 } > 0$ such that",
+        "bbox": [
+            88,
+            667,
+            689,
+            683
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/fe0a5de97cebfa13f0c5022ca96f680e615c406f102c5d8e7b0e6243a9aa1640.jpg",
+        "text": "$$\n\\| \\ b { y } ( \\ b { x } , \\omega ) \\| \\le M _ { 0 } , \\qquad \\| \\ b { \\hat { y } } ( \\ b { x } , \\hat { \\omega } ) \\| \\le M _ { 0 } , \\qquad \\forall \\ b { x } \\in \\ b { D } .\\tag{2.7}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            156,
+            711,
+            558,
+            729
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "2. The mappings � and $\\hat { f }$ are uniformly Lipschitz continuous with respect to the input variable. That is, there exists a constant $L > 0$ such that",
+        "bbox": [
+            86,
+            739,
+            930,
+            773
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/016b6c9c6375fe3dcae58181e5693c436d3ab6069fd87ec868cc188f06aafd8f.jpg",
+        "text": "$$\n\\| f ( \\pmb { x } , \\omega ) - f ( \\pmb { x } ^ { \\prime } , \\omega ) \\| \\leq L \\| \\pmb { x } - \\pmb { x } ^ { \\prime } \\| , \\quad \\| \\hat { f } ( \\pmb { x } , \\hat { \\omega } ) - \\hat { f } ( \\pmb { x } ^ { \\prime } , \\hat { \\omega } ) \\| \\leq L \\| \\pmb { x } - \\pmb { x } ^ { \\prime } \\| , \\ \\forall \\pmb { x } , \\pmb { x } ^ { \\prime } \\in D .\\tag{2.8}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            156,
+            800,
+            803,
+            819
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "3. The random variables � and ̂� are independent of the input variable �.",
+        "bbox": [
+            86,
+            830,
+            637,
+            847
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Following our previous work on local optimal transport [31], we define the weighted average squared $W _ { 2 }$ metric between the ground-truth and approximate random fields ${ \\pmb y } _ { \\pmb x }$ and $\\hat { y } _ { x }$ in Eqs. (2.1) and (2.2):",
+        "bbox": [
+            64,
+            857,
+            930,
+            890
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/64875f6c79288540243b8922cf83c91c4ab92ec542e787a2f9e0550127a966c2.jpg",
+        "text": "$$\n\\overline { { \\mathscr { W } } } _ { 2 } ( y _ { x } , \\hat { y } _ { x } ) : = \\int _ { D } W _ { 2 } ^ { 2 } ( \\mu _ { x } , \\hat { \\mu } _ { x } ) \\nu ( \\mathrm { d } x ) .\\tag{2.9}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            901,
+            397,
+            936
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "page_number",
+        "text": "Page 4 of 19",
+        "bbox": [
+            834,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "$\\overline { { \\mathscr { W } } } _ { 2 } ( { \\bf y } _ { x } , \\hat { \\bf y } _ { x } )$ defined in Eq. (2.9) is nonnegative, and if the weighting measure of the input variable � is strictly positive over $D _ { \\mathrm { { i } } }$ , then $\\overline { { \\mathscr { W } } } _ { 2 } ( y _ { x } , \\hat { y } _ { x } ) = 0$ holds if and only if",
+        "bbox": [
+            64,
+            72,
+            930,
+            109
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/88c4cc4a3e499e592692dae642988dafe09ba737fc5ffcdea9236a48f1a628b8.jpg",
+        "text": "$$\nW _ { 2 } ^ { 2 } ( \\mu _ { x } , \\hat { \\mu } _ { x } ) = 0 , \\qquad \\mathrm { f o r ~ a l m o s t ~ e v e r y ~ } x \\in \\mathcal { D } ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            112,
+            113,
+            457,
+            133
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "which implies that the probability measure of ${ \\pmb y } _ { \\pmb x }$ can be matched by the probability measure of $\\hat { y } _ { x }$ for almost every $\\boldsymbol { x } \\in \\boldsymbol { D }$ . Consequently, minimizing (2.9) is equivalent to matching the conditional distributions $\\mu _ { x }$ using $\\hat { \\mu } _ { x }$ throughout the computational domain. However, in practical applications only a finite set of scattered observations $\\{ ( \\pmb { x } _ { i } , \\pmb { y } _ { \\pmb { x } _ { i } } ) \\} _ { i = 1 } ^ { N }$ is available. Since the conditional probability measures $\\mu _ { x }$ and $\\hat { \\mu } _ { x }$ cannot be evaluated directly from finite observations, we approximate them by local empirical measures constructed from neighboring samples.",
+        "bbox": [
+            64,
+            140,
+            930,
+            219
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Given a training sample $\\pmb { x } _ { i } \\in \\{ \\pmb { x } _ { 1 } , . . . \\pmb { x } _ { N } \\}$ , we define its neighborhood",
+        "bbox": [
+            91,
+            221,
+            610,
+            237
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c71ce4b853961a1b777bbea527fab74e14b735f9e1717ce8c81ae60a6044a7af.jpg",
+        "text": "$$\nB ( \\pmb { x } _ { i } , \\delta ) = \\{ \\pmb { x } _ { j } : \\lVert \\pmb { x } _ { j } - \\pmb { x } _ { i } \\rVert < \\delta , \\ j = 1 , . . . , N \\} ,\\tag{2.10}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            112,
+            243,
+            465,
+            261
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "where $\\delta > 0$ is the neighborhood radius. For implementing the neighborhood technique, we randomly choose a subset",
+        "bbox": [
+            64,
+            268,
+            930,
+            284
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c8b2ea2d055521288008a7d68b8dae373df90c46122bd969c73c3f641848c1ed.jpg",
+        "text": "$$\nB ( \\pmb { x } _ { i } , \\delta ) \\subseteq B ( \\pmb { x } _ { i } , \\delta ) .\\tag{2.11}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            112,
+            308,
+            261,
+            324
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Let $\\mu _ { x _ { i } , \\delta } ^ { \\mathrm { e } }$ and $\\hat { \\mu } _ { x _ { i } , \\delta } ^ { \\mathrm { e } }$ denote the corresponding empirical conditional probability measures constructed from the neighboring observations, i.e., $\\mu _ { x _ { i } , \\delta } ^ { \\mathrm { e } }$ is the empirical distribution of $\\pmb { y } ( \\pmb { x } ; \\omega ) , \\pmb { x } \\in B ( \\pmb { x } _ { i } , \\delta )$ and $\\hat { \\mu } _ { x _ { i } , \\delta } ^ { \\mathrm { e } }$ is the empirical distribution of �̂(�; �), $\\pmb { x } \\in B ( \\pmb { x } _ { i } , \\dot { \\delta } ) . \\mu _ { \\pmb { x } _ { i } , \\delta } ^ { \\mathrm { e } }$ and $\\hat { \\mu } _ { x _ { i } , \\delta } ^ { \\mathrm { e } }$ are used to approximate $\\mu _ { x }$ and $\\hat { \\mu } _ { x }$ , respectively. We then introduce the proposed local Sinkhorn divergence loss:",
+        "bbox": [
+            64,
+            331,
+            931,
+            404
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/954686c8b2169863d2a3f5a94d7a6c5938b42016c30373a9ed7fea7208f25ecb.jpg",
+        "text": "$$\nS _ { \\varepsilon , \\delta } ^ { \\mathrm { e } } ( y _ { x } , \\hat { y } _ { x } ) : = \\int _ { \\cal D } S _ { \\varepsilon } ( \\mu _ { x , \\delta } ^ { \\mathrm { e } } , \\hat { \\mu } _ { x , \\delta } ^ { \\mathrm { e } } ) \\nu ^ { \\mathrm { e } } ( \\mathrm { d } x ) ,\\tag{2.12}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            411,
+            417,
+            446
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "where $\\nu ^ { \\mathrm { e } }$ denotes the empirical measure associated with the observed input variable �. Eq. (2.12) is not a single Sinkhorn divergence between two probability measures. Instead, it computes the average Sinkhorn divergence between the local empirical conditional distributions over the entire input domain. The superscript e indicates empirical probability measures estimated from neighboring observations, while the subscript � denotes the neighborhood radius.",
+        "bbox": [
+            64,
+            450,
+            931,
+            514
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Compared with the $W _ { 2 }$ metrics, the Sinkhorn divergence introduces an entropic regularization, allowing the optimal transport problem to be solved eficiently by iterative matrix scaling rather than network simplex optimization [6, 8]. Consequently, the resulting loss is fully diferentiable and naturally amenable to GPU-parallel computation, while recent theoretical results also demonstrate improved statistical convergence properties for empirical Sinkhorn divergences compared with empirical Wasserstein distances [11]. Specifically, we establish two diferent forms of the generalization error bounds on how the local Sinkhorn divergence Eq. (2.12) approximates the averaged squared Wasserstein discrepancy in Eq. (2.9).",
+        "bbox": [
+            64,
+            514,
+            931,
+            628
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Theorem 2.1 (Generalization bound based on the generalization error of the local squared $W _ { 2 }$ loss). Under Assumptions 2.1, let $\\mu _ { x }$ and $\\hat { \\mu } _ { x }$ denote the true conditional probability measures associated with ${ \\pmb y } _ { \\pmb x }$ and $\\hat { y } _ { x }$ at location $\\boldsymbol { x } \\in \\mathcal { D }$ , respectively. Let $\\mu _ { x , \\delta } ^ { \\mathrm { e } }$ and $\\hat { \\mu } _ { x , \\delta } ^ { \\mathrm { e } }$ be the corresponding empirical neighborhood measures built from the sample set $\\{ ( \\pmb { x } _ { i } , \\pmb { y } _ { \\pmb { x } _ { i } } ) \\} _ { i = 1 } ^ { N }$ with neighborhood radius $\\delta > 0$ . We assume $\\varepsilon < \\frac { 2 M _ { 0 } ^ { 2 } } { \\sqrt { d } }$ . For $\\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\mathrm { e } } ( \\boldsymbol { y } _ { x } , \\hat { \\boldsymbol { y } } _ { x } )$ and $\\overline { { \\mathscr { W } } } _ { 2 } ( { \\bf y } _ { x } , \\hat { \\bf y } _ { x } )$ defined in Eqs. (2.9) and (2.12), there exists a constant $C > 0$ such that:",
+        "bbox": [
+            64,
+            633,
+            931,
+            731
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6fa2e18e41eae54fc9560e3e1c358e591f98dcb2a5a087669b77ae7fe8ab2a73.jpg",
+        "text": "$$\n\\mathbb { E } \\bigg [ \\bigg \\lvert \\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\textnormal { e } } ( y _ { x } , \\hat { y } _ { x } ) - \\overline { { \\mathcal { W } } } _ { 2 } ( y _ { x } , \\hat { y } _ { x } ) \\bigg \\rvert \\bigg ] \\leq 2 \\varepsilon \\log \\Bigg ( \\frac { 2 e ^ { 2 } M _ { 0 } ^ { 2 } } { \\sqrt { d } \\varepsilon } \\Bigg ) + \\frac { 4 M _ { 0 } } { \\sqrt { N } } + 8 C M _ { 0 } \\mathbb { E } \\big [ h ( N ( x , \\delta ) , d ) \\big ] + 1 6 M _ { 0 } ^ { 2 } \\delta ,\\tag{2.13}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            737,
+            840,
+            780
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "where � is the number of training samples, and",
+        "bbox": [
+            66,
+            787,
+            426,
+            803
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f74e9f222c61c7ac2708ddb8d61279a9ac9601ba3d09c41f61faa542efa73333.jpg",
+        "text": "$$\nN ( \\pmb { x } , \\delta ) : = | B ( \\pmb { x } , \\delta ) |\\tag{2.14}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            113,
+            809,
+            270,
+            826
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "denotes the efective number of samples chosen from the neighborhood $B ( { \\pmb x } , \\delta )$ centered at � defined in Eq. (2.10), and",
+        "bbox": [
+            64,
+            834,
+            930,
+            865
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0002933029b750921c458f310c9ef2a376ce1ded666ead8ef27a6ac3dfdb1bf8.jpg",
+        "text": "$$\n\\begin{array} { r } { h ( N , d ) : = \\left\\{ \\begin{array} { l l } { 2 N ^ { - 1 / 4 } \\log ( 1 + N ) ^ { 1 / 2 } , } & { d \\leq 4 , } \\\\ { 2 N ^ { - \\frac { 1 } { 4 } } + \\big ( \\prod _ { i = 1 } ^ { d } ( \\frac { \\sigma _ { i , x } } { \\sigma _ { 1 , x } } ) N \\big ) ^ { - \\frac { 1 } { d } } + \\big ( \\prod _ { i = 1 } ^ { d } ( \\frac { \\hat { \\sigma } _ { i , x } } { \\hat { \\sigma } _ { 1 , x } } ) N \\big ) ^ { - \\frac { 1 } { d } } , } & { d > 4 . } \\end{array} \\right. } \\end{array}\\tag{2.15}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            870,
+            656,
+            933
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "page_number",
+        "text": "Page 5 of 19",
+        "bbox": [
+            834,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "In Eq. (2.15),",
+        "bbox": [
+            64,
+            72,
+            170,
+            88
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "img_path": "images/767483c8d97922971e366373a478f4a207001275e2d88440a31b1cf49406a451.jpg",
+        "text": "$$\n\\sigma _ { i , x } : = \\big ( \\int _ { \\mathbb { R } ^ { d } } y _ { i } \\mu _ { x } ( \\mathrm { d } y ) \\big ) ^ { \\frac { 1 } { 6 } } , \\ \\hat { \\sigma } _ { i , x } : = \\big ( \\int _ { \\mathbb { R } ^ { d } } y _ { i } \\hat { \\mu } _ { x } ( \\mathrm { d } y ) \\big ) ^ { \\frac { 1 } { 6 } } .\\tag{2.16}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            98,
+            509,
+            134
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The proof of Theorem 2.1 is mainly based on the generalization error bound of the local squared $W _ { 2 }$ distance ([30, Theorem 2.3]) and is given in Appendix B. Theorem 2.1 provides a generalization error bound on estimating how the empirical Sinkhorn divergence loss function $\\bar { S } _ { \\varepsilon , \\delta } ^ { \\mathrm { e } } .$ , when utilizing the neighborhood technique, approximates the averaged squared $W _ { 2 }$ distance between the ground truth random field ${ \\pmb y } _ { \\pmb x }$ and the approximate model $\\hat { y } _ { x }$",
+        "bbox": [
+            64,
+            144,
+            931,
+            210
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "On the other hand, if we use the generalization error bound for estimating the Sinkhorn divergence using the empirical distributions, we can obtain another generalization error bound for our local Sinkhorn divergence loss function.",
+        "bbox": [
+            64,
+            210,
+            931,
+            258
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Theorem 2.2 (Generalization bound based on the generalization error of the Sinkhorn divergence). For the averaged local Sinkhorn loss defined in Eq. (2.12) and the corresponding population averaged squared $W _ { 2 }$ distance defined in Eq. (2.9), assume that the hypotheses of [11, Theorem 3] hold, and $\\varepsilon < \\frac { 2 M _ { 0 } ^ { 2 } } { \\sqrt { d } }$ . Then the following generalization error bound holds:",
+        "bbox": [
+            64,
+            268,
+            931,
+            345
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3b2e87c568ae633e7787794af2fe8f67ab0ae571a2a138461a54519be00eb307.jpg",
+        "text": "$$\n\\mathbb { E } \\bigg [ \\bigg \\lvert \\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\textnormal { e } } ( \\mathbf { y } _ { x } , \\hat { y } _ { x } ) - \\overline { { \\mathcal { W } } } _ { 2 } ( y _ { x } , \\hat { y } _ { x } ) \\bigg \\rvert \\bigg ] \\leq 2 \\varepsilon \\log \\bigg ( \\frac { 2 e ^ { 2 } M _ { 0 } ^ { 2 } } { \\sqrt { d } \\varepsilon } \\bigg ) + \\mathcal { O } \\bigg ( \\frac { e ^ { \\frac { S M _ { 0 } ^ { 2 } } { \\varepsilon } } } { \\sqrt { N ( x , \\delta ) } } \\bigg ( 1 + \\varepsilon ^ { - \\lfloor d / 2 \\rfloor } \\bigg ) \\bigg ) + 1 6 M _ { 0 } ^ { 2 } \\delta ,\\tag{2.17}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            354,
+            823,
+            404
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "where $N ( { \\pmb x } , \\delta )$ denotes the efective number of samples in each neighborhood (defined in Eq. (2.14)).",
+        "bbox": [
+            64,
+            415,
+            812,
+            432
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The proof of Theorem 2.2 is mainly based on the generalization error bound of using the empirical measures to evaluate the Sinkhorn divergence ([11, Theorem 3]) and is given in Appendix B.",
+        "bbox": [
+            64,
+            440,
+            930,
+            474
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "To exemplify how the size of the neighborhood � and the number of samples in each neighborhood $N ( { \\pmb x } , \\delta )$ influences the generalization error bound, consider the case when the empirical probability measure of the input variable is close to the uniform distribution and the neighborhood size satisfies $N ( { \\pmb x } , \\delta ) \\asymp C N \\delta ^ { n }$ (� is the total number of training samples) for the intrinsic dimension � of the input variable �, then using Theorem 2.1, we have:",
+        "bbox": [
+            64,
+            474,
+            931,
+            539
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "img_path": "images/bd9f536da916d0ab5491e9daeac387a24d764124319bf275f31a1df0a3d6bc11.jpg",
+        "text": "$$\n\\mathbb { E } \\bigg [ \\bigg \\lvert \\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\mathrm { e } } ( y _ { x } , \\hat { y } _ { x } ) - \\overline { { \\mathcal { W } } } _ { 2 } ( y _ { x } , \\hat { y } _ { x } ) \\bigg \\rvert \\bigg ] \\lesssim 2 \\varepsilon \\log \\Biggl ( \\frac { 2 e ^ { 2 } M _ { 0 } ^ { 2 } } { \\sqrt { d } \\varepsilon } \\Biggr ) + \\frac { 4 M _ { 0 } } { \\sqrt { N } } + 8 C M _ { 0 } h ( C N \\delta ^ { n } , d ) + 1 6 M _ { 0 } ^ { 2 } \\delta .\\tag{2.18}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            548,
+            812,
+            594
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "On the other hand, using Theorem 2.2 yields:",
+        "bbox": [
+            91,
+            602,
+            433,
+            619
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c29c9a43b0101378640138fe01f254f93add2befbcf9cfea3cceec8b6d436832.jpg",
+        "text": "$$\n\\mathbb { E } \\bigg [ \\bigg \\lvert \\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\textnormal { e } } ( \\mathbf { y } _ { x } , \\hat { y } _ { x } ) - \\overline { { \\mathcal { W } } } _ { 2 } ( \\mathbf { y } _ { x } , \\hat { y } _ { x } ) \\bigg \\rvert \\bigg ] \\lesssim 2 \\varepsilon \\log \\Bigg ( \\frac { 2 e ^ { 2 } M _ { 0 } ^ { 2 } } { \\sqrt { d } \\varepsilon } \\Bigg ) + \\mathcal { O } \\Bigg ( \\frac { e ^ { \\frac { 5 M _ { 0 } ^ { 2 } } { \\varepsilon } } } { \\sqrt { C N \\delta ^ { n } } } \\Big ( 1 + \\varepsilon ^ { - \\lfloor d / 2 \\rfloor } \\Big ) \\Bigg ) + 1 6 M _ { 0 } ^ { 2 } \\delta .\\tag{2.19}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            630,
+            821,
+            680
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The two bounds Eqs. (2.18) and (2.19) suggest an important practical implication. When the data are highly heterogeneous, the conditional distributions may vary sharply across the domain. When the approximate random field model can capture such heterogeneity such that $\\begin{array} { r } { \\prod _ { i = 1 } ^ { d } ( \\frac { \\sigma _ { i , x } } { \\sigma _ { 1 , x } } ) ^ { \\frac { 1 } { d } } + \\prod _ { i = 1 } ^ { d } ( \\frac { \\hat { \\sigma } _ { i , x } } { \\hat { \\sigma } _ { 1 , x } } ) ^ { \\frac { 1 } { d } } } \\end{array}$ is small, the approximation error induced by overly large entropic regularization when � is large can dominate the generalization error. In this regime, it is preferable to choose a relatively small regularization parameter �, so that the local Sinkhorn loss remains close to the local squared $W _ { 2 }$ loss. Then, compared with the local squared $W _ { 2 }$ loss, the additional generalization error induced is essentially only the Sinkhorn regularization bias, while the neighborhood-based approximation and sampling errors remain unchanged.",
+        "bbox": [
+            62,
+            691,
+            931,
+            830
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "On the other hand, when the noise in the target variable ${ \\pmb y } _ { \\pmb x }$ is homogeneous, the conditional distributions vary more smoothly and a moderately large regularization parameter, $\\begin{array} { r } { \\mathbf { e . g . } \\varepsilon = O ( 1 ) } \\end{array}$ at the scale of the cost function, can be advantageous, so that the convergence rate as the number of training samples $N \\to \\infty { \\mathrm { ~ i s ~ } } \\mathcal { O } \\big ( ( N \\delta ^ { n } ) ^ { - \\frac { 1 } { 2 } } \\big )$ . In this case, entropic smoothing improves numerical stability and can reduce the efective sample complexity penalty associated with the Sinkhorn approximation. As a result, by tuning �, the local Sinkhorn loss provides a flexible trade-of between statistical accuracy and computational robustness, and may partially alleviate the curse of dimensionality compared with the exact local squared $W _ { 2 }$ loss. Furthermore, as � decreases, the proposed local Sinkhorn loss approaches the local squared Wasserstein distance, leading to higher geometric fidelity but slower statistical convergence. Conversely, increasing � improves the statistical convergence and computational eficiency of the empirical Sinkhorn divergence while introducing additional regularization bias. Therefore, selecting a moderate regularization parameter also provides a favorable compromise between approximation accuracy and computational eficiency.",
+        "bbox": [
+            64,
+            830,
+            931,
+            933
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "page_number",
+        "text": "Page 6 of 19",
+        "bbox": [
+            834,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "code",
+        "sub_type": "algorithm",
+        "code_caption": [],
+        "code_footnote": [],
+        "code_body": "Algorithm 1 The pseudocode of the local Sinkhorn approach to train an SNN   \nRequire: Given � observed data $\\{ ( \\pmb { x } _ { i } , \\pmb { y } _ { \\pmb { x } _ { i } } ) \\} _ { i = 1 } ^ { N }$ , the neighborhood radius $\\delta ,$ the mini-batch size $n _ { b } ,$ the number of   \nlocal samples �, the minimum number of local samples required for each center $n _ { \\mathrm { m i n } }$ , the maximal number of local   \nsamples recorded for each center $n _ { \\mathrm { m a x } } ,$ the number of epochs �, and the Sinkhorn regularization parameter �   \n1: Initialize the SNN in Fig. 1   \n2: For each $x _ { i } ,$ find its neighborhood $B _ { i } : = \\{ \\pmb { x } _ { j } : \\| \\pmb { x } _ { j } - \\pmb { x } _ { i } \\| \\leq \\delta \\}$ . Do not use $\\pmb { x } _ { i }$ as an eligible training neighborhood   \ncenter if its neighborhood contains too few samples $( | B _ { i } | < n _ { \\operatorname* { m i n } } )$ . If there are too many neighbors such that   \n$| B _ { i } | > n _ { \\operatorname* { m a x } } ,$ randomly keep $n _ { \\mathrm { m a x } }$ neighbors to form the updated $B _ { i }$   \n3: Input $\\{ \\pmb { x } _ { i } \\} _ { i = 1 } ^ { N }$ into the SNN model to obtain predictions $\\{ \\bar { \\hat { y } } _ { i } \\} _ { i = 1 } ^ { N }$   \n4: for epoch ${ \\stackrel { } { = } } 1 , \\dots , E$ do   \n5: Randomly select � neighborhood centers $n _ { b }$   \n6: for each selected center $\\pmb { x } _ { i }$ do   \n7: Randomly choose min(�, $| B _ { i } | )$ samples from $B _ { i }$ to construct a local mini-batch $( B ( \\pmb { x } _ { i } , \\delta )$ defined in   \nEq. (2.11))   \n8: Input the sampled local inputs into the SNN to obtain predictions   \n9: Compute the local Sinkhorn loss   \n$\\mathcal { L } _ { i } = S _ { \\varepsilon } \\left( \\hat { \\mu } _ { x _ { i } , \\delta } ^ { \\mathrm { e } } , \\mu _ { x _ { i } , \\delta } ^ { \\mathrm { e } } \\right)$   \n10: end for   \n11: Calculate the total loss   \n$\\mathcal { L } = \\frac { 1 } { n _ { b } } \\sum _ { i = 1 } ^ { n _ { b } } \\mathcal { L } _ { i }$   \n12: Perform gradient descent to minimize  and update the parameters in the SNN   \n13: Resample the stochastic weights in the SNN using the updated parameter distributions   \n14: end for   \n15: return The trained SNN",
+        "bbox": [
+            66,
+            68,
+            931,
+            548
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            64,
+            575,
+            931,
+            656
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Finally, the neighborhood radius � must be chosen to balance two competing sources of error. As shown in Eqs. (2.18) and (2.19), increasing $\\delta$ enlarges the number of samples within each neighborhood and therefore reduces the empirical estimation error, namely 8� $M _ { 0 } h ( C N \\delta ^ { n } , d )$ and $\\mathcal { O } \\Bigg ( \\frac { \\exp \\Bigl ( 5 M _ { 0 } ^ { 2 } / \\varepsilon \\Bigr ) } { \\sqrt { C N \\delta ^ { n } } } \\left( 1 + \\varepsilon ^ { - \\lfloor d / 2 \\rfloor } \\right) \\Bigg )$ . However, a larger neighborhood inevitably increases the systematic approximation error, quantified by the term $1 6 M _ { 0 } ^ { 2 } \\delta$ . Consequently, an appropriate neighborhood radius should strike a balance between statistical accuracy and locality: it should not be too small to provide adequate samples for reliable estimation of the local empirical distribution, while remaining not too large to preserve the local structure of the underlying conditional distribution and avoid excessive approximation bias.",
+        "bbox": [
+            64,
+            654,
+            931,
+            812
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "3. Numerical experiments",
+        "text_level": 2,
+        "bbox": [
+            66,
+            831,
+            319,
+            850
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "In this section, we carry out numerical experiments to test our proposed local Sinkhorn approach for training SNNs. Test settings and hyperparameters are listed in Table 4. Pseudocode for minimizing our proposed local Sinkhorn to train the SNN in Fig. 1 is given in Algorithm 1.",
+        "bbox": [
+            64,
+            855,
+            930,
+            905
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            946,
+            426,
+            962
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "page_number",
+        "text": "Page 7 of 19",
+        "bbox": [
+            834,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "In Examples 1 and 2, the reconstruction accuracy on the testing set is evaluated by comparing the empirical conditional means and variances of the reconstructed and reference distributions. Let $\\{ ( \\bar { \\mathbf { x } } _ { i } ^ { \\mathrm { t e s t } } , \\mathbf { y } _ { i } ^ { \\mathrm { t e s t } } ) \\}$ denote samples in the testing set, and $B ^ { \\mathrm { t e s t } } ( { \\pmb x } _ { i } ^ { \\mathrm { t e s t } } , 0 )$ denote the set of observations with the identical input as $\\mathbf { \\boldsymbol { x } } _ { i } \\mathrm { : }$",
+        "bbox": [
+            64,
+            72,
+            931,
+            122
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/b7435bfe93e98afb7a3c57fd53ed5333eec0bf317e63c5cb89d7bd0e1856e4b5.jpg",
+        "text": "$$\n\\{ \\pmb { x } _ { j } ^ { \\mathrm { t e s t } } : \\pmb { x } _ { j } ^ { \\mathrm { t e s t } } = \\pmb { x } _ { i } ^ { \\mathrm { t e s t } } \\} .\\tag{3.1}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            112,
+            133,
+            273,
+            153
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "The ground-truth and predicted means are:",
+        "bbox": [
+            66,
+            163,
+            386,
+            179
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/64768cbe309ad740a9edd8913902d7daf005c068c940e1b7dcadb9caab814143.jpg",
+        "text": "$$\n\\pmb { m } _ { i } = \\frac { 1 } { R } \\sum _ { x _ { j } ^ { \\mathrm { t e s t } } \\in B ( x _ { i } ^ { \\mathrm { t e s t } } , 0 ) } \\pmb { y } _ { j } ^ { \\mathrm { t e s t } } , \\qquad \\hat { \\pmb { m } } _ { i } = \\frac { 1 } { R } \\sum _ { x _ { j } ^ { \\mathrm { t e s t } } \\in B ( x _ { i } ^ { \\mathrm { t e s t } } , 0 ) } \\hat { \\pmb { y } } _ { j } ^ { \\mathrm { t e s t } }\\tag{3.2}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            190,
+            531,
+            231
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "be the empirical conditional mean vectors at the $i ^ { \\mathrm { { t h } } }$ testing center, respectively. Similarly, let",
+        "bbox": [
+            64,
+            245,
+            748,
+            261
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/31f4655ccc1b7850c5a06bcd5bc9d97ec528fb7aa1551773f4717b2d5af87df4.jpg",
+        "text": "$$\nv _ { i } = \\frac { 1 } { R } \\sum _ { x _ { j } ^ { \\mathrm { t e s t } } \\in B ( x _ { i } ^ { \\mathrm { t e s t } } , 0 ) } \\left( y _ { j } ^ { \\mathrm { t e s t } } - m _ { i } \\right) ^ { \\circ 2 } , \\qquad \\hat { v } _ { i } = \\frac { 1 } { R } \\sum _ { x _ { j } ^ { \\mathrm { t e s t } } \\in B ( x _ { i } ^ { \\mathrm { t e s t } } , 0 ) } \\left( \\hat { y } _ { j } ^ { \\mathrm { t e s t } } - \\hat { m } _ { i } \\right) ^ { \\circ 2 } ,\\tag{3.3}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            270,
+            687,
+            315
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "denote the empirical variance vectors at the $i ^ { \\mathrm { { t h } } }$ testing center, where $( \\cdot ) ^ { \\circ 2 }$ denotes the element-wise square. In Eqs. (3.2) and (3.3), $R : = | B ^ { \\mathrm { t e s t } } ( x _ { i } ^ { \\mathrm { t e s t } } , 0 ) |$ is the number of testing samples at each testing center. The average relative mean and variance reconstruction error is defined as follows:",
+        "bbox": [
+            64,
+            327,
+            931,
+            377
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/efdaa9fc9d2acc07b1029ad7a378f14d2404694787f7d389d729a2bea77a021f.jpg",
+        "text": "$$\n\\mathcal { E } _ { \\mathrm { m e a n } } = \\frac { 1 } { N _ { c } } \\sum _ { i = 1 } ^ { N _ { c } } \\frac { \\| \\hat { \\pmb { m } } _ { i } - \\pmb { m } _ { i } \\| _ { 2 } } { \\| \\pmb { m } _ { i } \\| _ { 2 } + \\epsilon _ { 0 } } , ~ \\mathcal { E } _ { \\mathrm { v a r } } = \\frac { 1 } { N _ { c } } \\sum _ { i = 1 } ^ { N _ { c } } \\frac { \\| \\hat { \\pmb { v } } _ { i } - \\pmb { v } _ { i } \\| _ { 2 } } { \\| \\pmb { v } _ { i } \\| _ { 2 } + \\epsilon _ { 0 } } ,\\tag{3.4}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            384,
+            540,
+            428
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "where $N _ { c }$ is the number of testing centers, and $\\epsilon _ { 0 }$ is set as $1 0 ^ { - 8 }$ to avoid division by zero.",
+        "bbox": [
+            64,
+            440,
+            727,
+            458
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "First, we consider learning a unidimensional random field model to compare with diferent loss functions.",
+        "bbox": [
+            91,
+            458,
+            875,
+            474
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Example 1. We consider a one-dimensional conditional distribution reconstruction problem. The objective is to learn the conditional distribution",
+        "bbox": [
+            64,
+            482,
+            930,
+            516
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/596249a0cd8d710d35f18ca3bed123ea41cbe52aa288ff1ee0434b26b196094f.jpg",
+        "text": "$$\np ( y \\mid x ) , ~ x \\in [ 0 , 1 ] .\\tag{3.5}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            526,
+            261,
+            544
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Unlike conventional regression problems where only the conditional mean is estimated, our objective is to reconstruct the entire conditional distribution from scattered observations. The conditional response is generated from a bimodal Gaussian mixture model,",
+        "bbox": [
+            64,
+            555,
+            931,
+            603
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/59b9c8ebb1307b3d149dddb467fcfd6a591de0847abc860f47fa43e064681fd2.jpg",
+        "text": "$$\ny = m ( x ) + s d ( x ) + \\varepsilon _ { 0 } ,\\tag{3.6}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            615,
+            292,
+            632
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "where the random variable $s \\in \\{ - 1 , + 1 \\}$ is sampled with equal probability,",
+        "bbox": [
+            66,
+            644,
+            625,
+            660
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/db7966006857aed9fa5134e1f97e23c6c4b9d59e7e11f2daae246ad406bc5147.jpg",
+        "text": "$$\n\\mathbb { P } ( s = - 1 ) = \\mathbb { P } ( s = 1 ) = \\frac { 1 } { 2 } ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            669,
+            325,
+            700
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "and $\\varepsilon _ { 0 } \\sim \\mathcal { N } ( 0 , \\sigma ^ { 2 } )$ with $\\sigma = 0 . 0 4$ . In Eq. (3.6), the conditional mean function is chosen as",
+        "bbox": [
+            66,
+            710,
+            733,
+            727
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3fac8c16a29c10909de60eed919cd15ae50ed8282c2ee90c9fddde6d270e9586.jpg",
+        "text": "$$\nm ( x ) = 0 . 5 0 + 0 . 2 0 x + \\exp \\left[ - 5 ( x - 0 . 6 0 ) ^ { 2 } \\right] + 0 . 4 0 \\sin \\left( \\frac { x } { 2 } \\right) ,\\tag{3.7}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            738,
+            558,
+            765
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "which produces a smooth nonlinear trend over the computational domain. The separation between the two Gaussian modes is controlled by",
+        "bbox": [
+            64,
+            774,
+            930,
+            807
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/67917f15ffed67979a90d4230a42148aebf4b0e53fcfbb52ef8e91342ff0e555.jpg",
+        "text": "$$\nd ( x ) = 0 . 3 8 + 0 . 1 0 \\exp \\left( - \\frac { ( x - 0 . 7 0 ) ^ { 2 } } { 2 \\cdot ( 0 . 1 4 ) ^ { 2 } } \\right) ,\\tag{3.8}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            818,
+            424,
+            854
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "which allows the distance between the two modes to vary smoothly with the input variable. Consequently, the conditional distribution is given by",
+        "bbox": [
+            64,
+            863,
+            930,
+            894
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/7de6bc1f7da841133fbd4fa815277282176a089d78a3228d572cf34723775e0a.jpg",
+        "text": "$$\np ( y | x ) = \\frac { 1 } { 2 } \\mathcal { N } \\left( m ( x ) - d ( x ) , \\sigma ^ { 2 } \\right) + \\frac { 1 } { 2 } \\mathcal { N } \\left( m ( x ) + d ( x ) , \\sigma ^ { 2 } \\right) .\\tag{3.9}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            904,
+            555,
+            936
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "page_number",
+        "text": "Page 8 of 19",
+        "bbox": [
+            834,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "For the training set, $N _ { \\mathrm { t r a i n } } = 2 0 0 0$ samples are independently generated by first sampling $\\boldsymbol { x } _ { i } \\sim \\mathcal { V } ( \\boldsymbol { 0 } , \\boldsymbol { 1 } )$ , followed by drawing $y _ { i } \\sim p ( y | x _ { i } )$ . Therefore, each training sample is independent. To generate the test set, 100 uniformly distributed input locations are selected as neighborhood centers. At each testing location, 20 independent realizations are generated from the conditional distribution (Eq. 3.9), providing empirical estimates of the local conditional distributions used for quantitative evaluation.",
+        "bbox": [
+            64,
+            72,
+            931,
+            153
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "To investigate the influence of diferent discrepancy measures on conditional distribution learning, six diferent local loss functions are considered, namely local MSE, local MAE, local Energy Distance, local MMD, local squared $W _ { 2 } ,$ , and the proposed local Sinkhorn divergence. The mathematical definitions of these losses are summarized in Appendix D. Fig. 2 summarizes the overall performance of the six loss functions. Fig. 2 (a) compares the total training time. Owing to the entropic regularization, the proposed Local Sinkhorn loss requires significantly less computational efort than the previous local squared $W _ { 2 }$ loss in [31]. Fig. 2 (b) reports the average relative errors of the conditional mean and conditional variance on the testing set. Distribution-based losses consistently outperform pointwise regression losses (Local MSE and Local MAE), indicating that matching local empirical distributions is substantially more efective than matching individual samples. Among all competing losses, the proposed local Sinkhorn loss achieves the smallest overall errors for both the conditional mean and conditional variance. Fig. 2 (c) compares the reconstructed conditional distributions obtained by the proposed Local Sinkhorn model with the reference solution. The predicted mean accurately follows the true nonlinear trend while the predicted standard-deviation band agrees closely with the reference distribution over the entire computational domain. These results demonstrate that the proposed local Sinkhorn formulation is capable of accurately reconstructing both the location and spread of the conditional distribution.",
+        "bbox": [
+            64,
+            153,
+            931,
+            396
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Next, we carry out an experiment in which the target random variable ${ \\pmb y } _ { \\pmb x }$ is multidimensional and compare our local Sinkhorn approach with other machine-learning uncertainty quantification benchmarks.",
+        "bbox": [
+            64,
+            405,
+            930,
+            438
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Example 2. We consider a stochastic Darcy flow problem on the spatial domain $\\pmb { x } \\in \\mathcal { D } = [ 0 , 1 ] ^ { 2 }$ . For each realization of the uncertain model parameters $\\omega \\in \\Omega$ , we solve:",
+        "bbox": [
+            64,
+            447,
+            930,
+            479
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/64dcf91cf68bcf4855faf7b01bd93c10d98c1f26fffdeec4672dece088f7b4e9.jpg",
+        "text": "$$\n- \\nabla \\cdot ( a ( \\boldsymbol { x } , \\omega ) \\nabla u ( \\boldsymbol { x } , \\omega ) ) = f ( \\boldsymbol { x } ) , \\qquad \\boldsymbol { x } \\in D ,\\tag{3.10}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            493,
+            443,
+            509
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "subject to homogeneous Dirichlet boundary conditions",
+        "bbox": [
+            66,
+            521,
+            474,
+            537
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/11c04d8a67edc1d49dc973c3e108daf1bcca2f5f0b603c4bef9de89b235eb406.jpg",
+        "text": "$$\nu ( \\mathbf { x } , \\omega ) = 0 , \\qquad \\mathbf { x } \\in \\partial D .\\tag{3.11}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            549,
+            308,
+            566
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "The permeability field is modeled as:",
+        "bbox": [
+            93,
+            578,
+            373,
+            594
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/2fab4a85e40a1d45b7a93c45f78e12e692cad06f9d05427a0fa3425caa747a11.jpg",
+        "text": "$$\na ( \\mathbf { x } , \\omega ) = \\exp ( g ( \\mathbf { x } , \\omega ) ) ,\\tag{3.12}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            607,
+            292,
+            623
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "where $g ( \\pmb { x } , \\omega )$ is a zero-mean Gaussian random field generated by FFT-based spectral synthesis. Specifically, the random field is constructed in the Fourier domain as:",
+        "bbox": [
+            64,
+            634,
+            930,
+            668
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e739cafe98d7ca794e43fb5a3c6e8ea0d1c86d163a5f1c8177a8337fcc2c00af.jpg",
+        "text": "$$\n\\widehat { g } ( \\boldsymbol { k } , \\omega ) = \\sqrt { c ( \\boldsymbol { k } ) } \\widehat { \\xi } ( \\boldsymbol { k } , \\omega ) ,\\tag{3.13}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            679,
+            299,
+            698
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "where $\\widehat { \\xi } ( \\boldsymbol { k } , \\omega )$ are independent complex Gaussian random variables satisfying $\\widehat { \\xi } ( k , \\omega ) \\sim \\mathcal { N } ( 0 , 1 )$ , and the covariance spectrum is prescribed by",
+        "bbox": [
+            64,
+            708,
+            930,
+            743
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/84297980918e0667ed80f9c341965d650b171b044e99b05e4f60d2cf82d30dbe.jpg",
+        "text": "$$\n\\begin{array} { r } { c ( k ) = \\left( 1 + ( 2 \\pi \\ell ) ^ { 2 } | k | ^ { 2 } \\right) ^ { - \\alpha / 2 } , } \\end{array}\\tag{3.14}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            753,
+            340,
+            777
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "with correlation length $\\ell$ and smoothness parameter �. The Gaussian random field is then obtained by applying the inverse Fourier transform,",
+        "bbox": [
+            64,
+            788,
+            930,
+            820
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/73302c9e8ba98e851b7dfa81637601a77546ea6074a5b375f3262d1a8eb482b6.jpg",
+        "text": "$$\n\\begin{array} { r } { g ( \\pmb { x } , \\omega ) = \\mathcal { F } ^ { - 1 } \\big ( \\widehat { g } ( k , \\omega ) \\big ) , } \\end{array}\\tag{3.15}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            831,
+            301,
+            850
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "followed by normalization to zero mean and unit variance.",
+        "bbox": [
+            64,
+            862,
+            500,
+            877
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "To generate the training and testing set, we establish a uniform 64 × 64 grid on  denoted as $D _ { 6 4 } = \\{ \\pmb { x } _ { i , j } =$ $( \\frac { i } { 6 3 } , \\frac { j } { 6 3 } ) \\} _ { i , j = 0 } ^ { 6 4 }$ . Then, we randomly sample $\\boldsymbol { x } _ { i , j }$ from $D _ { 6 4 }$ satisfying $6 \\leq i , j \\leq 5 7$ . For the chosen $\\boldsymbol { x } _ { i , j }$ , a square window of size $7 \\times 7$ is first constructed on the underlying computational grid. A total of 16 grid points $\\mathbf x _ { i ^ { \\prime } , j ^ { \\prime } }$ are then randomly",
+        "bbox": [
+            64,
+            877,
+            931,
+            932
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "page_number",
+        "text": "Page 9 of 19",
+        "bbox": [
+            834,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "table",
+        "img_path": "images/605ad309466b61ab390b3440c2597a2ef283f8d3fc8c9fca979524e898a33901.jpg",
+        "table_caption": [
+            "Comparison of diferent conditional distribution learning methods and loss function used to train the SNN on the Darcy flow benchmark."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Method</td><td>Mean Error</td><td>Variance Error</td><td>Training Time (s)</td><td>Memory (MB)</td></tr><tr><td>Heteroscedastic Gaussian Regression</td><td>0.1189</td><td>0.5104</td><td>23.48</td><td>687.38</td></tr><tr><td>Mixture Density Network</td><td>0.0970</td><td>5.3101</td><td>52.06</td><td>686.72</td></tr><tr><td>Conditional VAE</td><td>0.2931</td><td>5.8687</td><td>31.10</td><td>695.09</td></tr><tr><td>Conditional Normalizing Flow</td><td>0.3256</td><td>3.5312</td><td>140.36</td><td>689.73</td></tr><tr><td> $\\mathsf { S N N } + \\mathsf { L o c a l } \\ W _ { 2 }$ </td><td>0.0519</td><td>0.3213</td><td>500.84</td><td>905.14</td></tr><tr><td> $\\mathsf { S N N } + \\mathsf { S i n k h o r n }$ </td><td>0.0473</td><td>0.2318</td><td>308.34</td><td>791.08</td></tr><tr><td> $\\mathsf { S N N } + \\mathsf { M M D }$ </td><td>0.0779</td><td>0.7878</td><td>649.60</td><td>733.90</td></tr></table>",
+        "bbox": [
+            136,
+            122,
+            862,
+            249
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "sampled without replacement from this window. This sampling strategy is adopted to ensure that most training samples have enough neighbors around them. For each selected grid point $\\pmb { x } _ { i ^ { \\prime } , j ^ { \\prime } } , \\mathrm { a } \\ 5 \\times 5$ solution patch on the grid is extracted with the selected grid point being the center. The corresponding solution patch is defined as:",
+        "bbox": [
+            62,
+            276,
+            931,
+            326
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/17495084e08c9f04535e7463b759cc4c6b9802bf919902012da63eeeffa2f05c.jpg",
+        "text": "$$\ny ( x _ { i ^ { \\prime } , j ^ { \\prime } } , \\omega _ { i ^ { \\prime } , j ^ { \\prime } } ) = \\left( u ( x _ { i ^ { \\prime } - 2 , j ^ { \\prime } - 2 } , \\omega _ { i ^ { \\prime } - 2 , j ^ { \\prime } - 2 } ) , u ( x _ { i ^ { \\prime } - 2 , j ^ { \\prime } - 1 } , \\omega _ { i ^ { \\prime } - 2 , j ^ { \\prime } - 1 } ) , \\ldots , u ( x _ { i ^ { \\prime } + 2 , j ^ { \\prime } + 2 } , \\omega _ { i ^ { \\prime } + 2 , j ^ { \\prime } + 2 } ) \\right) ^ { \\top } \\in \\mathbb { R } ^ { 2 5 } .\\tag{3.16}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            335,
+            869,
+            365
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "An illustration of the training and testing set sample generation strategy is given in Fig. 3 (a). The vector ${ \\pmb y } ( { \\pmb x } , \\omega )$ serves as the target random field whose conditional distribution is to be reconstructed when � is given. To generate the testing set, 20 testing centers are generated. For each testing center $\\pmb { x } _ { \\ell } ^ { \\mathrm { t e s t } }$ , a large number of independent permeability realizations $\\omega _ { 1 } , \\ldots , \\omega _ { M }$ are generated. The resulting collection",
+        "bbox": [
+            64,
+            376,
+            931,
+            442
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ae145687f5490a49dcefdadad7f7af8c1418dd3b0b5e8692de55b38201ac7c47.jpg",
+        "text": "$$\n\\left\\{ \\pmb { y } ( \\pmb { x } _ { \\ell } ^ { \\mathrm { t e s t } } , \\omega _ { \\ell } ) \\right\\} _ { j = 1 } ^ { M }\\tag{3.17}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            113,
+            450,
+            248,
+            477
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "provides an empirical approximation of the conditional distribution $p { \\Big ( } y \\mid x _ { \\ell } ^ { \\mathrm { t e s t } } { \\Big ) }$ . The learned model is then evaluated by comparing the predicted conditional distribution with this empirical reference distribution at the test locations. This benchmark naturally produces multidimensional output variables with strong spatial correlations, making it a suitable experiment to test if our local Sinkhorn approach could successfully reconstruct a multidimensional random field in which the noise is strongly heterogeneous or lies in a low-dimensional manifold.",
+        "bbox": [
+            64,
+            490,
+            931,
+            578
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "To evaluate the efectiveness of the proposed local Sinkhorn divergence, we compare it with several representative approaches for conditional distribution reconstruction. The compared loss functions include local Maximum Mean Discrepancy (MMD) and the local squared $W _ { 2 }$ loss proposed in our previous work [31], whose definitions are detailed in Appendix D. To further compare with representative probabilistic learning approaches, we also consider Heteroscedastic Gaussian Regression, Mixture Density Networks (MDN) [4], Conditional Variational Autoencoders (CVAE) [24], and Conditional Normalizing Flows (CNF) [22, 7, 19]. These methods represent commonly used likelihood-based and latent-variable models for conditional distribution estimation. All benchmark methods are trained and evaluated using the same datasets and testing protocols to ensure a fair comparison.",
+        "bbox": [
+            62,
+            576,
+            933,
+            706
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Table 2 compares the proposed neighborhood-based distribution learning methods with several representative conditional generative baselines. Among the likelihood-based models, the heteroscedastic Gaussian regression is computationally the most eficient, requiring only 23.48 seconds for training, but its Gaussian assumption limits the reconstruction accuracy, especially for the variance. MDN improves the mean prediction accuracy but still sufers from poor variance reconstruction. CVAE and CNF provide more expressive conditional generative models, although their reconstruction errors remain significantly larger than those of the neighborhood-based approaches.",
+        "bbox": [
+            62,
+            706,
+            933,
+            803
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "The neighborhood-based optimal transport methods consistently outperform the global conditional generative models. In particular, training the SNN with the local Sinkhorn divergence achieves the smallest errors in the predicted mean and variance. Furthermore, compared to the previous local squared $W _ { 2 }$ approach, its computational eficiency is improved, and the runtime is shortened. The proposed neighborhood-based Sinkhorn approach to train SNN provides the best overall trade-of between reconstruction accuracy and computational eficiency. These results suggest that once local conditional distributions are exploited with the neighborhood technique, the simple SNN can be eficiently trained using our local Sinkhorn loss, which is suficient to outperform considerably more sophisticated machine-learning conditional generative models. Overall, the experimental results demonstrate that exploiting local neighborhoods when utilizing the OT-based loss functions is considerably more important than increasing the complexity of the conditional generator.",
+        "bbox": [
+            62,
+            803,
+            933,
+            933
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            43,
+            696,
+            60
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "page_number",
+        "text": "Page 10 of 19",
+        "bbox": [
+            827,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            64,
+            72,
+            931,
+            105
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "To investigate the robustness of the proposed local Sinkhorn framework with respect to diferent algorithmic parameters, we further perform sensitivity studies on the noise level of the training data, the neighborhood radius, and the Sinkhorn regularization parameter. The corresponding results are presented in Fig. 3. For the noise sensitivity study, we vary the intensity of the underlying Gaussian random field. The permeability field is constructed from",
+        "bbox": [
+            62,
+            105,
+            931,
+            171
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/cadeb811a8f264226a525794db365b89717af9d5d2c0c297b406f28d81740aee.jpg",
+        "text": "$$\ng _ { \\sigma } ( \\boldsymbol { x } , \\omega ) = \\sigma g ( \\boldsymbol { x } , \\omega ) ,\\tag{3.18}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            184,
+            273,
+            200
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "where $\\sigma > 0$ is referred to as the noise level and $g$ denotes the normalized Gaussian random field generated by the FFT-based spectral synthesis in Eq. (3.15). Consequently, the permeability field is given by",
+        "bbox": [
+            64,
+            212,
+            931,
+            246
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e7943310a10a4485aedb9f8cdc718178935839a1d5e3bd9cfb6a0a5f6e090d2e.jpg",
+        "text": "$$\n\\begin{array} { r } { a ( \\mathbf { x } , \\omega ) = \\exp \\left( g _ { \\sigma } ( \\mathbf { x } , \\omega ) \\right) . } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            257,
+            305,
+            276
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Increasing � enlarges the variance of the permeability field and therefore increases the intrinsic uncertainty of the corresponding Darcy solutions.",
+        "bbox": [
+            62,
+            287,
+            931,
+            319
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Fig. 3 (b) illustrates the influence of the observation noise level. As expected, increasing the noise level deteriorates the reconstruction accuracy of both the conditional mean and variance, while the training time increases only moderately. This indicates that the proposed method remains computationally stable even under relatively noisy observations. Fig. 3 (c) studies the efect of the neighborhood radius �. A suficiently small neighborhood does not contain enough local samples to accurately approximate the conditional distribution, whereas an excessively large neighborhood violates the locality assumption and mixes samples associated with diferent conditional distributions. Consequently, an intermediate neighborhood radius provides the best trade-of between approximation accuracy and computational cost. Fig. 3 (d) shows the sensitivity of the proposed method to the Sinkhorn regularization parameter $\\varepsilon .$ . When $\\varepsilon$ is too small, the Sinkhorn divergence approaches the exact Wasserstein distance. In this regime, the reconstructed variance error is large because the empirical squared $W _ { 2 }$ distance converges slowly to the ground truth squared $W _ { 2 }$ distance in multidimensional settings. Furthermore, choosing a too small � leads to longer runtime. Conversely, a large regularization parameter introduces excessive entropic smoothing and leads to larger reconstruction errors. These observations agree well with the theoretical error analysis in Section 2, where the regularization parameter controls the trade-of between approximation bias and computational eficiency, and a moderate regularization parameter � is preferable to reconstruct multidimensional random field models. Overall, the proposed local Sinkhorn framework exhibits good robustness over a reasonably wide range of neighborhood radii and regularization parameters.",
+        "bbox": [
+            62,
+            319,
+            933,
+            595
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Finally, we consider reconstructing a stochastic dynamical system using our proposed local Sinkhorn approach.",
+        "bbox": [
+            90,
+            605,
+            915,
+            621
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Example 3. To further demonstrate the applicability of the proposed method to multidimensional stochastic dynamical systems, we consider a network of coupled nonlinear stochastic FHN oscillators in computational neuroscience [28, 1].",
+        "bbox": [
+            64,
+            632,
+            930,
+            664
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "We consider a network consisting of $N _ { n } = 5$ coupled neurons, resulting in a 10-dimensional stochastic diferential equation. Let",
+        "bbox": [
+            64,
+            664,
+            931,
+            695
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3e3ea31d32a49fd962ca6b7be33815738fc0917565587a4e86d7309e520adad6.jpg",
+        "text": "$$\n\\begin{array} { r } { \\pmb { x } ( t ; \\pmb { x } _ { 0 } ; \\omega ) = \\left( v _ { 1 } ( t ) , \\ldots , v _ { 5 } ( t ) , w _ { 1 } ( t ) , \\ldots , w _ { 5 } ( t ) \\right) ^ { \\top } \\in \\mathbb { R } ^ { 1 0 } , } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            708,
+            533,
+            730
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "where $v _ { i }$ denotes the membrane potential and $w _ { i }$ is the corresponding recovery variable. The governing stochastic system is",
+        "bbox": [
+            64,
+            742,
+            930,
+            773
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/999db0cac44b86442c77a07e9172992d9babec39f29f47e10a161f5570534937.jpg",
+        "text": "$$\n\\begin{array} { l } { { \\displaystyle { \\mathrm { d } } v _ { i } ( t ) = \\left( v _ { i } - \\frac { v _ { i } ^ { 3 } } { 3 } - w _ { i } + \\sum _ { j = 1 } ^ { 5 } C _ { i j } ( \\omega ) v _ { j } \\right) \\mathrm { d } t + \\sigma _ { i } ( \\omega ) { \\mathrm { d } } B _ { i } ( t ) , } } \\\\ { { \\displaystyle { \\mathrm { d } } w _ { i } ( t ) = \\varepsilon _ { i } ( \\omega ) \\left( v _ { i } + c - d w _ { i } \\right) { \\mathrm { d } } t , \\qquad i = 1 , \\dots , 5 , \\ ( v _ { 1 } ( 0 ) , \\dots , v _ { 5 } ( 0 ) , w _ { 1 } ( 0 ) , \\dots , w _ { 5 } ( 0 ) ) = x _ { 0 } , } } \\end{array}\\tag{3.19}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            112,
+            787,
+            803,
+            855
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "where $B _ { i } ( t )$ are independent standard Brownian motions, and $c = 0 . 7$ and $d = 0 . 8$ are fixed deterministic parameters. Unlike the classical FHN model, the coupling strengths $C _ { i j } ( \\omega )$ , the difusion coeficients $\\sigma _ { i } ( \\omega )$ , and the recovery time scales $\\varepsilon _ { i } ( \\omega )$ are all regarded as random variables whose values may vary across diferent realizations, and � denotes the uncertainty in those model parameters. More precisely, $\\left( C _ { i j } ( \\omega ) , \\sigma _ { i } ( \\omega ) , \\varepsilon _ { i } ( \\omega ) \\right)$ is independently sampled for every realization, yielding a stochastic drift field $a ( x , \\omega )$ and a stochastic difusion field $b ( x , \\omega )$ . Consequently, the dynamics can be written compactly as",
+        "bbox": [
+            64,
+            865,
+            931,
+            932
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "page_number",
+        "text": "Page 11 of 19",
+        "bbox": [
+            827,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            64,
+            72,
+            930,
+            106
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "equation",
+        "img_path": "images/72c14a475af5df56f6875528aaefa985ee1fb98d3182c82df1c9129cfeedef10.jpg",
+        "text": "$$\n\\mathrm { d } \\boldsymbol { x } ( t ; x _ { 0 } ; \\omega ) = a ( x ( t ; x _ { 0 } ; \\omega ) , \\omega ) \\mathrm { d } t + b ( x ( t ; x _ { 0 } ; \\omega ) , \\omega ) \\mathrm { d } B _ { t } , \\ x ( 0 ; x _ { 0 } ; \\omega ) = x _ { 0 } , \\ t \\in [ 0 , T ] ,\\tag{3.20}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            117,
+            753,
+            134
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "where both the drift and difusion are random functions induced by the uncertain parameters, $\\pmb { B } _ { t }$ is a five-dimensional standard Brownian motion, and $\\mathbf { \\boldsymbol { x } } _ { 0 }$ denotes the initial condition, with $\\pmb { x } ( t ; \\pmb { x } _ { 0 } ; \\omega )$ explicitly indicating the dependence of the solution on $\\pmb { x } _ { 0 } .$",
+        "bbox": [
+            64,
+            145,
+            931,
+            194
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "The reference trajectories and predicted trajectories are generated using the Euler–Maruyama solver implemented in the torchsde package. For the training set, each trajectory is associated with an independently sampled initial condition and an independent realization of the random parameter vector �. The resulting dataset consists of $\\left\\{ \\left( \\pmb { x } _ { 0 } ^ { ( i ) } , \\pmb { x } ^ { ( i ) } ( t _ { 1 } ; \\pmb { x } _ { 0 } ^ { ( i ) } ; \\omega ^ { ( i ) } ) , \\dots , \\pmb { x } ^ { ( i ) } ( t _ { N _ { t } } ; \\pmb { x } _ { 0 } ^ { ( i ) } ; \\omega ^ { ( i ) } ) \\right) \\right\\} _ { i = 1 } ^ { N _ { \\mathrm { t r a i n } } }$ , where $\\pmb { x } ^ { ( i ) } ( t _ { k } ) \\in \\mathbb { R } ^ { 1 0 }$ is the snapshot of the trajectory at time $\\begin{array} { r } { t _ { k } = \\frac { k T } { N _ { t } } } \\end{array}$",
+        "bbox": [
+            64,
+            194,
+            931,
+            293
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "For the testing set, we randomly select 20 initial conditions. For each initial condition, 20 independent realizations of the random parameters are generated, producing empirical conditional distributions of the solution trajectories. Therefore, the testing data naturally approximates the conditional distribution $P \\left( \\boldsymbol { x } ^ { \\mathrm { t e s t } } ( t ; \\boldsymbol { x } _ { 0 } ; \\omega ) \\mid \\boldsymbol { x } ^ { \\mathrm { t e s t } } ( 0 ; \\boldsymbol { x } _ { 0 } ; \\omega ) = \\boldsymbol { x } _ { 0 } \\right)$ which serves as the reference distribution for evaluating the reconstructed stochastic dynamics. For both the training set and the testing set, we set the time horizon $T = 1$ and the time steps $N _ { t } = 1 0$ in Eq. (3.20).",
+        "bbox": [
+            64,
+            292,
+            930,
+            373
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "To reconstruct the unknown stochastic dynamics, we construct the approximate model:",
+        "bbox": [
+            91,
+            373,
+            738,
+            389
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "equation",
+        "img_path": "images/dffcd485608d0d461e9472f87d3817049d88695bc162cfad79e871cba54eb9cc.jpg",
+        "text": "$$\n\\begin{array} { r } { \\mathrm { d } \\hat { \\mathbf { x } } ( t ; x _ { 0 } ; \\hat { \\omega } ) = \\hat { a } ( \\hat { x } ( t ; x _ { 0 } ; \\hat { \\omega } ) , \\hat { \\omega } _ { a } ) \\mathrm { d } t + \\hat { b } ( \\hat { x } ( t ; x _ { 0 } ; \\hat { \\omega } ) , \\hat { \\omega } _ { b } ) \\mathrm { d } B _ { t } , \\hat { \\mathbf { x } } ( 0 ; x _ { 0 } ; \\hat { \\omega } ) = x _ { 0 } , } \\end{array}\\tag{3.21}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            401,
+            683,
+            419
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "where $\\hat { a } ( \\pmb { x } ( t ; \\pmb { x } _ { 0 } ; \\hat { \\omega } ) , t ; \\hat { \\omega } _ { a } )$ and $\\hat { b } ( { \\pmb x } ( t ; { \\pmb x } _ { 0 } ; \\hat { \\omega } ) , t ; \\hat { \\omega } _ { b } )$ are two separate SNNs and $\\hat { \\omega } = ( \\hat { \\omega } _ { a } , \\hat { \\omega } _ { b } )$ refers to the union of uncertain weights in ̂� and �<sup>̂</sup>. ̂� and �<sup>̂</sup> in Eq. (3.21) take the 10-dimensional state variable $\\hat { \\pmb x } ( t ; \\pmb x _ { 0 } ; \\hat { \\omega } )$ and time � as the input and then output 10-dimensional approximate drift and difusion functions to approximate the stochastic drift and difusion coeficients in Eq. (3.20), respectively. Since the dynamics of $w _ { i }$ in $\\operatorname { E q . }$ . (3.19) are noise-free, we enforce the last five components of �<sup>̂</sup> in Eq. (3.21) to be 0. During one trajectory simulation, a single realization of the network weights $\\hat { \\omega }$ is sampled and kept fixed throughout the entire time interval. Consequently, the randomness remains trajectory-wise rather than time-wise, which is consistent with the assumption that the underlying uncertain parameters are realization-dependent. The two SNNs are trained simultaneously by minimizing a temporal-average local Sinkhorn loss:",
+        "bbox": [
+            62,
+            428,
+            931,
+            575
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "equation",
+        "img_path": "images/733bfb7755d639e4b36059b521b67b6cd8bc79df7f8ec1ad81074eae0a2c3cdd.jpg",
+        "text": "$$\n\\begin{array} { r l } & { \\displaystyle \\frac { 1 } { T } \\int _ { 0 } ^ { T } S _ { \\varepsilon , \\delta } ^ { \\mathrm { e } } ( x ( t ; x _ { 0 } ; \\omega ) , \\hat { x } ( t ; x _ { 0 } ; \\hat { \\omega } ) ) \\mathrm { d } t \\approx \\frac { 1 } { N _ { T } } \\sum _ { i = 1 } ^ { N _ { T } } \\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\mathrm { e } } ( x \\big ( \\frac { i T } { N _ { T } } ; x _ { 0 } ; \\omega ) , \\hat { x } ( \\frac { i T } { N _ { T } } ; x _ { 0 } ; \\hat { \\omega } ) \\big ) } \\\\ & { \\quad \\quad \\quad \\quad \\quad \\quad \\quad \\quad = \\frac { 1 } { N _ { T } } \\displaystyle \\sum _ { i = 1 } ^ { N _ { T } } \\int _ { D } S _ { \\varepsilon } \\big ( \\mu _ { x _ { 0 } , \\delta } ^ { \\mathrm { e } } ( \\frac { i T } { N _ { T } } ) , \\hat { \\mu } _ { x _ { 0 } , \\delta } ^ { \\mathrm { e } } ( \\frac { i T } { N _ { T } } ) \\big ) \\nu ^ { \\mathrm { e } } ( \\mathrm { d } x _ { 0 } ) , } \\end{array}\\tag{3.22}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            583,
+            755,
+            675
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "where $\\mathbf { \\boldsymbol { x } } _ { 0 }$ represents the initial condition, and $\\mu _ { x _ { 0 } , \\delta } ^ { e } ( t )$ and $\\widehat { \\mu } _ { x _ { 0 } , \\delta } ^ { e } ( t )$ denote the empirical distributions of $\\pmb { x } ( t ; \\pmb { x } _ { 0 } ; \\omega )$ and $\\widehat { \\pmb x } ( t ; \\pmb x _ { 0 } ; \\widehat { \\omega } )$ , respectively, constructed from trajectories whose initial conditions fall within the selected neighborhood subset $B ( \\pmb { x } _ { 0 } , \\delta ) \\subseteq B ( \\pmb { x } _ { 0 } , \\delta )$",
+        "bbox": [
+            64,
+            685,
+            931,
+            738
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "The proposed temporal-average local Sinkhorn loss Eq. (3.22) compares the empirical distributions of the predicted and reference trajectories at every observation time and then averages the discrepancies over the entire temporal domain. Compared with the temporal-average local squared $W _ { 2 }$ loss introduced in our previous work [31], which replaces the Sinkhorn divergence with the squared $W _ { 2 }$ distance in Eq. (3.22), the proposed Sinkhorn formulation provides a diferentiable approximation with substantially improved computational eficiency while preserving the geometric structure of optimal transport.",
+        "bbox": [
+            62,
+            737,
+            931,
+            834
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "To further evaluate the reconstruction quality of the proposed method, Fig. 4 compares the predicted stochastic dynamics with the corresponding reference solution for a representative testing sample. In addition to the stochastic trajectories, the learned drift and difusion functions are also compared with the ground truth. Since the proposed model reconstructs conditional probability distributions rather than individual trajectories, the conditional mean and one-standard-deviation bands estimated from multiple stochastic realizations are reported. As shown in Fig. 4 (a)(b), the predicted trajectories accurately reproduce both the temporal evolution and the associated uncertainty of the stochastic",
+        "bbox": [
+            62,
+            834,
+            931,
+            933
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "page_number",
+        "text": "Page 12 of 19",
+        "bbox": [
+            827,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            426,
+            962
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "table",
+        "img_path": "images/cfa775b1651212894c0a90454280f31794c68f45b14ae8a39c7679fb78b07c62.jpg",
+        "table_caption": [
+            "Comparison of the local Sinkhorn divergence versus the local squared $W _ { 2 }$ loss to train an SNN for reconstructing the FHN model Eq. (3.19)."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td>Loss Function</td><td>Training Time  $( \\mathsf { s } )$ </td><td>Drift  $W _ { 2 } ^ { 2 }$  Error</td><td>Diffusion  $W _ { 2 } ^ { 2 }$  Error</td><td>Test trajectory  $W _ { 2 } ^ { 2 }$  Error</td></tr><tr><td>Local Sinkhorn</td><td>6772</td><td>0.1110</td><td>0.1090</td><td>0.06415</td></tr><tr><td>Local squared  $W _ { 2 }$ </td><td>7256</td><td>0.1195</td><td>0.1791</td><td>0.06444</td></tr></table>",
+        "bbox": [
+            136,
+            126,
+            860,
+            187
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "FHN system. For both the membrane potential variable $v _ { 1 }$ and the recovery variable $w _ { 1 }$ , the predicted conditional means closely follow the reference solution, while the predicted uncertainty bands exhibit good agreement with the corresponding ground-truth distributions. Furthermore, the learned drift functions capture the nonlinear deterministic dynamics with high accuracy (Fig. 4 (c)(d)), and the difusion functions provide reasonable approximations of the stochastic forcing, while larger errors in the predicted difusion functions may be due to error accumulation (shown in Fig. 4 (e)). Overall, these results demonstrate that the proposed local Sinkhorn divergence is capable of simultaneously reconstructing the deterministic and stochastic components of the underlying dynamics from scattered conditional observations.",
+        "bbox": [
+            62,
+            215,
+            931,
+            345
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "We also compare minimizing our temporal-average local Sinkhorn divergence Eq. (3.22) with minimizing the previous temporal-average local squared $W _ { 2 }$ loss in [31]. The following error metrics are used to quantify the errors of �̂, ̂�, and $\\hat { b }$ of the reconstructed SDE (3.21) on the testing set, respectively:",
+        "bbox": [
+            64,
+            345,
+            931,
+            394
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f20fc95c0c8606594f37869f10fc06fdf5585028ef6494f465a79af378065e36.jpg",
+        "text": "$$\n\\begin{array} { r l } & { \\mathrm { e r r o r ~ i n ~ } \\hat { x } : = \\frac { \\sum _ { j = 1 } ^ { N _ { \\mathrm { t e x } } } \\sum _ { i = 1 } ^ { N _ { T } } W _ { 2 } ^ { 2 } ( \\mu _ { x _ { 0 , j } ^ { \\mathrm { t e x } } } ^ { \\mathrm { c } } ( \\frac { i T } { N _ { T } } ) , \\hat { \\mu } _ { x _ { 0 , j } ^ { \\mathrm { t e x } } } ^ { \\mathrm { c } } ( \\frac { i T } { N _ { T } } ) ) } { \\sum _ { j = 1 } ^ { N _ { \\mathrm { t e x } } } \\sum _ { i = 1 } ^ { N _ { T } } [  x ( \\frac { i T } { N _ { T } } ; \\boldsymbol { \\mathbf { x } } _ { 0 , j } ^ { \\mathrm { t e x } } ; \\boldsymbol { \\omega } )  ^ { 2 } ] } , \\quad \\mathrm { e r r r o r ~ i n ~ } \\hat { a } : = \\frac { \\sum _ { j = 1 } ^ { N _ { \\mathrm { t e x } } } \\sum _ { i = 1 } ^ { N _ { T } } W _ { 2 } ^ { 2 } ( \\eta _ { a , x _ { 0 , j } ^ { \\mathrm { t e x } } } ^ { \\mathrm { c } } ( \\frac { i T } { N _ { T } } ) , \\hat { \\eta } _ { a , x _ { 0 , j } ^ { \\mathrm { t e x } } } ^ { \\mathrm { c } } ( \\frac { i T } { N _ { T } } ) ) } { \\sum _ { j = 1 } ^ { N _ { \\mathrm { t e x } } } \\sum _ { i = 1 } ^ { N _ { T } } [  a ( { x } ( \\frac { i T } { N _ { T } } ; \\boldsymbol { \\mathbf { x } } _ { 0 , j } ^ { \\mathrm { t e x } } ; \\boldsymbol { \\omega } ) , \\boldsymbol { \\omega } )  ^ { 2 } ] } , } \\\\ &  \\mathrm { e r r o r ~ i n ~ } \\hat { b } : = \\frac  \\sum _ { j = 1 } ^ { N _ { \\mathrm { t e x } } } \\sum _ { i = 1 } ^ { N _ { T } } W _ { 2 } ^ { 2 } ( \\eta _ { b , x _ { 0 , j } ^ { \\mathrm { t e x } } } ^ \\end{array}\\tag{3.23}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            88,
+            407,
+            928,
+            537
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "where $\\pmb { x } _ { 0 , j } ^ { \\mathrm { t e s t } }$ refers to the $j ^ { \\mathrm { t e s t } }$ center in the testing set, $\\mu _ { x _ { 0 , i } ^ { \\mathrm { t e s t } } } ^ { \\mathrm { e } } ( \\frac { i T } { N _ { T } } ) , \\hat { \\mu } _ { x _ { 0 , i } ^ { \\mathrm { t e s t } } } ^ { \\mathrm { e } } ( \\frac { i T } { N _ { T } } )$ denotes the empirical distributions of the ground-truth and reconstructed trajectories at time $\\frac { i T } { N _ { T } }$ whose initial conditions are $x _ { 0 , j } ^ { \\mathrm { t e s t } } , \\eta _ { a , x _ { 0 , j } } ^ { \\mathrm { e } }$ and $\\hat { \\eta } _ { a , { \\boldsymbol x } _ { 0 , j } } ^ { \\mathrm { e } }$ refers to the empirical distribution of $a ( \\pmb { x } ( t ; \\pmb { x } _ { 0 , j } ^ { \\mathrm { t e s t } } ; \\omega )$ , �) and $\\hat { a } ( \\pmb { x } ( t ; \\pmb { x } _ { 0 , j } ^ { \\mathrm { t e s t . } } ; \\hat { \\omega } ) , t ; \\hat { \\omega } )$ , and $\\eta _ { b , x _ { 0 , j } } ^ { \\mathrm { e } }$ and $\\hat { \\eta } _ { b , x _ { 0 , j } } ^ { \\mathrm { e } }$ refers to the empirica distribution of $b ( \\pmb { x } ( t ; \\pmb { x } _ { 0 , i } ^ { \\mathrm { t e s t } } ; \\omega )$ , �) and $\\hat { b } ( \\pmb { x } ( t ; \\pmb { x } _ { 0 , i } ^ { \\mathrm { t e s t } } ; \\hat { \\omega } ) , t ; \\hat { \\omega } )$ , respectively.",
+        "bbox": [
+            64,
+            566,
+            931,
+            659
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "As shown in Table 3, using the Sinkhorn divergence is more computationally eficient, and the learned drift and difusion functions are more accurate compared to those learned when using the temporally decoupled local squared $W _ { 2 }$ as the loss function. The saving in runtime of using the temporal local Sinkhorn divergence Eq. (3.22) is not significant compared to using the temporal local squared $W _ { 2 }$ loss, and the possible reason is that the time needed to numerically solve the SDE is much longer than evaluating either the temporal local Sinkhorn divergence loss or the temporal local $W _ { 2 }$ loss.",
+        "bbox": [
+            64,
+            659,
+            931,
+            756
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "4. Summary and conclusion",
+        "text_level": 2,
+        "bbox": [
+            64,
+            778,
+            340,
+            797
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "In this paper, we proposed a local Sinkhorn divergence framework for conditional distribution reconstruction of random field models using SNNs. By utilizing the debiased Sinkhorn divergence, the proposed method preserved the geometric structure of optimal transport while introducing entropic regularization, leading to a diferentiable and computationally eficient distribution matching objective. Compared with our previous local squared $W _ { 2 }$ formulation, the proposed local Sinkhorn loss achieved improved computational eficiency and scalability while maintaining high reconstruction accuracy for learning multidimensional random field models. We further established theoretical error bounds for the proposed local Sinkhorn loss. The resulting bounds explicitly characterized the trade-of between approximation bias and statistical eficiency introduced by the entropic regularization parameter and implied that the proposed local Sinkhorn loss could partially alleviate the curse of dimensionality when learning multidimensional random field models by properly choosing the regularization parameter. Numerical experiments on one-dimensional conditional distribution reconstruction, stochastic Darcy flow, and stochastic FHN systems demonstrated that the proposed method accurately reconstructed random field models and outperformed several prevailing machinelearning uncertainty quantification benchmarks. Overall, the proposed local Sinkhorn approach ofered a practical balance between statistical accuracy, computational eficiency, and theoretical interpretability, making it a promising framework for uncertainty quantification and probabilistic scientific machine learning.",
+        "bbox": [
+            62,
+            803,
+            933,
+            933
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            426,
+            962
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "page_number",
+        "text": "Page 13 of 19",
+        "bbox": [
+            827,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            62,
+            72,
+            931,
+            185
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Several promising research directions deserve further investigation. First, the neighborhood radius � and the regularization parameter � are currently selected empirically and remain fixed. Developing adaptive strategies for simultaneously choosing and adjusting these two parameters according to the local complexity of the conditional distribution may further improve both accuracy and computational eficiency. Recent advances in stabilized and multiscale Sinkhorn algorithms provide promising directions for adaptive regularization and eficient optimal transport computations [23, 8]. Second, the current framework constructs neighborhoods using Euclidean distances. More general neighborhood constructions, including anisotropic neighborhoods, manifold-based neighborhoods, and graphbased local structures, may significantly improve the approximation of conditional distributions with low-dimensional intrinsic geometry [3, 27]. Such adaptive neighborhood constructions may also lead to improved theoretical convergence guarantees. Another important direction is to extend the proposed local Sinkhorn framework to large-scale scientific machine learning problems, including stochastic partial diferential equations, neural operator learning, probabilistic surrogate modeling, and Bayesian scientific machine learning. Since the proposed local Sinkhorn loss is fully diferentiable and naturally compatible with GPU-based optimization, it is particularly suitable for these large-scale applications [18, 21, 19]. Finally, it would be of considerable interest to further investigate the theoretical properties of local Sinkhorn learning in multidimensional settings.",
+        "bbox": [
+            62,
+            185,
+            933,
+            431
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Declaration of generative AI and AI-assisted technologies in the manuscript preparation process",
+        "text_level": 2,
+        "bbox": [
+            64,
+            451,
+            898,
+            489
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "During the preparation of this work, the authors used ChatGPT in order to polish the writing and assist in checking the manuscript. After using this tool/service, the authors reviewed and edited the content as needed and take full responsibility for the content of the published article.",
+        "bbox": [
+            64,
+            493,
+            931,
+            543
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Declaration of competing interest",
+        "text_level": 2,
+        "bbox": [
+            66,
+            566,
+            386,
+            584
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.",
+        "bbox": [
+            64,
+            588,
+            930,
+            622
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Data statement",
+        "text_level": 2,
+        "bbox": [
+            66,
+            645,
+            216,
+            663
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "The data used in this study were generated numerically according to the models and experimental settings described in the manuscript. The data and implementation code that support the findings of this study will be made publicly available upon publication of the article.",
+        "bbox": [
+            64,
+            668,
+            931,
+            718
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "CRediT authorship contribution statement",
+        "text_level": 2,
+        "bbox": [
+            66,
+            741,
+            476,
+            758
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Mingtao Xia: Conceptualization, Methodology, Formal analysis, Investigation, Software, Writing-original draft, Writing-review and editing. Qijing Shen: Methodology, Formal analysis, Software, Writing-original draft, Writingreview and editing.",
+        "bbox": [
+            64,
+            764,
+            931,
+            814
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "A. Proof to Theorem 2.1",
+        "text_level": 2,
+        "bbox": [
+            66,
+            836,
+            305,
+            853
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Here, we prove Theorem 2.1. We first decompose the generalization error as:",
+        "bbox": [
+            91,
+            859,
+            663,
+            876
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/7c1b688e93cc07298608e106581c58e6c2b664f7e56284021d1444f8524ff714.jpg",
+        "text": "$$\n\\left. \\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\mathrm { e } } ( y _ { x } , \\widehat { y } _ { x } ) - \\overline { { \\mathcal { W } } } _ { 2 } ( y _ { x } , \\widehat { y } _ { x } ) \\right. \\leq \\left. \\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\mathrm { e } } ( y _ { x } , \\widehat { y } _ { x } ) - \\overline { { \\mathcal { W } } } _ { 2 , \\delta } ^ { \\mathrm { e } } ( y _ { x } , \\widehat { y } _ { x } ) \\right. + \\left. \\overline { { \\mathcal { W } } } _ { 2 , \\delta } ^ { \\mathrm { e } } ( y _ { x } , \\widehat { y } _ { x } ) - \\overline { { \\mathcal { W } } } _ { 2 } ^ { 2 } ( y _ { x } , \\widehat { y } _ { x } ) \\right. ,\\tag{A.1}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            886,
+            803,
+            920
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "page_number",
+        "text": "Page 14 of 19",
+        "bbox": [
+            827,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "where $\\overline { { \\mathscr { W } } } _ { 2 } ( \\pmb { y } _ { x } , \\hat { \\pmb { y } } _ { x } )$ is defined in Eq. (2.9), and $\\overline { { \\mathcal { W } } } _ { 2 , \\delta } ^ { \\mathrm { e } } ( \\boldsymbol { y } _ { x } , \\hat { \\boldsymbol { y } } _ { x } )$ is the local squared $W _ { 2 }$ distance between the two random fields ${ \\pmb y } _ { \\pmb x }$ and $\\hat { y } _ { x }$ defined as:",
+        "bbox": [
+            64,
+            72,
+            930,
+            107
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c8c0e6cac46d0eefe93290dae20b311a65fbf12d56cea2626b0360be22812e39.jpg",
+        "text": "$$\n\\overline { { \\mathscr { W } } } _ { 2 , \\delta } ^ { \\mathrm { e } } \\bigl ( y _ { x } , \\hat { y } _ { x } \\bigr ) : = \\int _ { D } W _ { 2 } ^ { 2 } \\bigl ( \\mu _ { x , \\delta } ^ { \\mathrm { e } } , \\hat { \\mu } _ { x , \\delta } ^ { \\mathrm { e } } \\bigr ) \\nu ( \\mathrm { d } x ) .\\tag{A.2}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            117,
+            433,
+            152
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "The first term in Eq. (A.1) is the Sinkhorn regularization bias. By [11, Theorem 1] and the boundedness assumption (Assumption 2.1), taking the Lipschitz constant of the quadratic cost function � in Eq. (2.4) as $2 M _ { 0 }$ yields",
+        "bbox": [
+            64,
+            161,
+            930,
+            195
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/cab67194998a59dfe8cf03ca18aef3e7276c6e1d71f4c0e36040f6b1c85fed53.jpg",
+        "text": "$$\n0 \\leq W _ { \\varepsilon } ( \\alpha , \\beta ) - W ( \\alpha , \\beta ) \\leq 2 \\varepsilon \\log \\left( \\frac { 2 e ^ { 2 } M _ { 0 } ^ { 2 } } { \\sqrt { d } \\varepsilon } \\right) ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            204,
+            457,
+            249
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "for every relevant pair of probability measures $( \\alpha , \\beta )$ . Since the debiased Sinkhorn divergence is obtained by subtracting the self-transport terms, the same bound controls the diference between the local Sinkhorn loss and its $W _ { 2 } ^ { 2 }$ counterpart, namely",
+        "bbox": [
+            64,
+            260,
+            931,
+            308
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/79899c379cf0ae5218c56cce5a37574ffc35b905771c1f9b904e855fa3066907.jpg",
+        "text": "$$\n\\left. \\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\mathrm { e } } ( y _ { x } , \\hat { y } _ { x } ) - \\overline { { \\mathcal { W } } } _ { 2 , \\delta } ^ { \\mathrm { e } } ( y _ { x } , \\hat { y } _ { x } ) \\right. \\leq 2 \\varepsilon \\log \\left( \\frac { 2 e ^ { 2 } M _ { 0 } ^ { 2 } } { \\sqrt { d } \\varepsilon } \\right) .\\tag{A.3}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            319,
+            492,
+            363
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "The second term in Eq. (A.1) is exactly the local squared $W _ { 2 }$ generalization error. Therefore, applying [30, Theorem 2.3] in our previous work gives",
+        "bbox": [
+            64,
+            373,
+            930,
+            407
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c734ed1e6ae99c44782f17d448f2006f5733b5ddad3c25d6e4a0d87f3aeea30a.jpg",
+        "text": "$$\n\\mathbb { E } \\bigg [ \\Big \\vert \\overline { { \\mathcal { W } } } _ { 2 , \\delta } ^ { \\mathrm { e } } ( y _ { x } , \\hat { y } _ { x } ) - \\overline { { \\mathcal { W } } } _ { 2 } ( y _ { x } , \\hat { y } _ { x } ) \\Big \\vert \\bigg ] \\leq \\frac { 4 M _ { 0 } } { \\sqrt { N } } + 8 C M _ { 0 } \\mathbb { E } \\big [ h ( N ( x , \\delta ) , d ) \\big ] + 1 6 M _ { 0 } ^ { 2 } \\delta .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            416,
+            696,
+            455
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Combining the Sinkhorn bias bound in Eq. (A.3) with the local $W _ { 2 }$ generalization bound above proves Eq. (2.13).",
+        "bbox": [
+            91,
+            464,
+            928,
+            483
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "B. Proof to Theorem 2.2",
+        "text_level": 2,
+        "bbox": [
+            66,
+            505,
+            305,
+            522
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Here, we prove Theorem 2.2. We decompose the generalization error into three parts:",
+        "bbox": [
+            91,
+            529,
+            726,
+            547
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/8bc268f41bb4727e325d055607e5d4473702ba58519f20040da8b0027de9e65a.jpg",
+        "text": "$$\n\\begin{array} { r l } { \\mathrm { E } \\Bigg [ \\Bigg | \\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\mathrm { e } } ( y _ { x } , \\hat { y } _ { x } ) - \\overline { { \\mathcal { W } } } _ { 2 } ^ { 2 } ( y _ { x } , \\hat { y } _ { x } ) \\Bigg | \\Bigg ] } & { \\leq \\mathrm { E } \\Bigg [ \\Bigg | \\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\mathrm { e } } ( y _ { x } , \\hat { y } _ { x } ) - \\overline { { S } } _ { \\varepsilon , \\delta } ( y _ { x } , \\hat { y } _ { x } ) \\Bigg | \\Bigg ] } \\\\ & { \\qquad + \\mathrm { E } \\Bigg [ \\Bigg | \\displaystyle \\int _ { D } S _ { \\varepsilon } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) \\nu ^ { \\mathrm { e } } ( \\mathrm { d } x ) - \\int _ { D } W _ { 2 } ^ { 2 } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) \\nu ^ { \\mathrm { e } } ( \\mathrm { d } x ) \\Bigg | \\Bigg ] } \\\\ & { \\qquad + \\mathrm { E } \\Bigg [ \\Bigg | \\displaystyle \\int _ { D } W _ { 2 } ^ { 2 } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) \\nu ^ { \\mathrm { e } } ( \\mathrm { d } x ) - \\int _ { D } W _ { 2 } ^ { 2 } ( \\mu _ { x } , \\hat { \\mu } _ { x } ) \\nu ^ { \\mathrm { e } } ( \\mathrm { d } x ) \\Bigg | \\Bigg ] . } \\end{array}\\tag{B.1}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            555,
+            821,
+            669
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "The first term is the averaged empirical Sinkhorn error. For each �, by applying [11, Theorem 3], we have:",
+        "bbox": [
+            91,
+            679,
+            878,
+            695
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/dc4516723c4e0f29ca1e0dd76120134143e2f49d4f58f28f1525643852059e36.jpg",
+        "text": "$$\n\\mathbb { E } \\Big [ \\Big | S _ { \\varepsilon } ( \\mu _ { x , \\delta } ^ { \\mathrm { e } } , \\hat { \\mu } _ { x , \\delta } ^ { \\mathrm { e } } ) - S _ { \\varepsilon } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) \\Big | \\Big ] \\leq \\mathcal { O } \\Big ( \\frac { e ^ { \\frac { 5 M _ { 0 } ^ { 2 } } { \\varepsilon } } } { \\sqrt { N ( x , \\delta ) } } \\Big ( 1 + \\varepsilon ^ { - \\lfloor d / 2 \\rfloor } \\Big ) \\Big ) .\\tag{B.2}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            706,
+            623,
+            757
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "The second term is the average regularization bias between the Sinkhorn divergence and the Wasserstein discrepancy. From [11, Theorem 1], for each �, we have",
+        "bbox": [
+            64,
+            766,
+            930,
+            800
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/12e3ee52df92347de194788e776811416ed6fb832cb925bfd527a9cf9717cfe4.jpg",
+        "text": "$$\n\\operatorname { E } \\Bigg [ \\Big | S _ { \\varepsilon } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) - \\mathcal { W } _ { 2 } ^ { 2 } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) \\Big | \\Bigg ] \\leq 2 \\varepsilon \\log \\Bigg ( \\frac { 2 e ^ { 2 } M _ { 0 } ^ { 2 } } { \\sqrt { d } \\varepsilon } \\Bigg ) .\\tag{B.3}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            809,
+            553,
+            854
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Therefore,",
+        "bbox": [
+            66,
+            865,
+            148,
+            880
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/2bccc44b7d95ce118496518bf848993750db50e98300ab73d4ff0b9ee753d051.jpg",
+        "text": "$$\n\\mathrm { E } \\Bigg [ \\Bigg | \\int _ { D } S _ { \\varepsilon } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) \\nu ^ { \\mathrm { e } } ( \\mathrm { d } x ) - \\int _ { D } W _ { 2 } ^ { 2 } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) \\nu ^ { \\mathrm { e } } ( \\mathrm { d } x ) \\Bigg | \\Bigg ] \\leq 2 \\varepsilon \\log \\Bigg ( \\frac { 2 e ^ { 2 } M _ { 0 } ^ { 2 } } { \\sqrt { d } \\varepsilon } \\Bigg ) .\\tag{B.4}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            890,
+            702,
+            933
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "page_number",
+        "text": "Page 15 of 19",
+        "bbox": [
+            827,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Finally, for each �, using the triangular inequality of the $W _ { 2 }$ distance [5], we have:",
+        "bbox": [
+            64,
+            72,
+            676,
+            90
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/9392060e4887fb45a71b8fca760bd7d4837a7a8549961fa919e125df932ec58f.jpg",
+        "text": "$$\n| W _ { 2 } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) - W _ { 2 } ( \\mu _ { x } , \\hat { \\mu } _ { x } ) | \\leq W _ { 2 } ( \\mu _ { x , \\delta } , \\mu _ { x } ) + W _ { 2 } ( \\hat { \\mu } _ { x } , \\hat { \\mu } _ { x , \\delta } ) .\\tag{B.5}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            98,
+            575,
+            117
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Following the proof of [31, Theorem 2.3] and the Lipschitz continuity condition in Assumption 2.1, we have:",
+        "bbox": [
+            91,
+            123,
+            900,
+            141
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/920b0a7dc7e2206639f15ee6a0b1ea201f698eafcd237c31c98b0d3f2adf7962.jpg",
+        "text": "$$\nW _ { 2 } ( \\mu _ { x , \\delta } , \\mu _ { x } ) + W _ { 2 } ( \\hat { \\mu } _ { x } , \\hat { \\mu } _ { x , \\delta } ) \\leq 4 M _ { 0 } \\delta .\\tag{B.6}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            112,
+            150,
+            398,
+            168
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Therefore,",
+        "bbox": [
+            66,
+            176,
+            150,
+            192
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e6556819fc6acf739019a2ba0fdc07003f08ddc75d8a13f6ee57210b6acd88f9.jpg",
+        "text": "$$\n\\begin{array} { r l } & { | W _ { 2 } ^ { 2 } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) - W _ { 2 } ^ { 2 } ( \\mu _ { x } , \\hat { \\mu } _ { x } ) | \\leq | W _ { 2 } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) - W _ { 2 } ( \\mu _ { x } , \\hat { \\mu } _ { x } ) | \\cdot | W _ { 2 } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) + W _ { 2 } ( \\mu _ { x } , \\hat { \\mu } _ { x } ) | } \\\\ & { \\qquad \\leq 2 ( 2 M _ { 0 } ) \\delta ( 2 \\operatorname* { s u p } \\| y \\| _ { 2 } + 2 \\operatorname* { s u p } \\| \\hat { y } \\| _ { 2 } ) = 1 6 M _ { 0 } ^ { 2 } \\delta , } \\end{array}\\tag{B.7}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            199,
+            823,
+            242
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "which leads to:",
+        "bbox": [
+            66,
+            250,
+            183,
+            266
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6bce3becc83492f0999892768f6b9b423a3bcbe56378b87883e02f852ebee029.jpg",
+        "text": "$$\n\\mathrm { E } \\Big [ \\Big | W _ { 2 } ^ { 2 } ( \\mu _ { x , \\delta } , \\hat { \\mu } _ { x , \\delta } ) - W _ { 2 } ^ { 2 } ( \\mu _ { x } , \\hat { \\mu } _ { x } ) \\Big | \\Big ] \\leq 1 6 M _ { 0 } ^ { 2 } \\delta\\tag{B.8}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            270,
+            455,
+            299
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Combining Eqs. (B.8), (B.1), (B.2), and (B.4) yields Eq. (2.17).",
+        "bbox": [
+            91,
+            305,
+            566,
+            322
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Remark. The error bound induced from using the neighborhood technique Eq. (B.6) only applies to the Wasserstein distance through devising a special coupling of $\\mu _ { x , \\delta }$ and $\\mu _ { x } .$ . However, there is no direct error bound for $S _ { \\varepsilon } ( \\mu _ { x , \\delta } , \\mu _ { x } )$ as the Sinkhorn divergence introduces the additional entropic Kullback-Leibler divergence term. Therefore, it is nontrivial to obtain a direct error bound of",
+        "bbox": [
+            64,
+            322,
+            931,
+            385
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0430e1b0a975ede08b3ac3912c9584b7e821982cbfbd4a6a0c6cf5143607412d.jpg",
+        "text": "$$\n\\left| \\overline { { S } } _ { \\varepsilon , \\delta } ^ { \\mathrm { e } } ( \\mathbf { y } _ { \\boldsymbol { x } } , \\hat { \\mathbf { y } } _ { \\boldsymbol { x } } ) - \\int _ { D } S _ { \\varepsilon } ( \\mu _ { \\boldsymbol { x } } , \\hat { \\mu } _ { \\boldsymbol { x } } ) \\nu ( \\mathrm { d } \\boldsymbol { x } ) \\right| ,\\tag{B.9}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            110,
+            390,
+            393,
+            425
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "where $\\int _ { D } S _ { \\varepsilon } ( \\mu _ { x } , \\hat { \\mu } _ { x } ) \\nu ( \\mathrm { d } x )$ denotes the average Sinkhorn divergence between ${ \\pmb y } _ { \\pmb x }$ and $\\hat { y } _ { x }$ .",
+        "bbox": [
+            64,
+            433,
+            713,
+            452
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "C. Optimization, training settings and hyperparameters",
+        "text_level": 2,
+        "bbox": [
+            66,
+            474,
+            601,
+            493
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "All numerical experiments are implemented in Python 3.11 using the PyTorch deep learning framework. The proposed Local Sinkhorn divergence is implemented using the GeomLoss package, while the $W _ { 2 }$ distance is computed using the POT package. Unless otherwise specified, all competing methods within each numerical example employ the same neural network architecture, optimizer, initialization strategy, and training settings. All experiments are performed on a desktop equipped with an Intel Core i9-13900KF CPU (24 cores) and 64 GB RAM. The runtime reported in the numerical examples corresponds to the actual wall-clock training time under the same hardware environment. Training settings and hyperparameters are listed in Table 4. In this work, the $W _ { 2 }$ distance is evaluated numerically using the ot.emd2 function in the POT package [9] and the Sinkhorn divergence is evaluated numerically using the SamplesLoss function in the Geomloss package [8].",
+        "bbox": [
+            62,
+            497,
+            931,
+            642
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Unless otherwise specified, all model parameters are initialized using the default PyTorch initialization strategy. The same initialization scheme, optimizer, learning rate, training epochs, and network architecture are adopted for all competing methods within each numerical example to ensure a fair comparison.",
+        "bbox": [
+            64,
+            642,
+            931,
+            692
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "D. Definitions of Diferent Loss Metrics",
+        "text_level": 2,
+        "bbox": [
+            66,
+            712,
+            446,
+            730
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Here, we summarize the loss functions used in Examples 1 and 2. Let",
+        "bbox": [
+            91,
+            735,
+            612,
+            752
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/64e4e491d94cb076b4f79f54acebc9590c7ed90e13f176b2e8bbb284206e821b.jpg",
+        "text": "$$\nB ( \\pmb { x } _ { i } , \\delta ) = \\{ \\pmb { x } _ { j } : \\| \\pmb { x } _ { j } - \\pmb { x } _ { i } \\| \\leq \\delta \\}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            112,
+            761,
+            360,
+            778
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "denote the neighborhood centered at ${ \\pmb x } _ { i } \\left( { \\bf E q . } \\left( 2 . 1 0 \\right) \\right)$ . If a center $\\pmb { x } _ { i }$ is selected when evaluating the loss function within an epoch, a subset $B ( \\pmb { x } _ { i } , \\delta ) \\subseteq B ( \\pmb { x } _ { i } , \\delta )$ is randomly chosen with $| B ( \\pmb { x } _ { i } , \\delta ) | = \\operatorname* { m i n } ( n , | B ( \\pmb { x } _ { i } , \\delta ) | )$ . The overall loss is obtained by averaging the corresponding local loss over all randomly selected neighborhood centers.",
+        "bbox": [
+            64,
+            788,
+            931,
+            836
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "• 1. Local mean squared error (Local MSE)",
+        "bbox": [
+            91,
+            846,
+            426,
+            862
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/7fa3b01f525dedd199f5ee34e77f5a621fff7506890811fd8ce4f4ec902a5b42.jpg",
+        "text": "$$\n\\mathrm { M S E } _ { \\delta } ( y _ { x } , \\hat { y } _ { x } ) = \\frac { 1 } { n _ { b } } \\sum _ { i = 1 } ^ { n _ { b } } \\frac { 1 } { | \\mathcal { B } ( x _ { i } , \\delta ) | } \\sum _ { x _ { j } \\in \\mathcal { B } ( x _ { i } , \\delta ) } \\| y ( x _ { j } ; \\omega _ { j } ) - \\hat { y } ( x _ { j } ; \\hat { \\omega } _ { j } ) \\| ^ { 2 } .\\tag{D.1}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            156,
+            888,
+            672,
+            932
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "page_number",
+        "text": "Page 16 of 19",
+        "bbox": [
+            827,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "table",
+        "img_path": "images/cfa20107291b436e28b494c56bbed18daafd72b23411c4c5cc67b25ed4589994.jpg",
+        "table_caption": [
+            "Training hyperparameters, neural network settings, and optimization configurations for all numerical examples."
+        ],
+        "table_footnote": [],
+        "table_body": "<table><tr><td></td><td>Example 1</td><td>Example 2</td><td>Example 3</td></tr><tr><td>Optimizer</td><td>Adam</td><td>Adam</td><td>Adam</td></tr><tr><td>Learning rate</td><td> $5 \\times 1 0 ^ { - 3 }$ </td><td> $5 \\times 1 0 ^ { - 4 }$ </td><td> $1 \\times 1 0 ^ { - 2 }$ </td></tr><tr><td>Weight decay</td><td>0</td><td>0</td><td>0</td></tr><tr><td>Number of epochs E</td><td>2000</td><td>20000</td><td>200</td></tr><tr><td>Training samples</td><td>2000</td><td>2000</td><td>300</td></tr><tr><td>Number of testing centers  $N _ { c }$ </td><td>100</td><td>20</td><td>20</td></tr><tr><td>Testing Realizations</td><td>20</td><td>100</td><td>20</td></tr><tr><td>Mini-batch size  $n _ { b }$ </td><td>8</td><td>4</td><td>8</td></tr><tr><td>Hidden layers</td><td>2</td><td>3</td><td>2</td></tr><tr><td>Hidden neurons</td><td>32</td><td>128</td><td>32</td></tr><tr><td>Activation function</td><td>ReLU</td><td>ReLU</td><td>GeLU</td></tr><tr><td>Residual connection (ResNet)</td><td>Yes</td><td>Yes</td><td>Yes</td></tr><tr><td>Neighborhood radius δ</td><td>0.05</td><td>0.05</td><td>0.1</td></tr><tr><td>Minimal samples required for each neighborhood  $n _ { \\mathrm { m i n } }$ </td><td>4</td><td>4</td><td>4</td></tr><tr><td>Maximal samples recorded in each neighborhood  $n _ { \\mathrm { m a x } }$ </td><td>128</td><td>64</td><td>300</td></tr><tr><td>Samples chosen in each neighborhood n</td><td>32</td><td>32</td><td>32</td></tr><tr><td>Regularization coefficient ε</td><td>0.05</td><td>0.03</td><td>0.1</td></tr><tr><td>SNN parameter initialization</td><td></td><td></td><td>N(0, 0.012) N(0, 0.052) N(0, 0.012)</td></tr></table>",
+        "bbox": [
+            145,
+            110,
+            852,
+            463
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "• 2. Local mean absolute error (Local MAE)",
+        "bbox": [
+            93,
+            491,
+            433,
+            509
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ec1aef6b45a2644036796b6a25187e8726427f9f0f3b32b41da798ce15d0b1d7.jpg",
+        "text": "$$\n\\mathrm { M A E } _ { \\delta } ( \\pmb { y } _ { x } , \\hat { \\pmb { y } } _ { x } ) = \\frac { 1 } { n _ { b } } \\sum _ { i = 1 } ^ { n _ { b } } \\frac { 1 } { | \\mathscr { B } ( \\pmb { x } _ { i } , \\delta ) | } \\sum _ { \\pmb { x } _ { j } \\in \\mathscr { B } ( \\pmb { x } _ { i } , \\delta ) } \\| \\pmb { y } ( \\pmb { x } _ { j } ; \\omega _ { j } ) - \\hat { \\pmb { y } } ( \\pmb { x } _ { j } ; \\hat { \\omega } _ { j } ) \\| .\\tag{D.2}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            156,
+            540,
+            669,
+            583
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "• 3. Local energy distance (Local ED)",
+        "text_level": 2,
+        "bbox": [
+            93,
+            602,
+            386,
+            618
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "The energy distance follows from [26] and is defined locally by",
+        "bbox": [
+            112,
+            623,
+            582,
+            640
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4c165d0eaafc2d38b3d9a42919c580ef58da17ee627b3d1e9862f88cd01b0aca.jpg",
+        "text": "$$\n\\operatorname { E D } _ { \\delta } ( \\pmb { y } _ { \\pmb { x } } , \\hat { \\pmb { y } } _ { \\pmb { x } } ) = \\frac { 1 } { n _ { b } } \\sum _ { i = 1 } ^ { n _ { b } } \\operatorname { E D } \\left( Y _ { i } ^ { \\delta } , \\hat { Y } _ { i } ^ { \\delta } \\right) ,\\tag{D.3}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            156,
+            669,
+            426,
+            712
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "where",
+        "bbox": [
+            112,
+            730,
+            165,
+            743
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "equation",
+        "img_path": "images/55bd315cd07bc58514b16355abeabd11628129b4bc2afce0b4a69ae9a1cd0f73.jpg",
+        "text": "$$\n\\begin{array} { r l } & { \\mathrm { E D } \\big ( Y _ { i } ^ { \\delta } , \\hat { Y } _ { i } ^ { \\delta } \\big ) = \\displaystyle \\frac { 2 } { | { \\cal B } ( x _ { i } , \\delta ) | ^ { 2 } } \\sum _ { y _ { p } \\in Y _ { i } ^ { \\delta } , \\hat { y } _ { q } \\in \\hat { Y } _ { i } ^ { \\delta } } \\| y _ { p } - \\hat { y } _ { q } \\| } \\\\ & { \\quad \\quad \\quad \\quad - \\frac { 1 } { | { \\cal B } ( x _ { i } , \\delta ) | ^ { 2 } } \\sum _ { y _ { p } \\in Y _ { i } ^ { \\delta } , \\hat { y } _ { q } \\in \\hat { Y } _ { i } ^ { \\delta } } \\| y _ { p } - y _ { q } \\| - \\frac { 1 } { | { \\cal B } ( x _ { i } , \\delta ) | ^ { 2 } } \\sum _ { y _ { p } \\in Y _ { i } ^ { \\delta } , \\hat { y } _ { q } \\in \\hat { Y } _ { i } ^ { \\delta } } \\| \\hat { y } _ { p } - \\hat { y } _ { q } \\| , } \\end{array}\\tag{D.4}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            156,
+            774,
+            865,
+            863
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "with",
+        "bbox": [
+            112,
+            876,
+            152,
+            889
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "equation",
+        "img_path": "images/56900024bb1be2dce1d137adb60e7148f4d6fdbf652ff861861e5a4582f6b32b.jpg",
+        "text": "$$\n\\begin{array} { r } { Y _ { i } ^ { \\delta } = \\left\\{ { \\pmb y } ( { \\pmb x } _ { j } ; \\omega _ { j } ) : { \\pmb x } _ { j } \\in B ( { \\pmb x } _ { i } , \\delta ) \\right\\} , \\qquad \\hat { Y } _ { i } ^ { \\delta } = \\left\\{ \\hat { \\pmb y } ( { \\pmb x } _ { j } ; \\hat { \\omega } _ { j } ) : { \\pmb x } _ { j } \\in B ( { \\pmb x } _ { i } , \\delta ) \\right\\} . } \\end{array}\\tag{D.5}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            156,
+            901,
+            722,
+            924
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            43,
+            696,
+            59
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "page_number",
+        "text": "Page 17 of 19",
+        "bbox": [
+            827,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "• 4. Local maximum mean discrepancy (Local MMD)",
+        "text_level": 2,
+        "bbox": [
+            93,
+            72,
+            503,
+            88
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "The MMD follows from the kernel two-sample test [15] and is defined locally by:",
+        "bbox": [
+            110,
+            94,
+            715,
+            110
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/5e2520a2d4df95d366e51c042d68fdf701ce685227a40c165c95d8b1ffb13ff3.jpg",
+        "text": "$$\n\\mathrm { M M D } _ { \\delta } ( y _ { x } , \\hat { y } _ { x } ) = \\frac { 1 } { \\left| \\Gamma \\right| } \\sum _ { \\gamma \\in \\Gamma } \\frac { 1 } { n _ { b } } \\sum _ { i = 1 } ^ { n _ { b } } \\mathrm { M M D } _ { \\gamma } \\left( Y _ { i } ^ { \\delta } , \\hat { Y } _ { i } ^ { \\delta } \\right) ,\\tag{D.6}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            156,
+            122,
+            533,
+            165
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "where",
+        "bbox": [
+            112,
+            177,
+            165,
+            192
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/a66bc408505091a85e64145f5bc34ef2e1087bce520f7c846e8ecce5146324e5.jpg",
+        "text": "$$\n\\begin{array} { l } { { \\mathrm { M M D } _ { \\gamma } \\bigl ( Y _ { i } ^ { \\delta } , \\hat { Y } _ { i } ^ { \\delta } \\bigr ) = \\displaystyle \\frac { 1 } { | \\mathscr { B } ( x _ { i } , \\delta ) | ^ { 2 } } \\sum _ { \\substack { y _ { p } \\in Y _ { i } ^ { \\delta } , \\hat { y } _ { q } \\in \\hat { Y } _ { i } ^ { \\delta } } } K _ { \\gamma } ( { \\bf y } _ { p } , { \\bf y } _ { q } ) + \\displaystyle \\frac { 1 } { | \\mathscr { B } ( x _ { i } , \\delta ) | ^ { 2 } } \\sum _ { \\substack { y _ { p } \\in Y _ { i } ^ { \\delta } , \\hat { y } _ { q } \\in \\hat { Y } _ { i } ^ { \\delta } } } K _ { \\gamma } ( \\hat { y } _ { p } , \\hat { y } _ { q } ) } } \\\\ { { - \\displaystyle \\frac { 2 } { | \\mathscr { B } ( x _ { i } , \\delta ) | ^ { 2 } } \\sum _ { \\substack { y _ { p } \\in Y _ { i } ^ { \\delta } , \\hat { y } _ { q } \\in \\hat { Y } _ { i } ^ { \\delta } } } K _ { \\gamma } ( { y } _ { p } , \\hat { y } _ { q } ) , } } \\end{array}\\tag{D.7}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            158,
+            202,
+            821,
+            291
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "where $Y _ { i } ^ { \\delta }$ and $\\hat { Y } _ { i } ^ { \\delta }$ are defined in Eq. (D.5), and $K ( \\cdot , \\cdot )$ denotes the Gaussian kernel:",
+        "bbox": [
+            112,
+            304,
+            724,
+            323
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/9ced49572c88b241c360b9ac9a2ec1e39ffdaebce20e2765db250f8b7d094546.jpg",
+        "text": "$$\nK _ { \\gamma } ( \\pmb { y } , \\hat { \\pmb { y } } ) = \\mathrm { e x p } \\left( - \\frac { \\| \\pmb { y } - \\hat { \\pmb { y } } \\| ^ { 2 } } { 2 \\gamma ^ { 2 } } \\right) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            158,
+            335,
+            395,
+            371
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "In Examples 1 and $2 , \\Gamma = \\{ 0 . 5 , 1 . 0 , 2 . 0 , 4 . 0 \\}$",
+        "bbox": [
+            110,
+            384,
+            441,
+            400
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "• 5. Local squared $W _ { 2 }$ distance",
+        "bbox": [
+            93,
+            409,
+            334,
+            427
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3badf68663565319251207d9eca6daa932c48e09083ba810f5a92d88e75433df.jpg",
+        "text": "$$\nW _ { 2 , \\delta } ^ { 2 } ( \\pmb { y } _ { \\pmb { x } } , \\hat { \\pmb { y } } _ { \\pmb { x } } ) = \\frac { 1 } { n _ { b } } \\sum _ { i = 1 } ^ { n _ { b } } W _ { 2 } ^ { 2 } ( \\mu _ { { \\pmb x } _ { i } , \\delta } ^ { \\mathrm { e } } , \\hat { \\mu } _ { { \\pmb x } _ { i } , \\delta } ^ { \\mathrm { e } } ) ,\\tag{D.8}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            158,
+            456,
+            450,
+            498
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "where $\\mu _ { x _ { i } , \\delta } ^ { \\mathrm { e } }$ and $\\hat { \\mu } _ { x _ { i } , \\delta } ^ { \\mathrm { e } }$ are the empirical distributions associated with the samples ${ \\pmb y } ( { \\pmb x } _ { j } ; \\omega _ { j } )$ in $Y _ { i } ^ { \\delta }$ and $\\hat { \\pmb { y } } ( \\pmb { x } _ { j } ; \\hat { \\omega } _ { j } )$ in $\\hat { Y } _ { i } ^ { \\delta }$ defined in Eq. (D.5), respectively.",
+        "bbox": [
+            110,
+            512,
+            930,
+            552
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "• 6. Local Sinkhorn divergence",
+        "text_level": 2,
+        "bbox": [
+            93,
+            561,
+            334,
+            576
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "This loss is adopted throughout the numerical experiments unless otherwise specified.",
+        "bbox": [
+            112,
+            583,
+            748,
+            599
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1d573c88ae700a07d1f85e971bbe452578c52961eef23670360fd880f435f1c3.jpg",
+        "text": "$$\nS _ { \\varepsilon , \\delta } ( \\boldsymbol { y } _ { x } , \\hat { \\boldsymbol { y } } _ { x } ) = \\frac { 1 } { n _ { b } } \\sum _ { i = 1 } ^ { n _ { b } } S _ { \\varepsilon } ( \\boldsymbol { \\mu } _ { x _ { i } , \\delta } ^ { \\mathrm { e } } , \\hat { \\boldsymbol { \\mu } } _ { x _ { i } , \\delta } ^ { \\mathrm { e } } ) ,\\tag{D.9}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            158,
+            611,
+            437,
+            654
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "where $S _ { \\varepsilon } ( \\mu , \\hat { \\mu } )$ is the Sinkhorn divergence defined in Eq. (2.6), and $\\mu _ { x _ { i } , \\delta } ^ { \\mathrm { e } }$ and $\\hat { \\mu } _ { x _ { i } , \\delta } ^ { \\mathrm { e } }$ are the empirical distributions associated with the samples ${ \\bf y } ( { \\bf x } _ { j } ; \\omega _ { j } )$ in $Y _ { i } ^ { \\delta }$ and $\\hat { \\bf y } ( { \\bf x } _ { j } ; \\hat { \\omega } _ { j } )$ in $\\hat { Y } _ { i } ^ { \\delta }$ defined in Eq. (D.5), respectively.",
+        "bbox": [
+            110,
+            664,
+            930,
+            706
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "References",
+        "text_level": 2,
+        "bbox": [
+            66,
+            729,
+            176,
+            746
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "[1] Juan A. Acebrón, Adi R. Bulsara, and W.-J. Rappel. Noisy FitzHugh–Nagumo model: From single elements to globally coupled networks. Phys. Rev. E, 69:026202, 2004.",
+            "[2] Martin Arjovsky, Soumith Chintala, and Léon Bottou. Wasserstein GAN. 2017.",
+            "[3] Mikhail Belkin and Partha Niyogi. Laplacian eigenmaps for dimensionality reduction and data representation. Neural Comput., 15(6):1373– 1396, 2003.",
+            "[4] Christopher M. Bishop. Mixture density networks. 1994.",
+            "[5] Philippe Clement and Wolfgang Desch. An elementary proof of the triangle inequality for the Wasserstein metric. Proc. Am. Math. Soc., 136(1):333–339, 2008.",
+            "[6] Marco Cuturi. Sinkhorn distances: Lightspeed computation of optimal transport. volume 26, 2013.",
+            "[7] Laurent Dinh et al. Density estimation using real nvp. In ICLR, 2017.",
+            "[8] Jean Feydy, Thibault Séjourné, François-Xavier Vialard, Shun-ichi Amari, Alain Trouvé, and Gabriel Peyré. Interpolating between optimal transport and maximum mean discrepancy using Sinkhorn divergences. In Proceedings of the 22nd International Conference on Artificial Intelligence and Statistics, pages 2681–2690, 2019."
+        ],
+        "bbox": [
+            75,
+            752,
+            928,
+            777
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "page_number",
+        "text": "Page 18 of 19",
+        "bbox": [
+            827,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            426,
+            962
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "[9] Rémi Flamary, Nicolas Courty, Alexandre Gramfort, Mokhtar Z. Alaya, Aurélie Boisbunon, Stanislas Chambon, Laetitia Chapel, Adrien Corenflos, Kilian Fatras, Nemo Fournier, Léo Gautheron, Nathalie T.H. Gayraud, Hicham Janati, Alain Rakotomamonjy, Ievgen Redko, Antoine Rolet, Antony Schutz, Vivien Seguy, Danica J. Sutherland, Romain Tavenard, Alexander Tong, and Titouan Vayer. POT: Python optimal transport. J. Mach. Learn. Res., 22(78):1–8, 2021.",
+            "[10] Charlie Frogner, Chiyuan Zhang, Hossein Mobahi, Mauricio Araya, and Tomaso Poggio. Learning with a Wasserstein loss. volume 28, 2015.",
+            "[11] Aude Genevay, Lénaïc Chizat, Francis Bach, Marco Cuturi, and Gabriel Peyré. Sample complexity of Sinkhorn divergences. In Proceedings ofthe 22nd International Conference on Artificial Intelligence and Statistics, pages 1574–1583, 2019.",
+            "[12] Aude Genevay, Gabriel Peyré, and Marco Cuturi. Learning generative models with sinkhorn divergences. 2018.",
+            "[13] Roger G. Ghanem and Pol D. Spanos. Stochastic Finite Elements: A Spectral Approach. Springer, 1991.",
+            "[14] Ian Goodfellow et al. Generative adversarial nets. volume 27, 2014.",
+            "[15] Arthur Gretton, Karsten M. Borgwardt, Malte Rasch, Bernhard Schölkopf, and Alexander J. Smola. A kernel two-sample test. J. Mach. Learn. Res., 13:723–773, 2012.",
+            "[16] Jonathan Ho, Ajay Jain, and Pieter Abbeel. Denoising difusion probabilistic models. Advances in neural information processing systems, 33:6840–6851, 2020.",
+            "[17] Diederik P. Kingma and Max Welling. Auto-encoding variational Bayes. 2014.",
+            "[18] Nikola Kovachki et al. Neural operator: Learning maps between function spaces. J. Mach. Learn. Res., 24:1–97, 2023.",
+            "[19] George Papamakarios, Eric Nalisnick, Danilo Jimenez Rezende, Shakir Mohamed, and Balaji Lakshminarayanan. Normalizing flows for probabilistic modeling and inference. J. Mach. Learn. Res., 22:1–64, 2021.",
+            "[20] Gabriel Peyré and Marco Cuturi. Computational Optimal Transport. Now Publishers, 2019.",
+            "[21] Maziar Raissi, Paris Perdikaris, and George E. Karniadakis. Physics-informed neural networks: A deep learning framework for solving forward and inverse problems involving nonlinear partial diferential equations. J. Comput. Phys., 378:686–707, 2019.",
+            "[22] Danilo Rezende and Shakir Mohamed. Variational inference with normalizing flows. In ICML, 2015.",
+            "[23] Bernhard Schmitzer. Stabilized sparse scaling algorithms for entropy regularized transport problems. SIAM J. Sci. Comput., 41(3):A1443– A1481, 2019.",
+            "[24] Kihyuk Sohn et al. Learning structured output representation using deep conditional generative models. In NeurIPS, 2015.",
+            "[25] Timothy J. Sullivan. Introduction to Uncertainty Quantification. Springer, 2015.",
+            "[26] Gábor J. Székely and Maria L. Rizzo. Energy statistics: A class of statistics based on distances. J. Stat. Plan. Inference, 143(8):1249–1272, 2013.",
+            "[27] Joshua B. Tenenbaum, Vin de Silva, and John C. Langford. A global geometric framework for nonlinear dimensionality reduction. Science, 290(5500):2319–2323, 2000.",
+            "[28] Henry C. Tuckwell and Roger Rodriguez. Analytical and simulation results for stochastic FitzHugh–Nagumo neurons and neural networks. J. Comput. Neurosci., 5(1):91–113, 1998.",
+            "[29] Cédric Villani. Optimal Transport: Old and New. Springer, 2009.",
+            "[30] Mingtao Xia and Qijing Shen. Eficient reconstruction of multidimensional random field models with heterogeneous data using stochastic neural networks. arXiv preprint arXiv:2511.13977, 2025.",
+            "[31] Mingtao Xia and Qijing Shen. A local squared Wasserstein-2 method for eficient reconstruction of models with uncertainty. Mach. Learn.: Sci. Technol., 7(3):035001, 2026.",
+            "[32] Mingtao Xia, Qijing Shen, Philip Maini, Eamonn Gafney, and Alex Mogilner. A new local time-decoupled squared Wasserstein-2 method for training stochastic neural networks to reconstruct uncertain parameters in dynamical systems. Neural Netw., page 107893, 2025.",
+            "[33] Dongbin Xiu. Numerical Methodsfor Stochastic Computations. Princeton University Press, 2010."
+        ],
+        "bbox": [
+            73,
+            75,
+            930,
+            129
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            44,
+            696,
+            59
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "page_number",
+        "text": "Page 19 of 19",
+        "bbox": [
+            827,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "image",
+        "img_path": "images/54ed27eb02f80a2177361c68fbc899ef0dd1fe0264544293eaa2a1f0e91a5ac5.jpg",
+        "image_caption": [],
+        "image_footnote": [],
+        "bbox": [
+            130,
+            78,
+            457,
+            260
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "equation",
+        "img_path": "images/49bed67a370f6e6a58cc2d4be1d5ae1913ad3a323b2201e2b515f214098408d0.jpg",
+        "text": "$$\n\\begin{array} { r l } & { \\mathrm { N o r m a l : } \\quad g _ { i , k } = \\mathrm { R e L U } \\Bigl ( \\sum _ { j = 1 } ^ { H } w _ { i - 1 , j , k } g _ { i - 1 , j } + b _ { i , k } \\Bigr ) } \\\\ & { \\mathrm { R e s N e t : } \\quad g _ { i , k } = \\mathrm { R e L U } \\Bigl ( \\sum _ { j = 1 } ^ { H } w _ { i - 1 , j , k } g _ { i - 1 , j } + b _ { i , k } \\Bigr ) + g _ { i - 1 , k } \\pmod { i } } \\\\ & { \\qquad w _ { i , j , k } \\sim \\mathcal N ( a _ { i , j , k } , \\sigma _ { i , j , k } ^ { 2 } ) } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            466,
+            83,
+            856,
+            145
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "H: the number of neurons per hidden layer ReLU: the ReLU activation function",
+        "bbox": [
+            487,
+            184,
+            788,
+            214
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/c1f69de85353083139fa079e5b9ea0fbeffd16004eaff5e002197c37c9a13777.jpg",
+        "content": "",
+        "chart_caption": [
+            "Figure 1: Illustration of the SNN used for conditional distribution reconstruction. Each linear layer samples its weights from Gaussian distributions whose means and variances are trainable during forward propagation, enabling stochastic realizations to be generated for the same input. Residual connections (ResNet) could be employed to improve optimization stability. The generated samples are used to construct empirical conditional distributions of the reconstructed $\\hat { \\mathbf { y } } ( \\mathbf { x } ; \\hat { \\omega } )$ in Eq. (2.2). The stochastic weights in the SNN serve as the random variable ̂� in Eq. (2.2). The ReLU activation function may be replaced with other activation functions."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            66,
+            396,
+            347,
+            567
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/2adafa3cdf665bfa7a68429c945aa0b48efc69ecf54d6ca75b377ff283de62e1.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            351,
+            382,
+            632,
+            567
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/51cf36d9913704bdb4c674572cd8c57d44153ae75b294b71794c666e40224d3a.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            637,
+            394,
+            930,
+            553
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/8bc83554beffbf6413778609e93ddd69222045f06d7a6917947ea2ad5b3698ab.jpg",
+        "content": "",
+        "chart_caption": [
+            "Figure 2: Comparison of diferent local distribution matching losses for Example 1 (a) Total training time. (b) Average relative errors of the conditional mean and conditional variance on the testing set. (c) Comparison between the true and predicted conditional distributions obtained using the proposed Local Sinkhorn loss. The solid curves denote the conditional means, while the shaded regions represent one standard deviation. All loss functions are minimized to train the same SNN architecture and identical training hyperparameters."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            71,
+            688,
+            250,
+            814
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/ce951ce3a523b551608cbaeccd44055186a358282d4625da5975290d60bec7e7.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            237,
+            691,
+            465,
+            822
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/fb58341896373dc9e373014521ef8b1e4e30d2b5190cdd0a67d1527c771b725e.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            452,
+            692,
+            681,
+            822
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/10aab002b2c599da14e36cd94034267de170014959ae45be093efe7fbdad7c73.jpg",
+        "content": "",
+        "chart_caption": [
+            "Figure 3: (a) An illustration of the training and testing sample selection strategy. (b) Influence of the random-field intensity parameter �, where the Gaussian random field is generated as $g _ { \\sigma } ( \\pmb { x } , \\omega ) = \\sigma g _ { 0 } ( \\pmb { x } , \\omega )$ . (c) Influence of the neighborhood radius � used to construct local empirical conditional distributions. (d) Influence of the Sinkhorn regularization parameter �. For all panels, the left axis reports the average relative reconstruction errors of the conditional mean and variance, while the right axis reports the corresponding training time."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            676,
+            692,
+            930,
+            822
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            43,
+            696,
+            60
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "page_number",
+        "text": "Page 20 of 19",
+        "bbox": [
+            827,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "chart",
+        "img_path": "images/1d4b344be251cc1a0b6160934c0be94fc7ae40f61d96a8e50eeab1bff774d3cf.jpg",
+        "content": "",
+        "chart_caption": [
+            "(a) Trajectory of v<sub>1</sub>(t)"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            108,
+            327,
+            358,
+            452
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/92a0eed4c5e354479e1c2f346cff7de8ca5713cce78a1276ba4c009d4faeacbf.jpg",
+        "content": "",
+        "chart_caption": [
+            "(d) Drift function of $\\mathrm { d } w _ { 1 } ( t )$",
+            "(b) Trajectory of w<sub>1</sub>(t)"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            375,
+            322,
+            623,
+            451
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/356a39d07cce62d5294cb7f44973dfc7ebba5a8800216ca067df9539798a9fb0.jpg",
+        "content": "",
+        "chart_caption": [
+            "(c) Drift function of dv<sub>1</sub>(t)",
+            "(e) Di,usion function of $\\mathrm { d } v _ { 1 } ( t )$"
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            630,
+            328,
+            884,
+            451
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/abbbdc314a380062c2f51feaf22e0149be5fd6352e821a360eda24ce7a235c2a.jpg",
+        "content": "",
+        "chart_caption": [],
+        "chart_footnote": [],
+        "bbox": [
+            237,
+            467,
+            492,
+            591
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "chart",
+        "img_path": "images/a77f1fb7463ec8ba89f7f6fef51d549886360a1ca382552693551e9bce7dd3d7.jpg",
+        "content": "",
+        "chart_caption": [
+            "Figure 4: Comparison between the true and predicted stochastic dynamics for a representative testing sample in the stochastic FHN system. Panels $( \\mathsf { a } ) ( \\mathsf { b } )$ show the mean and standard deviation of trajectories of $v _ { 1 } ( t )$ and $w _ { 1 } ( t ) . ( \\mathsf { c } ) ( \\mathsf { d } )$ show the mean and standard deviation of the drift functions of $\\mathsf { d } v _ { 1 } ( t )$ and $\\mathsf { d } w _ { 1 } ( t )$ in Eq. (3.19). (e) shows the mean and standard deviation of the difusion functions of $\\mathsf { d } v _ { 1 } ( t )$ in Eq. (3.19). The shaded regions indicate one standard deviation estimated from multiple stochastic realizations."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            500,
+            470,
+            750,
+            591
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "header",
+        "text": "Sinkhorn Divergence for Reconstructing Random Fields",
+        "bbox": [
+            299,
+            43,
+            696,
+            60
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "footer",
+        "text": "M. Xia and Q. Shen: Preprint submitted to Elsevier",
+        "bbox": [
+            66,
+            947,
+            428,
+            962
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "page_number",
+        "text": "Page 21 of 19",
+        "bbox": [
+            827,
+            947,
+            930,
+            962
+        ],
+        "page_idx": 21
+    }
+]
