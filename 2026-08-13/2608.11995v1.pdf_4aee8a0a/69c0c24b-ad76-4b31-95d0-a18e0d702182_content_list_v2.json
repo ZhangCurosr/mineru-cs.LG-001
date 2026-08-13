@@ -1,0 +1,4397 @@
+[
+    [
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Latent variable models for simultaneous EOV identification and removal in population-based SHM"
+                    }
+                ],
+                "level": 1
+            },
+            "bbox": [
+                100,
+                123,
+                821,
+                174
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "M. D. Champneys <sup>1,2</sup>, M. R. Jones <sup>1</sup>, A. J. Hughes <sup>1</sup>, T. J. Rogers <sup>1</sup>, E. J. Cross <sup>1</sup>, K. Worden <sup>1</sup>"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                205,
+                831,
+                221
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>1</sup> Dynamics Research Group, University of Sheffield, Mappin Street, Sheffield S1 3JD, UK"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                221,
+                779,
+                236
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>2</sup> Centre for Machine Intelligence, University of Sheffield, Mappin Street, Sheffield S1 3JD, UK"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                236,
+                815,
+                252
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Abstract"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                102,
+                285,
+                206,
+                303
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The robust treatment of environmental and operational variability (EOV) is an open challenge in populationbased structural health monitoring (PBSHM). The difficulty is compounded in the case that the EOV signals are unmeasured. A common approach in conventional SHM is to apply projection-based methods that discard subspaces of healthy feature data, reasoning that the EOV signal dominates the variance of the measured features. However, a common pitfall of projection-based approaches is that when damage acts close to the same variance-dominant direction, damage sensitivity is removed along with the EOV. An alternative identifying assumption for the removal of particular unmeasured EOVs is slowness; the latent EOV process is characterised by its long temporal correlation. In this paper, the latent EOV is cast as a state-space Gaussian process, enabling tractable O(T) inference via a Kalman filter. A robust hierarchical Bayesian identification framework is developed that enables population-level identification of latent EOVs and EOV-free residual features, using a Laplace approximation. The approach is first validated on a single laboratory-scale bench mark structure from the literature, subject to thermal EOVs, demonstrating robust damage detection and EOV recovery. The method is then applied to a simulated nine-turbine offshore wind farm with staggered deployment and damage, where it delivers a substantial true-positive uplift over projection and cointegration-based baselines at matched false-positive rates."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                303,
+                900,
+                535
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "1 Introduction"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                102,
+                573,
+                285,
+                592
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Structural health monitoring (SHM) seeks to detect, locate, and characterise structural damage from measured response data [1]. A persistent obstacle is environmental and operational variability (EOV); ambient temperature, wind speed, and operational load shifts all alter the measured feature distribution, causing false alarms if damage detection is framed as distributional outlier detection on the raw features [2]."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                611,
+                900,
+                674
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To date, many approaches have been proposed to manage the effects of EOVs [3]. The central distinction between existing paradigms is the observability of the EOV. In the case that the EOV signal is observed (e.g. measured temperatures, operational logs etc.), regression<sup>1</sup> approaches model the feature-EOV relationship directly and detect damage in the regression residuals [4]."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                677,
+                900,
+                740
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "When the EOV is unmeasured<sup>2</sup>, the EOV subspace must be inferred from the feature data itself. The dominant paradigms are cointegration and projection-based removal. In the former case, the existence of a cointegrating relationship is assumed, whereby the features are individually non-stationary, driven by a shared integrated environmental trend, yet a linear combination of them is stationary [5, 6]. Damage is inferred by the violation of stationarity. Latent-variable treatments have also been proposed; factor analysis has been used to eliminate unmeasured EOVs and to distinguish their effects from those of sensor faults and damage [7, 8]."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                744,
+                900,
+                853
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "This paper focuses on the case of unmeasured EOVs. For projection-based approaches such as minor component analysis (MCA) [9, 10], the identifying assumption is variance-dominance, the top principal components (or other similarly-identified subspaces) of healthy feature data are discarded, with the reasoning that they are dominated by the EOV. However, for structural systems where damage induces proportional shifts across all monitored vibration modes (e.g. global foundation degradation from scour or corrosion) the damage direction may be close to collinear with the EOV direction, and the removal of the high-variance subspace removes the damage signature alongside the EOV."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                858,
+                900,
+                890
+            ]
+        },
+        {
+            "type": "page_aside_text",
+            "content": {
+                "page_aside_text_content": [
+                    {
+                        "type": "text",
+                        "content": "arXiv:2608.11995v1 [eess.SP] 12 Aug 2026"
+                    }
+                ]
+            },
+            "bbox": [
+                30,
+                361,
+                67,
+                797
+            ]
+        },
+        {
+            "type": "page_footnote",
+            "content": {
+                "page_footnote_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>1</sup>Also called explicit methods by some authors."
+                    }
+                ]
+            },
+            "bbox": [
+                121,
+                898,
+                415,
+                912
+            ]
+        },
+        {
+            "type": "page_footnote",
+            "content": {
+                "page_footnote_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>2</sup>Also called implicit methods by some authors."
+                    }
+                ]
+            },
+            "bbox": [
+                122,
+                912,
+                416,
+                927
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                99,
+                103,
+                900,
+                180
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "An alternative to variance-dominance is slowness; the identifying assumption is that the EOV varies on longer timescales than damage, noise or the structural dynamics, so it can be identified by a latent process with a long-correlation prior, regardless of its variance signature [11, 12]. So-called slow feature analysis (SFA) is an approach also used for nuisance-variable removal in other monitoring domains; e.g. condition monitoring [13]. A common limitation of slowness-based removal, however, is that abnormalities with a gradual onset (e.g. crack onset and propagation) can themselves be absorbed by the slow latent process, masking the presence of damage."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                184,
+                902,
+                293
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The challenges facing both variance-dominance and slowness approaches can be amplified in a populationbased setting. Structures in a population may share a common environmental driver yet differ in their perstructure response to EOVs. Furthermore, assets commissioned (or instrumented) at different times accumulate healthy training data at different rates, leaving newly deployed members with poorly estimated loadings at the critical early-detection stage. However, methodologies that share data between structures can improve robustness to EOVs compared to the single-structure setting."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                297,
+                900,
+                391
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Contribution This work proposes a shared Gaussian-process latent EOV (GLEOV)<sup>3</sup> model for simultaneous identification and removal of EOVs across a population of structures. The latent EOV signal is modelled as a Matern Gaussian process (GP) with a long lengthscale. The result of [14] is used to cast the GP in´ a linear-Gaussian, state-space form, enabling efficient computation of the marginal likelihood and model predictions via a Kalman-filtering framework. The same state-space treatment of Gaussian processes underpins the Gaussian-process latent force models used for joint input-state-parameter estimation in structural dynamics [15]."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                413,
+                900,
+                523
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In the proposed approach, the latent EOV is identified by its temporal correlation structure rather than its variance, avoiding the limitations of variance-dominance as an assumption for EOV removal. The latent EOV is shared across the population under a hierarchical prior on per-structure EOV loadings. Data-rich structures anchor the shared EOV and lend statistical strength to data-poor neighbours. Damage is detected using the Kalman innovations (the residuals on the projected EOVs) as damage sensitive features, with an approximate Laplace posterior supplying an uncertainty-aware exceedance probability at any given threshold."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                526,
+                902,
+                621
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The principal contributions of this work are:"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                625,
+                433,
+                642
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• A Gaussian-process latent EOV (GLEOV) model for efficient simultaneous identification and removal of EOVs in SHM."
+                    }
+                ]
+            },
+            "bbox": [
+                131,
+                645,
+                900,
+                677
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• A hierarchical Bayesian extension to the case of populations of structures."
+                    }
+                ]
+            },
+            "bbox": [
+                131,
+                683,
+                697,
+                699
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Validation on an experimental single-structure benchmark from the literature, and evaluation on a nineturbine synthetic offshore wind farm with staggered deployment and damage acting along the EOV direction, demonstrating true-positive uplift over projection-based baselines at matched false-positive rates."
+                    }
+                ]
+            },
+            "bbox": [
+                131,
+                705,
+                900,
+                766
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Related work The problem of accounting for EOVs in SHM has been well studied in the literature [16]. Much of the research effort has been focussed on the treatment of single structures and observed EOVs [17, 18, 19]. However, there are several works that consider unobserved EOVs. In [20], a projection-based approach based on minor-component analysis is compared to other implicit methods including cointegration [5, 6]. Although successful, these results are limited to a single structure and do not recover the latent EOV signal."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                790,
+                902,
+                884
+            ]
+        },
+        {
+            "type": "page_footnote",
+            "content": {
+                "page_footnote_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>3</sup>Pronounced (with some difficulty) as ‘glove’."
+                    }
+                ]
+            },
+            "bbox": [
+                122,
+                891,
+                410,
+                907
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Several approaches based on SFA (that can recover unobserved and observed EOVs) have also been proposed in process monitoring and SHM [13, 21], although these also have been focussed on single structures."
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                102,
+                900,
+                134
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Additional single-structure treatments are to be found in the literature, using similar identifying assumptions. A localised principal-component method for environment-induced bridge modal variability [22] uses a variance-dominance argument and applies the projection locally rather than globally, while a nonlinear system-identification approach for output-only monitoring under changing environments [23] removes the environmental influence implicitly via kernel PCA, a nonlinear extension of the variance-dominance assumption. As with the works above, both are confined to a single structure and share no information across a population. A Kalman-filtering approach is adopted in [24], where the filter innovations serve as damage-sensitive features under changing environmental conditions, although again for a single structure and without recovery of the latent environmental signal. In [25], the unmeasured EOV instead enters a random-coefficient functional model as a latent scheduling variable, although it is marginalised rather than recovered. What unites all of these methods is that the environmental process is treated as a nuisance to be removed. Conversely, the authors of [26] invert this view, treating the slow latent process as the signal rather than the nuisance and inferring a monotonic degradation state from fast operational dynamics with a hierarchical neural controlled differential equation."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                137,
+                902,
+                353
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The treatment of EOVs in a population-based context has had comparatively less attention in the literature. The foundations of PBSHM are set out in [27, 28, 29], and in [16] the major challenges are outlined, including the treatment of EOVs. An earlier population treatment is given in [30], using unsupervised multiple-model time-series methods across nominally-identical structures, but without an explicit EOV model. Several papers employ hierarchical Bayesian methods to population-based SHM [31, 32]. While these approaches are able to recover functional relationships between observed features and EOVs, they rely on at least partial observation of the EOV signal, in contrast to the fully-unobserved setting considered here. Closer to the present setting, a hierarchical Bayesian approach to anomaly detection in the natural frequencies of offshore wind turbines under temperature variation is presented in [33], although the EOV is not there recovered as a latent signal."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                356,
+                900,
+                511
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Two relevant works in this vein are a GP regression-surface approach to EOVs in [34, 35] and an adaptive methodology in [36] that combines data from two nominally-identical structures, governed by a mixing hyperparameter, to build adaptive stochastic models of the damage-sensitive features. This latter work demonstrates results on a population of two structures in a manner related to the present work, but it does not recover the underlying latent EOV signal."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                514,
+                900,
+                592
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Perhaps closest to the present work is the single-structure method of [37], which combines a Gaussian process with probabilistic PCA to account for both observed and latent EOVs. There, the GP models the structural response as a function of the measured EOVs, while PCA removes the unmeasured component. By contrast, GLEOV represents the unobserved EOV itself as a slow latent Gaussian process that requires no EOV observations, shares this latent process across a population of structures under a hierarchical prior, and retains O(T) state-space inference."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                595,
+                900,
+                688
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Although many approaches have been proposed to address the problem of EOVs in SHM, the combination of slow-latent EOV removal with population-level information sharing, so that data-rich structures anchor the shared EOV and provide an informative prior for data-poor neighbours, has not been treated in a unified probabilistic framework."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                692,
+                900,
+                755
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Paper structure The remainder of this paper is structured as follows: The following section describes the proposed method. A third section presents two case-study examples of the approach on a single-structure laboratory dataset and a simulated population of structures respectively. A final section presents some discussion and conclusions."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                776,
+                900,
+                838
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "2 The Gaussian-process latent EOV (GLEOV) model"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                100,
+                862,
+                715,
+                883
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Generative model In this work, a data-generating process of the following form is assumed. For structure "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "i \\in \\{ 1 , \\ldots , N \\}"
+                    },
+                    {
+                        "type": "text",
+                        "content": "at time t, the observed M-dimensional feature vector "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\pmb { x } _ { i , t } \\in \\mathbb { R } ^ { M }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is modelled as,"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                900,
+                899,
+                932
+            ]
+        }
+    ],
+    [
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "{ \\pmb x } _ { i , t } = { \\pmb \\mu } _ { i } + { \\cal W } _ { i } ( z _ { t } + \\rho _ { i , t } ) + \\epsilon _ { i , t } , \\quad \\epsilon _ { i , t } \\sim \\mathcal { N } \\left( \\mathbf { 0 } , \\sigma _ { e } ^ { 2 } I _ { M } \\right) , \\quad { \\pmb \\rho } _ { i , t } \\sim \\mathcal { N } \\left( \\mathbf { 0 } , \\tau _ { T } ^ { 2 } I _ { K } \\right) ,\\tag{1}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/21e5028e9b08cf9d25955344de7f61213babe437d3061b311fe512e90755fd4e.jpg"
+                }
+            },
+            "bbox": [
+                189,
+                115,
+                810,
+                135
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\pmb { \\mu } _ { i } \\in \\mathbb { R } ^ { M }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is the per-structure mean, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "z _ { t } \\in \\mathbb { R } ^ { K }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "are the shared slow latent EOVs. Intuitively, this treats the observed features in time as a Gaussian, i.i.d. process, per-structure, corrupted additively by a correlated latent process z via the action of the per-structure EOV loading weights "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "W _ { i }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". The "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\rho _ { i , t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "term accounts for the fact that even shared EOV signals (e.g. temperature) may vary stochastically across the population."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                147,
+                900,
+                210
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Note that the above can be re-written in the form,"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                215,
+                470,
+                230
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "{ \\pmb x } _ { i , t } = { \\pmb \\mu } _ { i } + W _ { i } { \\boldsymbol z } _ { t } + { \\pmb \\nu } _ { i , t } , \\quad { \\pmb \\nu } _ { i , t } \\sim \\mathcal { N } \\Big ( \\mathbf { 0 } , \\ \\sigma _ { e } ^ { 2 } { \\pmb I } _ { M } + \\boldsymbol \\tau _ { T } ^ { 2 } W _ { i } W _ { i } ^ { \\top } \\Big ) ,\\tag{2}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/18cfe3c950bea8024db352de37709c1f6bc07c22895dad0e38d62454d4267416.jpg"
+                }
+            },
+            "bbox": [
+                262,
+                247,
+                736,
+                271
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Thus, given estimates of the weightings, means and latent EOV signal, an EOV-removed residual can be computed as,"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                282,
+                900,
+                315
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\pmb { \\nu } _ { i , t } = \\pmb { x } _ { i , t } - \\pmb { \\hat { \\mu } _ { i } } - \\hat { W } _ { i } \\hat { z } _ { t | t - 1 } ,\\tag{3}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/788b131b7b7fa90d672da8552eb64a7085409bf16e2ca788460ed330cfc6ece0.jpg"
+                }
+            },
+            "bbox": [
+                389,
+                332,
+                610,
+                353
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where ˆ· denotes an estimated quantity. In the absence of damage, this residual is Gaussian and independent across time, with an approximately stationary covariance, making it an ideal candidate for novelty detection in SHM. A probabilistic graphical model of the proposed data-generating process is given in Figure 1."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                362,
+                900,
+                411
+            ]
+        },
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/2bbb1ae0ef9294966b431af2bab4175ff8211653b62c670a9236401afba51123.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 1: Probabilistic graphical model of the GLEOV generative process. The shared latent EOV "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "z _ { t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "evolves as a temporal Gaussian process (self-loop) and is mapped to the observed features "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { \\Delta } _ { \\mathbf { x } _ { i , t } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "(shaded node) by the per-structure loading "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "W _ { i } ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "offset by the per-structure mean "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mu _ { i } ;"
+                    },
+                    {
+                        "type": "text",
+                        "content": "loadings are drawn from a population consensus "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "W _ { 0 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". Plates index the latent dimension (K), time "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( T )"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", and structure "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( N )"
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                354,
+                420,
+                647,
+                532
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Priors In this work, the shared latent "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "z _ { t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is given a zero-mean Matern-3/2 GP´ "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { p r i o r } ^ { 4 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". It can be shown that such a GP can be written as a linear-Gaussian state-space-model as [14],"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                644,
+                899,
+                675
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\left[ \\boldsymbol { \\xi } _ { t } \\right] = \\boldsymbol { A } _ { d } \\left[ \\begin{array} { l } { \\boldsymbol { z } _ { t - 1 } } \\\\ { \\dot { \\boldsymbol { z } } _ { t - 1 } } \\end{array} \\right] + { \\bf w } _ { t } , \\qquad { \\bf w } _ { t } \\sim \\mathcal { N } ( \\mathbf { 0 } , \\boldsymbol { Q } _ { d } ) , \\qquad \\left[ \\begin{array} { l } { \\boldsymbol { z } _ { 0 } } \\\\ { \\dot { \\boldsymbol { z } } _ { 0 } } \\end{array} \\right] \\sim \\mathcal { N } ( \\mathbf { 0 } , P _ { \\infty } )\\tag{4}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/10d07e33427cc9fad3a56fb82ff286ce9dd6601577a7888d00632129cd71f002.jpg"
+                }
+            },
+            "bbox": [
+                235,
+                690,
+                768,
+                727
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "A _ { d } = e ^ { - \\lambda \\Delta _ { t } } \\left[ \\begin{array} { c c } { 1 + \\lambda \\Delta _ { t } } & { \\Delta _ { t } } \\\\ { - \\lambda ^ { 2 } \\Delta _ { t } } & { 1 - \\lambda \\Delta _ { t } } \\end{array} \\right] , \\quad P _ { \\infty } = \\left[ \\begin{array} { c c } { 1 } & { 0 } \\\\ { 0 } & { \\lambda ^ { 2 } } \\end{array} \\right] , \\quad Q _ { d } = P _ { \\infty } - A _ { d } P _ { \\infty } A _ { d } ^ { \\intercal }\\tag{5}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/fb8f9d01ee580820b26c71f681cdf681fd35c56636bad1b822f3ced2e4dc551b.jpg"
+                }
+            },
+            "bbox": [
+                194,
+                738,
+                805,
+                774
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Here "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\lambda = { \\sqrt { 3 } } / \\ell"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", where ℓ is the GP lengthscale and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\Delta _ { t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "the sampling period. The matrix "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "P _ { \\infty }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is the stationary covariance of the state at which the filter is initialised so that the recursion begins from the "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { G P ^ { \\circ } s }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "stationary distribution. Note that in order to avoid identifiability issues with the magnitude of the loading vectors, the signal variance of the GP is here assumed to be equal to 1 without loss of generality."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                787,
+                900,
+                850
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The loadings receive an informative hierarchical prior, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "W _ { i } \\sim \\mathcal { N } ( W _ { 0 } , 1 0 ^ { - 6 } I )"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", it is reasoned here that the EOV loading direction "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "W _ { i }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "will be highly similar between nominally identical structures, and that data-poor structures must borrow information from the population in order to identify it accurately. In contrast, the per-structure means receive a deliberately uninformative prior, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\pmb { \\mu } _ { i } \\sim \\mathcal { N } ( \\mathbf { 0 } , 1 0 ^ { 2 } I )"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", with the reasoning that the mean values will be structure specific and not necessarily shared among population members. All prior distributions and hyperparameters are listed in Table 1."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                853,
+                900,
+                887
+            ]
+        },
+        {
+            "type": "page_footnote",
+            "content": {
+                "page_footnote_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>4</sup>In the exposition of this section, scalar z<sub>t</sub> is considered only. However, the approach can be easily extended to vector-valued GPs by inflating the size of the state space."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                895,
+                900,
+                922
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                99,
+                103,
+                900,
+                164
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Both the GP lengthscale and time step are considered fixed in this work; the lengthscale is expressed in units of the sampling period "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\Delta _ { t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". In practice, the value of the lengthscale can be set according to knowledge of the population. For example, an annual seasonal trend could be given a lengthscale parameter in the range 50–150 days, whereas daily variation would require a shorter lengthscale on the order of hours. Note that the fixed value of the lengthscale encodes the assumption that the dynamics of the latent GP are slow. The robustness of the method to this choice is confirmed by a sensitivity study presented in Appendix A."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                167,
+                902,
+                262
+            ]
+        },
+        {
+            "type": "table",
+            "content": {
+                "image_source": {
+                    "path": "images/fa73b6dfdf8642c40ff95943e700ffb69386dab35157d199d470dea41befefd4.jpg"
+                },
+                "table_caption": [
+                    {
+                        "type": "text",
+                        "content": "Table 1: Prior distributions and fixed hyperparameters of the GLEOV model."
+                    }
+                ],
+                "table_footnote": [],
+                "html": "<table><tr><td>Parameter</td><td>Symbol</td><td>Prior / value</td></tr><tr><td colspan=\"3\">Priors</td></tr><tr><td>Per-structure mean</td><td> $\\pmb { \\mu } _ { i }$ </td><td> $\\overline { { \\mathcal { N } ( \\mathbf { 0 } , 1 0 ^ { 2 } I ) } }$ </td></tr><tr><td>Per-structure loading</td><td> $W _ { i }$ </td><td> $\\mathcal { N } ( W _ { 0 } , 1 0 ^ { - 6 } I )$ </td></tr><tr><td>Consensus loading</td><td> $W _ { 0 }$ </td><td> $\\mathrm { { f l a t } } \\left( \\propto 1 \\right)$ </td></tr><tr><td>Measurement-noise scale</td><td> $\\sigma _ { e }$ </td><td>flat (∝ 1) on log  $\\sigma _ { e }$ </td></tr><tr><td>Population EOV scale</td><td> $\\tau _ { T }$ </td><td> $\\log \\tau _ { T } \\sim \\mathcal { N } ( \\log 0 . 1 , 1 )$ </td></tr><tr><td colspan=\"3\">Hyperparameters (fixed)</td></tr><tr><td>GP lengthscale</td><td> $\\ell$ </td><td>100 (units of  $\\Delta _ { t } )$ </td></tr><tr><td>Sampling period</td><td> $\\Delta _ { t }$ </td><td>1</td></tr><tr><td>Latent EOV dimension</td><td> $K$ </td><td>1</td></tr><tr><td>Gating false-positive rate</td><td> $\\alpha _ { \\mathrm { g a t e } }$ </td><td>0.01</td></tr><tr><td>Detection false-positive rate</td><td> $\\alpha$ </td><td>0.001</td></tr></table>",
+                "table_type": "complex_table",
+                "table_nest_level": 1
+            },
+            "bbox": [
+                242,
+                297,
+                759,
+                527
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "2.1 Inference"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                100,
+                557,
+                245,
+                574
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The model is learned from data using a recursive Bayesian estimation approach based on a Kalman filter. Because the GP prior is discretised exactly as a linear-Gaussian SSM, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "z _ { t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "can be marginalised (conditional on the parameters "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\theta = \\{ \\mu , W , W _ { 0 } , \\sigma _ { e } , \\tau _ { T } \\} )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "in closed form [38]. Let "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "m _ { t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "P _ { t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "be the filtering mean and covariance at time t. Let also H be a suitable selection matrix such that "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "z _ { t } = H m _ { t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". Then the Kalman filter equations are given by,"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                587,
+                900,
+                665
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "p \\bigg ( \\bigg [ \\frac { z _ { t } } { \\dot { z } _ { t } } \\bigg ] \\bigg | x _ { 1 : t - 1 } , \\theta \\bigg ) = \\mathcal { N } ( m ^ { - } , P ^ { - } ) , \\qquad m ^ { - } = A _ { d } m _ { t - 1 } , \\qquad P ^ { - } = A _ { d } P _ { t - 1 } A _ { d } ^ { \\top } + Q _ { d } .\\tag{6}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/f4807d0155838f39168fc328f5cf7f96d96450babdcfc4a88a198f6643a7c76a.jpg"
+                }
+            },
+            "bbox": [
+                168,
+                678,
+                830,
+                714
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "p ( x _ { t } \\mid x _ { 1 : t - 1 } , \\theta ) = \\mathcal { N } ( \\mu + W \\hat { z } _ { t \\mid t - 1 } , S _ { t } ) , \\qquad \\hat { z } _ { t \\mid t - 1 } = H m ^ { - } , \\qquad S _ { t } = W H P ^ { - } H ^ { \\top } W ^ { \\top } + R e V ^ { \\top } W ^ { \\top }\\tag{7}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/61b52265f1cc36846355a61b454af0212040c97af7b84895f6370cde22a89091.jpg"
+                }
+            },
+            "bbox": [
+                142,
+                730,
+                857,
+                749
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where,"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                760,
+                157,
+                774
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "R = \\mathrm { b l o c k d i a g } ( R _ { 1 } , \\ldots , R _ { N } ) , \\qquad R _ { i } = \\sigma _ { e } ^ { 2 } { \\cal I } _ { M } + \\tau _ { T } ^ { 2 } W _ { i } W _ { i } ^ { \\top }\\tag{8}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/b20acc3cffe78e4c5197b6669f0c37010f782699c84774086f7fa4ba35cd6656.jpg"
+                }
+            },
+            "bbox": [
+                273,
+                793,
+                727,
+                812
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "is the block-diagonal observation noise model for each structure in the population."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                822,
+                712,
+                838
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "p \\bigg ( \\bigg [ \\mathcal { z } _ { t } \\bigg ] \\bigg | x _ { 1 : t } \\bigg ) = \\mathcal { N } ( m _ { t } , P _ { t } ) , \\qquad m _ { t } = m ^ { - } + K _ { t } \\nu _ { t } , \\qquad P _ { t } = P ^ { - } - K _ { t } S _ { t } K _ { t } ^ { \\top } ,\\tag{9}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/dc702195af13182060be454138f722f50c074bce39d5c8a16a6f122cf535249d.jpg"
+                }
+            },
+            "bbox": [
+                193,
+                852,
+                805,
+                888
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "with Kalman gain "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "K _ { t } = P ^ { - } H ^ { \\top } W ^ { \\top } S _ { t } ^ { - 1 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and innovation "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\nu _ { t } = x _ { t } - \\mu - W \\hat { z } _ { t | t - 1 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". The marginal likelihood can thus be computed recursively as the product of the one-step-ahead predictive densities,"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                898,
+                900,
+                931
+            ]
+        }
+    ],
+    [
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "p ( x _ { 1 : T } \\mid \\theta ) = \\prod _ { t = 1 } ^ { T } { \\mathcal { N } } ( x _ { t } \\mid \\mu + W { \\hat { z } } _ { t \\mid t - 1 } , S _ { t } ) .\\tag{10}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/f29eead98a5d60033a50fddfaf15d60813a6ccbc2c7d4819a5b8a8a7b9c246da.jpg"
+                }
+            },
+            "bbox": [
+                331,
+                112,
+                665,
+                156
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "However, the above is still conditional on the unknown parameters θ. Unfortunately, the full posterior distribution is intractable, and so a Laplace approximation is employed."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                167,
+                899,
+                199
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "MAP The maximum a posteriori (MAP) values of the unknown parameters "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "{ \\widehat { \\theta } } ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "are computed by minimisation of the negative log joint distribution,"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                222,
+                899,
+                254
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "{ \\hat { \\theta } } = \\arg \\operatorname* { m i n } _ { \\theta } - \\log p ( x _ { 1 : T } \\mid \\theta ) - \\log p ( \\theta )\\tag{11}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/823bf748155bb72128daadb8f3896c53bb92c49b0ab6c5e1cce16e9611abb479.jpg"
+                }
+            },
+            "bbox": [
+                342,
+                272,
+                653,
+                296
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "p ( \\theta )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is given by the product of the parameter priors above. Here, the optimisation is run using the L-BFGS-B solver [39, 40], as implemented in scipy [41]."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                307,
+                899,
+                340
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To aid convergence, the optimisation is preconditioned: L-BFGS-B is run in a whitened space in which each parameter block is rescaled by a counting-heuristic estimate of its Fisher information "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( \\propto 1 / \\sqrt { n _ { \\mathrm { o b s } } } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". Without this step the gradient magnitudes across the heterogeneous blocks (loadings, means, and log-scaled noise terms) differ by orders of magnitude and the optimiser fails to converge."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                344,
+                900,
+                407
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The optimiser is initialised at the pooled-PCA solution: The per-structure means "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\pmb { \\mu } _ { i }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "are set to the observed training-window means, and the consensus loading "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "W _ { 0 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and every per-structure loading "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "W _ { i }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "are initialised to the "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathrm { t o p } { - } K"
+                    },
+                    {
+                        "type": "text",
+                        "content": "right singular vectors of the per-structure mean-centred training features, pooled across all structures. The noise scales are initialised to a fraction of the residual spread "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( \\sigma _ { e }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "at one tenth of the pooled standard deviation) and to "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\tau _ { T } = 0 . 1"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". From this warm start, L-BFGS-B refines the loadings under the GP prior, replacing the purely variance-based initial subspace with one that additionally respects the temporalcorrelation structure of the latent. Because each marginal-likelihood evaluation is linear in the series length, the fit is inexpensive in practice; the full nine-turbine population model here (Section 3.2, 365 observations) converges in approximately 70 s on a single CPU core."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                412,
+                900,
+                551
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Laplace approximation The Laplace approximation is a Gaussian surrogate centred at the MAP estimate, with covariance the inverse Hessian of the negative log-joint at the mode,"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                574,
+                899,
+                606
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "p ( \\theta \\mid \\alpha _ { 1 : T } ) \\approx \\mathcal { N } \\big ( \\hat { \\theta } , \\hat { \\Sigma } \\big ) , \\qquad \\hat { \\Sigma } = \\big [ - \\nabla _ { \\theta } ^ { 2 } \\log p ( \\theta , x _ { 1 : T } ) \\big | _ { \\hat { \\theta } } \\big ] ^ { - 1 }\\tag{12}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/ea1288a5e8352d3e902d741c2562809bcd00aecd019fe1f6a331197c6709ac38.jpg"
+                }
+            },
+            "bbox": [
+                258,
+                621,
+                737,
+                644
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The Hessian matrix is evaluated exactly by automatic differentiation of the negative log-joint at the mode, and hence "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\hat { \\Sigma }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is obtained by its inversion."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                653,
+                899,
+                686
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "2.2 Damage detection"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                100,
+                708,
+                329,
+                725
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Once the model is identified, the EOV-removed residual for each structure is the Kalman innovation,"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                739,
+                843,
+                756
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\pmb { \\nu } _ { i , t } = \\pmb { x } _ { i , t } - \\pmb { \\hat { \\mu } _ { i } } - \\hat { W } _ { i } \\hat { \\pmb { z } } _ { t | t - 1 }\\tag{13}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/386ad90be6122c6449be6d6926271592124b2ea29c476cd8b2d12cbedc424143.jpg"
+                }
+            },
+            "bbox": [
+                389,
+                774,
+                606,
+                793
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Under healthy conditions, (and the assumption of a well-specified model) these residuals are zero-mean, Gaussian, and i.i.d. Thus, the onset of damage can be inferred as a departure from their healthy distribution. To obtain estimates of the normal condition, a Gaussian is fitted to the training-window innovations for each structure,"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                804,
+                900,
+                865
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\begin{array} { r } { \\hat { \\pmb { \\mu } } _ { i } ^ { \\nu } = \\mathbb { E } \\left[ \\pmb { \\nu } _ { i , t } \\right] , \\quad \\hat { \\Sigma } _ { i } ^ { \\nu } = \\mathbb { V } \\left[ \\pmb { \\nu } _ { i , t } \\right] , \\quad \\forall t \\in \\mathrm { T r a i n i n g ~ w i n d o w } } \\end{array}\\tag{14}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/1933aa4670bc9a7a1f4e2b23871299ea2c2f18ca547d613e4c5ccbf4533478e3.jpg"
+                }
+            },
+            "bbox": [
+                285,
+                884,
+                714,
+                903
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "and score every time step by the Mahalanobis distance (MD) to this empirical reference [42],"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                915,
+                789,
+                931
+            ]
+        }
+    ],
+    [
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "D _ { i , t } ^ { 2 } = ( \\pmb { \\nu } _ { i , t } - \\hat { \\pmb { \\mu } } _ { i } ^ { \\nu } ) ^ { \\top } ( \\hat { \\Sigma } _ { i } ^ { \\nu } ) ^ { - 1 } ( \\pmb { \\nu } _ { i , t } - \\hat { \\pmb { \\mu } } _ { i } ^ { \\nu } )\\tag{15}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/de84ba0ae4aabeab87baaa83d290f8fe236be928f869d623973d839b74e2936d.jpg"
+                }
+            },
+            "bbox": [
+                352,
+                115,
+                647,
+                135
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "For healthy structures, the MD follows a chi-squared distribution with M degrees of freedom, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "D _ { i , t } ^ { 2 } \\sim \\chi _ { M } ^ { 2 } { } ^ { 5 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "A detection threshold "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\tau"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is therefore obtained at a tolerable false-positive rate α as the corresponding upper quantile, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\tau = \\chi _ { M } ^ { 2 } ( 1 { - } \\alpha )"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", the value exceeded by only a fraction of α healthy observations. Here, and throughout, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\chi _ { M } ^ { 2 } ( \\cdot )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "denotes the quantile function (inverse CDF) of the chi-squared distribution with M degrees of freedom."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                147,
+                900,
+                225
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Robust observation gating A complication of the proposed approach in the population-based setting is that damage has the potential to bias the EOV estimation. An anomalous observation, if assimilated by the Kalman filter, is partially absorbed into the shared latent "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "z _ { t } ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "potentially masking future damage and contaminating the estimate for every other structure. To address this, an online gating strategy that downweights highly anomalous observations is applied, in the spirit of robust Kalman filtering approaches that guard the state estimate against outlying measurements [43, 44]."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                249,
+                900,
+                343
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "At each test step and for each structure, a predictive gating distance "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "G _ { i , t } ^ { 2 } ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is computed from the scaled Kalman innovations and predictive covariance,"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                346,
+                900,
+                379
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "G _ { i , t } ^ { 2 } = \\frac { 1 } { d _ { i } } \\pmb { \\nu } _ { i , t } ^ { \\top } S _ { i , t } ^ { - 1 } \\pmb { \\nu } _ { i , t }\\tag{16}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/5e42f8a4b60ecd864a237b84cb3458139a12a54bdaa86fe11b0a1395723471a0.jpg"
+                }
+            },
+            "bbox": [
+                418,
+                393,
+                581,
+                426
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "with,"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                436,
+                146,
+                451
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "d _ { i } = \\frac { 1 } { M T _ { \\mathrm { t r a i n } } } \\sum _ { t \\in T _ { \\mathrm { t r a i n } } } \\nu _ { i , t } ^ { \\top } S _ { i , t } ^ { - 1 } \\nu _ { i , t } ,\\tag{17}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/466c4d59fe7f55525514813847ec6a9234198f323d76061a0bc2bd389910adb9.jpg"
+                }
+            },
+            "bbox": [
+                374,
+                467,
+                625,
+                507
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "being the average per-structure dispersion, estimated on the training window. This normalised-innovationsquared statistic is the same quantity used to form validation gates in target tracking [45] and to test the whiteness of the innovation sequence for fault detection in dynamic systems [46]. Observations that exceed the threshold "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "G _ { i , t } ^ { 2 } > \\chi _ { M } ^ { 2 } ( 1 - \\mathrm { \\bar { \\alpha } } _ { \\mathrm { g a t e } } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "are reasoned to be sufficiently outlying that their inclusion is at risk of biasing the latent EOV removal and are thus excluded. Note that the gating procedure is applied perobservation. In this way, it is possible to exclude an outlier but include an observation afterwards. This is in contrast to some damage detection schemes that exclude all observations after an outlier is observed."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                518,
+                900,
+                626
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "It is noteworthy that the gating procedure allows one to be much more aggressive with the threshold selection than might otherwise be possible during damage detection. The objective is not to classify observations as damaged, only to exclude samples suspected of being damaged such that they do not bias the estimation. It is therefore possible to set the value of "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\alpha _ { \\mathrm { g a t e } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "to a very permissive false-positive rate (FPR) without necessarily incurring a corresponding cost of many false activations in practice."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                631,
+                900,
+                709
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Finally, the Laplace posterior is propagated at each step to turn the point estimate into an uncertainty-aware decision signal. Drawing samples "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\hat { \\theta ^ { ( s ) } } \\sim \\mathcal { N } ( \\hat { \\theta } , \\Sigma )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and recomputing "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "D ^ { 2 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "for each, the decision signal is thus the posterior exceedance probability, given by,"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                713,
+                900,
+                760
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\mathrm { P r } \\left( D _ { i , t } ^ { 2 } > \\tau \\right) \\approx \\frac { 1 } { S } \\sum _ { s = 1 } ^ { S } \\mathbb { I } \\big [ D _ { i , t } ^ { 2 , ( s ) } > \\tau \\big ]\\tag{18}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/768781d8a91cecf8a3cf11e8090d088535637c4bda66f1e6b263e0ac9fde6c71.jpg"
+                }
+            },
+            "bbox": [
+                356,
+                776,
+                643,
+                820
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "for "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "S"
+                    },
+                    {
+                        "type": "text",
+                        "content": "samples, where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\tau = \\chi _ { M } ^ { 2 } ( 1 - \\alpha )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "for some target FPR "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\alpha ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbb { I } [ \\cdot ]"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is an indicator function. Values near zero indicate a confidently healthy structure, and near unity a confident detection. An overview of the proposed approach is given in Algorithm 1."
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                831,
+                900,
+                881
+            ]
+        },
+        {
+            "type": "page_footnote",
+            "content": {
+                "page_footnote_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>5</sup>The chi-squared statistic is strictly-speaking, an assumption, if the covariance matrix "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\hat { \\Sigma } _ { i } ^ { \\nu }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is actually estimated from training data. However, it is a good approximation and the majority of outlier analysis studies in SHM make this simplification."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                888,
+                900,
+                916
+            ]
+        }
+    ],
+    [
+        {
+            "type": "algorithm",
+            "content": {
+                "algorithm_caption": [],
+                "algorithm_content": [
+                    {
+                        "type": "text",
+                        "content": "Algorithm 1 GLEOV: simultaneous EOV identification and damage detection Require: features "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "{ \\bf { x } } _ { i , t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", commissioning masks, lengthscale ℓ, period "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\Delta _ { t } ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": ", priors p(θ), α<sub>gate</sub>, α Identification ▷ training window 1: form the Matern SSM´ "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( A _ { d } , Q _ { d } , P _ { \\infty } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "from "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( \\ell , \\Delta _ { t } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "▷ Eq. 5 2: "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\hat { \\theta } \\gets \\mathbf { M A P }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "estimate ▷ Eq. 11, L-BFGS-B [39, 40] 3: Σ<sup>ˆ</sup> ← Laplace covariance; draw "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\theta ^ { ( s ) } \\sim \\mathcal { N } ( \\hat { \\theta } , \\hat { \\Sigma } ) , s = 1 , \\dots , S"
+                    },
+                    {
+                        "type": "text",
+                        "content": "▷ Eq. 12 4: run KF at "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\hat { \\theta }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "over training; fit normal condition "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( \\hat { \\mu } _ { i } ^ { \\nu } , \\hat { \\Sigma } _ { i } ^ { \\nu } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and dispersion "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "d _ { i }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "▷ Eqs. 14, 17 Robust observation gating 5: for "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "t = 1 , \\dots , T"
+                    },
+                    {
+                        "type": "text",
+                        "content": "do 6: KF predict; form innovation "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\nu _ { i , t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and predictive covariance "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "S _ { i , t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "▷ Eqs. 3, 7 7: "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { i f } t > T _ { \\mathrm { t r a i n } }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "G _ { i , t } ^ { 2 } > \\chi _ { M } ^ { 2 } ( 1 - \\alpha _ { \\mathrm { g a t e } } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "then ▷ Eq. 16 8: mark "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "x _ { i , t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "as gated and exclude from observation model 9: end if 10: KF update using non-gated observations 11: end for Damage detection 12: for "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\theta ^ { \\prime } \\in \\{ \\hat { \\theta } , \\theta ^ { ( 1 ) } , \\dots , \\theta ^ { ( S ) } \\}"
+                    },
+                    {
+                        "type": "text",
+                        "content": "do 13: run KF without gated observations; score "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "D _ { i , t } ^ { 2 } ( \\theta ^ { \\prime } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "▷ Eq. 15 14: end for 15: compute exceedance probability "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "p _ { i , t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "▷ Eq. 18 16: return MAP score "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "D _ { i , t } ^ { 2 } ( \\hat { \\theta } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and exceedance probability "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "p _ { i , t }"
+                    }
+                ],
+                "algorithm_footnote": []
+            },
+            "bbox": [
+                100,
+                99,
+                900,
+                451
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "3 Case studies"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                100,
+                475,
+                294,
+                494
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In order to demonstrate the effectiveness of the proposed GLEOV approach, two case-study examples of detection and removal of EOVs in SHM datasets are presented."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                513,
+                900,
+                545
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "3.1 Single structure"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                100,
+                568,
+                309,
+                586
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Before demonstrating the proposed approach on a population of structures, it is important to first establish that the method is effective in identification and removal of EOV signals in the case of a single structure "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( N = 1 )"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". The first case study is therefore a laboratory-scale benchmark SHM dataset. The dataset under consideration comes from a Lamb-wave inspection investigation of a composite panel subject to temperature variations in an environmental chamber. The data were collected as part of the Brite-Euram project DAMAS-COS (BE97 4213) [20]. The dataset consists of Lamb-wave recordings collected every minute, comprising three distinct phases."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                599,
+                900,
+                707
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Phase I: For the first 1355 minutes, the chamber temperature was held at approximately "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "2 5 \\mathrm { { ^ \\circ C } }"
+                    }
+                ]
+            },
+            "bbox": [
+                131,
+                712,
+                840,
+                728
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Phase II: For the next 1128 minutes, the chamber temperature was varied between "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "1 0 ^ { \\circ } \\mathrm { C }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "3 0 ^ { \\circ } \\mathrm { C }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "with a cycle time of approximately 370 minutes."
+                    }
+                ]
+            },
+            "bbox": [
+                131,
+                733,
+                899,
+                765
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "• Phase III: At minute 2483, the chamber was opened and damage was introduced by drilling a 10mm hole in the centre of the plate. Data collection continued under the same "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "1 0 ^ { \\circ } \\mathrm { C } { - } 3 0 ^ { \\circ } \\mathrm { C }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "cycling; the present analysis uses the series up to minute 3700, giving 1217 minutes of post-damage monitoring."
+                    }
+                ]
+            },
+            "bbox": [
+                131,
+                770,
+                900,
+                818
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The features under investigation are the magnitudes of 50 spectral lines in the vicinity of the peak of the frequency spectrum of the received Lamb-wave signal, these features are plotted in Figure 2. For a more complete description of the dataset and experimental setup, the interested reader is directed to [20]. A training set (comprised of data from minutes 1000 to 2000) was extracted from the overall dataset. In order to capture both the stationary and non-stationary behaviour of the features, the training set comprises examples from both phases I and II."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                821,
+                900,
+                915
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/252d15e349910633f7794e818219231c1b980f0721f04c051a56412b6b532171.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 2: Raw features for the DAMASCOS dataset."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                112,
+                107,
+                889,
+                397
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Because this dataset comprises only a single structure, an invariance exists between the two variance terms in equation (2). As such, the two terms cannot be separately identified and so "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\rho"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is removed from the model "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( \\mathrm { i } . \\mathbf { e } . \\tau _ { T } = 0 )"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                455,
+                900,
+                502
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The GLEOV algorithm was applied to this dataset as per Algorithm 1, with prior distributions and parameters as in Table 1. Here, the sampling period is "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\Delta _ { t } = 1"
+                    },
+                    {
+                        "type": "text",
+                        "content": "minute, so the fixed lengthscale "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\ell = 1 0 0"
+                    },
+                    {
+                        "type": "text",
+                        "content": "corresponds to 100 minutes, roughly a quarter of the ∼370-minute thermal cycle. During the inference, S = 200 Laplace posterior samples are drawn. The posterior predictive MD values "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( D _ { t } ^ { 2 } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "are plotted in Figure 3. The samples from the distribution are extremely sensitive to the presence of damage "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "( \\mathrm { A U C - R O C } = 1 . 0 0"
+                    },
+                    {
+                        "type": "text",
+                        "content": "over the test window), while remaining insensitive to the variation in temperature. Also visible in the figure are the gated observation points. It is clear that the gating has successfully removed all observations corresponding to damage as well as some of the more outlying points in the healthy testing regime. It is interesting that although several healthy observations are gated (22.6%) this does not come at any cost to damage sensitivity or EOV reconstruction."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                506,
+                902,
+                661
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Figure 4 depicts the posterior over the inferred latent "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\hat { z } _ { t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". It is remarkable that, despite never observing any temperature measurements, the recovered signal shows strong agreement with the qualitative thermal history of the campaign<sup>6</sup>. In the damage regime, all observations are excluded from the Kalman filter by the gating process and so in the absence of any information, the EOV returns correctly to the GP prior. In the context of a single structure, this behaviour is inevitable. However, in the context of a population of structures, the latent EOV can still be informed by healthy structures, as shown below."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                665,
+                902,
+                759
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "3.2 Population of structures"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                100,
+                781,
+                388,
+                799
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "To demonstrate the effectiveness of the proposed approach on a population of structures, a simulated dataset corresponding to an offshore wind turbine farm subject to an unmeasured temperature EOV is introduced. This dataset has been deliberately designed to offer a robust modelling challenge in that the damage and EOV are highly confounded and that the EOV signal dominates the variance of the features."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                813,
+                900,
+                876
+            ]
+        },
+        {
+            "type": "page_footnote",
+            "content": {
+                "page_footnote_content": [
+                    {
+                        "type": "text",
+                        "content": "<sup>6</sup>The EOV is recovered up to an affine invariance because of the form of the data generating process. This invariance explains the apparently inverted EOV compared to the features in Figure 2."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                884,
+                900,
+                912
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/e0bb302292a1a07cd37d98fb3338148676847722ef0b3da84daf9e69c3297e0a.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 3: Mahalanobis "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "D ^ { 2 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "detection trace (posterior samples) for the DAMASCOS dataset. Also shown (grey line) are the gated observations, for which "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "G _ { i , t } ^ { 2 } > \\chi _ { M } ^ { 2 } ( 1 - \\alpha _ { \\mathrm { g a t e } } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "that are excluded during prediction."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                110,
+                130,
+                892,
+                428
+            ]
+        },
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/7dec1b708ff5d3f374f58f27c90336c9c8dfd7793110880352adad867256dad2.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 4: Inferred latent EOV signal "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\hat { z } _ { t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "(posterior samples) over the full monitoring series, note that although the ground truth temperature is unavailable, good agreement is seen with the qualitative description of the test campaign in [20]."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                109,
+                538,
+                890,
+                838
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Simulated offshore wind turbine farm The simulated population comprises "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "N = 9"
+                    },
+                    {
+                        "type": "text",
+                        "content": "nominally-identical turbines, each monitored via "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "M = 3"
+                    },
+                    {
+                        "type": "text",
+                        "content": "natural frequencies over "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "T = 7 3 0"
+                    },
+                    {
+                        "type": "text",
+                        "content": "daily samples, split into a 365- day healthy training period and a 365-day test period with a sampling period of "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\Delta _ { t } \\ = \\ 1"
+                    },
+                    {
+                        "type": "text",
+                        "content": "day. A single environmental driver (temperature), shared across the farm, is considered. It is generated as a Matern-3/2´ Gaussian process in time with a 60-day lengthscale about a "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "9 \\mathrm { { } ^ { \\circ } C }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "mean. At a sampling rate of "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\Delta _ { t } = 1"
+                    },
+                    {
+                        "type": "text",
+                        "content": "day, daily temperature variations (e.g. day-night cycles) are considered to be averaged over and are not considered here. The temperature field is treated as common to the whole farm, with local Gaussian perturbations at each turbine. For features, the natural frequencies of the turbine’s monopile are simulated; each turbine’s features are set to depend affinely on its local temperature,"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                102,
+                900,
+                242
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\pmb { x } _ { i , t } = \\pmb { \\mu } _ { i } + \\phi _ { i } ( z _ { t } + \\pmb { \\rho } _ { i , t } ) + \\pmb { \\varepsilon } _ { i , t }\\tag{19}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/954b849a5c596aa80af683c08770045f78c6fa35599a866ce313ae5dad9b2f20.jpg"
+                }
+            },
+            "bbox": [
+                378,
+                261,
+                623,
+                278
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "with,"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                290,
+                146,
+                305
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\varepsilon _ { i , t } \\sim \\mathcal { N } ( \\mathbf { 0 } , \\ \\sigma _ { \\varepsilon } ^ { 2 } I _ { M } ) , \\quad \\rho _ { i , t } \\sim \\mathcal { N } ( \\mathbf { 0 } , \\ \\sigma _ { \\rho } ^ { 2 } I _ { K } )\\tag{20}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/4439ac54c99f460b17951c4fc583263bc0b080a700faa05cbd64fffb88adeb42.jpg"
+                }
+            },
+            "bbox": [
+                332,
+                324,
+                665,
+                343
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The per-turbine baseline frequencies "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\pmb { \\mu } _ { i }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and temperature sensitivities "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\phi _ { i }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "are sampled heterogeneously across the population to account for inter-structure variance. Damage is introduced asynchronously to five of the nine turbines, with onsets staggered across the test window days 485 − 665. In order to ensure that this dataset represents a stiff challenge to SHM algorithms, damage is introduced primarily along the per-turbine thermal loading vector "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\phi _ { i }"
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                354,
+                900,
+                434
+            ]
+        },
+        {
+            "type": "equation_interline",
+            "content": {
+                "math_content": "\\Delta x _ { i , t } = \\beta _ { i } \\left( \\phi _ { i } + 0 . 1 \\left\\| \\phi _ { i } \\right\\| g _ { \\perp } \\right)\\tag{21}",
+                "math_type": "latex",
+                "image_source": {
+                    "path": "images/6308f2e4374fc13caf650d4c48f2022e3b12f4261c62b308f8421ab5125e6c4f.jpg"
+                }
+            },
+            "bbox": [
+                381,
+                451,
+                618,
+                469
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "with "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathbf { \\delta } \\mathbf { \\mathcal { g } } \\bot \\mathrm { ~ a ~ }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "unit vector orthogonal to "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\phi _ { i }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and where "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\beta _ { i }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is a damage severity parameter. Thus, the damage signal is highly confounded with the EOV, with only a small component that acts independently. The motivation for this choice of damage model (other than it being challenging from an identification point of view) is that under a proportional stiffness perturbation "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\kappa  \\kappa ( 1 \\overset { \\cdot } { + } \\overset { \\cdot } { \\beta } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "with mass unchanged (caused by either temperature variation or stiffness-reducing damage, e.g. scour) the natural frequencies shift as "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "f _ { n }  f _ { n } \\sqrt { 1 + \\beta } \\approx f _ { n } ( 1 + \\beta / 2 )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "to first order. The induced feature-space displacement therefore lies along the same direction as the thermal loading, independent of the severity. This suggests that when EOVs and damage both cause proportional stiffness changes, the resulting changes to the natural-frequency features can lie in the same subspace."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                481,
+                900,
+                620
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In order to demonstrate the benefits of the GLEOV approach in a population-based context, the dataset implements a synthetic staggered deployment. For each turbine in the population, the number of data available for training is spaced linearly from the full 365 down to 30 across the nine turbines. The simulated features, training windows and damage regions are depicted in Figure 5. All parameter values pertaining to the creation of the synthetic OWT farm are collected in Table 2. It is clear from the figure that this dataset represents a robust modelling challenge. The onset of damage is barely perceptible and is dwarfed by the variation caused by the EOV. Furthermore, several turbines have remarkably few data available for training, particularly T8 which sees only a 30-day window."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                624,
+                900,
+                749
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "With the dataset established, the proposed GLEOV approach is applied as described above; the sampling period is "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\Delta _ { t } = 1"
+                    },
+                    {
+                        "type": "text",
+                        "content": "day, so the fixed lengthscale "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\ell = 1 0 0"
+                    },
+                    {
+                        "type": "text",
+                        "content": "corresponds to 100 days. During the inference, "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "S = 5 0 0"
+                    },
+                    {
+                        "type": "text",
+                        "content": "Laplace posterior samples are drawn. In Figure "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "^ { 6 , }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "the posterior predictive MD "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "D _ { i , t } ^ { 2 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "are plotted for all turbines in the population. As can be seen in the figure, the sensitivity to damage is excellent. Furthermore, the gated observations are plotted (coloured in grey). Here, it can be seen that almost all observations from damaged regimes are excluded. Although some false positive readings are visible in T8, it is encouraging that these readings are also excluded by the gating mechanism so that these observations do not bias the estimation of the latent EOV."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                752,
+                900,
+                877
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The latent EOV signal is plotted in Figure 7. Because this is a simulated dataset, the ground truth is available (although there is an affine invariance). In the figure, the latent EOV is aligned to the ground truth by a leastsquares fit to the affine transformation on the training window. As can be seen in the figure, the posterior prediction of the EOV is excellent. As expected, uncertainty shrinks over the course of the training window as data from more turbines become available. At the onset of damage, observations from damaged turbines are excluded, and the tracking remains strong. At the very end of the test window (with damage in over half of the population), performance begins to degrade and the tracking diverges slightly from the ground truth."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                881,
+                902,
+                929
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/3a7350ddf5f09e93d53479c006d71601297ebde4818df8e8177d5f102f9572c8.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 5: Raw natural frequency features (scaled to zero-mean for plotting) for the simulated OWT farm."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                110,
+                255,
+                892,
+                741
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/65ec5e94077a1c42710e53e22b3ae7ff5c388d1416e7c082705225413928ceeb.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 6: GLEOV posterior distribution over the Mahalanobis distances "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "D _ { i , t } ^ { 2 } ,"
+                    },
+                    {
+                        "type": "text",
+                        "content": "for the simulated OWT farm dataset. Also shown (grey line) are the gated observations, for which "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "G _ { i , t } ^ { 2 } > \\chi _ { M } ^ { 2 } ( 1 - \\alpha _ { \\mathrm { g a t e } } )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "that are excluded during prediction."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                110,
+                230,
+                892,
+                736
+            ]
+        }
+    ],
+    [
+        {
+            "type": "table",
+            "content": {
+                "image_source": {
+                    "path": "images/32615b55ed7ac15c1464c2e0db511054f26134401569a249725378ffd6fef896.jpg"
+                },
+                "table_caption": [
+                    {
+                        "type": "text",
+                        "content": "Table 2: Parameters of the simulated nine-turbine offshore wind farm."
+                    }
+                ],
+                "table_footnote": [],
+                "html": "<table><tr><td>Parameter</td><td>Symbol</td><td>Value</td></tr><tr><td colspan=\"3\">Dimensions</td></tr><tr><td>Turbines</td><td>N</td><td>9</td></tr><tr><td>Frequencies per turbine</td><td>M</td><td>3</td></tr><tr><td>Duration (train/test)</td><td>T</td><td>730 (365 /365) days 365 → 30 (linearly spaced)</td></tr><tr><td colspan=\"3\">Training days per turbine Temperature EOV</td></tr><tr><td>Mean temperature GP amplitude standard deviation</td><td> $T _ { \\mathrm { b a s e } }$ </td><td> $\\overline { { 9 . 0 ^ { \\circ } C } }$   $4 . 0 ^ { \\circ } \\mathrm { C }$   $6 0 \\mathrm { d a y s }$ </td></tr><tr><td colspan=\"3\">Per turbine noise standard deviation  $\\sigma _ { \\rho }$  Feature model</td></tr><tr><td>Baseline frequencies (per turbine) mean standard deviation Temperature sensitivity (per turbine)</td><td> $[ 5 , 1 0 , 1 5 ] \\times 1 0 ^ { - 3 }$ </td><td> $[ 0 . 3 0 , 0 . 6 5 , 1 . 0 5 ] \\mathrm { H z }$  Hz  $[ - 5 , - 1 0 , - 1 5 ] \\times 1 0 ^ { - 4 } \\mathrm { H z ^ { \\circ } C ^ { - 1 } }$   $[ 1 , 2 , 3 ] \\times 1 0 ^ { - 4 } \\mathrm { H z ^ { \\circ } C ^ { - 1 } }$ </td></tr><tr><td colspan=\"3\">Frequency noise standard deviation  $\\sigma _ { \\varepsilon }$   $5 \\times 1 0 ^ { - 4 } \\mathrm { H z }$  Damage model</td></tr><tr><td>Damaged turbines</td><td> $\\beta _ { i }$ </td><td>5 of 9 2.5-3.0</td></tr><tr><td>Severity (per damaged turbine) Off-axis fraction</td><td></td><td>0.10 days 485–665</td></tr></table>",
+                "table_type": "complex_table",
+                "table_nest_level": 1
+            },
+            "bbox": [
+                171,
+                124,
+                828,
+                537
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                99,
+                561,
+                900,
+                625
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In Figure 8, the exceedance probability is plotted for each turbine in the population, with the threshold set to a target FPR of "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\alpha = 0 . 0 0 1"
+                    },
+                    {
+                        "type": "text",
+                        "content": "on the training window. As can be seen in the figure, the exceedance probability is high in the damage regimes and remains close to 0 at almost all other times for all turbines. The exception to this trend is T8, the most data-poor member of the population, commissioned with only 30 days of healthy training data. This is not an unexpected result, for T8, the EOV loading direction "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "W _ { 8 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is only weakly identified, and the corresponding posterior over the "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "D ^ { 2 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "is broad (as can be seen in Figure 6). The exceedance probability inherits this uncertainty. Although the exceedance probability is raised during the healthy portion of the testing window for T8, it remains lower than during the damaged region, indicating sensitivity to damage."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                627,
+                902,
+                768
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Baseline comparison GLEOV is compared here against five baselines, each scored by the same Mahalanobis distance statistic (equation (15)) to provide a fair comparison between methods. The first, raw features, performs no EOV removal and detects damage directly in the M-dimensional feature space. The next two are variants of projection-based minor-component analysis (MCA) [9, 10], the canonical variancedominance approach. In MCA, the top-K principal directions of the healthy training features (assumed to span the dominant environmental variation) are discarded by singular value decomposition, and detection is carried out in the residual (M − K)-dimensional minor-component subspace. The two MCA variants dif fer only in how this subspace is estimated. Per-structure MCA estimates it independently for each turbine, whereas pooled MCA estimates a single shared subspace jointly from the whole population."
+                    }
+                ]
+            },
+            "bbox": [
+                97,
+                790,
+                902,
+                932
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/cbf37df65be25b7cca275e0a2cfdd4475c5f1e541bbed7bc08f1be0aaf8a9c42.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 7: GLEOV posterior predictions of the latent temperature EOV "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\hat { z } _ { t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "for the simulated OWT farm dataset, for plotting these predictions are aligned affinely to the ground truth signal by least squares on the training data. The darkening red regions indicate damage onset events in the population with darker shading corresponding to a greater damaged proportion of the population."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                110,
+                108,
+                892,
+                406
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The final two are cointegration baselines, the other canonical implicit EOV-removal paradigm [5, 6]. Here the features are assumed to share a common non-stationary environmental trend, and a stationary linear combination of them is sought that cancels this trend. Damage is then inferred by a loss of stationarity of that combination. The cointegrating vector is estimated by the Johansen procedure [47], following the approach of [5]. Detection is carried out on the resulting one-dimensional cointegration residual. As for MCA, a per-structure variant estimates the cointegrating vector independently per turbine, while a pooled variant estimates a single shared vector across the population."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                513,
+                902,
+                623
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Rather than present results at only a single threshold level, it is of interest to consider the performance of the GLEOV method and baselines across threshold levels. A convenient way to achieve this is by computing the receiver operating characteristic (ROC) curve [48]. The ROC traces the true-positive rate (TPR) against the false-positive rate (FPR) as the detection threshold is swept across its full range. A convenient single scalar summary value is available as the area under the ROC curve (AUC-ROC), which is equivalent to the probability that a randomly-chosen damaged observation is scored higher than a randomly-chosen healthy one [48], so that AUC = 1 denotes perfect separation and AUC = 0.5 implies chance."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                626,
+                902,
+                736
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Figure 9 shows the pooled ROC over all test observations for GLEOV and the five baselines. GLEOV attains an AUC of 0.965 in the OWT test and lies above every baseline at every operating point. The baselines remain close to the diagonal (per-structure MCA 0.605, raw features 0.600, pooled MCA 0.564, per-structure cointegration 0.537 and pooled cointegration 0.515), barely exceeding chance. This gap is a direct consequence of the adversarial damage design of equation (21). Because the damage acts predominantly along the EOV direction, the baselines that remove the environmental subspace (either by discarding its high-variance directions (MCA) or by cancelling the shared environmental trend with a stationary combination (cointegration)) remove the damage signature along with it and retain only the small off-axis residual. By identifying the EOV via its slowness rather than its variance, GLEOV separates damage from the environment in time and recovers the collinear component that the baselines remove."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                739,
+                902,
+                895
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The shaded region in Figure 9 quantifies the effect of parameter uncertainty. Each Laplace posterior sample yields its own ROC, and the band spans their 99.7% central interval, with the ROC curve corresponding to the MAP curve shown as the central line. The band is narrow, indicating that the posterior uncertainty in θ has little bearing on the relative performance of the GLEOV and baseline methods."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                898,
+                900,
+                931
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/0ab569ea3e3a7ab128986240fdfa5d0794eb371833659b0f6b8eed2965fd747d.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 8: GLEOV exceedance probability "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "p _ { i , t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "for each turbine in the OWT farm dataset at a threshold level targeting 0.001 FPR on the training window."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                109,
+                239,
+                892,
+                741
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/9ba07b886473211a4a904e11dabe975689ccefcb362e5b1bd43387a2f06c4560.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 9: Pooled ROC curves over all OWT test observations for GLEOV and the five baselines."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                268,
+                105,
+                734,
+                430
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                99,
+                489,
+                900,
+                521
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In Figure 10, the ROC curves are reported for each of the damaged OWTs in the dataset independently. GLEOV (solid) attains per-turbine AUCs of 0.92–0.99 in every panel, while the projection and cointegration baselines stay near the diagonal (0.41–0.77). The lower-right panel plots AUC against training-set size, with GLEOV high and approximately flat (dropping only to 0.92 on the most data-poor turbine) and the projection baselines below it at every level. The same panel also reports an ablation study in which the GLEOV population sharing is switched off and each turbine is fit independently, with no shared consensus loading "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "W _ { 0 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and no shared latent EOV (GLEOV, no pooling). Stripped of the population-level data sharing, detection collapses to the per-structure MCA at every training-set size (0.54–0.77)."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                525,
+                900,
+                650
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "This result is a clear motivation for the population-based approach proposed in this work; the shared EOV is anchored by the healthy members, while the data-poor loadings are additionally shrunk toward the consensus "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "W _ { 0 }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". The most data-poor turbine, T8, with only 30 days of data, still benefits measurably from the pooling (AUC 0.77 → 0.92)."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                653,
+                900,
+                717
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "4 Discussion"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                100,
+                743,
+                273,
+                762
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "This work has presented GLEOV, a Bayesian recursive-estimation framework for the simultaneous identi fication and removal of EOVs in population-based structural health monitoring. The unobserved EOV is represented by a latent Gaussian process in time, shared across the population and identified by its slowness rather than its variance. Cast in linear-Gaussian state-space form, the GP is marginalised exactly by a Kalman filter at "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\mathcal { O } ( T )"
+                    },
+                    {
+                        "type": "text",
+                        "content": "cost, while a hierarchical prior over the per-structure loadings lets data-rich structures lend statistical strength to data-poor ones. The approach has been demonstrated on two case studies: A single laboratory-scale structure subject to thermal variability, and a simulated population of offshore wind turbines with damage acting along the environmental direction under staggered deployment."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                781,
+                900,
+                906
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In the first case study, the framework was validated on real monitoring data from a single laboratory-scale structure subject to thermal variability. Without observing temperature, GLEOV recovered the latent environmental signal directly from the measured features, in agreement with the qualitative thermal history of the test campaign. The resulting EOV-removed residuals are highly damage sensitive (AUC = 1.00). This study demonstrates identification and detection performance on real-world data, before the benefits of population sharing are examined in the second case study."
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                909,
+                900,
+                926
+            ]
+        }
+    ],
+    [
+        {
+            "type": "image",
+            "content": {
+                "image_source": {
+                    "path": "images/93379dbaafe6d190bb3852150baa97b87dfb2cb514c3eb05d1e1b9b19b6feefb.jpg"
+                },
+                "image_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 10: Per-turbine ROC curves for each of the five damaged turbines, comparing GLEOV against the raw-feature, MCA and cointegration baselines. The final panel plots AUC against training-set size for each method, together with the no-pooling ablation of GLEOV in which each turbine is fit independently by the GLEOV approach."
+                    }
+                ],
+                "image_footnote": []
+            },
+            "bbox": [
+                107,
+                101,
+                894,
+                435
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": []
+            },
+            "bbox": [
+                99,
+                541,
+                900,
+                618
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The second case study examined the population setting on a simulated nine-turbine farm, constructed deliberately so that damage acts along the same feature-space direction as the temperature EOV. Here, GLEOV recovers with uncertainty the damage signal that is missed by the projection baselines. The pooled ROC is above every baseline at every operating point (AUC = 0.965) compared to the baseline results (0.52–0.61). This robustness to data scarcity is the central benefit of treating EOV removal within a population-based framework; the joint identification of shared latent EOVs means that the data-poor members are better able to remove the effect of the EOV by borrowing strength from other turbines with more observations."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                621,
+                900,
+                731
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Modelling a shared latent EOV is, however, not without risk. An anomalous observation on one structure can be absorbed into the common EOV and bias the estimate for the whole population. The gating strategy proposed in this work guards against this by withholding observations inconsistent with the predicted environmental response from the latent update. In this way, damage cannot be accidentally interpreted as environmental variation, overcoming one of the main limitations of SFA in SHM."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                736,
+                900,
+                814
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "A further advantage of the proposed gating is that it can be operated far more permissively than the detection threshold. An operator would be free to gate observations liberally (accepting that some observations would be falsely excluded) without the corresponding cost of false positive activations (potentially very expensive if many superfluous inspections are triggered)."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                816,
+                900,
+                881
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The Bayesian framework adopted in this work lends further robustness to the proposed detection approach. Propagating the Laplace posterior gives access to an uncertainty-aware exceedance probability that correctly concentrates uncertainty on the structures with the lowest amount of data available."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                884,
+                900,
+                932
+            ]
+        }
+    ],
+    [
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Although the proposed approach is shown here to be highly promising, there remain some important limitations. The first, is that the Laplace approximation, being a Gaussian surrogate centred at the mode, can be inaccurate when the true posterior departs substantially from Gaussianity [49]. Future work by the authors will address this by employing more advanced Bayesian inference techniques (Hamiltonian Monte-Carlo, Stochastic variational inference). Another limitation is the choice of an isotropic noise structure for "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\epsilon _ { i , t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": "and "
+                    },
+                    {
+                        "type": "equation_inline",
+                        "content": "\\rho _ { i , t }"
+                    },
+                    {
+                        "type": "text",
+                        "content": ". If the EOVs or EOV weights vary on drastically different timescales this strong assumption may not be warranted and a more rich correlation structure would have to be considered. Also of interest are alternative methods for the MAP optimisation procedure used herein. Methods such as expectation maximisation [50, 51] may offer performance benefits over the LBFGS-B approach. A final limitation is that a single latent EOV dimension (K = 1) is used throughout both case studies, reflecting the single dominant EOV in each dataset. Where several environmental factors act concurrently (for example, temperature alongside wind or humidity), a higher-dimensional latent (K > 1) would be required. The state-space formulation accommodates this directly by inflating the latent state, but its behaviour in the population setting remains to be explored and is left to future investigation."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                103,
+                900,
+                318
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In this work, the lengthscale parameter of the Gaussian process has been treated as a fixed hyperparameter rather than inferred. Although the hyperparameter sensitivity study in Appendix A demonstrates broad robustness to this choice, incorporating ℓ as an inference parameter under a prior that enforces slowness nonetheless remains a promising avenue for future work."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                322,
+                900,
+                385
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "In conclusion, unobserved environmental and operational variability remains a central obstacle to reliable SHM in a population-based context. By identifying the latent EOV through its temporal correlation, sharing it across a population, and robustly gating anomalous observations, GLEOV recovers the confounding trend rather than discarding variance, sharpening the separation between benign environmental change and genuine damage and offering a promising route towards more robust operation and maintenance decision-making."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                388,
+                900,
+                468
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Statements and declarations"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                100,
+                494,
+                435,
+                513
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Ethical considerations"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                531,
+                322,
+                546
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Not applicable."
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                562,
+                220,
+                579
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Consent to participate"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                601,
+                321,
+                618
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Not applicable."
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                633,
+                220,
+                649
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Consent for publication"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                673,
+                332,
+                688
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Not applicable."
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                703,
+                220,
+                719
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Declaration of conflicting interest"
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                743,
+                426,
+                759
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Not applicable."
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                775,
+                220,
+                789
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Funding"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                100,
+                814,
+                188,
+                831
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The authors of this paper gratefully acknowledge the support of the UK Engineering and Physical Sciences Research Council (EPSRC) via grant reference EP/W005816/1 (ROSEHIPS). For the purpose of open access, the authors have applied a Creative Commons Attribution (CC BY) licence to any Author Accepted Manuscript version arising."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                845,
+                900,
+                908
+            ]
+        }
+    ],
+    [
+        {
+            "type": "list",
+            "content": {
+                "list_type": "reference_list",
+                "list_items": [
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "EJC, TJR and MRJ would like to acknowledge the support of Innovate UK through the OLLGA project grant 10040817."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "MDC gratefully acknowledges the support of the Centre for Machine Intelligence (CMI) within the University of Sheffield."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "MRJ gratefully acknowledges the support of the University of Sheffield through a Research Excellence Fellowship."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                103,
+                899,
+                131
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "Data availability"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                102,
+                229,
+                258,
+                247
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The experimental data analysed in the first case study were collected under the Brite-Euram project DAMAS-COS (BE97 4213) and are not owned by the authors; a description of the dataset and experimental campaign is given in [20]."
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                261,
+                899,
+                307
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "The code implementing the GLEOV model and all baseline methods will be made available upon acceptance of the paper."
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                312,
+                899,
+                344
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "References"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                102,
+                370,
+                238,
+                391
+            ]
+        },
+        {
+            "type": "list",
+            "content": {
+                "list_type": "reference_list",
+                "list_items": [
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[1] Charles R Farrar and Keith Worden. Structural Health Monitoring: a Machine Learning Perspective. John Wiley & Sons, 2012."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[2] Hoon Sohn, Keith Worden, and Charles R Farrar. Statistical damage classification under changing environmental and operational conditions. Journal of Intelligent Material Systems and Structures, 13(9):561–574, 2002."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[3] Hoon Sohn. Effects of environmental and operational variability on structural health monitoring. Philosophical Transactions of the Royal Society A: Mathematical, Physical and Engineering Sciences, 365(1851):539–560, 2007."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[4] Bart Peeters and Guido De Roeck. One-year monitoring of the Z24-Bridge: environmental effects versus damage events. Earthquake Engineering & Structural Dynamics, 30(2):149–171, 2001."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[5] Elizabeth J Cross, Keith Worden, and Qian Chen. Cointegration: a novel approach for the removal of environmental trends in structural health monitoring data. Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences, 467(2133):2712–2732, 2011."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[6] Elizabeth J Cross and Keith Worden. Cointegration and why it works for SHM. In Journal of Physics: Conference Series, volume 382, page 012046, 2012."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[7] Jyrki Kullaa. Eliminating environmental or operational influences in structural health monitoring using the missing data analysis. Journal of Intelligent Material Systems and Structures, 20(11):1327–1336, 2009."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[8] Jyrki Kullaa. Distinguishing between sensor fault, structural damage, and environmental or operational effects in structural health monitoring. Mechanical Systems and Signal Processing, 25(8):2976–2989, 2011."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[9] A-M Yan, G Kerschen, P De Boe, and J-C Golinval. Structural damage diagnosis under varying environmental conditions—Part I: A linear analysis. Mechanical Systems and Signal Processing, 19(4):847–864, 2005."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[10] A-M Yan, G Kerschen, P De Boe, and J-C Golinval. Structural damage diagnosis under varying environmental conditions—Part II: Local PCA for non-linear cases. Mechanical Systems and Signal Processing, 19(4):865–880, 2005."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "bbox": [
+                110,
+                409,
+                897,
+                439
+            ]
+        }
+    ],
+    [
+        {
+            "type": "list",
+            "content": {
+                "list_type": "reference_list",
+                "list_items": [
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[11] Laurenz Wiskott and Terrence J. Sejnowski. Slow feature analysis: Unsupervised learning of invariances. Neural Computation, 14(4):715–770, 2002."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[12] Richard E Turner and Maneesh Sahani. A maximum-likelihood interpretation for slow feature analysis. Neural Computation, 19(4):1022–1038, 2007."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[13] Shumei Zhang and Chunhui Zhao. Slow-feature-analysis-based batch process monitoring with comprehensive interpretation of operation condition deviation and dynamic anomaly. IEEE Transactions on Industrial Electronics, 66(5):3773–3783, 2019."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[14] Jouni Hartikainen and Simo Sarkk¨ a. Kalman filtering and smoothing solutions to temporal Gaussian¨ process regression models. In 2010 IEEE International Workshop on Machine Learning for Signal Processing, pages 379–384, 2010."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[15] T. J. Rogers, K. Worden, and E. J. Cross. On the application of Gaussian process latent force models for joint input-state-parameter estimation: With a view to Bayesian operational identification. Mechanical Systems and Signal Processing, 140:106580, 2020."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[16] Keith Worden, Lawrence A Bull, Paul Gardner, Julian Gosliga, Timothy J Rogers, Elizabeth J Cross, Evangelos Papatheou, Weijiang Lin, and Nikolaos Dervilis. A brief introduction to recent developments in population-based structural health monitoring. Frontiers in Built Environment, 6:146, 2020."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[17] Luis David Avendano-Valencia, Eleni N Chatzi, and Dmitri Tcherniak. Gaussian process models for˜ mitigation of operational variability in the structural health monitoring of wind turbines. Mechanical Systems and Signal Processing, 142:106686, 2020."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[18] Keith Worden and E.J. Cross. On switching response surface models, with applications to the structural health monitoring of bridges. Mechanical Systems and Signal Processing, 98:139–156, 2018."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[19] Soren M¨ oller, Matthew R. Jones, Clemens Jonscher, Jasper Ragnitz, Elizabeth J. Cross, and Raimund¨ Rolfes. Grey-box Gaussian processes for mode shape normalisation: Damage localisation under environmental and operational variability. Mechanical Systems and Signal Processing, 253:114353, 2026."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[20] Elizabeth J Cross, Graham Manson, Keith Worden, and Stephen G Pierce. Features for damage detection with insensitivity to environmental and operational variations. Proceedings ofthe Royal Society A: Mathematical, Physical and Engineering Sciences, 468(2148):4098–4122, 2012."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[21] Zhen Wang, Xin-Yan Tang, Jian Zhang, Guo-Hong Liu, and Foysal Bin Shakil. A dynamic early warning method for bridge damage via data clustering-aided subdomain feature extraction considering nonlinear environmental effects. International Journal of Structural Stability and Dynamics, page 2750429, 2026."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[22] Zhen Wang, Ting-Hua Yi, Dong-Hui Yang, Hong-Nan Li, Guan-Hua Zhang, and Ji-Gang Han. Early anomaly warning of environment-induced bridge modal variability through localized principal component differences. ASCE-ASME Journal of Risk and Uncertainty in Engineering Systems, Part A: Civil Engineering, 8(4):04022044, 2022."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[23] Edwin Reynders, Gersom Wursten, and Guido De Roeck. Output-only structural health monitoring in changing environmental conditions by means of nonlinear system identification. Structural Health Monitoring, 13(1):82–93, 2014."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[24] Kalil Erazo, Debarshi Sen, Satish Nagarajaiah, and Limin Sun. Vibration-based structural health monitoring under changing environmental conditions using Kalman filtering. Mechanical Systems and Signal Processing, 117:1–15, 2019."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[25] T.-C.I. Aravanis, J.S. Sakellariou, and S.D. Fassois. A stochastic functional model based method for random vibration based robust fault detection under variable non-measurable operating conditions with application to railway vehicle suspensions. Journal ofSound and Vibration, 466:115006, 2020."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                102,
+                899,
+                134
+            ]
+        }
+    ],
+    [
+        {
+            "type": "list",
+            "content": {
+                "list_type": "reference_list",
+                "list_items": [
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[26] Mengjie Zhao and Olga Fink. Disentangling slow and fast temporal dynamics in degradation inference with hierarchical differential models. Reliability Engineering & System Safety, 277:112943, 2027."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[27] L.A. Bull, P.A. Gardner, J. Gosliga, T.J. Rogers, N. Dervilis, E.J. Cross, E. Papatheou, A.E. Maguire, C. Campos, and K. Worden. Foundations of population-based SHM, Part I: Homogeneous populations and forms. Mechanical Systems and Signal Processing, 148:107141, 2021."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[28] J. Gosliga, P.A. Gardner, L.A. Bull, N. Dervilis, and K. Worden. Foundations of population-based SHM, Part II: Heterogeneous populations – graphs, networks, and communities. Mechanical Systems and Signal Processing, 148:107144, 2021."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[29] P. Gardner, L.A. Bull, J. Gosliga, N. Dervilis, and K. Worden. Foundations of population-based SHM, Part III: Heterogeneous populations – mapping and transfer. Mechanical Systems and Signal Processing, 149:107142, 2021."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[30] K.J. Vamvoudakis-Stefanou, J.S. Sakellariou, and S.D. Fassois. Vibration-based damage detection for a population of nominally identical structures: Unsupervised Multiple Model (MM) statistical time series type methods. Mechanical Systems and Signal Processing, 111:149–171, 2018."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[31] TA Dardeno, LA Bull, N Dervilis, and K Worden. A population form via hierarchical Bayesian modelling of the FRF. In Data Science in Engineering, Volume 10: Proceedings of the 41st IMAC, A Conference and Exposition on Structural Dynamics 2023, volume 10, pages 95–103. Springer Nature, 2023."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[32] T.A. Dardeno, K. Worden, N. Dervilis, R.S. Mills, and L.A. Bull. On the hierarchical Bayesian modelling of frequency response functions. Mechanical Systems and Signal Processing, 208:111072, 2024."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[33] S.M. Smith, A.J. Hughes, T.A. Dardeno, L.A. Bull, N. Dervilis, and K. Worden. Anomaly detection in offshore wind turbine structures using hierarchical Bayesian modelling, 2024. Presented at the 14th International Workshop on Structural Health Monitoring (IWSHM 2023)."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[34] Weijiang Lin, Keith Worden, Andrew Eoghan Maguire, and Elizabeth J Cross. Towards populationbased structural health monitoring, part VII: EOV fields–environmental mapping. In Topics in Modal Analysis & Testing, Volume 8: Proceedings ofthe 38th IMAC, A Conference and Exposition on Structural Dynamics 2020, pages 297–304. Springer, 2020."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[35] Weijiang Lin, Keith Worden, Andrew E Maguire, and Elizabeth J Cross. A mapping method for anomaly detection in a localized population of structures. Data-Centric Engineering, 3:e25, 2022."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[36] Kevin Qu, Alasdair Logan, Euan Miller, and David Garcia Cava. Multi-phase adaptive methodology for mitigating environmental and operational variability in slowly changing time-variant engineering structures. Mechanical Systems and Signal Processing, 229:112494, 2025."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[37] Yi-Chen Zhu, Wen Xiong, and Xiao-Dong Song. Structural performance assessment considering both observed and latent environmental and operational conditions: A Gaussian process and probability principal component analysis method. Structural Health Monitoring, 21(6):2531–2546, 2022."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[38] Simo Sarkk¨ a and Lennart Svensson.¨ Bayesian Filtering and Smoothing. Institute of Mathematical Statistics Textbooks. Cambridge University Press, New York, 2nd edition, 2023."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[39] Richard H. Byrd, Peihuang Lu, Jorge Nocedal, and Ciyou Zhu. A limited memory algorithm for bound constrained optimization. SIAM Journal on Scientific Computing, 16(5):1190–1208, 1995."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[40] Ciyou Zhu, Richard H. Byrd, Peihuang Lu, and Jorge Nocedal. Algorithm 778: L-BFGS-B: Fortran subroutines for large-scale bound-constrained optimization. ACM Transactions on Mathematical Software, 23(4):550–560, 1997."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "bbox": [
+                100,
+                102,
+                899,
+                134
+            ]
+        }
+    ],
+    [
+        {
+            "type": "list",
+            "content": {
+                "list_type": "reference_list",
+                "list_items": [
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[41] Pauli Virtanen, Ralf Gommers, Travis E. Oliphant, Matt Haberland, Tyler Reddy, David Cournapeau, Evgeni Burovski, Pearu Peterson, Warren Weckesser, Jonathan Bright, Stefan J. van der Walt, Matthew´ Brett, Joshua Wilson, K. Jarrod Millman, Nikolay Mayorov, Andrew R. J. Nelson, Eric Jones, Robert Kern, Eric Larson, C J Carey, <sup>˙</sup>Ilhan Polat, Yu Feng, Eric W. Moore, Jake VanderPlas, Denis Laxalde, Josef Perktold, Robert Cimrman, Ian Henriksen, E. A. Quintero, Charles R. Harris, Anne M. Archibald, Antonio H. Ribeiro, Fabian Pedregosa, Paul van Mulbregt, and SciPy 1.0 Contributors. SciPy 1.0:ˆ Fundamental algorithms for scientific computing in Python. Nature Methods, 17:261–272, 2020."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[42] Keith Worden, Graham Manson, and Nigel R. J. Fieller. Damage detection using outlier analysis. Journal ofSound and Vibration, 229(3):647–667, 2000."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[43] Jo-Anne Ting, Evangelos Theodorou, and Stefan Schaal. A Kalman filter for robust outlier detection. In 2007 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS), pages 1514–1519, 2007."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[44] Gabriel Agamennoni, Juan I. Nieto, and Eduardo M. Nebot. An outlier-robust Kalman filter. In 2011 IEEE International Conference on Robotics and Automation (ICRA), pages 1551–1558, 2011."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[45] Yaakov Bar-Shalom and Thomas E. Fortmann. Tracking and Data Association, volume 179 of Mathematics in Science and Engineering. Academic Press, San Diego, CA, 1988."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[46] Raman K. Mehra and J. Peschon. An innovations approach to fault detection and diagnosis in dynamic systems. Automatica, 7(5):637–640, 1971."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[47] Søren Johansen. Estimation and hypothesis testing of cointegration vectors in Gaussian vector autoregressive models. Econometrica, 59(6):1551–1580, 1991."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[48] Kevin P. Murphy. Probabilistic Machine Learning: Advanced Topics. MIT Press, Cambridge, MA, 2023."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[49] Malte Kuss and Carl Edward Rasmussen. Assessing approximate inference for binary Gaussian process classification. Journal ofMachine Learning Research, 6(57):1679–1704, 2005."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[50] Arthur P Dempster, Nan M Laird, and Donald B Rubin. Maximum likelihood from incomplete data via the EM algorithm. Journal of the Royal Statistical Society: Series B (Methodological), 39(1):1–22, 1977."
+                            }
+                        ]
+                    },
+                    {
+                        "item_type": "text",
+                        "item_content": [
+                            {
+                                "type": "text",
+                                "content": "[51] Robert H Shumway and David S Stoffer. An approach to time series smoothing and forecasting using the EM algorithm. Journal ofTime Series Analysis, 3(4):253–264, 1982."
+                            }
+                        ]
+                    }
+                ]
+            },
+            "bbox": [
+                102,
+                102,
+                900,
+                210
+            ]
+        },
+        {
+            "type": "title",
+            "content": {
+                "title_content": [
+                    {
+                        "type": "text",
+                        "content": "A Lengthscale sensitivity"
+                    }
+                ],
+                "level": 2
+            },
+            "bbox": [
+                100,
+                667,
+                415,
+                687
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Throughout this work the Gaussian-process lengthscale ℓ is treated as a fixed hyperparameter rather than inferred, encoding the slowness assumption that the latent EOV varies on longer timescales than damage, noise or the structural dynamics. To verify that the reported performance does not hinge on the precise value chosen, the population case study of Section 3.2 is re-run across a grid of lengthscales, with all other priors and hyperparameters held at the values of Table 1. At each ℓ, the full pooled model is refit and the pooled population AUC-ROC over the test window is reported. The results are shown in Figure 11."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                706,
+                900,
+                799
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "As can be seen in the figure, the AUC-ROC performance across the population remains largely insensitive to ℓ across a large range of choices of lengthscale, encompassing the range of values that might be selected to model annual seasonal variation. AUC-ROC remains at ≈ 0.96 for lengthscales between 40–150 days, comfortably bracketing both the 60-day lengthscale of the simulated environmental field and the ℓ = 100 days value adopted in the main text."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                802,
+                900,
+                881
+            ]
+        },
+        {
+            "type": "paragraph",
+            "content": {
+                "paragraph_content": [
+                    {
+                        "type": "text",
+                        "content": "Damage identification performance degradation is only seen at the extremes, and even there it remains far above the best projection baseline (0.61, Section 3.2). The fixed choice of ℓ is therefore not a significant limitation of the results in this work."
+                    }
+                ]
+            },
+            "bbox": [
+                99,
+                884,
+                900,
+                931
+            ]
+        }
+    ],
+    [
+        {
+            "type": "chart",
+            "content": {
+                "image_source": {
+                    "path": "images/13ab4bf8c85f5fe023132a97e55c17333ef8a3f9b268db946ec6e7d86cdc5921.jpg"
+                },
+                "content": "",
+                "chart_caption": [
+                    {
+                        "type": "text",
+                        "content": "Figure 11: Pooled population AUC-ROC for the OWT case study as the GP lengthscale ℓ is swept, with all other hyperparameters and priors fixed as in the main text."
+                    }
+                ],
+                "chart_footnote": []
+            },
+            "bbox": [
+                112,
+                313,
+                887,
+                669
+            ]
+        }
+    ]
+]

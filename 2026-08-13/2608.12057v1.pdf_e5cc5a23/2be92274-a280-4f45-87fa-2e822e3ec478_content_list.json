@@ -1,0 +1,1469 @@
+[
+    {
+        "type": "text",
+        "text": "Towards Truly Unsupervised Evaluation of Feature Selection",
+        "text_level": 1,
+        "bbox": [
+            258,
+            140,
+            746,
+            184
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Hafiz Saud Arshad<sup>1[0009−0003−2107−5589]</sup>, Muhammad Rajabinasab<sup>1[0009−0006−7045−3998]</sup>, and Arthur Zimek<sup>1[0000−0001−7713−4208]</sup>",
+        "bbox": [
+            233,
+            212,
+            766,
+            242
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "University of Southern Denmark, Odense, Denmark {saudarshad,rajabinasab,zimek}@imada.sdu.dk",
+        "bbox": [
+            328,
+            255,
+            674,
+            282
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Abstract. Feature selection is one of the most important and fundamental tasks in data mining, tackled by a family of methods with an established set of evaluation techniques to measure the quality of a specific method. Most of the methods commonly used for the unsupervised evaluation of feature selection algorithms sufer from critical design flaws which question their unsupervised nature. In this paper, we provide a critical discussion on the established allegedly unsupervised evaluation techniques, and shed light on the reasons why they are not truly unsupervised but, at best, supervised evaluation under an unsupervised downstream task. We also propose a novel, truly unsupervised evaluation framework to measure the quality of the feature selection algorithms without any form of information about the labels. The proposed framework utilizes unsupervised Principal Component Analysis, and optimal transport to measure the quality of the feature selection methods in a truly unsupervised manner.",
+        "bbox": [
+            261,
+            320,
+            740,
+            530
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Keywords: Unsupervised Evaluation · Feature Selection · Dimensionality Reduction · Subspace Similarity",
+        "bbox": [
+            261,
+            541,
+            738,
+            570
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "1 Introduction",
+        "text_level": 2,
+        "bbox": [
+            217,
+            597,
+            374,
+            612
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "The curse of dimensionality is one of the fundamental challenges in machine learning and data mining. As dimensionality increases, both computational complexity and the dificulty of downstream tasks grow considerably. High dimensionality negatively impacts a wide range of applications, including but not limited to Nearest Neighbor search [17,37], classification [1], clustering [27], and outlier detection [2,36,33], among others. Dimensionality reduction consists of many diferent families of techniques, ranging from subspace learning [33] to feature extraction [3]. Among dimensionality reduction methods, Feature Selection remains particularly important because it preserves the semantics of the original dimensions and therefore maintains interpretability and explainability.",
+        "bbox": [
+            214,
+            628,
+            787,
+            780
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Feature selection is a fundamental machine learning and data mining task. Given a set of initial features $F ~ = ~ \\{ f _ { 1 } , f _ { 2 } , . . . , f _ { n } \\}$ , the problem of feature selection is defined as finding the optimal subset $S ^ { * } \\subseteq F$ that maximizes a criterion function J(S) (e.g., the predictive power or the information content of the subset). Formally, this can be expressed as the optimization problem $S ^ { * } = \\arg \\operatorname* { m a x } _ { S \\subseteq X } J ( S )$ . It can be set to be subject to the constraint $| S | = k < n$ or with a penalty term that encourages sparsity. The objective is to identify the most relevant features while eliminating redundant or irrelevant dimensions, thereby improving model generalization and reducing computational costs [13,21]. Feature selection can be conducted in both supervised and unsupervised settings. In supervised feature selection, information about class labels is used to facilitate the identification of informative features. In the unsupervised setting, the feature selection process is based on the intrinsic information of the features themselves (e.g., correlation and variance) [8].",
+        "bbox": [
+            214,
+            780,
+            787,
+            840
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "aside_text",
+        "text": "arXiv:2608.12057v1 [cs.LG] 12 Aug 2026",
+        "bbox": [
+            29,
+            352,
+            65,
+            799
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            214,
+            146,
+            787,
+            299
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Similar to dimensionality reduction, feature selection addresses the curse of dimensionality, the exponential expansion of the data space as the number of features increases, causing data to become so sparse that statistical distance and density metrics lose their meaningful distinction, leading to a degradation in the performance of many downstream machine learning and data mining tasks [12,43]. Unlike dimensionality reduction methods, feature selection ofers an important advantage: keeping the explainability properties of the original feature space while reducing the dimensionality. This is why, despite the existence of many successful methods for dimensionality reduction such as Principal Component Analysis (PCA), Autoencoders [7], t-distributed Stochastic Neighbor Embedding (t-SNE) [22], and Uniform Manifold Approximation and Projection (UMAP) [23], feature selection methods are still important for tackling the curse of dimensionality [13].",
+        "bbox": [
+            214,
+            303,
+            789,
+            500
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "There are established evaluation techniques for measuring the quality of feature selection algorithms. In most cases, a combination of supervised and unsupervised evaluation is used which measures the quality of a feature selection method with respect to the performance in conducting a downstream task. There is however an important problem concerned with the unsupervised evaluation part, and that is the fact that the process is done by conducting clustering (usually using k-means) on the data representation using selected features, and checking the clustering accuracy with respect to the ground-truth labels. This is clearly problematic, as using any information about the labels is in contrast with the alleged unsupervised nature which we expect from the evaluation, rendering the current established so-called unsupervised way of evaluation, at best, as supervised evaluation under an unsupervised downstream task. Even not using the labels, and just using the number of distinct classes to select the number of clusters, should still be considered a violation of the unsupervised setting. Unsupervised feature selection methods require a truly unsupervised evaluation technique, and in many practical scenarios, ground-truth labels might actually not be available.",
+        "bbox": [
+            214,
+            502,
+            787,
+            761
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "There are other evaluation metrics and methods proposed for the evaluation of feature selection algorithms. These techniques ofer ways of evaluating the entire feature selection process, instead of a single point [32], evaluating the amount of dimensionality reduction and the quality of feature selection at once [24], or the evaluation of the stability of feature selection algorithms [26,32], or of modelagnostic evaluation [34]. Only the last one can be considered an unsupervised metric, as it does not use the labels or any external information about the labels in the calculation of the metric.",
+        "bbox": [
+            214,
+            763,
+            787,
+            842
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_number",
+        "text": "2",
+        "bbox": [
+            217,
+            116,
+            228,
+            126
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "header",
+        "text": "H. S. Arshad et al.",
+        "bbox": [
+            271,
+            114,
+            398,
+            128
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            214,
+            146,
+            785,
+            191
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "In this paper, we propose a novel method for the truly unsupervised evaluation of feature selection algorithms, utilizing dimensionality reduction and inter-dataset similarity to measure the quality of the feature selection process. In this evaluation method, we take advantage of PCA as an informative unsupervised dimensionality reduction technique. We evaluate the performance of a feature selection algorithm A in selecting f features by calculating the interdataset similarity metric IDS between the subsets constituted by selecting f features using algorithm A, and the first f principal components. Inter-dataset similarity metrics measure the distributional similarities or diferences between two datasets. There are various inter-dataset similarity measures [34], especially in the field of optimal transport (OT) [29]. Metrics such as Earth Mover’s Distance (EMD) [39], Wasserstein Distance [41], Sliced Wasserstein Distance [25], and Sinkhorn [9] can give us useful insights on how similar two datasets are. Measuring the inter-dataset similarity between the two aforementioned subsets of the data allows us to rank the feature selection algorithms based on how closely to PCA they perform. This process hence favors a feature selection algorithm yielding close performance figures to PCA without compromising the explainability as a notion for unsupervised evaluation.",
+        "bbox": [
+            214,
+            191,
+            787,
+            464
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The remainder of this paper is structured as follows: In Section 2, we review the existing measures for evaluating feature selection algorithms. In Section 3, we showcase a detailed description of the proposed unsupervised evaluation framework. In Section 4, we present experimental results. In Section 5, we conclude the paper by presenting a summary, highlighting limitations, and outlining possible directions for future research.",
+        "bbox": [
+            214,
+            463,
+            787,
+            555
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "2 Related Work",
+        "text_level": 2,
+        "bbox": [
+            215,
+            574,
+            388,
+            590
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Feature selection algorithms are primarily evaluated based on their ability to enhance (or maintain) the performance of downstream machine learning tasks while simultaneously reducing the dimensionality. Evaluation methods for feature selection can be divided into two main categories: (i) performance assessment on downstream supervised or unsupervised tasks, typically using metrics computed for a fixed number of selected features, and (ii) measures that capture broader properties such as overall performance trends, model-agnostic quality, fitness gain, or stability.",
+        "bbox": [
+            214,
+            602,
+            787,
+            724
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "2.1 Evaluation Based on Downstream Tasks",
+        "text_level": 2,
+        "bbox": [
+            215,
+            742,
+            593,
+            757
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The most common evaluation approach involves measuring how feature selection afects the quality of a subsequent machine learning task, most frequently classification (supervised) or clustering (unsupervised). These evaluations are usually point-based, i.e., they report performance achieved with a specific number of selected features.",
+        "bbox": [
+            214,
+            765,
+            787,
+            840
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "header",
+        "text": "Towards Truly Unsupervised Evaluation of Feature Selection",
+        "bbox": [
+            326,
+            114,
+            732,
+            128
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "page_number",
+        "text": "3",
+        "bbox": [
+            774,
+            116,
+            785,
+            127
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Supervised Evaluation: In supervised settings, the efectiveness of a feature selection method is typically quantified by training one or more classifiers on the reduced feature set and calculating standard classification performance measures.",
+        "bbox": [
+            214,
+            146,
+            787,
+            207
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Accuracy (ACC): Accuracy is defined as the proportion of correctly classified instances:",
+        "bbox": [
+            214,
+            223,
+            785,
+            253
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/d9b43a176fc4a9da3e83b6c61d92490f95fd92ca0fb4b5adc0dd978d7d7e8a24.jpg",
+        "text": "$$\n\\mathrm { A C C } = { \\frac { \\mathrm { T P } + \\mathrm { T N } } { \\mathrm { T P } + \\mathrm { T N } + \\mathrm { F P } + \\mathrm { F N } } }\\tag{1}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            390,
+            250,
+            609,
+            282
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "where TP, TN, FP, and FN denote the number of true positives, true negatives, false positives, and false negatives, respectively.",
+        "bbox": [
+            214,
+            286,
+            785,
+            319
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Area Under the ROC Curve (AUC): The area under the receiver operating characteristic curve quantifies a classifier’s ability to discriminate between classes across all decision thresholds:",
+        "bbox": [
+            214,
+            334,
+            787,
+            380
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/b7e0c99097942be9e9609936e6bd8835d8947ee45888f39414769e8f1153a641.jpg",
+        "text": "$$\n\\mathrm { A U C } = \\int _ { 0 } ^ { 1 } \\mathrm { T P R } ( \\mathrm { F P R } ) d \\mathrm { F P R }\\tag{2}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            392,
+            387,
+            611,
+            424
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "where TPR is the true positive rate and FPR is the false positive rate. Values of AUC close to 1 indicate excellent discriminative power, while $\\mathrm { A U C } = 0 . 5$ corresponds to random guessing.",
+        "bbox": [
+            214,
+            434,
+            787,
+            479
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Supervised metrics are used widely for the evaluation of feature selection methods. However, their values strongly depend on the choice of classifier, hyperparameter settings, and the dataset characteristics. They can be deceptive, as classifiers might still perform reasonably well even on a poorly (or randomly) selected subset of features [31].",
+        "bbox": [
+            214,
+            479,
+            787,
+            556
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Unsupervised Evaluation: In the so-called unsupervised evaluation of feature selection, performance is frequently evaluated by applying a clustering algorithm (usually k-means) on the selected features and comparing the resulting clustering labels against ground-truth class labels using external validation measures, i.e., these evaluation measures actually are not unsupervised as such, but only use an unsupervised downstream task while employing supervised evaluation.",
+        "bbox": [
+            214,
+            579,
+            787,
+            672
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Clustering Accuracy (CLSACC) Clustering accuracy measures the agreement between predicted cluster labels and true class labels after finding an optimal label correspondence:",
+        "bbox": [
+            214,
+            686,
+            787,
+            733
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6da675a130590fb0ed0551b40bcfcf15428e79dd4e63ca0720d388cb88d7053a.jpg",
+        "text": "$$\n{ \\mathrm { C L S A C C } } = { \\frac { 1 } { n } } \\sum _ { i = 1 } ^ { n } \\delta { \\bigl ( } c _ { i } , \\operatorname* { m a p } ( g _ { i } ) { \\bigr ) }\\tag{3}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            382,
+            743,
+            617,
+            784
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "where n is the number of instances, $c _ { i }$ and $g _ { i }$ are the predicted cluster and true class labels for instance $i ,$ respectively, map(·) is the optimal assignment obtained via the Hungarian method [20], and $\\delta ( \\cdot , \\cdot )$ is the Kronecker delta function [4].",
+        "bbox": [
+            214,
+            794,
+            787,
+            842
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "page_number",
+        "text": "4",
+        "bbox": [
+            217,
+            116,
+            228,
+            126
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "header",
+        "text": "H. S. Arshad et al.",
+        "bbox": [
+            269,
+            114,
+            398,
+            128
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Normalized Mutual Information (NMI): Normalized mutual information quantifies the shared information between the predicted clustering $C$ and the true partitioning indicated by the ground-truth labels $L ,$ normalized by their entropies:",
+        "bbox": [
+            214,
+            146,
+            787,
+            207
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0d8b69627b655429721463b6f8bf19f9667acb4cb2170b82107b7be0e5ba3d56.jpg",
+        "text": "$$\n\\mathrm { N M I } = \\frac { \\mathrm { M I } ( L , C ) } { \\operatorname* { m a x } \\bigl ( \\mathrm { E n t r o p y } ( L ) , \\mathrm { E n t r o p y } ( C ) \\bigr ) }\\tag{4}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            357,
+            205,
+            640,
+            239
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "where $\\operatorname { M I } ( \\cdot , \\cdot )$ denotes mutual information. The measure ranges from 0 (independent) to 1 (perfect agreement).",
+        "bbox": [
+            214,
+            242,
+            784,
+            273
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "These external clustering metrics, while informative, still rely on groundtruth labels, which is in contrast with the unsupervised nature of the downstream task. If we aim to apply an unsupervised feature selection algorithm on a dataset which does not have any labels, this would be rendered inefective as much as the supervised evaluation.",
+        "bbox": [
+            214,
+            273,
+            787,
+            349
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "2.2 Specialized Evaluation Measures",
+        "text_level": 2,
+        "bbox": [
+            215,
+            367,
+            531,
+            383
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Several specialized metrics have been proposed to overcome limitations of singlepoint and downstream task-dependent evaluations by providing more holistic, model-agnostic, or robustness-oriented insights.",
+        "bbox": [
+            214,
+            390,
+            785,
+            436
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "FSDEM Score: Feature Selection Dynamic Evaluation Metric (FSDEM) [32] aggregates performance across varying numbers of selected features. Let d be the total number of features, $P ( f )$ be the value of a downstream performance measure obtained using exactly f selected features, and $g ( x )$ be a continuous function approximated based on the observed pairs $\\{ ( f , P ( f ) ) \\} _ { f = 1 } ^ { d }$ . The FSDEM score is then defined as the normalized area under this curve over a chosen interval [a, b]:",
+        "bbox": [
+            214,
+            454,
+            787,
+            561
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/199c4ee06abbc4cac4bd7fd71eb13c0fb31547519456d6957657ec744fdf9639.jpg",
+        "text": "$$\n\\mathrm { F S D E M } = { \\frac { 1 } { b - a } } \\int _ { a } ^ { b } g ( x ) d x .\\tag{5}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            395,
+            560,
+            604,
+            594
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "When the underlying performance measure $P$ is bounded in $[ 0 , 1 ] ,$ , so is FSDEM, with values closer to 1 indicating consistently good performance. FSDEM allows approximating the overall performance of the entire feature selection process based on a number of observations, leading to a more holistic overview compared to the common single-point evaluation.",
+        "bbox": [
+            214,
+            597,
+            787,
+            674
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Average Angle Diference (AAD): The Average Angle Diference [34], also formally denoted as ∆θ, provides a model-agnostic assessment of feature selection quality by quantifying the average change in the direction of the eigenvector corresponding to the first principal component when non-selected features are removed. Let F be the set of selected features and $F ^ { C }$ its complement. For each feature $f \\in F ^ { C }$ , construct the modified dataset $\\mathbf { D } _ { f ^ { 0 } }$ by setting all values of feature f to zero. The AAD is then calculated as:",
+        "bbox": [
+            214,
+            693,
+            787,
+            799
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3fe1daa18a032f3041aba6504e73f23f447210906d499ae064b1be495ada0734.jpg",
+        "text": "$$\nA A D = \\frac { 1 } { | F ^ { C } | } \\sum _ { f \\in F ^ { C } } \\varDelta \\theta \\big ( \\mathbf { D } , \\mathbf { D } _ { f ^ { 0 } } \\big ) ,\\tag{6}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            380,
+            804,
+            619,
+            843
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "header",
+        "text": "Towards Truly Unsupervised Evaluation of Feature Selection",
+        "bbox": [
+            326,
+            114,
+            732,
+            128
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "page_number",
+        "text": "5",
+        "bbox": [
+            774,
+            116,
+            785,
+            127
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "image",
+        "img_path": "images/4bad5ae188bb1f64546f9c1cb0e56827ea4671dfffc915ca0d3e91c07c8bcc99.jpg",
+        "image_caption": [
+            "Fig. 1: Proposed method for truly unsupervised evaluation of feature selection."
+        ],
+        "image_footnote": [],
+        "bbox": [
+            276,
+            143,
+            727,
+            318
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "where ∆θ denotes the angle diference between the eigenvectors corresponding to the first principal components. Smaller values of ∆θ (closer to 0) indicate that the removed features were largely redundant or uninformative, hence afecting the first and most important principal component the least.",
+        "bbox": [
+            214,
+            375,
+            787,
+            436
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "3 Unsupervised Evaluation of Feature Selection",
+        "text_level": 2,
+        "bbox": [
+            215,
+            459,
+            692,
+            477
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "The core idea behind our framework is to decouple the evaluation from the original ground-truth labels. The overall structure of the method is presented in Fig. 1. The method operates as follows: We apply PCA for efective dimensionality reduction and select top f principal components. To evaluate the result of some feature selection algorithm, selecting f features, we calculate an interdataset similarity metric IDS for the two representations of the data resulting from PCA and from some feature selection method. The similarity between the reduced datasets with f selected features and the PCA-based representation with f components yields the final evaluation.",
+        "bbox": [
+            214,
+            492,
+            787,
+            628
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "The objective is to identify feature selection algorithms that select features in a way that they are as close as possible to the representation obtained from PCA. The better a subset preserves the structure of the PCA representation, the higher it ranks.",
+        "bbox": [
+            214,
+            628,
+            787,
+            689
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "The proposed framework constitutes a truly unsupervised approach for evaluating the quality of feature selection algorithms. The use of PCA as a baseline allows us to favor feature selection methods which select features which best resemble the principal components, aiming for a similar downstream performance figure while maintaining the explainability. The unsupervised nature of the proposed framework addresses the existing gap in the evaluation of feature selection algorithms by facilitating the truly unsupervised evaluation of the feature selection methods.",
+        "bbox": [
+            214,
+            689,
+            787,
+            809
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "While we focus on the implementation of the framework using PCA, other dimensionality reduction methods could be used as well, depending on the desired bias of the quality measure. We experiment with a selection of diferent dataset similarity measures. Earth Mover’s Distance (OT\\_EMD2) [5] measures the minimum cost of transforming one distribution into another by moving probability mass. Entropic-Regularized Sinkhorn Distance (OT\\_SINKHORN2) [10] is a GPU-friendly approximation of EMD. Gromov-Wasserstein Distance (OT\\_GW2) [30] compares distributions living in incomparable metric spaces by matching their internal pairwise geometry rather than point-to-point correspondences. And finally, Sliced Wasserstein Distance (OT\\_Sliced\\_SW) [6] approximates the Wasserstein distance by averaging one-dimensional projections of the distributions, yielding a scalable but lower-resolution similarity estimate.",
+        "bbox": [
+            214,
+            809,
+            787,
+            840
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "page_number",
+        "text": "6",
+        "bbox": [
+            217,
+            116,
+            228,
+            126
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "header",
+        "text": "H. S. Arshad et al.",
+        "bbox": [
+            269,
+            114,
+            398,
+            128
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            214,
+            146,
+            787,
+            297
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "As all the values reflected by optimal transport are a measure of distance or dissimilarity, we transform them into a similarity measure:",
+        "bbox": [
+            214,
+            299,
+            787,
+            330
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "img_path": "images/a716381c4678a1d513e335d7cc16f66ab30727ee2888b7fa9ade5e3f3ad2e3b5.jpg",
+        "text": "$$\n\\mathrm { O T _ { \\mathrm { s i m } } = \\frac { 1 } { O T } \\quad \\mathrm { i f ~ O T \\neq 0 ~ e l s e ~ O T = + \\infty ~ } }\\tag{7}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            349,
+            343,
+            650,
+            375
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "where OT is the optimal transport cost. As the distances are theoretically not bounded, we use +∞ as an indicator of maximum possible similarity which only happens when the distributions are exactly the same (e.g., passing the same dataset twice).",
+        "bbox": [
+            214,
+            382,
+            787,
+            444
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "4 Experiments and Analyses",
+        "text_level": 2,
+        "bbox": [
+            215,
+            472,
+            509,
+            489
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "We perform our experiments using the FSEVAL benchmarking suite [38], a specialized framework designed for the extensive and comprehensive evaluation of feature selection algorithms. Below, we list the experimental setup, results and analysis.",
+        "bbox": [
+            214,
+            510,
+            787,
+            571
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "4.1 Experimental Setup",
+        "text_level": 2,
+        "bbox": [
+            215,
+            598,
+            428,
+            614
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "The benchmark consists of 8 publicly available high-dimensional datasets commonly used in the unsupervised feature selection literature [21]. This collection spans biomedical data and other high-dimensional benchmarks, representing a variety of applications. These datasets include COIL20, Isolet, ORL, lung, lung\\_discrete, warpAR10P, warpPIE10P, and Yale.",
+        "bbox": [
+            214,
+            630,
+            787,
+            707
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Unsupervised Feature Selection Methods Among the classical approaches, variance-based [15] and correlation-based methods [14] operate directly on feature statistics without any learning component. Laplacian Score (LS) [16] is a forward-filter method that operates in an unsupervised manner as part of the broader spectral feature selection framework [42], with computational complexity of $\\bar { C _ { \\mathrm { L S } } } = d n ^ { 2 }$ , where d denotes the number of features and n the number of samples.",
+        "bbox": [
+            214,
+            733,
+            787,
+            840
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "header",
+        "text": "Towards Truly Unsupervised Evaluation of Feature Selection",
+        "bbox": [
+            326,
+            114,
+            732,
+            128
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "page_number",
+        "text": "7",
+        "bbox": [
+            774,
+            116,
+            785,
+            127
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "On the more recent end, Subspace Clustering-based Feature Selection (SCFS) [28] integrates subspace learning, clustering, and sparse learning via a selfexpressive model combined with regularized regression to sparsely capture featurecluster correlations. The Variance-Covariance Subspace Distance approach (VCS-DFS) leverages inter-feature correlations by identifying feature subsets whose variance-covariance matrices exhibit minimal norm properties [19].",
+        "bbox": [
+            214,
+            146,
+            790,
+            237
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "We evaluate five feature selection methods and augment them with the Random baseline [31] that assigns uniform random importance scores to study how the proposed metrics are able to discriminate the random behavior from other feature selection approaches. Hyperparameters follow the default or suggested values, e.g., Laplacian Score uses k = 5 for the nearest neighbor graph, VCSDFS uses $\\rho = 0 . 5$ with 30 iterations, SCFS uses $\\alpha = \\beta = 1 . 0$",
+        "bbox": [
+            214,
+            238,
+            787,
+            329
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Evaluation Measures On the evaluation end, we compare nine feature selection evaluation metrics, organized into four groups:",
+        "bbox": [
+            214,
+            348,
+            785,
+            381
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "– Supervised: These metrics use explicit supervisory knowledge e.g., groundtruth class labels. We use Classification Accuracy (ACC) and Area under the ROC Curve (AUC), computed with a Random Forest classifier (100 trees) under the stratified 5-fold cross validation, average over 5 repetitions (diferent splits).",
+        "bbox": [
+            223,
+            387,
+            787,
+            463
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "– Pseudo-Unsupervised: These metrics are based on clustering as an unsupervised downstream task, but are still measured with respect to the groundtruth labels, including Clustering Accuracy (CLSACC) and Normalized Mutual Information (NMI), obtained from k-means with the number of clusters set to the number of ground-truth classes, averaged over 10 diferent random initializations.",
+        "bbox": [
+            223,
+            463,
+            787,
+            553
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "– Model Agnostic: The Average Angle Diference (AAD) [32] does not use any label information and operates on the average change in the angle of the eigenvector corresponding to the first principle component caused by the removal of unselected features.",
+        "bbox": [
+            225,
+            553,
+            787,
+            613
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "– Proposed (Truly Unsupervised): We create four instantiations of our framework, difering in the choice of the inter-dataset similarity metric while comparing the optimal transport between the subspace of selected features against the PCA-reduced representation. As discussed in Section 3, we are using the Earth Mover’s Distance (OT\\_EMD2) [5], Entropic-Regularized Sinkhorn Distance (OT\\_SINKHORN2) [10], Gromov-Wasserstein Distance (OT\\_GW2) [30], and Sliced Wasserstein Distance (OT\\_SLICED\\_SW) [6].",
+        "bbox": [
+            223,
+            613,
+            787,
+            722
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Following the dynamic-evaluation philosophy of FSDEM [32], we assess each method at 10 feature fractions in low-percentage regime, 0-5 Percent with p ∈ {0.005, 0.010, 0.015, . . . , 0.05}, capturing the low-feature setting most relevant to high-dimensional data.",
+        "bbox": [
+            215,
+            727,
+            787,
+            790
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "Rankings, Repetitions, and Selection For each (dataset, feature selection method, percentage) configuration, we proceed as follows. The feature selection method assigns a score to every feature; scores are sorted in descending order, and the top-f features are selected where f is determined by the percentage p following the FSDEM schedule [32]. Stochastic methods (here, only the Random baseline) are run 10 times and their resulting metric values are averaged; while deterministic methods are run once. We evaluate the selected set of features by each feature selection method using all 9 metrics.",
+        "bbox": [
+            214,
+            809,
+            787,
+            840
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "page_number",
+        "text": "8",
+        "bbox": [
+            217,
+            116,
+            228,
+            126
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "header",
+        "text": "H. S. Arshad et al.",
+        "bbox": [
+            269,
+            114,
+            398,
+            128
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "chart",
+        "img_path": "images/0f69826fe1528d5c03cd4bb2d99d95cfd69a9f886be237a696016f7e82ccb758.jpg",
+        "content": "",
+        "chart_caption": [
+            "Percentage of features selected (%)",
+            "Fig. 2: Performance curves of the nine evaluation metrics on Isolet as a function of the percentage of features selected. For all measures, higher is better (distances are converted to similarities for OT-measures)."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            218,
+            143,
+            787,
+            398
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            214,
+            505,
+            787,
+            597
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "4.2 Results",
+        "text_level": 2,
+        "bbox": [
+            215,
+            617,
+            325,
+            632
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Figure 2 shows that OT\\_GW2 produces rankings partly aligning with the supervised block by placing VCSDFS and Correlation ranked lowest and Laplacian ranked highest. Although it places SCFS fourth and Variance second, misplaced, it still shows an overall agreement. Such disagreements are observed within Supervised block as well across diferent datasets. While OT\\_SINKHORN2 and OT\\_EMD2 produce the ranking largely inverted with respect to the supervised block, rating the two weakest selectors best. Here, we highlight that the local disruption between 1.5% and 3.5% is caused by the per-budget cost matrix normalization performed on the OT-metrics as a standard step: the unnormalized distance grows monotonically, while its denominator grows faster. Hence, we recommend readers not to compare OT scores across diferent percentages of selected features, rather observe the ranking order. In case of OT\\_SLICED\\_SW, the resolution degrades. Figure 3 shows the ranking produced by OT\\_SLICED\\_SW for the six feature selection methods and we see traces of agreement e.g., Random and SCFS are ranked top.",
+        "bbox": [
+            214,
+            643,
+            789,
+            842
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "header",
+        "text": "Towards Truly Unsupervised Evaluation of Feature Selection",
+        "bbox": [
+            326,
+            114,
+            732,
+            128
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "page_number",
+        "text": "9",
+        "bbox": [
+            774,
+            116,
+            785,
+            126
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "chart",
+        "img_path": "images/5b1b997304325eeccdba9a4633779e1a121da777e971637e41bc914b918bea84.jpg",
+        "content": "",
+        "chart_caption": [
+            "Fig. 3: Ranking produced by Ot\\_Sliced\\_SW for Isolet dataset as a function of the percentage of features selected. 1 represents highest rank and 6 represents lowest rank."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            302,
+            143,
+            702,
+            286
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            214,
+            402,
+            787,
+            434
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "These observations indicate that the proposed framework carries predictive validity: the proposed (label-free) metrics order selectors in a way that anticipates their label-based downstream performance. This should not be read as a claim of constructing validity nor as measuring our pipeline’s eficacy by its agreement with supervised metrics. Agreement should rather be seen as the downstream-task performance (here, classification) of the selected features that a practitioner would obtain by choosing methods according to the ranking provided by the proposed measure. Furthermore, a disagreement should not be seen as declaring a metric inefective. We should not expect them to produce a single shared ordering of the selectors; rather, examining where the rankings agree and where they diverge is itself informative about the evaluation landscape. The metrics provide us with information about a specific aspect of the quality of the feature selection process. Our framework measures similarity to the first f principal components which is in particular important as there is no loss of explainability imposed by feature selection, compared to the case of PCA, where the actual features are replaced by principal components.",
+        "bbox": [
+            214,
+            446,
+            789,
+            691
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Figure 4 reports the pairwise correlations between evaluation metrics, separately under Pearson and Spearman correlation. It is evident that OT\\_GW2 and OT\\_SLICED\\_SW exhibit positive correlation with respect to traditional metrics, especially the supervised block(Pearson coeficients: 0.29 − 0.37; Spearman coeficients: 0.26−0.33), While OT\\_EMD2 and OT\\_Sinkhorn2 exhibit opposite patterns. Among model-agnostic alternatives, AAD correlates positively but relatively weakly with the supervised block than the proposed optimal transport-based metrics, indicating that the proposed framework tracks label-based downstream performance competitively without explicit supervision.",
+        "bbox": [
+            214,
+            704,
+            789,
+            842
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "page_number",
+        "text": "10",
+        "bbox": [
+            217,
+            114,
+            236,
+            127
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "header",
+        "text": "H. S. Arshad et al.",
+        "bbox": [
+            269,
+            114,
+            398,
+            128
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "chart",
+        "img_path": "images/f9e26908879647f2947e853a64088df7d9bdd3022603bfbec0b3175bd47e0849.jpg",
+        "content": "",
+        "chart_caption": [
+            "Fig. 4: Pairwise correlation between 9 evaluation metrics for the percentage of features selected in the range (0.5%–5%). The left plot reports Pearson correlations; and the right plot reports Spearman. Red cells mark metric-pair that ranks the feature selection methods consistently in the same direction, blue cells represent a pair that ranks them in opposite directions."
+        ],
+        "chart_footnote": [],
+        "bbox": [
+            220,
+            146,
+            782,
+            344
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "5 Conclusions, Limitations, and Future Work",
+        "text_level": 2,
+        "bbox": [
+            215,
+            462,
+            671,
+            479
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "This study takes a first step toward a broader question: whether feature selection can be evaluated without relying on information that the feature selection process itself is not assumed to have access to. We have approached this question by replacing label-dependent evaluation with an unsupervised comparison between the selected feature space and a reference representation derived from the data itself. The results provide encouraging evidence for the feasibility of this perspective, while also revealing several methodological and empirical challenges that remain to be addressed. The following subsections summarize the main conclusions, discuss the limitations of the current framework, and outline directions for developing a more comprehensive and robust approach to truly unsupervised evaluation.",
+        "bbox": [
+            214,
+            493,
+            787,
+            661
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Conclusions. In this paper, we argued that the established procedures for unsupervised evaluation of feature selection are not truly unsupervised. The procedures commonly used in the literature as unsupervised evaluation in fact rely on ground-truth labels. Hence, these techniques are technically supervised, merely using an unsupervised downstream task. To the best of our knowledge, only one truly unsupervised and model-agnostic metric currently exists for the evaluation of feature selection methods [34].",
+        "bbox": [
+            214,
+            674,
+            787,
+            780
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "We proposed a truly unsupervised evaluation framework that, instead of exploiting ground-truth labels, evaluates a feature selection algorithm by measuring the optimal transport distance between its selected feature subset and a PCA-based reference subspace of the same size. Across eight high-dimensional datasets, the proposed metrics showed consistent correlations with established evaluation metrics under both correlation measures.",
+        "bbox": [
+            214,
+            780,
+            789,
+            840
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "header",
+        "text": "Towards Truly Unsupervised Evaluation of Feature Selection",
+        "bbox": [
+            326,
+            114,
+            732,
+            128
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "page_number",
+        "text": "11",
+        "bbox": [
+            767,
+            116,
+            784,
+            127
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            214,
+            146,
+            785,
+            176
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Our results also demonstrate that the choice of the underlying inter-dataset similarity measure has a substantial efect on the insights obtained from the evaluation. Importantly, a lower correlation with classification-based performance should not necessarily be interpreted as evidence that a metric provides a false or uninformative signal. Rather, it may indicate that the metric captures aspects of feature selection quality that are diferent from those reflected in downstream classification performance. This observation reinforces the importance of studying unsupervised evaluation metrics not merely according to their agreement with supervised performance, but also according to the properties of the selected representations that they actually measure.",
+        "bbox": [
+            214,
+            176,
+            787,
+            330
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Limitations. Despite providing preliminary steps toward truly unsupervised evaluation of feature selection, the proposed framework has several important limitations.",
+        "bbox": [
+            214,
+            342,
+            787,
+            387
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "First, optimal transport methods can be computationally expensive, particularly for large datasets. Computationally eficient approximations, such as Sinkhorn-based methods [9], provide a practical alternative but may introduce stochasticity. This is particularly problematic for an evaluation metric, for which deterministic behavior is desirable. Given the same feature selection process and dataset, repeated evaluations should ideally produce identical results. Such stability is important when metric values are subsequently used for comparisons, statistical analysis, or ranking of feature selection methods.",
+        "bbox": [
+            214,
+            387,
+            787,
+            508
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Second, the use of PCA as the reference mechanism imposes a structural limitation on the framework. The number of principal components that can be obtained from PCA is bounded by min(n, d), where n is the number of instances and d is the number of features. Consequently, the proposed evaluation is either restricted to datasets satisfying n ≥ d, or limited to a partial view of the feature selection process when the number of selected features exceeds this bound. Ideally, an unsupervised evaluation metric should be applicable to datasets regardless of the relationship between their numbers of instances and features, and should be capable of evaluating the selection process across its full range of dimensionality reductions.",
+        "bbox": [
+            214,
+            508,
+            789,
+            660
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Finally, the empirical scope of this study is limited. The experiments cover a relatively small number of datasets and feature selection methods, and the observed relationships may therefore not generalize to the broader space of feature selection problems. Moreover, the current analysis primarily examines aggregate correlations rather than investigating how these relationships vary across individual datasets or diferent levels of dimensionality reduction.",
+        "bbox": [
+            214,
+            659,
+            787,
+            751
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Future Work and Broader Impact. The limitations above suggest several directions for future research. First, the proposed framework should be studied at a finer granularity. In particular, correlations should be examined separately for individual datasets and for diferent levels of dimensionality reduction. Repeated experiments should also be conducted to quantify and, where possible, eliminate the efects of stochasticity. A systematic comparison of diferent optimal transport formulations and their underlying design choices is likewise necessary to understand why they produce diferent evaluation signals. Such analyses would provide a more complete picture of the behavior of the proposed framework and help establish reliable recommendations for its use.",
+        "bbox": [
+            214,
+            765,
+            787,
+            842
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "page_number",
+        "text": "12",
+        "bbox": [
+            217,
+            114,
+            236,
+            127
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "header",
+        "text": "H. S. Arshad et al.",
+        "bbox": [
+            269,
+            114,
+            398,
+            128
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            214,
+            146,
+            787,
+            223
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Second, the reliance on PCA as the unsupervised reference could be relaxed. Other dimensionality reduction techniques, such as autoencoders, could provide alternative reference representations and potentially overcome the dimensionality constraints of PCA while also allowing nonlinear structures to be captured. This could further enable a more detailed analysis of method rankings using Critical Diference diagrams based on Standard rank statistics [11] and MARS [35]. More generally, alternative dimensionality reduction techniques could transform the current approach into a dynamically guided evaluation framework. For example, multiple dimensionality reduction candidates could be generated and evaluated using internal dimensionality-reduction quality measures [40], with the best-performing representation for a given dataset subsequently used as the reference for feature selection evaluation.",
+        "bbox": [
+            214,
+            227,
+            787,
+            410
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Third, the raw values produced by the proposed metrics warrant further investigation. It should be determined whether their distributions have a meaningful interpretation and whether a correction-for-chance adjustment is necessary [18]. Such an adjustment could improve the interpretability and comparability of metric values across datasets and experimental settings.",
+        "bbox": [
+            214,
+            415,
+            787,
+            491
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Fourth, the properties of individual optimal transport measures provide an opportunity to simplify the framework. In particular, the Gromov-Wasserstein distance [30], used in OT\\_GW2, can compare distributions defined on spaces of diferent dimensionality. This property could potentially eliminate the need for a reference subspace altogether, allowing the selected feature subset to be compared directly with the full-dimensional dataset.",
+        "bbox": [
+            214,
+            496,
+            787,
+            588
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Finally, the recurring loss of resolution observed for OT\\_SLICED\\_SW deserves a systematic investigation. Understanding why this behavior occurs, under which dataset characteristics it emerges, and which alternative inter-dataset similarity measures reproduce or avoid it could provide important insights into the design of future unsupervised evaluation metrics.",
+        "bbox": [
+            214,
+            593,
+            787,
+            669
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Taken together, these directions position the present study as a starting point rather than a final characterization of unsupervised feature selection evaluation. The limited number of datasets and methods, together with the methodological constraints imposed by optimal transport and PCA, mean that the current results should primarily be interpreted as a proof of concept. We therefore do not intend the observed correlations to constitute a definitive verdict on the superiority of the proposed metrics or on the quality of existing feature selection methods. Instead, the broader aim is to demonstrate the feasibility of evaluating feature selection without relying on ground-truth labels and to motivate a more rigorous, granular, and reproducible investigation of truly unsupervised evaluation in future work.",
+        "bbox": [
+            214,
+            674,
+            787,
+            840
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "header",
+        "text": "Towards Truly Unsupervised Evaluation of Feature Selection",
+        "bbox": [
+            326,
+            114,
+            732,
+            128
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "page_number",
+        "text": "13",
+        "bbox": [
+            767,
+            114,
+            785,
+            127
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "References",
+        "text_level": 2,
+        "bbox": [
+            215,
+            145,
+            325,
+            161
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "1. Amsaleg, L., Bailey, J., Barbe, A., Erfani, S.M., Furon, T., Houle, M.E., Radovanovic, M., Nguyen, X.V.: High intrinsic dimensionality facilitates adversarial attack: Theoretical evidence. IEEE Trans. Inf. Forensics Secur. 16, 854–865 (2021)",
+            "2. Anderberg, A., Bailey, J., Campello, R.J.G.B., Houle, M.E., Marques, H.O., Radovanovic, M., Zimek, A.: Dimensionality-aware outlier detection. In: SDM. pp. 652–660. SIAM (2024)",
+            "3. Asadi Amiri, S., Rajabinasab, M.: Face recognition using color and edge orientation diference histogram. Journal of AI and Data Mining 9(1), 31–38 (2021)",
+            "4. Bishop, C.M.: Pattern Recognition and Machine Learning. Springer (2006), appendix or index reference to Kronecker delta δ<sub>ij</sub>",
+            "5. Bonneel, N., van de Panne, M., Paris, S., Heidrich, W.: Displacement interpolation using lagrangian mass transport. ACM Trans. Graph. 30(6), 158 (2011)",
+            "6. Bonneel, N., Rabin, J., Peyré, G., Pfister, H.: Sliced and radon wasserstein barycenters of measures. J. Math. Imaging Vis. 51(1), 22–45 (2015)",
+            "7. Bourlard, H., Kamp, Y.: Auto-association by multilayer perceptrons and singular value decomposition. Biological Cybernetics 59(4-5), 291–294 (1988)",
+            "8. Cai, J., Luo, J., Wang, S., Yang, S.: Feature selection in machine learning: A new perspective. Neurocomputing 300, 70–79 (2018)",
+            "9. Cuturi, M.: Sinkhorn distances: Lightspeed computation of optimal transport. In: Advances in Neural Information Processing Systems 26 (NIPS 2013) (2013)",
+            "10. Cuturi, M.: Sinkhorn distances: Lightspeed computation of optimal transport. In: Advances in Neural Information Processing Systems 26. pp. 2292–2300 (2013)",
+            "11. Demšar, J.: Statistical comparisons of classifiers over multiple data sets. Journal of Machine Learning Research 7, 1–30 (2006)",
+            "12. François, D., Wertz, V., Verleysen, M.: The concentration of fractional distances. IEEE Trans. Knowl. Data Eng. 19(7), 873–886 (2007)",
+            "13. Guyon, I., Elisseef, A.: An introduction to variable and feature selection. Journal of Machine Learning Research 3, 1157–1182 (2003)",
+            "14. Hall, M.A.: Correlation-based feature selection for machine learning. Ph.D. thesis, University of Waikato (1999)",
+            "15. He, X., Cai, D., Niyogi, P.: Laplacian score for feature selection. Advances in Neural Information Processing Systems 18 (2005)",
+            "16. He, X., Cai, D., Niyogi, P.: Laplacian score for feature selection. In: NIPS. pp. 507–514 (2005)",
+            "17. Houle, M.E., Kriegel, H., Kröger, P., Schubert, E., Zimek, A.: Can shared-neighbor distances defeat the curse of dimensionality? In: SSDBM. pp. 482–500 (2010)",
+            "18. Hubert, L., Arabie, P.: Comparing partitions. Journal of classification 2(1), 193– 218 (1985)",
+            "19. Karami, S., Saberi-Movahed, F., Tiwari, P., Marttinen, P., Vahdati, S.: Unsupervised feature selection based on variance-covariance subspace distance. Neural Networks 166, 188–203 (2023)",
+            "20. Kuhn, H.W.: The Hungarian Method for the assignment problem. Naval Research Logistics Quarterly 2(1-2), 83–97 (1955)",
+            "21. Li, J., Cheng, K., Wang, S., Morstatter, F., Trevino, R.P., Tang, J., Liu, H.: Feature selection: A data perspective. ACM Computing Surveys 50(6), 94:1–94:45 (2017)",
+            "22. Van der Maaten, L., Hinton, G.: Visualizing data using t-sne. Journal of Machine Learning Research 9(11), 2579–2605 (2008)"
+        ],
+        "bbox": [
+            223,
+            176,
+            785,
+            231
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "page_number",
+        "text": "14",
+        "bbox": [
+            217,
+            114,
+            236,
+            127
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "header",
+        "text": "H. S. Arshad et al.",
+        "bbox": [
+            269,
+            114,
+            398,
+            128
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "23. McInnes, L., Healy, J., Saul, N., Grossberger, L.: Umap: Uniform manifold approximation and projection. Journal of Open Source Software 3(29), 861 (2018)",
+            "24. Mostert, W., Malan, K.M., Engelbrecht, A.P.: A feature selection algorithm performance metric for comparative analysis. Algorithms 14(3), 100 (2021)",
+            "25. Nguyen, K., Nguyen, H., Pham, T., Ho, N.: Lightspeed geometric dataset distance via sliced optimal transport. arXiv preprint arXiv:2501.18901 (2025)",
+            "26. Nogueira, S., Sechidis, K., Brown, G.: On the stability of feature selection algorithms. Journal of Machine Learning Research 18(174), 1–54 (2017)",
+            "27. Okkels, C.B., Thordsen, E., Aumüller, M., Zimek, A., Schubert, E.: Approximate single-linkage clustering using graph-based indexes: Mst-based approaches and incremental searchers. In: SISAP. pp. 233–247 (2025)",
+            "28. Parsa, M.G., Zare, H., Ghatee, M.: Unsupervised feature selection based on adaptive similarity learning and subspace clustering. Eng. Appl. Artif. Intell. 95, 103855 (2020)",
+            "29. Peyré, G., Cuturi, M.: Computational optimal transport. Foundations and Trends in Machine Learning 11(5-6), 355–607 (2019)",
+            "30. Peyré, G., Cuturi, M., Solomon, J.: Gromov-wasserstein averaging of kernel and distance matrices. In: Proceedings of The 33rd International Conference on Machine Learning. vol. 48, pp. 2664–2672. PMLR (2016)",
+            "31. Rajabinasab, M., Houle, M.E., Chelly, O., Zimek, A.: Worse than random: The importance of a baseline for unsupervised feature selection. CoRR abs/2605.22973 (2026)",
+            "32. Rajabinasab, M., Lautrup, A.D., Hyrup, T., Zimek, A.: A dynamic evaluation metric for feature selection. In: Similarity Search and Applications. pp. 65–72. Springer Nature Switzerland, Cham (2025)",
+            "33. Rajabinasab, M., Lautrup, A.D., Schneider-Kamp, P., Zimek, A.: Towards semisupervised subspace learning for outlier detection in big data. In: Similarity Search and Applications. pp. 330–344 (2026)",
+            "34. Rajabinasab, M., Lautrup, A.D., Zimek, A.: Metrics for inter-dataset similarity with example applications in synthetic data and feature selection evaluation - extended version. CoRR abs/2501.09591 (2025)",
+            "35. Rajabinasab, M., Nejad, A.M., Zimek, A.: MARS: magnitude-aware rank statistics. CoRR abs/2605.23563 (2026)",
+            "36. Rajabinasab, M., Pakdaman, F., Gabbouj, M., Schneider-Kamp, P., Zimek, A.: Randomized PCA forest for outlier detection. CoRR abs/2508.12776 (2025)",
+            "37. Rajabinasab, M., Pakdaman, F., Zimek, A., Gabbouj, M.: Randomized pca forest for approximate k-nearest neighbor search. Expert Systems with Applications 281 (2025)",
+            "38. Rajabinasab, M., Zimek, A.: FSEVAL: feature selection evaluation toolbox and dashboard. CoRR abs/2604.18227 (2026)",
+            "39. Rubner, Y., Tomasi, C., Guibas, L.J.: The earth mover’s distance as a metric for image retrieval. International Journal of Computer Vision 40(2), 99–121 (2000)",
+            "40. Van Der Maaten, L., Postma, E.O., Van Den Herik, H.J., et al.: Dimensionality reduction: A comparative review. Journal of Machine Learning Research 10(1), 1–41 (2009)",
+            "41. Villani, C.: Optimal Transport: Old and New. Springer, Berlin, Heidelberg (2009)",
+            "42. Zhao, Z., Liu, H.: Spectral feature selection for supervised and unsupervised learning. In: ICML. pp. 1151–1157 (2007)",
+            "43. Zimek, A., Schubert, E., Kriegel, H.: A survey on unsupervised outlier detection in high-dimensional numerical data. Stat. Anal. Data Min. 5(5), 363–387 (2012)"
+        ],
+        "bbox": [
+            215,
+            147,
+            784,
+            175
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "header",
+        "text": "Towards Truly Unsupervised Evaluation of Feature Selection",
+        "bbox": [
+            326,
+            114,
+            733,
+            128
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "page_number",
+        "text": "15",
+        "bbox": [
+            766,
+            116,
+            785,
+            127
+        ],
+        "page_idx": 14
+    }
+]

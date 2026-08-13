@@ -1,0 +1,5506 @@
+[
+    {
+        "type": "text",
+        "text": "Adversarial Resilience of Poisson-Process Submodular Maximization over Matroids: From Robust Ofline Optimization to Full-Bandit Learning",
+        "text_level": 1,
+        "bbox": [
+            111,
+            125,
+            883,
+            207
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Vaneet Aggarwal<sup>∗</sup>",
+        "bbox": [
+            424,
+            226,
+            578,
+            243
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Abstract",
+        "text_level": 2,
+        "bbox": [
+            459,
+            292,
+            539,
+            308
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "We study nonnegative submodular maximization subject to a general matroid when the ofline algorithm is given an arbitrary controlled value oracle. Our main result is an adversarial resilience theorem for the Spiteful Greedy Swap Poisson Process (SGS-Poisson): without modifying its Poisson intensity, single-element exchange rule, or spiteful drop step, the algorithm retains limiting approxi mation factors 1/e for non-monotone objectives and 1 − 1/e for monotone objectives. More precisely, under every controlled oracle fb satisfying |fb(S) − f(S)| ≤ ξ for every set S, our implementation returns a feasible set with expected value at least $( 1 / e - \\varepsilon ) \\mathrm { O P T } - O ( k \\xi )$ and $( 1 - 1 / e - \\varepsilon ) \\mathrm { O P T } - O ( k \\xi )$ respectively, using $\\widetilde { O } ( n k ^ { 2 } \\varepsilon ^ { - 2 } )$ oracle calls. As a consequence, the ofline-to-online reduction yields full-bandit CMAB algorithms for general matroid-constrained submodular rewards with exact limiting approximation-regret factors 1/e and 1 − 1/e and $\\widetilde { O } ( n ^ { 1 / 5 } k ^ { 4 / 5 } T ^ { 4 / 5 } )$ regret.",
+        "bbox": [
+            138,
+            315,
+            859,
+            472
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "1 Introduction",
+        "text_level": 2,
+        "bbox": [
+            96,
+            494,
+            285,
+            513
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "Submodular maximization under matroid constraints is a canonical problem in combinatorial optimization, with applications including influence maximization, sensor placement, experimental design, and data summarization [11]. Let U be a ground set of n items, let $M = \\left( U , { \\mathcal { T } } \\right)$ be a matroid, and define $k : = { \\mathrm { r a n k } } ( M )$ . We study",
+        "bbox": [
+            93,
+            529,
+            901,
+            597
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "equation",
+        "img_path": "images/216abdfd52749ea45c742e4f5d78068eb34e06da0ea9184f1380306cf405369e.jpg",
+        "text": "$$\n\\operatorname* { m a x } _ { S \\in { \\mathscr { T } } } f ( S ) , \\qquad f : 2 ^ { U } \\to [ 0 , 1 ] ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            379,
+            594,
+            617,
+            621
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "where f is nonnegative and submodular. For monotone objectives, continuous greedy gives the classical $1 - 1 / e$ approximation [4], and combinatorial approaches based on non-oblivious local search also attain the optimal factor [6, 2]. For non-monotone objectives, measured continuous greedy gives the classical 1/e factor [5].",
+        "bbox": [
+            93,
+            627,
+            901,
+            695
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "A recent line of work introduced a Poisson-process approach to this problem. Ganz-Rozenman et al. introduced a Poisson process for monotone submodular maximization under a matroid, while Kulik et al. subsequently extended the paradigm to non-monotone objectives, obtaining 1/e for the non-monotone case and $1 - 1 / e$ for the monotone case [10, 12]. The resulting SGS (Spiteful Greedy Swap)-Poisson process maintains feasibility and evolves through single-element exchanges, providing a discrete stochastic primitive for matroid-constrained optimization.",
+        "bbox": [
+            93,
+            695,
+            903,
+            797
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "This paper asks whether the same SGS-Poisson process is resilient to controlled oracle error. This question is important for full-bandit combinatorial multi-armed bandits (CMAB), where empirical estimates of super-arm rewards naturally enter an ofline optimization routine. Nie et al. introduced a black-box reduction from resilient ofline approximation algorithms to full-bandit CMAB algorithms [15], and Fourati et al. later extended the reduction to ofline algorithms with an $( \\alpha - \\varepsilon )$ guarantee and polynomial dependence on $1 / \\varepsilon \\ [ 8 ]$ . Existing full-bandit results already cover general matroid constraints, including the $k _ { \\mathrm { s u b } } = 1$ specialization of the k-submodular framework of Nie et al. [14], but obtain only $1 / 2$ for monotone and $1 / 3$ for non-monotone objectives. Our goal is therefore to establish the controlled-oracle resilience required to place SGS-Poisson inside this ofline-to-online framework and thereby recover the classical $1 - 1 / e$ and $1 / e$ approximation factors for general matroids.",
+        "bbox": [
+            93,
+            797,
+            903,
+            901
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "aside_text",
+        "text": "arXiv:2608.12134v1 [cs.LG] 12 Aug 2026",
+        "bbox": [
+            29,
+            353,
+            65,
+            799
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "page_footnote",
+        "text": "<sup>∗</sup>V. Aggarwal is with Purdue University, West Lafayette IN, USA, email: vaneet@purdue.edu",
+        "bbox": [
+            114,
+            910,
+            738,
+            926
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "page_number",
+        "text": "1",
+        "bbox": [
+            493,
+            949,
+            504,
+            960
+        ],
+        "page_idx": 0
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            93,
+            77,
+            901,
+            146
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Recent work on noisy submodular maximization considers persistent stochastic noise [1], whereas we consider persistent adversarially controlled oracle error, which is the form needed by the CMAB reduction. We do not analyze the persistent stochastic-noise model.",
+        "bbox": [
+            93,
+            146,
+            901,
+            198
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Our contribution. We prove that the SGS-Poisson algorithmic process is resilient. For every target approximation loss $\\varepsilon \\in ( 0 , 1 / 2 ]$ and every persistent oracle $\\widehat { f }$ satisfying",
+        "bbox": [
+            93,
+            217,
+            901,
+            252
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1836da781463165b0fcef487a77c17c452b1063a864601371b19c4a0965d2849.jpg",
+        "text": "$$\n| { \\widehat { f } } ( S ) - f ( S ) | \\leq \\xi \\qquad \\forall S \\subseteq U ,\\tag{1}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            375,
+            260,
+            619,
+            281
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "we construct an implementation that returns $A _ { \\mathrm { o u t } } \\in \\mathcal { T }$ with",
+        "bbox": [
+            93,
+            292,
+            566,
+            309
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "equation",
+        "img_path": "images/8f026c802a1d22983facc8bb0ba33a5f50d92602061f48538b3e323d8314fd68.jpg",
+        "text": "$$\n\\mathbb { E } [ f ( A _ { \\mathrm { o u t } } ) ] \\geq \\left\\{ \\begin{array} { l l } { ( 1 / e - \\varepsilon ) \\mathrm { O P T } - C k \\xi , } & { f \\mathrm { ~ n o n - m o n o t o n e } , } \\\\ { ( 1 - 1 / e - \\varepsilon ) \\mathrm { O P T } - C k \\xi , } & { f \\mathrm { ~ m o n o t o n e } , } \\end{array} \\right.\\tag{2}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            258,
+            320,
+            735,
+            366
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "for a universal constant $C .$ . In particular, this is the first full-bandit CMAB guarantee for general matroids in this framework that attains the classical limiting factors $1 / e$ and $1 - 1 / e$ for non-monotone and monotone objectives, respectively. The number of controlled-oracle calls is",
+        "bbox": [
+            93,
+            377,
+            901,
+            429
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "equation",
+        "img_path": "images/481f8b6bb42af56bc33adcd2b8e81ab42b2bb677914691eef7ebb64f3bd2120f.jpg",
+        "text": "$$\nO \\left( n k \\log \\frac { 1 } { \\varepsilon } + \\frac { n k ^ { 2 } \\log n \\log ( 1 / \\varepsilon ) } { \\varepsilon ^ { 2 } } + \\frac { n k \\log ^ { 2 } ( 1 / \\varepsilon ) } { \\varepsilon ^ { 2 } } \\right) .\\tag{3}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            297,
+            438,
+            696,
+            474
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "The result is not obtained by simply replacing $f$ with $\\widehat { f }$ in an existing proof. A bounded perturbation can change the entire adaptive trajectory: a maximum-weight residual base can change discontinuously; its basis-exchange map can consequently change; the stopping time of Advanced Preprocessing changes; and the sequence of bases used by the Poisson process changes. Moreover, $\\widehat { f }$ need not itself be submodular or monotone. Thus one cannot invoke the structural properties of $f$ on the surrogate function.",
+        "bbox": [
+            93,
+            488,
+            903,
+            575
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "The main technical novelty is the following adaptive potential-preservation result.",
+        "bbox": [
+            120,
+            575,
+            767,
+            592
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "Controlled-oracle adaptive preprocessing preserves the exact structural certificate needed by SGS-Poisson.",
+        "bbox": [
+            137,
+            604,
+            857,
+            638
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "The preprocessing process is driven by a controlled-oracle estimate of the maximum sum of residual marginals and stops at a controlled-oracle threshold. We first robustify Residual Random Greedy (RRG) to obtain a realized constant-factor estimate $\\widehat { V }$ of OPT. We then run the exact preprocessing process with ${ \\widehat { f } } .$ . Although the chosen bases and stopping time can be completely diferent from their exact-oracle counterparts, the exchange potential",
+        "bbox": [
+            93,
+            654,
+            903,
+            739
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "equation",
+        "img_path": "images/57c604944f1530fa76386b2a27e5d19191f0f3d948e210a8656db62231ce6b43.jpg",
+        "text": "$$\nM _ { t } = f ( Q _ { t } \\cup O _ { t } ) + { \\frac { 1 } { 2 } } f ( Q _ { t } )\\tag{4}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            388,
+            747,
+            606,
+            780
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "satisfies the robust drift inequality",
+        "bbox": [
+            93,
+            789,
+            370,
+            806
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "equation",
+        "img_path": "images/53e6c5958ba435c28c6da1fe2d3f5e38a947b85b05d9a8f6617db590bb310e10.jpg",
+        "text": "$$\n\\mathbb { E } [ M _ { t + 1 } - M _ { t } \\mid \\mathcal { F } _ { t } ] \\geq \\frac { 8 \\mathrm { O P T } - k \\xi } { k - t } .\\tag{5}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            362,
+            814,
+            632,
+            848
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "This is the key lemma of the paper. It simultaneously handles noisy maximum-base selection, a noisy adaptive stopping rule, and the evolving matroid exchange set.",
+        "bbox": [
+            93,
+            858,
+            901,
+            892
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "A second technical ingredient is a robust almost-above-average swap lemma. The exact SGS-Poisson implementation estimates, for every candidate element, a multilinear marginal using random sets. Under",
+        "bbox": [
+            93,
+            892,
+            901,
+            926
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "page_number",
+        "text": "2",
+        "bbox": [
+            491,
+            948,
+            504,
+            960
+        ],
+        "page_idx": 1
+    },
+    {
+        "type": "text",
+        "text": "controlled oracle error we show that the base-sum concentration argument remains valid and incurs only an additional $O ( k \\xi )$ term. Thus a swap at every Poisson event is η-almost-above-average with",
+        "bbox": [
+            93,
+            77,
+            901,
+            112
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "equation",
+        "img_path": "images/8aca3574bd6bd3e8731eeaeb7ae03b59de072f34dc843520f2c3c096fedbf4d2.jpg",
+        "text": "$$\n\\eta \\leq C _ { 1 } \\varepsilon \\mathrm { O P T } + C _ { 2 } k \\xi .\\tag{6}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            410,
+            126,
+            584,
+            142
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "The original SGS-Poisson process and its drop rule are unchanged.",
+        "bbox": [
+            93,
+            156,
+            622,
+            172
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "We use the ofline-to-online reduction proposed in [15, 8] as a black box: our resilience theorem supplies precisely the controlled-oracle interface needed by that reduction. This approach converts our resilience parameters into exact limiting approximation-regret factors $1 / e$ and $1 - 1 / e$ with $\\widetilde { O } ( n ^ { 1 / 5 } k ^ { 4 / 5 } T ^ { 4 / 5 } )$ regret for general matroids. We emphasize that this is not claimed to dominate specialized cardinality-bandit rates; the point is that the general-matroid resilient ofline guarantee survives the full-bandit reduction.",
+        "bbox": [
+            93,
+            174,
+            903,
+            260
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "2 Related Work",
+        "text_level": 2,
+        "bbox": [
+            94,
+            282,
+            302,
+            301
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "2.1 Submodular Maximization under Matroid Constraints",
+        "text_level": 2,
+        "bbox": [
+            94,
+            315,
+            674,
+            333
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "For monotone submodular maximization under a matroid, continuous greedy gives the classical $1 - 1 / e$ approximation [4]. For non-monotone objectives, measured continuous greedy gives $1 / e \\ [ 5 ]$ , while the recent SGS-Poisson line obtains the same limiting non-monotone factor and the $1 - 1 / e$ monotone factor through a discrete Poisson-process construction [10, 12]. Our base algorithm is exactly SGS-Poisson: its Poisson intensity, valid-swap rule, and spiteful drop are not modified. Residual Random Greedy (RRG) was introduced by Buchbinder et al. [3]; we use its matroid version as a constant-factor preprocessing primitive.",
+        "bbox": [
+            93,
+            343,
+            903,
+            463
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "2.2 Ofline-to-Online Learning and Full-Bandit CMAB",
+        "text_level": 2,
+        "bbox": [
+            94,
+            481,
+            638,
+            500
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Nie et al. [15] introduced a black-box ofline-to-online framework for stochastic combinatorial multi-armed bandits with full-bandit feedback. The key condition is robustness of the ofline approximation algorithm to bounded errors in value-oracle evaluations. Under this condition, the ofline algorithm can be used as a black box and its approximation factor becomes the benchmark for sublinear α-regret. The framework was instantiated for several submodular settings, including cardinality and knapsack constraints. Some special cases of this approach are in [13, 7, 14]. The k-submodular results in [14] include ordinary set-submodularity as the $k _ { \\mathrm { s u b } } = 1$ special case. Thus general-matroid full-bandit CMAB is not new in itself. The distinction here is the approximation factor: the existing general-matroid rows attain $1 / 2$ for monotone and $1 / 3$ for non-monotone objectives, whereas our resilient SGS-Poisson construction attains the classical $1 - 1 / e$ and $1 / e$ factors, respectively.",
+        "bbox": [
+            93,
+            508,
+            903,
+            679
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Fourati et al. [8] subsequently extended this interface to ofline algorithms whose guarantee is $\\left( \\alpha - \\varepsilon \\right)$ and whose oracle complexity depends polynomially on $1 / \\varepsilon$ . They remove the ofline ε loss and yield α-regret. A special case of this framework can be seen in [9]. We use the approach of [8] in our CMAB result.",
+        "bbox": [
+            93,
+            679,
+            901,
+            746
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Table 1 summarizes these full-bandit results. We list only CMAB results and only constraints that are matroids or special cases of matroids. The cardinality constraint is the uniform matroid, and the unconstrained problem is the free matroid. Our two rows give the monotone and non-monotone results separately.",
+        "bbox": [
+            93,
+            747,
+            901,
+            816
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "3 Problem Setup and Resilience",
+        "text_level": 2,
+        "bbox": [
+            94,
+            839,
+            488,
+            859
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "text",
+        "text": "Let $M = ( U , { \\mathcal { T } } )$ be a matroid of rank k and $n = | U |$ . A set function $f : 2 ^ { U }  [ 0 , 1 ]$ is submodular if",
+        "bbox": [
+            93,
+            872,
+            877,
+            890
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "equation",
+        "img_path": "images/2ccdbdfec86cd5d98f419219f68a2ca61d4578c5bf651ff3fed8652bb97ff787.jpg",
+        "text": "$$\nf ( A ) + f ( B ) \\geq f ( A \\cup B ) + f ( A \\cap B ) \\qquad \\forall A , B \\subseteq U .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            289,
+            904,
+            707,
+            921
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "page_number",
+        "text": "3",
+        "bbox": [
+            493,
+            949,
+            504,
+            962
+        ],
+        "page_idx": 2
+    },
+    {
+        "type": "table",
+        "img_path": "images/ded00474f9d147b5c0106cc41e9c69e5fc1078ba3a4bc326f59070396f0f41ec.jpg",
+        "table_caption": [
+            "Table 1: Stochastic full-bandit CMAB results for ordinary set-submodular rewards under matroid constraints or special cases."
+        ],
+        "table_footnote": [
+            "Note. The two [14] rows are results for $k _ { \\mathrm { s u b } }$ -submodular bandits specialized to $k _ { \\mathrm { s u b } } = 1$ , which recovers ordinary set-submodularity. Here k in the table denotes the rank of the matroid, whereas $k _ { \\mathrm { s u b } }$ denotes the number of labels in k-submodularity."
+        ],
+        "table_body": "<table><tr><td>Paper</td><td>Constraint</td><td>Objective</td><td>Approx.</td><td>Regret</td></tr><tr><td>Nie et al. [13]</td><td>Uniform (cardi- Monotone nality)</td><td></td><td> $1 - 1 / e$ </td><td> $\\mathcal { O } ( n ^ { 1 / 3 } k ^ { 4 / 3 } T ^ { 2 / 3 } \\log ^ { 1 / 2 } T )$ </td></tr><tr><td>Fourati et al. [9]</td><td>Uniform (cardi- Monotone nality)</td><td></td><td> $1 - 1 / e$ </td><td> $\\widetilde { \\mathcal { O } } ( n ^ { 1 / 3 } k ^ { 2 / 3 } T ^ { 2 / 3 } )$ </td></tr><tr><td>Fourati et al. [7]</td><td>Free</td><td>Non- monotone</td><td> $1 / 2$ </td><td> $\\widetilde { \\mathcal { O } } ( n T ^ { 2 / 3 } )$ </td></tr><tr><td>Fourati et al. [8]</td><td>Uniform (cardi- Non- nality)</td><td>monotone</td><td>1/e</td><td> $\\widetilde { \\mathcal { O } } ( n ^ { 1 / 5 } k ^ { 2 / 5 } T ^ { 4 / 5 } )$ </td></tr><tr><td>Nie et al. [14]</td><td>General troid</td><td>ma- Monotone</td><td>1/2</td><td> $\\widetilde { \\mathcal { O } } ( n ^ { 1 / 3 } k T ^ { 2 / 3 } )$ </td></tr><tr><td>Nie et al. [14]</td><td>General troid</td><td>ma- Non-</td><td>1/3 monotone</td><td> $\\widetilde { \\mathcal { O } } ( n ^ { 1 / 3 } k T ^ { 2 / 3 } )$ </td></tr><tr><td>This work</td><td>General ma- Monotone troid</td><td></td><td> ${ \\bf 1 } - { \\bf 1 } / { \\bf e }$ </td><td> $\\widetilde { \\mathcal { O } } ( \\mathbf { n } ^ { 1 / 5 } \\mathbf { k } ^ { 4 / 5 } \\mathbf { T } ^ { 4 / 5 } )$ </td></tr><tr><td>This work</td><td>General ma- Non- troid</td><td></td><td> $\\mathbf { 1 / e }$  monotone</td><td> $\\widetilde { \\mathcal { O } } ( \\mathbf { n } ^ { 1 / 5 } \\mathbf { k } ^ { 4 / 5 } \\mathbf { T } ^ { 4 / 5 } )$ </td></tr></table>",
+        "bbox": [
+            158,
+            117,
+            839,
+            402
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We use the equivalent diminishing-returns notation",
+        "bbox": [
+            93,
+            472,
+            501,
+            488
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/152ae244213fc1e7c0218c542986a46cd238fda63d49131c886fdcc6df077540.jpg",
+        "text": "$$\nf ( i \\mid S ) : = f ( S \\cup \\{ i \\} ) - f ( S ) ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            379,
+            501,
+            616,
+            520
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "for which $S \\subseteq T$ and $i \\not \\in T$ imply",
+        "bbox": [
+            93,
+            532,
+            361,
+            550
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0ff8014ba01b300283ca761a6110ab5a4ee3eac0ba184ae88eb5f218623b31f5.jpg",
+        "text": "$$\nf ( i \\mid S ) \\geq f ( i \\mid T ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            421,
+            549,
+            573,
+            568
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Define",
+        "bbox": [
+            122,
+            575,
+            179,
+            590
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e69fbb19fc8f28c7939d510532650ec3a4a59b29e49adfec0e17b811a084645d.jpg",
+        "text": "$$\n{ \\mathrm { O P T } } : = \\operatorname* { m a x } _ { S \\in { \\mathcal { T } } } f ( S ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            421,
+            592,
+            573,
+            617
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "We assume standard access to an independence oracle for the matroid. Maximum-weight bases in contracted matroids are computed using this access. As usual, we count only value-oracle calls in the resilience and CMAB complexity bounds; independence queries and the computation of maximum-weight bases are not counted.",
+        "bbox": [
+            93,
+            622,
+            901,
+            690
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "For the online full-bandit application, at round t the learner chooses a feasible super-arm $A _ { t } \\in \\mathcal { T }$ and observes only an aggregate reward $Y _ { t } \\in [ 0 , 1 ]$ with $\\mathbb { E } [ Y _ { t } \\mid A _ { t } = S ] = f ( S )$ . For $\\alpha \\in ( 0 , 1 ]$ , we define the cumulative α-regret by",
+        "bbox": [
+            93,
+            690,
+            901,
+            742
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/890950ad223f3f5839fcf6020a64e9fff4b774db31742161716556d261922f5b.jpg",
+        "text": "$$\nR _ { \\alpha } ( T ) : = \\alpha T \\mathrm { O P T } - \\mathbb { E } \\left[ \\sum _ { t = 1 } ^ { T } Y _ { t } \\right] .\\tag{7}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            367,
+            739,
+            627,
+            786
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "Only the aggregate reward is observed; no component-wise or semi-bandit feedback is assumed.",
+        "bbox": [
+            93,
+            791,
+            844,
+            809
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "3.1 Controlled oracle",
+        "text_level": 2,
+        "bbox": [
+            94,
+            827,
+            318,
+            844
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "A ξ-controlled oracle is a function $\\widehat { f } : 2 ^ { U } \\to \\mathbb { R }$ satisfying",
+        "bbox": [
+            94,
+            853,
+            539,
+            871
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f373fffdcac893f60ad3ad6078efd440b9751b6c57976d970d315494350f5a22.jpg",
+        "text": "$$\n| { \\widehat { f } } ( S ) - f ( S ) | \\leq \\xi \\qquad \\forall S \\subseteq U .\\tag{8}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            375,
+            882,
+            619,
+            904
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "page_number",
+        "text": "4",
+        "bbox": [
+            493,
+            949,
+            504,
+            960
+        ],
+        "page_idx": 3
+    },
+    {
+        "type": "text",
+        "text": "The perturbation is deterministic and may be adversarial; no stochastic or independence assumption is imposed. Because $\\widehat { f }$ is a fixed function, the same set always receives the same oracle value; thus the adversarial perturbation is persistent throughout the execution.",
+        "bbox": [
+            93,
+            78,
+            901,
+            128
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "We may project $\\widehat { f }$ onto [0, 1] without increasing its error. Hence, throughout the proof we assume",
+        "bbox": [
+            120,
+            128,
+            893,
+            146
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/8b6c02f8043c27d9c8b00f24607f39f256b3734fae38846bd0be1e0af34b192e.jpg",
+        "text": "$$\n0 \\leq { \\widehat { f } } ( S ) \\leq 1 .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            439,
+            156,
+            553,
+            178
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Then",
+        "bbox": [
+            94,
+            191,
+            143,
+            207
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/429fe3b85a06bcc09f519d63c428b1f0e0650cc70a5637f58f3efe6ec61a6350.jpg",
+        "text": "$$\n\\left| | { \\widehat { f } } ( i \\mid S ) - f ( i \\mid S ) | \\leq 2 \\xi . \\right|\\tag{9}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            393,
+            205,
+            601,
+            228
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "3.2 Resilience definition",
+        "text_level": 2,
+        "bbox": [
+            94,
+            247,
+            346,
+            265
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "We use the $( \\alpha , \\beta , \\gamma , \\psi , \\delta )$ resilience parameterization of [8], which extends the robust-approximation notion of Nie et al. [15] by recording the accuracy-dependent oracle complexity.",
+        "bbox": [
+            93,
+            275,
+            901,
+            309
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Definition 3.1 $( ( \\alpha , \\beta , \\gamma , \\psi , \\delta )$ -resilience). An ofline algorithm $\\mathcal { A } ( \\varepsilon )$ is $( \\alpha , \\beta , \\gamma , \\psi , \\delta )$ -resilient $i f ,$ for every $\\xi \\ge 0$ , under a ξ-controlled oracle it outputs a feasible Θ satisfying",
+        "bbox": [
+            93,
+            319,
+            901,
+            354
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/9f3ea93da0f5a7368c086522e7bef58e66759e6c43a4af5e26b7af1b07628198.jpg",
+        "text": "$$\n\\begin{array} { r } { \\mathbb { E } [ f ( \\Theta ) ] \\geq ( \\alpha - \\varepsilon ) \\mathrm { O P T } - \\delta \\xi , } \\end{array}\\tag{10}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            382,
+            367,
+            612,
+            386
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "and has expected oracle complexity at most",
+        "bbox": [
+            93,
+            400,
+            436,
+            416
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/748f15966b42e5cfc85e4e37f3d90946adb70b1ebe0cab582683b0e53141b0f4.jpg",
+        "text": "$$\nN ( \\varepsilon ) = \\left\\{ \\begin{array} { l l } { \\psi , } & { \\varepsilon = 0 , } \\\\ { \\psi \\varepsilon ^ { - \\beta } \\log ^ { \\gamma } ( 1 / \\varepsilon ) , } & { \\varepsilon > 0 } \\end{array} \\right.\\tag{11}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            361,
+            428,
+            632,
+            470
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "oracle calls, up to universal constant factors.",
+        "bbox": [
+            93,
+            483,
+            449,
+            500
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "Remark 3.2. For $\\beta > 0$ , the ofline-to-online reduction only invokes $\\mathcal { A } ( \\varepsilon )$ with $\\varepsilon > 0$ . Thus the $\\varepsilon = 0$ branch in the definition is a convention and is not used in the CMAB application.",
+        "bbox": [
+            93,
+            511,
+            901,
+            546
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "4 Algorithms and Exact-Oracle Guarantees",
+        "text_level": 2,
+        "bbox": [
+            93,
+            569,
+            619,
+            589
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "This section makes explicit the exact algorithmic object whose resilience we study. We use the SGS-Poisson algorithm of Kulik et al. [12] as a black-box base process. Its Poisson rate, valid-swap conditions, and spiteful drop step are unchanged.",
+        "bbox": [
+            93,
+            603,
+            903,
+            655
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "4.1 Multilinear extension",
+        "text_level": 2,
+        "bbox": [
+            94,
+            672,
+            357,
+            689
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "For $x \\in [ 0 , 1 ] ^ { U }$ , let $R _ { x }$ include each element i independently with probability $x _ { i }$ . Define",
+        "bbox": [
+            93,
+            699,
+            782,
+            717
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/cd4419bc4b10bfe294dbb1a26df16bf90a211eb2d061e99a6cfae5fd26251a96.jpg",
+        "text": "$$\nF ( x ) : = \\mathbb { E } [ f ( R _ { x } ) ] .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            426,
+            729,
+            570,
+            748
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "For a set A and $t \\in [ 0 , 1 ]$ , write $t \\mathbf { 1 } _ { A }$ for its scaled indicator. The quantity",
+        "bbox": [
+            94,
+            761,
+            673,
+            779
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e800b2378e3f1aae17d9f89aad5bcb29b9cd596156cc5b8cfb4937ab4fd9d820.jpg",
+        "text": "$$\nF ( t \\mathbf { 1 } _ { A } \\lor \\mathbf { 1 } _ { i } ) - F ( t \\mathbf { 1 } _ { A } )\n$$",
+        "text_format": "latex",
+        "bbox": [
+            410,
+            791,
+            584,
+            809
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "is the marginal used by SGS-Poisson.",
+        "bbox": [
+            93,
+            824,
+            392,
+            840
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "page_number",
+        "text": "5",
+        "bbox": [
+            493,
+            948,
+            504,
+            962
+        ],
+        "page_idx": 4
+    },
+    {
+        "type": "text",
+        "text": "4.2 Valid swaps",
+        "text_level": 2,
+        "bbox": [
+            94,
+            77,
+            266,
+            94
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Definition 4.1 (Valid swap). For a matroid of rank r (equal to k before contraction and to $k ^ { \\prime }$ after contraction), let $A \\in \\mathcal { T }$ and $t \\in ( 0 , 1 ]$ . A random pair",
+        "bbox": [
+            93,
+            103,
+            903,
+            138
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "code",
+        "sub_type": "algorithm",
+        "code_caption": [],
+        "code_footnote": [],
+        "code_body": "(I, J) ∈ (A ∪ {⊥}) × U   \nis a valid swap $i f { \\mathrm { : } }$   \n(i) $A - I + J \\in { \\mathcal { I } }$ almost surely;   \n(ii) $i f J \\in A$ , then $I = J ;$   \n(iii) Pr(I = i) = 1/r for every $i \\in A ,$   \n(iv) Pr(J = j) ≤ 1/r for every $j \\in U$   \nIt is η-almost-above-average if, for an optimal base O,   \nE[F(t1<sub>A</sub> ∨ 1<sub>J</sub>) − F(t1<sub>A</sub>)] ≥ (F(t1<sub>A</sub> ∨ 1<sub>O</sub>) − F(t1<sub>A</sub>)) − η (12)   \nr",
+        "bbox": [
+            96,
+            145,
+            903,
+            367
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "code",
+        "sub_type": "algorithm",
+        "code_caption": [],
+        "code_footnote": [],
+        "code_body": "Algorithm 1 SGS-Poisson (base algorithm)   \nRequire: Matroid M, starting time $\\varepsilon _ { 0 } > 0 .$ , valid swap procedure   \n1: $t  \\varepsilon _ { 0 } , A  \\varnothing$   \n2: while $t < 1$ do   \n3: Sample the next event time $\\tau ( t )$ of a Poisson process with rate $k / t$   \n4: t ← τ (t)   \n5: (I, J) ← Swap(t, A)   \n6: $A  A - I + J$   \n7: if $I = J$ then   \n8: With probability t, set $A  A - I$   \n9: end if   \n10: end while   \n11: return A",
+        "bbox": [
+            94,
+            382,
+            901,
+            609
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "The process in Algorithm 1 is exactly the SGS-Poisson process of Kulik et al. [12]. In Algorithm 1, k denotes the rank of the matroid on which the process is currently run; after contraction this is $k ^ { \\prime } \\leq k$ In particular, the spiteful drop in the fourth line is not a modification introduced here. The expected number of swap calls is $k \\log ( 1 / \\varepsilon _ { 0 } )$",
+        "bbox": [
+            93,
+            622,
+            903,
+            693
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "4.3 Poisson-process guarantee",
+        "text_level": 2,
+        "bbox": [
+            94,
+            710,
+            403,
+            728
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "We use the following theorem from Kulik et al. [12] as a black-box analytical guarantee for the unchanged Poisson process.",
+        "bbox": [
+            93,
+            736,
+            900,
+            771
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "Proposition 4.2 (SGS-Poisson with an almost-above-average swap; Kulik et al. [12]). Suppose Algorithm 1 uses a right-continuous η-almost-above-average valid swap. Then",
+        "bbox": [
+            93,
+            779,
+            903,
+            814
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "equation",
+        "img_path": "images/7cd656ff102e8c8e067cf8cb827b6e61ee2794d3e477dd92a11b8078f340c345.jpg",
+        "text": "$$\n\\mathbb { E } [ f ( A ) ] \\geq \\left\\{ \\begin{array} { l l } { ( 1 - \\varepsilon _ { 0 } ) e ^ { - 1 } \\mathrm { O P T } + e ^ { - 1 } f ( \\varnothing ) - \\eta , } & { f ~ n o n - m o n o t o n e , } \\\\ { ( 1 - \\varepsilon _ { 0 } ) ( 1 - e ^ { - 1 } ) \\mathrm { O P T } + e ^ { - 1 } f ( \\varnothing ) - \\eta , } & { f ~ m o n o t o n e . } \\end{array} \\right.\\tag{13}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            220,
+            821,
+            772,
+            867
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "The exact SGS-Poisson value-oracle implementation requires an estimate of the optimum and a bound on the maximum sum of residual marginals. A naive noisy greedy construction is not valid for general non-monotone matroid maximization. We therefore use Residual Random Greedy.",
+        "bbox": [
+            93,
+            875,
+            903,
+            928
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "page_number",
+        "text": "6",
+        "bbox": [
+            491,
+            948,
+            504,
+            962
+        ],
+        "page_idx": 5
+    },
+    {
+        "type": "text",
+        "text": "4.4 Residual Random Greedy",
+        "text_level": 2,
+        "bbox": [
+            94,
+            77,
+            400,
+            94
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Add a set D of k dummy elements and form the rank-k augmentation",
+        "bbox": [
+            93,
+            103,
+            648,
+            121
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "img_path": "images/84a372cf62bdd32701ab14f818647f33141811ee3313261966d469663cc316fc.jpg",
+        "text": "$$\nU ^ { + } : = U \\cup D , \\qquad \\mathbb { Z } ^ { + } : = \\{ S \\subseteq U ^ { + } : S \\cap U \\in \\mathbb { Z } , \\ | S | \\leq k \\} .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            269,
+            132,
+            723,
+            152
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Equivalently, $M ^ { + } = ( U ^ { + } , \\mathbb { Z } ^ { + } )$ is the rank-k truncation of the direct sum of M and the free matroid on D. In particular, $\\operatorname { r a n k } ( M ^ { + } ) = k$ , and every independent set of M can be completed to a base of $M ^ { + }$ by adding dummy elements. Extend the objective and controlled oracle by",
+        "bbox": [
+            93,
+            165,
+            901,
+            218
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6db3afb97ccb9c580980b0257a6709d02479e267b0abae5e1c52305459d9062d.jpg",
+        "text": "$$\nf ^ { + } ( S ) : = f ( S \\setminus D ) , \\qquad { \\widehat { f } } ^ { + } ( S ) : = { \\widehat { f } } ( S \\setminus D ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            323,
+            227,
+            671,
+            250
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Hence every dummy element has identically zero true and estimated marginal, and an optimal solution of the original instance can be extended to an optimal base of $M ^ { + }$ without changing its value. From this point through the preprocessing and Poisson stages, we run the algorithm on the augmented instance $\\bar { ( } M ^ { + } , U ^ { + } , f ^ { \\bar { + } } , \\widehat { f } ^ { + } )$ and suppress the superscript + on $M , f , { \\widehat { f } }$ for notation. Thus the rank remains $k ,$ the optimum value remains $\\mathrm { O P T }$ , and the ground-set size is $n + k = O ( n )$ because $k \\leq n$ . The k dummy elements sufice because after t selections the residual rank is $k - t ,$ while at least $k - t$ dummy slots remain, so every residual independent set can be completed to a residual base. At the end, dummy elements are discarded; this preserves feasibility and objective value.",
+        "bbox": [
+            91,
+            261,
+            903,
+            397
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "Run Residual Random Greedy (RRG) [3] for $r = \\lceil k / 2 \\rceil$ iterations. At iteration $i ,$ let $S _ { i - 1 }$ be the current set and $r _ { i } = k - i + 1$ the residual rank. In the contraction $M / S _ { i - 1 }$ , compute a maximum-weight base $M _ { i }$ with weights $\\widehat { w } _ { i } ( u ) = \\widehat { f } ( u \\mid S _ { i - 1 } )$ , and choose $u _ { i }$ uniformly from $M _ { i }$",
+        "bbox": [
+            93,
+            397,
+            901,
+            452
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "code",
+        "sub_type": "algorithm",
+        "code_caption": [],
+        "code_footnote": [],
+        "code_body": "Algorithm 2 Residual Random Greedy, truncated to $\\lceil k / 2 \\rceil$ iterations [3]   \nRequire: M, value oracle h   \n1: $S \\gets \\emptyset$   \n2: for $i = 1 , \\ldots , \\lceil k / 2 \\rceil$ do   \n3: Compute a maximum-weight base $M _ { i }$ of $M / S$   \nwith weights h(u | S)   \n4: Draw u uniformly from $M _ { i }$   \n5: $S \\gets S \\cup \\{ u \\}$   \n6: end for   \n7: return $S$",
+        "bbox": [
+            96,
+            463,
+            900,
+            638
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "We stop after $\\lceil k / 2 \\rceil$ iterations because the RRG analysis already gives the constant-factor guarantee needed here at that point.",
+        "bbox": [
+            93,
+            654,
+            901,
+            689
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "4.5 Advanced preprocessing and contraction",
+        "text_level": 2,
+        "bbox": [
+            93,
+            708,
+            542,
+            726
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "For an independent set $Q \\in { \\mathcal { T } } .$ , define the residual marginal mass",
+        "bbox": [
+            93,
+            734,
+            606,
+            752
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "img_path": "images/02c8c33fa1d94535ae3f8025ebcd02ec04fa5412c1e7fb6e086ad677706b151a.jpg",
+        "text": "$$\n\\operatorname { M a r } _ { f } ( Q ) : = \\operatorname* { m a x } _ { \\stackrel { T \\subseteq U } { T \\cup { \\bar { Q } } } } \\sum _ { j \\in T } f ( j \\mid Q ) .\\tag{14}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            372,
+            763,
+            622,
+            801
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "We also use the global maximum singleton-marginal mass",
+        "bbox": [
+            93,
+            814,
+            552,
+            832
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "equation",
+        "img_path": "images/cd78ae7cf70a9fba6241d666fbf1569a753d4358dc757b229bf4c32750651746.jpg",
+        "text": "$$\n\\operatorname { M a r } ( f , { \\mathcal { T } } ) : = \\operatorname { M a r } _ { f } ( { \\mathcal { O } } ) = \\operatorname* { m a x } _ { T \\in { \\mathcal { T } } } \\sum _ { j \\in T } f ( j \\mid { \\mathcal { O } } ) .\\tag{15}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            330,
+            842,
+            663,
+            878
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "For a contracted instance $( g , M ^ { \\prime } )$ , we analogously write $\\mathrm { M a r } ( g , M ^ { \\prime } )$ for the global quantity $\\operatorname { M a r } ( g , { \\mathcal { T } } ( M ^ { \\prime } ) )$ The exact SGS-Poisson value-oracle implementation of Kulik et al. [12] first constructs a constant-factor upper estimate V of OPT and then performs Advanced Preprocessing. Starting from $Q _ { 0 } = \\emptyset$ , while Mar $_ f ( Q _ { t } ) > 2 0 V$ , it chooses a maximum-weight residual base under the true marginals and adds a uniformly random element of that base. The resulting set is denoted by S<sup>¯</sup>.",
+        "bbox": [
+            93,
+            891,
+            901,
+            926
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "page_number",
+        "text": "7",
+        "bbox": [
+            493,
+            948,
+            504,
+            962
+        ],
+        "page_idx": 6
+    },
+    {
+        "type": "text",
+        "text": "",
+        "bbox": [
+            93,
+            77,
+            901,
+            128
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "The dummy-element extension described above guarantees that every residual independent set can be completed to a base, so the process has at most k iterations. The exact-oracle analysis shows that the stopping rule supplies the bounded-residual-marginal condition required by the subsequent swap process. In Section 5 we show that the same preprocessing rule, with exact values replaced by the given controlled oracle, retains this certificate up to an additive $O ( k \\xi )$ term. Importantly, this is an analysis of the same preprocessing process rather than a new algorithm.",
+        "bbox": [
+            93,
+            128,
+            901,
+            232
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "After preprocessing, contract the matroid at S<sup>¯</sup>:",
+        "bbox": [
+            122,
+            232,
+            498,
+            248
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "equation",
+        "img_path": "images/eec8416b05922663917daac7644b5b3bf0176fd74e86993f15f50bc891bebbec.jpg",
+        "text": "$$\nM ^ { \\prime } : = M / { \\bar { S } } , \\qquad g ( T ) : = f ( T \\cup { \\bar { S } } ) .\\tag{16}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            357,
+            258,
+            637,
+            279
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "The contracted matroid has rank $k ^ { \\prime } \\leq k$ . The SGS-Poisson process is run with its actual rank $k ^ { \\prime } ;$ throughout the analysis we upper bound $k ^ { \\prime }$ by the original rank k. Then $g$ is nonnegative and submodular on $M ^ { \\prime }$ . Using the dummy elements, we may and do take $O _ { g }$ to be an optimal base of the contracted instance; all dummy elements have zero g-marginal.",
+        "bbox": [
+            93,
+            290,
+            901,
+            359
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "4.6 Value-oracle implementation of the swap rule",
+        "text_level": 2,
+        "bbox": [
+            93,
+            378,
+            589,
+            395
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "At time t, for current set $A \\in \\mathbb { Z } ( M ^ { \\prime } )$ and candidate element $i ,$ the SGS-Poisson implementation of Kulik et al. [12] uses the multilinear marginal",
+        "bbox": [
+            93,
+            405,
+            901,
+            439
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3b6a7a3b3a89a7ba9046f2fd1167e27dd8bc8ee1c13d57af7376c445bb191565.jpg",
+        "text": "$$\nw _ { i } = F ( t \\mathbf { 1 } _ { A } \\lor \\mathbf { 1 } _ { i } ) - F ( t \\mathbf { 1 } _ { A } ) .\\tag{17}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            385,
+            452,
+            607,
+            468
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "It estimates $w _ { i }$ by drawing independent sets $R _ { 1 } , \\dots , R _ { m } \\sim t { \\bf 1 } _ { A }$ and averaging",
+        "bbox": [
+            94,
+            481,
+            707,
+            498
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "equation",
+        "img_path": "images/29da59fb4b4cfb178b23669d363be873ed518ccba96f473522c2a41aa950683f.jpg",
+        "text": "$$\n\\widetilde { w } _ { i } = \\frac { 1 } { m } \\sum _ { \\ell = 1 } ^ { m } \\big [ g ( R _ { \\ell } \\cup \\{ i \\} ) - g ( R _ { \\ell } ) \\big ] .\\tag{18}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            362,
+            507,
+            632,
+            551
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "The exact SGS-Poisson value-oracle implementation chooses a maximum-weight residual base under these estimates, constructs a matroid exchange map, and samples the entering element uniformly from that base. A fixed deterministic tie-breaking order makes the rule right-continuous. The concentration analysis of the exact algorithm controls the base sum of these estimated marginals, which is the quantity needed for the almost-above-average condition. Section 5 shows that this same implementation remains valid under the controlled oracle.",
+        "bbox": [
+            93,
+            561,
+            903,
+            664
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "The augmented instance is used throughout preprocessing and the Poisson process. Its dummy elements have identically zero true and controlled-oracle marginals. At the end they are discarded. When $k = 1$ , the direct enumeration described below gives a stronger guarantee; hence the analysis below assumes $k \\geq 2$ . All maximum-base ties use a fixed deterministic ordering independent of time, so the swap rule is right-continuous. The Poisson process is run in the contracted matroid and returns $S \\in { \\mathcal { T } } ( M / { \\bar { S } } )$ , so $S \\cup \\bar { S }$ is feasible in the original matroid.",
+        "bbox": [
+            91,
+            664,
+            903,
+            767
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "5 Robustness of the Main Algorithm",
+        "text_level": 2,
+        "bbox": [
+            94,
+            790,
+            544,
+            810
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "We now analyze the algorithm of Section 4 under the controlled oracle of Section 3. The SGS-Poisson process, valid-swap rule, spiteful drop, and Advanced Preprocessing recursion are unchanged from Kulik et al. [12]. The only robustification is that the constant-factor certificate V is obtained by running RRG [3] with the controlled oracle and amplifying it to obtain a realized lower bound on OPT; all subsequent decisions use the same procedures with the available oracle. The purpose of this section is solely to prove that the exact SGS-Poisson guarantee survives these perturbations.",
+        "bbox": [
+            91,
+            824,
+            903,
+            928
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "page_number",
+        "text": "8",
+        "bbox": [
+            491,
+            948,
+            504,
+            962
+        ],
+        "page_idx": 7
+    },
+    {
+        "type": "text",
+        "text": "5.1 Robust Residual Random Greedy and the optimum certificate",
+        "text_level": 2,
+        "bbox": [
+            93,
+            77,
+            751,
+            94
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "We first show that the same Residual Random Greedy procedure remains a constant-factor procedure when its value queries are answered by ${ \\widehat { f } } .$ The RRG exchange coupling is unchanged; only the maximumbase comparison is afected by the oracle perturbation.",
+        "bbox": [
+            93,
+            104,
+            903,
+            155
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Lemma 5.1 (Robust maximum-base comparison). At iteration $i ,$ for every base B of the residual matroid,",
+        "bbox": [
+            93,
+            166,
+            903,
+            199
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/5f65a3fd958884d875b72c5fec3dbcb0b94a31778aca373228d3f6aa1b0a456b.jpg",
+        "text": "$$\n\\sum _ { u \\in M _ { i } } f ( u \\mid S _ { i - 1 } ) \\geq \\sum _ { u \\in B } f ( u \\mid S _ { i - 1 } ) - 4 r _ { i } \\xi .\\tag{19}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            334,
+            198,
+            661,
+            234
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Proof. By optimality under ${ \\widehat { f } } ,$",
+        "bbox": [
+            94,
+            246,
+            338,
+            265
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c168dff3a534ff6dcd8bde5a706c3f39264032fd44eee6405cc4877c1f9ebed3.jpg",
+        "text": "$$\n\\sum _ { u \\in M _ { i } } { \\widehat { f } } ( u \\mid S _ { i - 1 } ) \\geq \\sum _ { u \\in B } { \\widehat { f } } ( u \\mid S _ { i - 1 } ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            361,
+            275,
+            633,
+            313
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Each base has $r _ { i }$ elements, and (9) gives an error of at most $2 r _ { i } \\xi$ on either side. Rearranging gives (19). □",
+        "bbox": [
+            93,
+            325,
+            901,
+            359
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "We next prove the exchange coupling used by $\\operatorname { R R G } ;$ no additional property of the noisy oracle is needed.",
+        "bbox": [
+            93,
+            371,
+            901,
+            404
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Lemma 5.2 (RRG exchange coupling). Consider the augmented matroid $M ^ { + }$ and let $O ^ { + }$ be an optimal base containing an optimal solution of the original instance (together with dummy elements). The RRG coupling can be chosen so that, for $0 \\leq i \\leq k - 1$ ，",
+        "bbox": [
+            93,
+            416,
+            901,
+            468
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/bd1e2cea48395ad549a0d8b7c1abccd2d26bc860ec82cb5e5104cb50007bd788.jpg",
+        "text": "$$\n\\mathbb { E } [ f ^ { + } ( S _ { i } \\cup O _ { i } ) ] \\geq \\frac { ( k - i ) ( k - i - 1 ) } { k ( k - 1 ) } \\mathrm { O P T } ,\\tag{20}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            333,
+            478,
+            661,
+            513
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "where $O _ { 0 } = O ^ { + } , O _ { i } \\subseteq O _ { i - 1 }$ , and $S _ { i } \\cup O _ { i }$ is a base of $M ^ { + }$ almost surely.",
+        "bbox": [
+            93,
+            526,
+            658,
+            544
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Proof. Fix $i < k$ and condition on the history through iteration $i - 1$ . Put $r _ { i } = k - i + 1$ . The set $M _ { i }$ is a base of the contracted matroid $M ^ { + } / S _ { i - 1 }$ , and $O _ { i - 1 }$ is another base of the same contraction because $S _ { i - 1 } \\cup O _ { i - 1 }$ is a base of $M ^ { + }$ . By the strong basis-exchange property, there is a bijection",
+        "bbox": [
+            94,
+            555,
+            901,
+            607
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/479626fc4526703992ac2107a766828896e9fa9787cb5cfa483da2cf4df66cfb.jpg",
+        "text": "$$\nh _ { i } : M _ { i } \\longrightarrow O _ { i - 1 }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            429,
+            619,
+            566,
+            637
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "such that",
+        "bbox": [
+            93,
+            651,
+            174,
+            666
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/867a3349a9f33f80ee27c14f04ffd06abaa78d67d45c94c5dffba616790f7660.jpg",
+        "text": "$$\nS _ { i - 1 } \\cup O _ { i - 1 } - h _ { i } ( u ) + u \\in \\mathbb { Z } ( M ^ { + } ) \\qquad \\forall u \\in M _ { i } ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            310,
+            667,
+            686,
+            685
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "with $h _ { i } ( u ) = u$ whenever $u \\in M _ { i } \\cap O _ { i - 1 }$ . After drawing $u _ { i }$ uniformly from $M _ { i } .$ , set",
+        "bbox": [
+            93,
+            694,
+            738,
+            710
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3cbc965ff9a35dbf1d34d8daa4f698789f60192638b58695dec645ccf85f4eb8.jpg",
+        "text": "$$\nO _ { i } : = O _ { i - 1 } \\backslash \\{ h _ { i } ( u _ { i } ) \\} .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            408,
+            724,
+            584,
+            742
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Thus $S _ { i } \\cup O _ { i }$ is a base.",
+        "bbox": [
+            93,
+            756,
+            279,
+            771
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "We use the following elementary consequence of submodularity. If B is an independent set and a random set R satisfies",
+        "bbox": [
+            93,
+            772,
+            901,
+            806
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/35600deb37ff413246445db8dfa7247e612e2f459a214cbd41a41251afa41aa7.jpg",
+        "text": "$$\n\\operatorname* { P r } ( a \\in R ) \\geq p \\quad ( a \\in B ) , \\qquad \\operatorname* { P r } ( a \\in R ) \\leq q \\quad ( a \\not \\in B ) ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            281,
+            820,
+            714,
+            838
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "then, for nonnegative submodular $f ^ { + }$",
+        "bbox": [
+            93,
+            851,
+            397,
+            868
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1e6326a91057dc6bfa2fb8322aba0ec59442e1131a05c0a9e0110b38f42d4746.jpg",
+        "text": "$$\n\\mathbb { E } [ f ^ { + } ( R ) ] \\geq ( p - q ) f ^ { + } ( B ) .\\tag{21}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            390,
+            881,
+            602,
+            900
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "page_number",
+        "text": "9",
+        "bbox": [
+            491,
+            948,
+            504,
+            962
+        ],
+        "page_idx": 8
+    },
+    {
+        "type": "text",
+        "text": "Indeed, if $p \\leq q$ the claim follows from nonnegativity. If $p > q$ , let $\\alpha _ { a } = \\operatorname* { P r } ( a \\in R )$ . The Lovasz extension $f _ { L } ^ { + }$ is a convex extension of $f ^ { + }$ , hence",
+        "bbox": [
+            93,
+            77,
+            900,
+            113
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/2b3dc6610d1e80c26428ef023616b635f745af0e915aad49a39cca925f788ff2.jpg",
+        "text": "$$\n\\mathbb { E } [ f ^ { + } ( R ) ] \\geq f _ { L } ^ { + } ( \\alpha ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            418,
+            117,
+            575,
+            137
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "For every threshold $s \\in ( q , p ]$ , we have $\\alpha _ { a } \\geq s$ for every $a \\in B$ and $\\alpha _ { a } < s$ for every $a \\notin B$ . Thus the threshold set",
+        "bbox": [
+            93,
+            142,
+            901,
+            175
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6dd25294c950206c9161c725eed4c7df1ccc39abdf0d14c0bd039ba818bcbd79.jpg",
+        "text": "$$\n\\left\\{ a : \\alpha _ { a } \\geq s \\right\\} = B \\qquad { \\mathrm { f o r ~ e v e r y ~ } } s \\in ( q , p ] .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            336,
+            176,
+            656,
+            194
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Using the threshold-set representation of the Lovasz extension and nonnegativity of $f ^ { + }$ for all other thresholds,",
+        "bbox": [
+            93,
+            199,
+            901,
+            232
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/d0f6f9dcd9dde31b90b906313155999f8567947a22518dd5780a9ae8c8f4a250.jpg",
+        "text": "$$\nf _ { L } ^ { + } ( \\alpha ) \\geq \\int _ { q } ^ { p } f ^ { + } ( B ) d s = ( p - q ) f ^ { + } ( B ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            341,
+            229,
+            653,
+            267
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Therefore $\\mathbb { E } [ f ^ { + } ( R ) ] \\ge ( p - q ) f ^ { + } ( B )$",
+        "bbox": [
+            93,
+            270,
+            382,
+            287
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Now take $B = S _ { i - 1 } \\cup O _ { i - 1 }$ . Every element of B is absent from $S _ { i } \\cup O _ { i }$ only if it is the image under $h _ { i }$ of the sampled element, so its removal probability is at most $1 / r _ { i }$ . Every element outside B can enter only if it is the sampled element, so its inclusion probability is at most $1 / r _ { i }$ . Applying (21) with $p = 1 - 1 / r _ { i }$ and $q = 1 / r _ { i }$ gives",
+        "bbox": [
+            93,
+            287,
+            901,
+            356
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1bae6424d862634d2c65bc5af32c31bdb5dd01c0107d9348dba84b48d9bf358e.jpg",
+        "text": "$$\n\\mathbb { E } [ f ^ { + } ( S _ { i } \\cup O _ { i } ) \\mid { \\mathcal { F } } _ { i - 1 } ] \\ge \\left( 1 - { \\frac { 2 } { r _ { i } } } \\right) f ^ { + } ( S _ { i - 1 } \\cup O _ { i - 1 } ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            295,
+            361,
+            699,
+            397
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Iterating this inequality for i steps yields",
+        "bbox": [
+            93,
+            401,
+            421,
+            417
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/286c82d2837ce83fa6b03ef47685241c41ff75e77a0455f1f64b46afea968ba6.jpg",
+        "text": "$$\n\\prod _ { \\ell = 1 } ^ { i } \\left( 1 - { \\frac { 2 } { k - \\ell + 1 } } \\right) = { \\frac { ( k - i ) ( k - i - 1 ) } { k ( k - 1 ) } } ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            330,
+            424,
+            663,
+            468
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "which proves the lemma.",
+        "bbox": [
+            93,
+            473,
+            294,
+            489
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Lemma 5.3 (Robust RRG). For $1 \\leq i \\leq \\lceil k / 2 \\rceil$ ，",
+        "bbox": [
+            94,
+            500,
+            480,
+            517
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1acc4803bdf16650791bcd11c0208b9c78cd182999f8d7c063345bd856e0fe72.jpg",
+        "text": "$$\n\\mathbb { E } [ f ^ { + } ( S _ { i } ) ] \\geq { \\frac { i ( k - i ) } { k ( k - 1 ) } } { \\mathrm { O P T } } - 4 i \\xi .\\tag{22}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            364,
+            522,
+            629,
+            558
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "In particular, for $r = \\lceil k / 2 \\rceil$",
+        "bbox": [
+            93,
+            563,
+            318,
+            580
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/516283e82fab1f22ee707e1a603b9bd061d1c67cfd96a90f5ad3b2b5a00138d8.jpg",
+        "text": "$$\n\\mathbb { E } [ f ( S _ { r } ) ] \\geq { \\frac { 1 } { 4 } } \\mathrm { O P T } - 4 k \\xi .\\tag{23}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            395,
+            577,
+            598,
+            609
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Proof. Let $r _ { i } = k - i + 1$ . Conditional on the history through iteration $i - 1$ , Lemma 5.1 with $B = O _ { i - 1 }$ gives",
+        "bbox": [
+            93,
+            612,
+            901,
+            646
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/016ed1178c1770f6ec24ba1d31ea4192adac268f368e91b24418ae18cd34913c.jpg",
+        "text": "$$\n\\begin{array} { r l r } {  { \\mathbb { E } [ f ^ { + } ( S _ { i } ) - f ^ { + } ( S _ { i - 1 } ) \\mid \\mathcal { F } _ { i - 1 } ] = \\frac { 1 } { r _ { i } } \\sum _ { u \\in M _ { i } } f ^ { + } ( u \\mid S _ { i - 1 } ) } } \\\\ & { } & { \\geq \\frac { f ^ { + } ( S _ { i - 1 } \\cup O _ { i - 1 } ) - f ^ { + } ( S _ { i - 1 } ) } { r _ { i } } - 4 \\xi . } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            240,
+            643,
+            754,
+            719
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "Taking expectations and applying Lemma 5.2 at $i - 1$",
+        "bbox": [
+            93,
+            723,
+            526,
+            739
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/bd8ddc3f6487a06d6ba576c5568d27616a43052585378409b15413f58dcf2ca2.jpg",
+        "text": "$$\n\\mathbb { E } [ f ^ { + } ( S _ { i } ) ] \\geq \\frac { k - i } { k - i + 1 } \\mathbb { E } [ f ^ { + } ( S _ { i - 1 } ) ] + \\frac { k - i } { k ( k - 1 ) } \\mathrm { O P T } - 4 \\xi .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            276,
+            743,
+            718,
+            779
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "An induction on $i ,$ starting from $S _ { 0 } = \\emptyset$ , gives (22). Finally,",
+        "bbox": [
+            94,
+            784,
+            573,
+            801
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6ddda65e4d37b75b9d256b96746aca6266028bdc418734be383c40f2bcb62e0b.jpg",
+        "text": "$$\n\\frac { r ( k - r ) } { k ( k - 1 ) } \\geq \\frac 1 4\n$$",
+        "text_format": "latex",
+        "bbox": [
+            442,
+            806,
+            555,
+            842
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "for $r = \\lceil k / 2 \\rceil$ and $k \\geq 2$ , while $f ^ { + }$ agrees with $f$ on sets after deleting dummy elements. This proves (23). □",
+        "bbox": [
+            93,
+            847,
+            901,
+            882
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "For $k = 1$ , querying all feasible singleton sets $\\mathrm { g i }$ ves a stronger $1 - O ( \\xi )$ estimate, so the remainder assumes $k \\geq 2$",
+        "bbox": [
+            93,
+            892,
+            901,
+            926
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "page_number",
+        "text": "10",
+        "bbox": [
+            488,
+            948,
+            509,
+            962
+        ],
+        "page_idx": 9
+    },
+    {
+        "type": "text",
+        "text": "5.2 High-probability optimum certificate",
+        "text_level": 2,
+        "bbox": [
+            93,
+            77,
+            506,
+            94
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "The expectation guarantee in Lemma 5.3 is not enough because Advanced Preprocessing uses a realized threshold. We therefore amplify.",
+        "bbox": [
+            93,
+            103,
+            901,
+            137
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Run Algorithm 2 independently",
+        "bbox": [
+            120,
+            138,
+            380,
+            155
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/9067ecedc74498e5fa4f695dff397dd989a6ed0547d6b35077ca8381fe057697.jpg",
+        "text": "$$\nR = \\left\\lceil 1 5 \\log \\frac { 1 } { \\rho } \\right\\rceil\n$$",
+        "text_format": "latex",
+        "bbox": [
+            436,
+            151,
+            558,
+            189
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "times, and let $G ^ { \\star }$ be the set with largest $\\widehat { f }$ value.",
+        "bbox": [
+            93,
+            195,
+            485,
+            213
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "If $\\mathrm { { O P T } = 0 } { } _ { ; }$ , the lower bound $\\mathrm { O P T } \\le \\widehat { V }$ is trivial. Hence assume $\\mathrm { O P T > 0 }$ in the amplification argument below. If $\\mathrm { O P T } \\geq 3 2 k \\xi$ , then (23) implies",
+        "bbox": [
+            93,
+            213,
+            901,
+            248
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/17f02abb0987481d8b40e5a1ad4000d0960a31280265f06b6ed0c6b21a713925.jpg",
+        "text": "$$\n\\mathbb { E } [ f ( S _ { r } ) ] \\geq { \\frac { 1 } { 8 } } \\mathrm { O P T } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            419,
+            256,
+            575,
+            289
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Since $0 \\leq f ( S _ { r } ) \\leq \\mathrm { O P T }$ ，",
+        "bbox": [
+            93,
+            296,
+            290,
+            314
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c5384827a5dd0262c3d06c019bac22d2aa676a9e36990320e7938cf03b6fb111.jpg",
+        "text": "$$\n\\mathbb { P } \\left( f ( S _ { r } ) \\geq { \\frac { 1 } { 1 6 } } \\mathrm { O P T } \\right) \\geq { \\frac { 1 } { 1 5 } } .\\tag{24}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            383,
+            313,
+            611,
+            348
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Thus, with probability at least $1 - \\rho ,$ one run has value at least $\\mathrm { O P T } / 1 6$ . Define",
+        "bbox": [
+            93,
+            353,
+            732,
+            371
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/eea94850f68ff6c8df8afe6ea0c78abed9a9fe7cf9e9ac8baded7432ddda7d3c.jpg",
+        "text": "$$\n\\widehat { V } : = \\operatorname* { m a x } \\left\\{ 3 2 k \\xi , 1 6 \\widehat { f } ( G ^ { \\star } ) + 6 4 \\xi \\right\\} .\\tag{25}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            359,
+            380,
+            637,
+            407
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "On the good event,",
+        "bbox": [
+            93,
+            416,
+            251,
+            433
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3fd8889a171a977b63f1166855c448f0c449c3a191462952cbb4a835da11ea0d.jpg",
+        "text": "$$\n\\mathrm { O P T } \\leq { \\widehat { V } } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            452,
+            430,
+            542,
+            449
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Moreover, because $G ^ { \\star }$ is feasible,",
+        "bbox": [
+            93,
+            457,
+            357,
+            474
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/2c934a5008e3f3138fa4216632d12622dd7ac96a675c92954005f2378876200c.jpg",
+        "text": "$$\n{ \\widehat { f } } ( G ^ { \\star } ) \\leq \\mathrm { O P T } + \\xi ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            421,
+            472,
+            575,
+            492
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "and hence",
+        "bbox": [
+            93,
+            498,
+            181,
+            515
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/efd7ee416a68451dd2d35b9d871151ec275a5845bbf6ade81bd62c3f7cc28425.jpg",
+        "text": "$$\n\\boxed { \\mathrm { O P T } \\leq \\widehat { V } \\leq 1 6 \\mathrm { O P T } + 9 6 k \\xi }\\tag{26}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            380,
+            511,
+            616,
+            537
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "with probability at least $1 - \\rho .$ . If $\\mathrm { O P T } < 3 2 k \\xi$ , the first term in (25) already gives $\\widehat { V } \\geq \\mathrm { O P T }$",
+        "bbox": [
+            91,
+            545,
+            833,
+            564
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "5.3 Robust adaptive preprocessing",
+        "text_level": 2,
+        "bbox": [
+            94,
+            582,
+            449,
+            601
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Lemma 5.4 (Marginal-mass perturbation). For every $Q \\in \\mathcal { I }$",
+        "bbox": [
+            93,
+            608,
+            584,
+            626
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/a3f6e51daa0e31473501e5a5301ae28a53183117072e135898d122ada65572fe.jpg",
+        "text": "$$\n\\lvert \\mathrm { M a r } _ { \\hat { f } } ( Q ) - \\mathrm { M a r } _ { f } ( Q ) \\rvert \\leq 2 k \\xi .\\tag{27}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            382,
+            636,
+            614,
+            656
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Proof. Every feasible $T$ contains at most k elements. The diference between its estimated and true marginal sum is at most 2kξ by (9). Taking maxima in both directions proves the result. □",
+        "bbox": [
+            93,
+            665,
+            901,
+            700
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Starting from $Q _ { 0 } = \\emptyset$ , define the stopping time",
+        "bbox": [
+            120,
+            710,
+            501,
+            728
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0beae8f3687a528f63f08e80805f1bc5c860c227f268a86464f895c1e2d98df2.jpg",
+        "text": "$$\n\\tau : = \\operatorname* { i n f } \\{ t : \\operatorname { M a r } _ { \\widehat { f } } ( Q _ { t } ) \\leq 2 0 \\widehat { V } \\} .\\tag{28}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            375,
+            737,
+            619,
+            758
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "For $t < \\tau$ , choose a maximum-weight residual base $Z _ { t }$ under the estimated marginals and draw $j _ { t }$ uniformly from $Z _ { t }$ . Set $Q _ { t + 1 } = Q _ { t } + j _ { t }$",
+        "bbox": [
+            93,
+            767,
+            900,
+            801
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Because of the dummy elements, every residual independent set can be extended to a base. Thus this process has at most k iterations.",
+        "bbox": [
+            93,
+            803,
+            901,
+            835
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Lemma 5.5 (Residual marginal bound). On the event in (26),",
+        "bbox": [
+            93,
+            844,
+            598,
+            862
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c2176d4b6d40325a4fa9c6dfbafd380eb8a21aee4d617bd3202d720e8769f86e.jpg",
+        "text": "$$\n\\begin{array} { r } { \\big | \\mathrm { M a r } _ { f } ( \\bar { S } ) \\leq 3 2 0 \\mathrm { O P T } + 1 9 2 2 k \\xi , \\big | } \\end{array}\\tag{29}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            374,
+            876,
+            622,
+            896
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "where $\\bar { S } = Q _ { \\tau }$",
+        "bbox": [
+            93,
+            909,
+            214,
+            925
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "page_number",
+        "text": "11",
+        "bbox": [
+            488,
+            948,
+            508,
+            962
+        ],
+        "page_idx": 10
+    },
+    {
+        "type": "text",
+        "text": "Proof. At stopping,",
+        "bbox": [
+            94,
+            78,
+            253,
+            94
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/2fc14f9a8fccb58e557f4f9f6ebb3ec384ac9af1a5314e3ec77e4e2dccc3ebb7.jpg",
+        "text": "$$\n\\mathrm { M a r } _ { \\hat { f } } ( \\bar { S } ) \\leq 2 0 \\widehat { V } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            429,
+            92,
+            565,
+            114
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "By Lemma 5.4 and (26),",
+        "bbox": [
+            93,
+            121,
+            294,
+            138
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4bba658345d99956918b2685112845cdf54fc2e8c7d19045fbb26ffc8f1fb4a0.jpg",
+        "text": "$$\n\\operatorname { M a r } _ { f } ( { \\bar { S } } ) \\leq 2 0 ( 1 6 \\mathrm { O P T } + 9 6 k \\xi ) + 2 k \\xi ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            348,
+            137,
+            647,
+            156
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "which gives (29).",
+        "bbox": [
+            93,
+            165,
+            230,
+            181
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "The crucial result is that the preprocessing certificate itself is resilient.",
+        "bbox": [
+            120,
+            193,
+            679,
+            209
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Let $O _ { 0 } = O$ be an optimal base. By basis exchange, construct $O _ { t } \\subseteq O$ so that $Q _ { t } \\cup O _ { t }$ is a base at every time. Define",
+        "bbox": [
+            93,
+            209,
+            901,
+            242
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/977b36878023d704c1aef6b45a8894cbd12cd1214348bb1a5fe2083c52d9b515.jpg",
+        "text": "$$\nM _ { t } = f ( Q _ { t } \\cup O _ { t } ) + { \\frac { 1 } { 2 } } f ( Q _ { t } ) .\\tag{30}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            385,
+            241,
+            607,
+            273
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Lemma 5.6 (Resilient adaptive-preprocessing drift). On the event $\\widehat { V } \\geq \\mathrm { O P T }$ , for every $t < \\tau$",
+        "bbox": [
+            93,
+            284,
+            841,
+            301
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/46add6e0cc7e47e31e10ef4416242f41521c9214c14cbf285a75ae10e1127ca7.jpg",
+        "text": "$$\n\\left| \\mathbb { E } [ M _ { t + 1 } - M _ { t } \\mid { \\mathcal { F } } _ { t } ] \\geq { \\frac { 8 { \\mathrm { O P T } } - k \\xi } { k - t } } . \\right|\\tag{31}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            359,
+            315,
+            637,
+            352
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Proof. Fix $t < \\tau$ and write $r _ { t } = k - t .$ Conditional on $\\mathcal { F } _ { t }$ , the current set $Q _ { t } ,$ the estimated marginal weights, and the selected maximum weight base $Z _ { t }$ are fixed. Because the stopping condition has not fired,",
+        "bbox": [
+            93,
+            366,
+            901,
+            415
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/9bce09b42cd5d99397dee5740cda65d8bdafa18b5d5f48bb1422d449697ab19c.jpg",
+        "text": "$$\n\\sum _ { j \\in Z _ { t } } { \\widehat { f } } ( j \\mid Q _ { t } ) > 2 0 { \\widehat { V } } \\geq 2 0 \\mathrm { O P T } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            370,
+            414,
+            622,
+            450
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "The base $Z _ { t }$ has $r _ { t }$ elements, so by (9),",
+        "bbox": [
+            93,
+            457,
+            405,
+            474
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6a6b76432d89bb4a862217b22e2a7f47276aef1ab14a1ee5d489447e03197878.jpg",
+        "text": "$$\n\\sum _ { j \\in Z _ { t } } f ( j \\mid Q _ { t } ) \\geq 2 0 \\mathrm { O P T } - 2 r _ { t } \\xi .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            372,
+            487,
+            620,
+            523
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Since $j _ { t }$ is uniform in $Z _ { t }$ ,",
+        "bbox": [
+            93,
+            535,
+            294,
+            553
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/a20ec088da30546a0f91c34bbc874d14ed6281e80042cd91a0ac8dcf1b796c9a.jpg",
+        "text": "$$\n\\mathbb { E } [ f ( Q _ { t + 1 } ) - f ( Q _ { t } ) \\mid { \\mathcal { F } _ { t } } ] \\ge \\frac { 2 0 0 \\mathrm { P T } - 2 r _ { t } \\xi } { r _ { t } } .\\tag{32}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            330,
+            549,
+            663,
+            583
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "We next make the exchange argument explicit. Let $O _ { t }$ be the current exchange set, so $Q _ { t } \\cup O _ { t }$ is a base. By the strong basis-exchange property, there is a bijection",
+        "bbox": [
+            93,
+            589,
+            901,
+            625
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ab1cfcd12422634ff7b74d11cc013913316d43afaa71858acf6390809b2033b3.jpg",
+        "text": "$$\nh _ { t } : Z _ { t } \\longrightarrow O _ { t }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            441,
+            637,
+            555,
+            654
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "such that",
+        "bbox": [
+            93,
+            667,
+            176,
+            684
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6677f35dbc6e68c6a82d1b2b697bd4d9e8bce508bc1e4324cb927461b73b63b3.jpg",
+        "text": "$$\nQ _ { t } \\cup O _ { t } - h _ { t } ( j ) + j \\in \\mathcal { T } \\qquad \\forall j \\in Z _ { t } ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            352,
+            684,
+            642,
+            703
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "with $h _ { t } ( j ) = j$ on $Z _ { t } \\cap O _ { t }$ . After drawing $j _ { t }$ uniformly from $Z _ { t } ,$ set",
+        "bbox": [
+            93,
+            710,
+            620,
+            728
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c72a6fff1d830dae4068de8cb0d58ca933a511c7c3afe380e5bc5d878282d571.jpg",
+        "text": "$$\nO _ { t + 1 } : = O _ { t } \\setminus \\{ h _ { t } ( j _ { t } ) \\} .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            408,
+            741,
+            584,
+            758
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Then $Q _ { t + 1 } \\cup O _ { t + 1 }$ is a base.",
+        "bbox": [
+            94,
+            772,
+            318,
+            789
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Every element of $Q _ { t } \\cup O _ { t }$ is removed from the next base with probability at most $1 / r _ { t }$ , while every element outside $Q _ { t } \\cup O _ { t }$ is inserted with probability at most $1 / r _ { t }$ . Applying (21) with $p = 1 - 1 / r _ { t }$ and $q = 1 / r _ { t }$ gives",
+        "bbox": [
+            93,
+            789,
+            901,
+            840
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1ddfbcbc4238c5bc9e971040d248fed91e29e2cef18aa2a704ddb4cb298a8a3b.jpg",
+        "text": "$$\n\\mathbb { E } [ f ( Q _ { t + 1 } \\cup O _ { t + 1 } ) \\mid { \\mathcal { F } } _ { t } ] \\geq \\left( 1 - { \\frac { 2 } { r _ { t } } } \\right) f ( Q _ { t } \\cup O _ { t } ) .\\tag{33}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            310,
+            838,
+            683,
+            875
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "For $r _ { t } = 1$ the right-hand side is nonpositive, so the same inequality holds trivially by nonnegativity.",
+        "bbox": [
+            93,
+            881,
+            883,
+            898
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "page_number",
+        "text": "12",
+        "bbox": [
+            488,
+            948,
+            509,
+            960
+        ],
+        "page_idx": 11
+    },
+    {
+        "type": "text",
+        "text": "Combining (32) and (33),",
+        "bbox": [
+            122,
+            77,
+            328,
+            94
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "equation",
+        "img_path": "images/cb9bcab732e8199c576c3bfbfd48914468fdb4b240d6c961eb4d70d2660bb9d0.jpg",
+        "text": "$$\n\\begin{array} { r } { \\mathbb { E } \\left[ M _ { t + 1 } - M _ { t } \\ | \\ \\mathcal { F } _ { t } \\right] \\geq - \\frac { 2 } { r _ { t } } f ( Q _ { t } \\cup O _ { t } ) + \\frac { 1 0 \\mathrm { O P T } - r _ { t } \\xi } { r _ { t } } } \\\\ { = \\frac { 1 0 \\mathrm { O P T } - r _ { t } \\xi - 2 f ( Q _ { t } \\cup O _ { t } ) } { r _ { t } } . } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            289,
+            104,
+            704,
+            176
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Since $Q _ { t } \\cup O _ { t }$ is feasible, $f ( Q _ { t } \\cup O _ { t } ) \\leq \\mathrm { O P T }$ . Hence",
+        "bbox": [
+            93,
+            188,
+            506,
+            205
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "equation",
+        "img_path": "images/b5923a060142157a6bbdc119ff90bb7060b920dcb83ea101de8b0e3a303e64cc.jpg",
+        "text": "$$\n\\mathbb { E } [ M _ { t + 1 } - M _ { t } \\ | \\ \\mathcal { F } _ { t } ] \\geq \\frac { 8 \\mathrm { O P T } - r _ { t } \\xi } { r _ { t } } \\geq \\frac { 8 \\mathrm { O P T } - k \\xi } { k - t } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            302,
+            215,
+            691,
+            252
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Theorem 5.7 (Resilient preprocessing certificate). Let E be any event measurable with respect to the initial RRG randomness such that ${ \\mathcal { E } } \\subseteq \\{ { \\widehat { V } } \\geq \\operatorname { O P T } \\}$ . Then the output S<sup>¯</sup> of Advanced Preprocessing satisfies",
+        "bbox": [
+            93,
+            290,
+            901,
+            340
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "equation",
+        "img_path": "images/602f9347bd69a29130f5de651cf213335683b922618345c89c6def7a7e9817ce.jpg",
+        "text": "$$\n\\lceil \\mathbb { E } [ \\operatorname* { m a x } _ { T : T \\cup \\bar { S } \\in \\mathcal { T } } f ( T \\cup \\bar { S } ) + \\frac { 1 } { 2 } f ( \\bar { S } ) \\rceil \\mathcal { E } ] \\geq \\mathrm { O P T } - C _ { 0 } k \\xi . \\rceil\\tag{34}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            294,
+            340,
+            702,
+            381
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Proof. Condition on any such event E. On E and when $\\mathrm { O P T } \\geq k \\xi / 8$ , define $\\widetilde { M } _ { t } : = M _ { t \\wedge \\tau }$ . Lemma 5.6 implies that $( \\widetilde { M } _ { t } ) _ { t \\geq 0 }$ is a submartingale under the conditional probability given E. Since $\\tau \\leq k$ and $0 \\leq M _ { t } \\leq 3 / 2$ , the stopped submartingale is bounded, so the elementary bounded optional-stopping theorem gives",
+        "bbox": [
+            93,
+            395,
+            901,
+            464
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e7538c2b8c2be68b2ef6fc4caba833514a9b20d9032e5ce9907c04e4e5fb8443.jpg",
+        "text": "$$\n\\mathbb { E } [ M _ { \\tau } \\mid \\mathcal { E } ] \\ge M _ { 0 } = f ( O ) + \\frac { 1 } { 2 } f ( \\emptyset ) \\ge \\mathrm { O P T } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            330,
+            463,
+            665,
+            494
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "If $\\mathrm { O P T } < k \\xi / 8$ , nonnegativity gives",
+        "bbox": [
+            93,
+            500,
+            380,
+            517
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "equation",
+        "img_path": "images/95c08a0f1921e906b3a4fce176104d914e4366f9d22764abc8f357d80fb222b3.jpg",
+        "text": "$$\n\\mathbb { E } [ M _ { \\tau } \\mid \\mathcal { E } ] \\ge 0 \\ge \\mathrm { O P T } - \\frac { 1 } { 8 } k \\xi .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            379,
+            529,
+            614,
+            560
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Thus in all cases",
+        "bbox": [
+            93,
+            570,
+            232,
+            587
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "equation",
+        "img_path": "images/8a7e3f3a7b3e6a475af2ce7bb1f7b14add21912f43f5b0fa92c71a928a9303a2.jpg",
+        "text": "$$\n\\mathbb { E } [ M _ { \\tau } \\ | \\ \\mathcal { E } ] \\ge \\mathrm { O P T } - C _ { 0 } k \\xi\n$$",
+        "text_format": "latex",
+        "bbox": [
+            395,
+            587,
+            601,
+            606
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "for a universal $C _ { 0 }$",
+        "bbox": [
+            94,
+            613,
+            243,
+            628
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Since $Q _ { \\tau } = \\bar { S }$ and $O _ { \\tau }$ is feasible in the contraction,",
+        "bbox": [
+            119,
+            631,
+            527,
+            647
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "equation",
+        "img_path": "images/8db380dc97bc1c33c196e7ac73e234c4ac721d922288db0e501e12e0c669e7e9.jpg",
+        "text": "$$\nf ( { \\bar { S } } \\cup O _ { \\tau } ) \\leq \\operatorname* { m a x } _ { T : T \\cup { \\bar { S } } \\in { \\mathcal { T } } } f ( T \\cup { \\bar { S } } ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            374,
+            660,
+            620,
+            686
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Because",
+        "bbox": [
+            94,
+            699,
+            165,
+            714
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "equation",
+        "img_path": "images/06c066bb7d6906454d45e5074a6639f73a0f4726d557c4ba538e6eaf7b827f53.jpg",
+        "text": "$$\n{ \\cal M } _ { \\tau } = f ( \\bar { S } \\cup { \\cal O } _ { \\tau } ) + \\frac { 1 } { 2 } f ( \\bar { S } ) ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            392,
+            709,
+            602,
+            742
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "the claimed certificate follows.",
+        "bbox": [
+            93,
+            746,
+            338,
+            762
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "Why this lemma is the technical centerpiece. The proof does not compare the controlled-oracle trajectory to the exact trajectory. The two trajectories may diverge completely. Instead, the potential is shown to retain positive drift on the controlled-oracle trajectory itself. This is the reason the result is not a routine Lipschitz perturbation argument.",
+        "bbox": [
+            91,
+            782,
+            901,
+            852
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "page_number",
+        "text": "13",
+        "bbox": [
+            488,
+            948,
+            509,
+            962
+        ],
+        "page_idx": 12
+    },
+    {
+        "type": "text",
+        "text": "5.4 Robust almost-above-average swaps",
+        "text_level": 2,
+        "bbox": [
+            93,
+            77,
+            496,
+            94
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "After preprocessing, contract the matroid at $\\bar { S } { : }$",
+        "bbox": [
+            93,
+            103,
+            470,
+            121
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c57d81e2556ddaf0137edc1d6c3a45a95e3829495b89da77c51c197733d230aa.jpg",
+        "text": "$$\nM ^ { \\prime } : = M / { \\bar { S } } , \\qquad g ( T ) : = f ( T \\cup { \\bar { S } } ) .\\tag{35}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            357,
+            131,
+            637,
+            151
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Then $g$ is nonnegative and submodular. Let $O _ { g }$ maximize $g$ in $M ^ { \\prime }$ .",
+        "bbox": [
+            93,
+            162,
+            620,
+            180
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "By Theorem 5.7, on the event $\\mathcal { E } .$",
+        "bbox": [
+            122,
+            181,
+            383,
+            196
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f86fd8099c88ef2479bbde3a870a56e306a8bc350d5ebe940924404ea4a1a9c7.jpg",
+        "text": "$$\n{ \\mathbb E } \\left[ g ( O _ { g } ) + \\frac { 1 } { 2 } g ( \\emptyset ) \\mid \\mathcal { E } \\right] \\geq \\mathrm { O P T } - C _ { 0 } k \\xi .\\tag{36}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            341,
+            207,
+            653,
+            243
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "By Lemma 5.5,",
+        "bbox": [
+            93,
+            253,
+            220,
+            270
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/64c14133161570949d822d8ff2d7837e1e8e07c5a01528826f510485eb9d75ef.jpg",
+        "text": "$$\n\\mathrm { M a r } ( g , M ^ { \\prime } ) \\leq 3 2 0 \\mathrm { O P T } + 1 9 2 2 k \\xi .\\tag{37}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            366,
+            270,
+            630,
+            287
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "The swap estimator. At time $t ,$ current set $A \\in \\mathbb { Z } ( M ^ { \\prime } )$ , and candidate element $i ,$ define",
+        "bbox": [
+            93,
+            306,
+            815,
+            324
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6834b21b68864076bc5cd63a442da32bd06b087bfa31f9e508fd85fbb47d5c5d.jpg",
+        "text": "$$\nw _ { i } = F ( t \\mathbf { 1 } _ { A } \\lor \\mathbf { 1 } _ { i } ) - F ( t \\mathbf { 1 } _ { A } ) .\\tag{38}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            385,
+            337,
+            609,
+            354
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Sample",
+        "bbox": [
+            93,
+            367,
+            160,
+            383
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/5580e4406cc2155dfd1d15f3514e47f2710db561f89b9bc917fc8cf25d6dd588.jpg",
+        "text": "$$\nR _ { 1 } , \\dots , R _ { m } \\sim t { \\bf 1 } _ { A }\n$$",
+        "text_format": "latex",
+        "bbox": [
+            424,
+            383,
+            571,
+            401
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "independently. Estimate",
+        "bbox": [
+            93,
+            409,
+            294,
+            426
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e4b98ce21c7647fc1efb87bc834d081a107397d0b9b3180de723753a046f5e84.jpg",
+        "text": "$$\n\\widetilde { w } _ { i } = \\frac { 1 } { m } \\sum _ { \\ell = 1 } ^ { m } \\bigl ( g ( R _ { \\ell } \\cup \\{ i \\} ) - g ( R _ { \\ell } ) \\bigr ) .\\tag{39}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            361,
+            424,
+            632,
+            467
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "The exact SGS-Poisson implementation chooses a maximum-weight base under $\\widetilde { w } _ { i }$ , constructs a matroid exchange map, and samples uniformly from that base.",
+        "bbox": [
+            93,
+            472,
+            901,
+            507
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "We use exactly this implementation, replacing exact function values by the controlled oracle induced on the contracted instance,",
+        "bbox": [
+            93,
+            507,
+            900,
+            540
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/dd364c3af8f4befda6ca33994e6d79f83a38bed56e31e5230668ea2a150574c3.jpg",
+        "text": "$$\n{ \\widehat { g } } ( T ) : = { \\widehat { f } } ( T \\cup { \\bar { S } } ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            423,
+            537,
+            570,
+            559
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Then",
+        "bbox": [
+            93,
+            565,
+            143,
+            580
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c6e5e509cfcf96f2162f958e91b8defc605610c6134b14e0df9a2be5600820d6.jpg",
+        "text": "$$\n| \\widehat { g } ( T ) - g ( T ) | \\leq \\xi , \\qquad | \\widehat { g } ( i \\mid T ) - g ( i \\mid T ) | \\leq 2 \\xi .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            308,
+            582,
+            686,
+            601
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Thus the same controlled-oracle model is inherited after contraction.",
+        "bbox": [
+            93,
+            607,
+            637,
+            625
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Lemma 5.8 (Right-continuity of the controlled swap). The controlled-oracle implementation of the SGS-Poisson swap is right-continuous in the sense required by Proposition 4.2.",
+        "bbox": [
+            93,
+            635,
+            901,
+            670
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Proof. Right-continuity is inherited from the sampling, event-time, exchange-map, and deterministic tie-breaking convention of the SGS-Poisson implementation of Kulik et al. [12]. For example, the sampled sets can be generated from fixed independent uniform random variables by thresholding at t, which gives a right-continuous version of the sampling and marginal processes; together with deterministic tie-breaking, this gives a right-continuous exchange rule. Replacing exact oracle values by $\\widehat g$ changes only the numerical weights used in the same selection rule and does not change this temporal convention. Thus the controlled-oracle implementation has the required right-continuous version of the swap process. No continuity or submodularity property of $\\widehat g$ is required. □",
+        "bbox": [
+            93,
+            679,
+            903,
+            818
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "Lemma 5.9 (Robust swap concentration). Fix $\\delta _ { s } \\in ( 0 , 1 / 2 )$ . Use the same value-oracle sampling, maximum-weight-base selection, exchange-map construction, and fixed tie-breaking convention as the exact SGS-Poisson implementation of Kulik et al. [12], but evaluate every set through the controlled oracle ${ \\widehat { g } } .$ . If",
+        "bbox": [
+            91,
+            828,
+            903,
+            896
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "equation",
+        "img_path": "images/eb343cf90d0d835d35b4ffb99afb4b656fef5f0623e0212e7220cbd1ce285394.jpg",
+        "text": "$$\nm = O \\left( \\frac { k \\log n + \\log ( 1 / \\delta _ { s } ) } { \\delta _ { s } ^ { 2 } } \\right) ,\\tag{40}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            375,
+            892,
+            617,
+            931
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "page_number",
+        "text": "14",
+        "bbox": [
+            488,
+            948,
+            509,
+            960
+        ],
+        "page_idx": 13
+    },
+    {
+        "type": "text",
+        "text": "then the resulting swap is valid and right-continuous and satisfies",
+        "bbox": [
+            93,
+            78,
+            611,
+            94
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/1de5281b3a16fffaed4ab24f4362c35eae29f26f205d59a062bf9f5dea443017.jpg",
+        "text": "$$\n\\begin{array} { r } { \\left| \\eta \\leq C _ { 1 } \\delta _ { s } \\big ( \\mathrm { M a r } ( g , M ^ { \\prime } ) + g ( O _ { g } ) \\big ) + C _ { 2 } k \\xi . \\right| } \\end{array}\\tag{41}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            336,
+            104,
+            658,
+            128
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "The constants $C _ { 1 } , C _ { 2 }$ are universal.",
+        "bbox": [
+            93,
+            138,
+            374,
+            156
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Proof. Validity is purely combinatorial. Once a maximum-weight base Z has been selected, the deterministic exchange map used by the exact implementation satisfies the valid-swap conditions. Right-continuity follows from Lemma 5.8.",
+        "bbox": [
+            93,
+            165,
+            903,
+            215
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Fix a swap time and condition on the complete history H immediately before the fresh samples are drawn. Thus A, t and the contracted matroid are fixed. For every independent set $Z$ of the contracted matroid, define",
+        "bbox": [
+            93,
+            217,
+            901,
+            266
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/452dff0c2830e468f37feeb044e63c4ca66c75a7a74dce1aa2ceb0d5d626d25c.jpg",
+        "text": "$$\nX _ { \\ell } ( Z ) : = \\sum _ { i \\in Z } \\bigl ( g ( R _ { \\ell } \\cup \\{ i \\} ) - g ( R _ { \\ell } ) \\bigr ) ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            354,
+            265,
+            640,
+            300
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "where $R _ { \\ell } \\sim t { \\bf 1 } _ { A }$ independently. Its population expectation is",
+        "bbox": [
+            91,
+            305,
+            576,
+            321
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/68a6823b941bd749344fff7d71ebe6159ef0f3a2ca81f4878df6dfd75aaa4aef.jpg",
+        "text": "$$\nW _ { g } ( Z ) : = \\operatorname { \\mathbb { E } } [ X _ { \\ell } ( Z ) \\mid \\mathcal { H } ] = \\sum _ { i \\in Z } \\left( F ( t \\mathbf { 1 } _ { A } \\lor \\mathbf { 1 } _ { i } ) - F ( t \\mathbf { 1 } _ { A } ) \\right) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            282,
+            330,
+            714,
+            366
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "We also define the empirical true base sum",
+        "bbox": [
+            93,
+            375,
+            437,
+            391
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ae1c1e012e40c455358f9d83dc9e3125bdca9d0ed122d6d7ae12a26afbbb7c0f.jpg",
+        "text": "$$\n{ \\overline { { W } } } _ { g } ( Z ) : = { \\frac { 1 } { m } } \\sum _ { \\ell = 1 } ^ { m } X _ { \\ell } ( Z ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            398,
+            400,
+            594,
+            444
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "We first establish a uniform concentration event for the true marginals. Let",
+        "bbox": [
+            120,
+            453,
+            718,
+            469
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/888bc1627031a78007fd0834dbcd45a498705eef8969266f7faca153c66fbad5.jpg",
+        "text": "$$\nZ ^ { + } ( R ) : = \\{ i \\in Z : g ( i \\mid R ) \\geq 0 \\} .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            367,
+            479,
+            625,
+            497
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Since $Z ^ { + } ( R )$ is independent and submodularity gives $g ( i \\mid R ) \\leq g ( i \\mid \\emptyset )$ 2",
+        "bbox": [
+            93,
+            507,
+            665,
+            525
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0fbc939e8e14f0276a607e1c33bd6635d5c1e6414b8c3dfca494da56a85344ad.jpg",
+        "text": "$$\nX _ { \\ell } ( Z ) \\leq \\sum _ { i \\in Z ^ { + } ( R _ { \\ell } ) } g ( i  { | } R _ { \\ell } ) \\leq \\mathrm { M a r } ( g , M ^ { \\prime } ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            336,
+            535,
+            658,
+            571
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "For the lower bound, submodularity gives",
+        "bbox": [
+            93,
+            582,
+            428,
+            598
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/7e4eb3609718603f2959ef05971ccb9c95a4e909397ead590ab36ea028af10c8.jpg",
+        "text": "$$\nX _ { \\ell } ( Z ) \\geq g ( R _ { \\ell } \\cup Z ) - g ( R _ { \\ell } ) \\geq - g ( R _ { \\ell } ) \\geq - g ( O _ { g } ) ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            303,
+            608,
+            692,
+            627
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "because $R _ { \\ell } \\subseteq A$ is independent and $g ( O _ { g } )$ is the optimum value of the contracted instance. Hence",
+        "bbox": [
+            93,
+            637,
+            867,
+            654
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/90164adb9145ddccc8188f1abdc129cc38899c54515f3535ee7282e4281ca5c8.jpg",
+        "text": "$$\n- g ( O _ { g } ) \\leq X _ { \\ell } ( Z ) \\leq \\mathrm { M a r } ( g , M ^ { \\prime } ) \\qquad \\forall Z , \\ell .\\tag{42}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            334,
+            664,
+            661,
+            683
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "Set",
+        "bbox": [
+            122,
+            693,
+            155,
+            708
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f67c31642d4026dbd0c74e5ae1818b9defcd2cd4f8dbda304a7a9714d4a24dd0.jpg",
+        "text": "$$\nL : = \\operatorname { M a r } ( g , M ^ { \\prime } ) + g ( O _ { g } ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            395,
+            709,
+            599,
+            727
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "If $L = 0 ;$ , then $g ( O _ { g } ) = 0$ and the contracted instance has zero optimum, so the almost-above-average condition is immediate. Hence assume $L > 0$ for the concentration argument below. Hoefding’s inequality and (42) imply, for every fixed independent set $Z$",
+        "bbox": [
+            93,
+            733,
+            901,
+            785
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c65b31c602ebc70f38807173c4d76d35159f60bf5f478c077e22e55ca72f7daf.jpg",
+        "text": "$$\n\\mathbb { P } \\left( \\left| \\overline { { W } } _ { g } ( Z ) - W _ { g } ( Z ) \\right| > \\frac { \\delta _ { s } } { 5 } L \\bigg | \\mathcal { H } \\right) \\leq 2 \\exp \\left( - \\frac { 2 m \\delta _ { s } ^ { 2 } } { 2 5 } \\right) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            282,
+            794,
+            710,
+            830
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "The contracted augmented matroid has rank at most k and ground-set size $n + k \\leq 2 n$ . Hence the number of independent sets is at most",
+        "bbox": [
+            93,
+            838,
+            901,
+            873
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "equation",
+        "img_path": "images/29d7f82385e10a9475ced5f2e897d94001462c9ab213f893110d8f3384f36b20.jpg",
+        "text": "$$\n\\sum _ { j = 0 } ^ { k } { \\binom { n + k } { j } } \\leq ( e ( n + k ) ) ^ { k } \\leq ( 2 e n ) ^ { k } ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            348,
+            882,
+            645,
+            929
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "page_number",
+        "text": "15",
+        "bbox": [
+            488,
+            948,
+            509,
+            962
+        ],
+        "page_idx": 14
+    },
+    {
+        "type": "text",
+        "text": "whose logarithm is $O ( k \\log n )$ . Thus, for a suficiently large universal constant in (40), the event",
+        "bbox": [
+            93,
+            77,
+            849,
+            94
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/5132bf44ca88a3415d7f2472ff4528cc188c1d65c395dddb3af5ae8eaa0d30dd.jpg",
+        "text": "$$\n\\mathcal { E } _ { \\mathrm { s w } } : = \\left\\{ \\operatorname* { s u p } _ { Z \\in \\mathbb { Z } ( M ^ { \\prime } ) } \\left. \\overline { { W } } _ { g } ( Z ) - W _ { g } ( Z ) \\right. \\leq \\frac { \\delta _ { s } } { 5 } L \\right\\}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            323,
+            104,
+            669,
+            148
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "satisfies",
+        "bbox": [
+            93,
+            159,
+            163,
+            174
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/02ac449136689b5d12bfc4ee6cf728dd2b5aace1e67691cf788973a2d77c5cb8.jpg",
+        "text": "$$\n\\mathbb { P } ( \\mathcal { E } _ { \\mathrm { s w } } ^ { c } \\mid \\mathcal { H } ) \\le \\frac { \\delta _ { s } } { 5 } .\\tag{43}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            429,
+            169,
+            566,
+            202
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Now incorporate the controlled oracle. For every sampled set R and candidate element $i ,$",
+        "bbox": [
+            122,
+            205,
+            825,
+            223
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f7fc70f7b0cda898e0f64cb41fee2612b933457f37f68e5138ac7d7b1e5590e4.jpg",
+        "text": "$$\n| [ \\widehat { g } ( R \\cup \\{ i \\} ) - \\widehat { g } ( R ) ] - [ g ( R \\cup \\{ i \\} ) - g ( R ) ] | \\leq 2 \\xi .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            305,
+            233,
+            689,
+            253
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Consequently, for every independent set $Z$",
+        "bbox": [
+            93,
+            263,
+            436,
+            281
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/002264a3dc7551afb9c5af7a22b54bf1de37166415a62375209f77434946cc20.jpg",
+        "text": "$$\n\\left| \\sum _ { i \\in Z } [ \\widehat { g } ( R \\cup \\{ i \\} ) - \\widehat { g } ( R ) ] - \\sum _ { i \\in Z } [ g ( R \\cup \\{ i \\} ) - g ( R ) ] \\right| \\leq 2 k \\xi .\\tag{44}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            274,
+            290,
+            720,
+            335
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "This is deterministic and holds simultaneously for all $Z .$",
+        "bbox": [
+            93,
+            344,
+            539,
+            361
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Let $\\widehat { W } ( Z )$ denote the empirical base sum computed from the controlled oracle. On ${ \\mathcal E } _ { \\mathrm { s w } }$",
+        "bbox": [
+            120,
+            361,
+            812,
+            378
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f6caf0c11184f84f34d391fdeefab022d57276d8f110694f0725c48649b2f3df.jpg",
+        "text": "$$\n\\operatorname* { s u p } _ { Z \\in \\mathcal { I } ( M ^ { \\prime } ) } | \\widehat { W } ( Z ) - W _ { g } ( Z ) | \\leq \\Delta , \\qquad \\Delta : = \\frac { \\delta _ { s } } { 5 } L + 2 k \\xi .\\tag{45}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            294,
+            388,
+            702,
+            426
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Let $\\widehat { Z }$ be the data-dependent maximum-weight base selected by the algorithm. Since $O _ { g }$ is an optimal base, it is an admissible comparison base for the almost-above-average guarantee. Because (45) holds simultaneously for every independent set, it applies to the data-dependent set $\\widehat { Z }$ and the fixed comparison base $O _ { g }$ , even though $\\overrightharpoon { Z }$ depends on the same samples. Therefore, on ${ \\mathcal E } _ { \\mathrm { s w } }$",
+        "bbox": [
+            93,
+            439,
+            901,
+            511
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f60383cc9886038998a2ffec80cc1cf488f3d551550f694749a6b2a2434e1845.jpg",
+        "text": "$$\n\\begin{array} { r l } & { \\overline { { W } } _ { g } ( \\widehat { Z } ) \\geq \\widehat { W } ( \\widehat { Z } ) - 2 k \\xi } \\\\ & { \\qquad \\quad \\geq \\widehat { W } ( O _ { g } ) - 2 k \\xi } \\\\ & { \\qquad \\quad \\geq \\overline { { W } } _ { g } ( O _ { g } ) - 4 k \\xi } \\\\ & { \\qquad \\quad \\geq W _ { g } ( O _ { g } ) - \\frac { \\delta _ { s } } { 5 } L - 4 k \\xi } \\\\ & { \\qquad \\quad \\geq F ( t \\mathbf { 1 } _ { A } \\lor \\mathbf { 1 } _ { O _ { g } } ) - F ( t \\mathbf { 1 } _ { A } ) - \\frac { \\delta _ { s } } { 5 } L - 4 k \\xi . } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            310,
+            518,
+            684,
+            655
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Equivalently, using the looser bound $2 \\Delta$",
+        "bbox": [
+            93,
+            664,
+            419,
+            680
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/98cce62abe4714c652b684a87783e8b4812fcc096295cdbffbb7f3aeebb0e68a.jpg",
+        "text": "$$\n\\overline { { { W } } } _ { g } ( \\widehat { Z } ) \\geq D - 2 \\Delta , \\qquad D : = F ( t { \\bf 1 } _ { A } \\vee { \\bf 1 } _ { O _ { g } } ) - F ( t { \\bf 1 } _ { A } ) .\\tag{46}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            287,
+            690,
+            707,
+            710
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "Here we used the standard submodularity bound",
+        "bbox": [
+            93,
+            722,
+            485,
+            738
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f182c746bcc0b0c0b6727425005d75393fd2509f3c727ddbb1de8718201a0f04.jpg",
+        "text": "$$\nW _ { g } ( O _ { g } ) = \\sum _ { i \\in O _ { g } } \\bigl ( F ( t \\mathbf { 1 } _ { A } \\lor \\mathbf { 1 } _ { i } ) - F ( t \\mathbf { 1 } _ { A } ) \\bigr ) \\geq F ( t \\mathbf { 1 } _ { A } \\lor \\mathbf { 1 } _ { O _ { g } } ) - F ( t \\mathbf { 1 } _ { A } ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            238,
+            747,
+            756,
+            785
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "The key point is that, conditional on the realized samples, the entering element is uniform in ${ \\widehat { Z } } .$ . Thus its conditional expected gain is the true base sum",
+        "bbox": [
+            93,
+            797,
+            901,
+            833
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "equation",
+        "img_path": "images/49ec179057b49c6ebeb4637e82bb499a045ea3eb255523db61eba71dc1897164.jpg",
+        "text": "$$\n\\frac { W _ { g } ( \\widehat { Z } ) } { k ^ { \\prime } } ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            465,
+            842,
+            531,
+            878
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "where $k ^ { \\prime } \\leq k$ is the contracted rank. The empirical quantity $\\overline { { W } } _ { g } ( \\widehat { Z } )$ is used only to establish a lower bound on the true quantity $W _ { g } ( \\widehat { Z } )$",
+        "bbox": [
+            93,
+            890,
+            901,
+            926
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "page_number",
+        "text": "16",
+        "bbox": [
+            488,
+            948,
+            509,
+            962
+        ],
+        "page_idx": 15
+    },
+    {
+        "type": "text",
+        "text": "On ${ \\mathcal E } _ { \\mathrm { s w } }$ , the uniform concentration event and the controlled-oracle error give",
+        "bbox": [
+            120,
+            77,
+            725,
+            94
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e06a6fc33fd8b4a241c49d2c1cde80719837e03f3575abf7805f023e3afa4fda.jpg",
+        "text": "$$\n\\begin{array} { r l } & { W _ { g } ( \\widehat { Z } ) \\geq \\widehat { W } _ { g } ( \\widehat { Z } ) - \\frac { \\delta _ { s } } { 5 } L } \\\\ & { \\qquad \\geq \\widehat { W } ( \\widehat { Z } ) - 2 k \\xi - \\frac { \\delta _ { s } } { 5 } L } \\\\ & { \\qquad \\geq \\widehat { W } ( O _ { g } ) - 2 k \\xi - \\frac { \\delta _ { s } } { 5 } L } \\\\ & { \\qquad \\geq \\overline { { W } } _ { g } ( O _ { g } ) - 4 k \\xi - \\frac { \\delta _ { s } } { 5 } L } \\\\ & { \\qquad \\geq W _ { g } ( O _ { g } ) - \\frac { 2 \\delta _ { s } } { 5 } L - 4 k \\xi } \\\\ & { \\qquad \\geq W _ { g } ( O _ { g } ) - \\frac { 2 \\delta _ { s } } { 5 } L - 4 k \\xi } \\\\ & { \\qquad \\geq D - 2 \\Delta . } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            370,
+            101,
+            624,
+            286
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "where",
+        "bbox": [
+            93,
+            296,
+            148,
+            310
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/52fa97ddbd8caeb2cf82553708d2cf485a63486a6b2a96cc7771f3cd75903f1c.jpg",
+        "text": "$$\nD : = F ( t { \\bf 1 } _ { A } \\vee \\mathbf { 1 } _ { O _ { g } } ) - F ( t { \\bf 1 } _ { A } ) , \\qquad \\Delta : = \\frac { \\delta _ { s } } { 5 } L + 2 k \\xi .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            295,
+            306,
+            700,
+            338
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Consequently,",
+        "bbox": [
+            93,
+            342,
+            210,
+            358
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/756a5507e828249cb799c0ebdc495ade810bc76dea59324660a44733a9b9ffc3.jpg",
+        "text": "$$\n\\mathbb { E } \\big [ F ( t \\mathbf { 1 } _ { A } \\vee \\mathbf { 1 } _ { J } ) - F ( t \\mathbf { 1 } _ { A } ) \\mid \\mathcal { H } , \\mathcal { E } _ { \\mathrm { s w } } , R _ { 1 } , \\dots , R _ { m } \\big ] \\geq \\frac { D - 2 \\Delta } { k ^ { \\prime } } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            269,
+            354,
+            723,
+            387
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "On the failure event, the pointwise lower bound $X _ { \\ell } ( Z ) \\geq - g ( O _ { g } )$ implies",
+        "bbox": [
+            93,
+            391,
+            673,
+            409
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3c4e13103f91d950ef4056933a572288ebcca72dc0b351d2ce5181f33407b0ee.jpg",
+        "text": "$$\nW _ { g } ( Z ) \\geq - g ( O _ { g } ) \\qquad \\forall Z \\in \\mathcal { T } ( M ^ { \\prime } ) ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            359,
+            416,
+            635,
+            435
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "and hence",
+        "bbox": [
+            93,
+            444,
+            181,
+            459
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ff9f88682ccf0552b96ae4d37f8d85ce99b237a518f95b62be1e5e8ab3979c61.jpg",
+        "text": "$$\n\\mathbb { E } [ F ( t \\mathbf { 1 } _ { A } \\vee \\mathbf { 1 } _ { J } ) - F ( t \\mathbf { 1 } _ { A } ) \\mid \\mathcal { H } , \\mathcal { E } _ { \\mathrm { s w } } ^ { c } , R _ { 1 } , \\dots , R _ { m } ] \\geq - \\frac { g ( O _ { g } ) } { k ^ { \\prime } } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            271,
+            454,
+            723,
+            488
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Let",
+        "bbox": [
+            122,
+            492,
+            156,
+            506
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/170e7c49c878a83a0cddbaf85380ee4a1e0adba46d4c83bbf472fc28e0982d2b.jpg",
+        "text": "$$\np : = \\mathbb { P } ( \\mathcal { E } _ { \\mathrm { s w } } ^ { c } \\mid \\mathcal { H } ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            431,
+            507,
+            562,
+            525
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Averaging over the fresh samples and using (43),",
+        "bbox": [
+            93,
+            531,
+            482,
+            547
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/2657fba509e4fdb53e96a8c35bc1a0be95504c8003c488ba60b20d0f187260fe.jpg",
+        "text": "$$\n\\begin{array} { r l } & { \\mathbb { E } [ F ( t { \\mathbf { 1 } _ { A } } \\vee { \\mathbf { 1 } _ { J } } ) - F ( t { \\mathbf { 1 } _ { A } } ) \\mid \\mathcal { H } ] } \\\\ & { \\qquad \\geq ( 1 - p ) \\frac { D - 2 \\Delta } { k ^ { \\prime } } - p \\frac { g ( O _ { g } ) } { k ^ { \\prime } } } \\\\ & { \\qquad = \\frac { ( 1 - p ) ( D - 2 \\Delta ) - p g ( O _ { g } ) } { k ^ { \\prime } } } \\\\ & { \\qquad \\geq \\frac { D - 2 \\Delta - 2 p g ( O _ { g } ) } { k ^ { \\prime } } . } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            359,
+            556,
+            633,
+            679
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Indeed, the last inequality follows from",
+        "bbox": [
+            93,
+            685,
+            406,
+            700
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/5f95dbc3c0dda9133d0c41bfa431864594ce4bb43621c5989932d7ab147f3c96.jpg",
+        "text": "$$\n- p D + 2 \\Delta p - p g ( O _ { g } ) \\ge - 2 p g ( O _ { g } ) ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            356,
+            710,
+            640,
+            729
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "which is equivalent to",
+        "bbox": [
+            93,
+            738,
+            272,
+            753
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/f263624ec0596f5e7f35d2ca300a7a74ae61c84d9d630e1109841552c86607ac.jpg",
+        "text": "$$\np \\big ( g ( O _ { g } ) - D + 2 \\Delta \\big ) \\geq 0 ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            398,
+            753,
+            596,
+            772
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "and follows from $D \\leq g ( O _ { g } )$ and $\\Delta \\geq 0$",
+        "bbox": [
+            93,
+            777,
+            411,
+            794
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Therefore, using $\\Delta = \\delta _ { s } L / 5 + 2 k \\xi , p \\leq \\delta _ { s } / 5 .$ , and $g ( O _ { g } ) \\le L$ , we obtain",
+        "bbox": [
+            120,
+            795,
+            684,
+            811
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ac24d057a4d34fabc3c964c1b3c3fa05bebd55dc1d7333a31c144b743da01bb5.jpg",
+        "text": "$$\n\\eta \\leq 2 \\Delta + \\frac { 2 \\delta _ { s } } { 5 } g ( O _ { g } ) \\leq \\frac { 4 } { 5 } \\delta _ { s } L + 4 k \\xi .\\tag{47}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            357,
+            819,
+            635,
+            852
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "In particular, this has the claimed form $\\eta \\leq C _ { 1 } \\delta _ { s } L + C _ { 2 } k \\xi$ for universal constants. This is precisely the η-almost-above-average condition.",
+        "bbox": [
+            93,
+            858,
+            901,
+            891
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "No submodularity, monotonicity, or unbiasedness of $\\widehat g$ is used. The key adaptive-selection point is the uniform event (45), which is established before the data-dependent base $\\widehat { Z }$ is selected. □",
+        "bbox": [
+            93,
+            892,
+            903,
+            926
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "page_number",
+        "text": "17",
+        "bbox": [
+            488,
+            948,
+            509,
+            962
+        ],
+        "page_idx": 16
+    },
+    {
+        "type": "text",
+        "text": "Combining (37), $g ( O _ { g } ) \\leq \\mathrm { O P T }$ , and Lemma 5.9, we obtain",
+        "bbox": [
+            122,
+            77,
+            589,
+            94
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "equation",
+        "img_path": "images/8beec960bbc25417cb21fa97a35c8e241474acdedaabf7fac6360ac829499a70.jpg",
+        "text": "$$\n\\eta \\leq C _ { 1 } \\delta _ { s } ( 3 2 1 0 \\mathrm { P T } + 1 9 2 2 k \\xi ) + C _ { 2 } k \\xi .\\tag{48}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            348,
+            108,
+            647,
+            126
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "Set",
+        "bbox": [
+            93,
+            140,
+            127,
+            155
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4d93939a98d57e0e348fd60be4482b5b6a32e96e6bccb9c6c05cf255dd8ee122.jpg",
+        "text": "$$\n\\delta _ { s } = \\frac { \\varepsilon } { 1 0 ^ { 4 } } .\\tag{49}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            457,
+            151,
+            537,
+            181
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "Then",
+        "bbox": [
+            94,
+            185,
+            142,
+            200
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "equation",
+        "img_path": "images/766a71fb1c2450e614b978b4e865209428f1e5ad68b235197156517141c714e8.jpg",
+        "text": "$$\n\\begin{array} { r } { \\boxed { \\eta \\leq C _ { 3 } \\varepsilon \\mathrm { O P T } + C _ { 4 } k \\xi . } } \\end{array}\\tag{50}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            406,
+            200,
+            589,
+            220
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "Notice the important relative form of the first term. We do not replace it by $O ( \\varepsilon ) { \\mathrm { : } }$ doing so would lose the desired $( \\alpha - \\varepsilon ) \\mathrm { O P T }$ resilience statement when OPT is small.",
+        "bbox": [
+            93,
+            228,
+            901,
+            262
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "The expected number of Poisson events is",
+        "bbox": [
+            122,
+            263,
+            457,
+            280
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "equation",
+        "img_path": "images/27688e3252d0ff9956224cf172354869142cf22e71da8ff92ca0b5f8832ee28b.jpg",
+        "text": "$$\nO \\left( k \\log { \\frac { 1 } { \\varepsilon _ { 0 } } } \\right) .\\tag{51}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            439,
+            291,
+            555,
+            328
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "Each swap requires",
+        "bbox": [
+            94,
+            339,
+            251,
+            356
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "equation",
+        "img_path": "images/6a53d5edb83a27e8757de9229462fd6a422fa3f5ccd1b0cd6a2d75cd59af0a47.jpg",
+        "text": "$$\nO \\left( \\frac { n ( k \\log n + \\log ( 1 / \\delta _ { s } ) ) } { \\delta _ { s } ^ { 2 } } \\right)\\tag{52}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            387,
+            352,
+            606,
+            390
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "controlled-oracle evaluations.",
+        "bbox": [
+            93,
+            395,
+            326,
+            411
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "Lemma 5.10 (Controlled-oracle complexity). With $\\rho = \\Theta ( \\varepsilon ) , \\delta _ { s } = \\Theta ( \\varepsilon )$ , and $\\varepsilon _ { 0 } = \\Theta ( \\varepsilon )$ , the expected number of controlled-oracle evaluations used by the unchanged SGS-Poisson value-oracle implementation is",
+        "bbox": [
+            93,
+            422,
+            901,
+            473
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "equation",
+        "img_path": "images/963f87b4940a7ff0cbb2b799697d0bc0c29004f67eeccf1ed304f2c0a160f924.jpg",
+        "text": "$$\n\\begin{array} { l } { { \\displaystyle N ( \\varepsilon ) = O \\left( n k \\log \\frac { 1 } { \\varepsilon } + n k + \\frac { n k ^ { 2 } \\log n \\log ( 1 / \\varepsilon ) } { \\varepsilon ^ { 2 } } + \\frac { n k \\log ^ { 2 } ( 1 / \\varepsilon ) } { \\varepsilon ^ { 2 } } \\right) } } \\\\ { { \\displaystyle ~ = \\widetilde O ( n k ^ { 2 } \\varepsilon ^ { - 2 } ) . } } \\end{array}\\tag{53}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            250,
+            469,
+            743,
+            527
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "Here the expectation is over all internal randomization of the algorithm, including the RRG amplification, preprocessing, Poisson process, and swap sampling. Independence-oracle queries and maximum-weightbase computation are not counted.",
+        "bbox": [
+            93,
+            536,
+            903,
+            587
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "Proof. Each RRG run has $\\lceil k / 2 \\rceil$ iterations, and each iteration requires $O ( n )$ marginal-value queries to form a maximum-weight base. The amplified certificate uses $R = O ( \\log ( 1 / \\rho ) ) = O ( \\log ( 1 / \\varepsilon ) )$ ) independent runs, hence $O ( n k \\log ( 1 / \\varepsilon ) )$ queries. Advanced Preprocessing performs at most k iterations, each requiring $O ( n )$ marginal queries, hence $O ( n k )$ additional queries.",
+        "bbox": [
+            93,
+            598,
+            901,
+            666
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "For a swap, (40) with $\\delta _ { s } = \\Theta ( \\varepsilon )$ gives",
+        "bbox": [
+            122,
+            666,
+            423,
+            684
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "equation",
+        "img_path": "images/68dc7a21d54c225f6cf679a75b9facede9a3349e48289034cb1a53a0b826fd8a.jpg",
+        "text": "$$\nm = O \\left( \\frac { k \\log n + \\log ( 1 / \\varepsilon ) } { \\varepsilon ^ { 2 } } \\right) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            379,
+            695,
+            614,
+            731
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "There are n candidate entering elements, and each sampled marginal $g ( R e \\cup \\{ i \\} ) - g ( R e )$ uses two controlled-oracle evaluations. Thus one Poisson event requires $O ( n m )$ controlled-oracle evaluations (the factor of two is absorbed in the $O ( \\cdot )$ notation). The non-homogeneous Poisson process on $[ \\varepsilon _ { 0 } , 1 ]$ has expected number of events k $\\textstyle \\int _ { \\varepsilon _ { 0 } } ^ { 1 } t ^ { - 1 } { \\dot { d t } } = k \\log ( { \\dot { 1 / \\varepsilon _ { 0 } } } )$ . Multiplying these two quantities gives",
+        "bbox": [
+            93,
+            743,
+            901,
+            814
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "equation",
+        "img_path": "images/a8661bd07e79017e62533c4d346356f1733db74da9234bb48629a81ab8f7104c.jpg",
+        "text": "$$\nO \\left( \\frac { n k ^ { 2 } \\log n \\log ( 1 / \\varepsilon ) } { \\varepsilon ^ { 2 } } + \\frac { n k \\log ^ { 2 } ( 1 / \\varepsilon ) } { \\varepsilon ^ { 2 } } \\right) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            339,
+            827,
+            655,
+            863
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "Adding the RRG and preprocessing costs proves the claim.",
+        "bbox": [
+            94,
+            876,
+            560,
+            892
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "page_number",
+        "text": "18",
+        "bbox": [
+            488,
+            948,
+            509,
+            962
+        ],
+        "page_idx": 17
+    },
+    {
+        "type": "text",
+        "text": "5.5 Combining the pieces: the resilience theorem",
+        "text_level": 2,
+        "bbox": [
+            93,
+            77,
+            588,
+            94
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "We now combine the preprocessing and swap results with the unchanged SGS-Poisson dynamics.",
+        "bbox": [
+            93,
+            103,
+            856,
+            121
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "Theorem 5.11 (Resilience of SGS-Poisson). There exists a universal constant C such that for every $\\varepsilon \\in ( 0 , 1 / 2 ]$ the following holds.",
+        "bbox": [
+            93,
+            132,
+            901,
+            165
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "$I f k = 0$ , return ∅. $I f k = 1$ , query $\\widehat { f }$ on every feasible singleton and on $\\emptyset$ and return the best queried feasible set; this gives",
+        "bbox": [
+            93,
+            166,
+            901,
+            200
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4fc3bb694fa2a8cd628c3199c67fb8ae2aa85e4fb1679a48325d12c6dd9c14c3.jpg",
+        "text": "$$\n\\mathbb { E } [ f ( A _ { \\mathrm { o u t } } ) ] \\geq \\mathrm { O P T } - 2 \\xi ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            400,
+            200,
+            596,
+            218
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "so the claimed theorem follows. Hence assume $k \\geq 2$ below.",
+        "bbox": [
+            93,
+            226,
+            562,
+            242
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "Let $f : 2 ^ { U }  [ 0 , 1 ]$ be nonnegative submodular and let $M = ( U , { \\mathcal { T } } )$ be a matroid of rank k. Given any persistent $\\xi \\cdot$ -controlled oracle, the SGS-Poisson value-oracle implementation outputs $A _ { \\mathrm { o u t } } \\in \\mathcal { T }$ satisfying",
+        "bbox": [
+            93,
+            242,
+            901,
+            279
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/43c389d38eb47e958fdd5a68caa6b82e82c93d2e5321f3f2a769a974b12f451d.jpg",
+        "text": "$$\n\\begin{array} { r } { \\boxed { \\mathbb { E } [ f ( A _ { \\mathrm { o u t } } ) ] \\geq \\left\\{ \\begin{array} { l l } { ( 1 / e - \\varepsilon ) \\mathrm { O P T } - C k \\xi , } & { f \\ n o n - m o n o t o n e , } \\\\ { ( 1 - 1 / e - \\varepsilon ) \\mathrm { O P T } - C k \\xi , } & { f \\ m o n o t o n e . } \\end{array} \\right. } } \\end{array}\\tag{54}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            254,
+            291,
+            736,
+            342
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "Moreover,",
+        "bbox": [
+            94,
+            356,
+            178,
+            372
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/956fedf99ae1581e0ca00cea85cdab2e0a83fddf8cabbeaf198bb4b710f30882.jpg",
+        "text": "$$\n\\boxed { N ( \\varepsilon ) = O \\left( n k \\log \\frac { 1 } { \\varepsilon } + \\frac { n k ^ { 2 } \\log n \\log ( 1 / \\varepsilon ) } { \\varepsilon ^ { 2 } } + \\frac { n k \\log ^ { 2 } ( 1 / \\varepsilon ) } { \\varepsilon ^ { 2 } } \\right) . }\\tag{55}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            263,
+            372,
+            735,
+            412
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "Proof. Choose the RRG amplification failure probability $\\rho = \\varepsilon / 1 0 0$ . By the certificate construction,",
+        "bbox": [
+            94,
+            425,
+            879,
+            443
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ea8e1c99f90ed7ca6488750758a24ca6a7445f64176f98934dee21f6163dfc7f.jpg",
+        "text": "$$\n\\mathbb { P } ( \\widehat { V } \\geq \\mathrm { O P T } ) \\geq 1 - \\rho .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            408,
+            454,
+            586,
+            473
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "Let",
+        "bbox": [
+            93,
+            488,
+            129,
+            502
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/39eda2c45c033b264785d86839ae177cc51a318cde1d23adacf2c493ca822252.jpg",
+        "text": "$$\n\\mathcal { E } : = \\left\\{ \\mathrm { O P T } \\leq \\widehat { V } \\leq 1 6 \\mathrm { O P T } + 9 6 k \\xi \\right\\} .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            349,
+            498,
+            643,
+            527
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "By $( 2 6 ) , \\mathbb { P } ( \\mathcal { E } ) \\geq 1 - \\rho$ . We take the initial sigma-field to include the RRG repetitions and their output, so $\\mathcal { E }$ is measurable at time zero. Conditional on this initial sigma-field, all subsequent preprocessing and SGS-Poisson randomness is independent of the RRG repetitions. The preprocessing certificate is used in conditional expectation, while the residual-mass and swap bounds hold uniformly for every realized preprocessing trajectory on $\\mathcal { E } ;$ hence the subsequent conditioning on $\\mathcal { E }$ is legitimate.",
+        "bbox": [
+            93,
+            532,
+            901,
+            619
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "On $\\mathcal { E } ,$ Theorem 5.7 gives",
+        "bbox": [
+            122,
+            618,
+            325,
+            636
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/4b07266c6a603d04ad6eaebbb604fa13330ad7e8de324e39de54818fda64827f.jpg",
+        "text": "$$\n{ \\mathbb E } \\left[ g ( O _ { g } ) + \\frac { 1 } { 2 } g ( \\emptyset ) \\mid \\mathcal { E } \\right] \\ge \\mathrm { O P T } - C _ { 0 } k \\xi .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            341,
+            646,
+            653,
+            683
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "Also, Lemma 5.5 and Lemma 5.9, with",
+        "bbox": [
+            94,
+            694,
+            405,
+            710
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/a134679e97a7d02c789bf461b2f90ed6d5bb7b296b3aa86781620f3ed492aca2.jpg",
+        "text": "$$\n\\delta _ { s } = \\frac { \\varepsilon } { 1 0 ^ { 4 } } ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            457,
+            707,
+            537,
+            738
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "give, uniformly over every realized preprocessing trajectory in $\\mathcal { E } .$",
+        "bbox": [
+            93,
+            742,
+            604,
+            758
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/edacd15af8eb06d9c49efc0099156095e50a589a00e193f6d0b3df35b085ad76.jpg",
+        "text": "$$\n\\eta \\leq C _ { 3 } \\varepsilon \\mathrm { O P T } + C _ { 4 } k \\xi .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            411,
+            772,
+            584,
+            790
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "If the contracted rank is $k ^ { \\prime } = 0$ , then $O _ { g } = \\emptyset$ and the post-preprocessing algorithm returns $\\bar { S } .$ . The certificate gives",
+        "bbox": [
+            93,
+            803,
+            901,
+            837
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/654d72b595efda5be7807ac873595bf2c3583cbd8b0afc75d927fd76af0d63dd.jpg",
+        "text": "$$\n\\mathbb { E } \\left[ g ( O _ { g } ) + \\frac { 1 } { 2 } g ( \\emptyset ) \\mid \\xi \\right] = \\frac { 3 } { 2 } \\mathbb { E } [ g ( \\emptyset ) \\mid \\xi ] \\geq \\mathrm { O P T } - C _ { 0 } k \\xi ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            281,
+            834,
+            714,
+            871
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "and hence",
+        "bbox": [
+            94,
+            877,
+            181,
+            892
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "equation",
+        "img_path": "images/ce492052af40362c7db0d12a9e2a3e2affb9923ad8974ca052103db05c6414dc.jpg",
+        "text": "$$\n\\mathbb { E } [ f ( A _ { \\mathrm { o u t } } ) \\mid \\mathcal { E } ] \\geq \\frac { 2 } { 3 } \\mathrm { O P T } - \\frac { 2 } { 3 } C _ { 0 } k \\xi .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            362,
+            887,
+            632,
+            921
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "page_number",
+        "text": "19",
+        "bbox": [
+            488,
+            948,
+            509,
+            962
+        ],
+        "page_idx": 18
+    },
+    {
+        "type": "text",
+        "text": "Since $2 / 3 > 1 - 1 / e > 1 / e$ , enlarging the universal constant yields both claimed approximation bounds.   \nThus we may assume $k ^ { \\prime } \\ge 1$ when applying Proposition 4.2 below.",
+        "bbox": [
+            93,
+            77,
+            901,
+            112
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "Run SGS-Poisson on the contracted instance with starting time $\\varepsilon _ { 0 } = \\varepsilon / 1 0 0$ . Conditioned on $\\mathcal { E }$ and on the realized S<sup>¯</sup>, Proposition 4.2 gives, in the non-monotone case,",
+        "bbox": [
+            93,
+            112,
+            901,
+            146
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "equation",
+        "img_path": "images/7a7d7ac34f9937b98728c004c46e72fadd74f932d9696bf5a91beece351e9f80.jpg",
+        "text": "$$\n\\mathbb { E } [ g ( S _ { \\mathrm { o u t } } ) \\mid \\bar { S } , \\mathcal { E } ] \\ge ( 1 - \\varepsilon _ { 0 } ) \\frac { 1 } { e } g ( O _ { g } ) + \\frac { 1 } { e } g ( \\mathcal { O } ) - \\eta .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            307,
+            156,
+            687,
+            189
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "Since $g ( \\emptyset ) \\geq 0$ and $1 / e \\geq ( 1 - \\varepsilon _ { 0 } ) / ( 2 e )$ , taking expectation over the preprocessing randomness $\\bar { S }$ conditioned on $\\mathcal { E }$ and using linearity of expectation gives",
+        "bbox": [
+            93,
+            200,
+            901,
+            234
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "equation",
+        "img_path": "images/da4f9b511aebed0f925f72c22657f6ec7f73c1c7fd8c45a2ea06331b8fe92248.jpg",
+        "text": "$$\n\\begin{array} { r l } & { \\mathbb { E } \\displaystyle [ g ( S _ { \\mathrm { o u t } } ) \\mid \\mathcal { E } ] \\geq \\frac { 1 - \\varepsilon _ { 0 } } { e } \\mathbb { E } \\left[ g ( O _ { g } ) + \\frac { 1 } { 2 } g ( \\emptyset ) \\mid \\mathcal { E } \\right] } \\\\ & { \\qquad - C _ { 2 } \\varepsilon \\mathrm { O P T } - C _ { 3 } k \\xi . } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            316,
+            246,
+            676,
+            303
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "Using the certificate,",
+        "bbox": [
+            94,
+            315,
+            264,
+            332
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "equation",
+        "img_path": "images/d122d7e46e99406a56ae9824d75ec6c61198fd495c508b116f9b49cc3acc937d.jpg",
+        "text": "$$\n\\mathbb { E } [ f ( A _ { \\mathrm { o u t } } ) \\mid \\mathcal { E } ] \\geq \\left( { \\frac { 1 } { e } } - C _ { 4 } \\varepsilon \\right) { \\mathrm { O P T } } - C _ { 5 } k \\xi .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            328,
+            330,
+            665,
+            366
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "For monotone $f ,$ the contraction $g$ is also monotone, and Proposition 4.2 gives",
+        "bbox": [
+            120,
+            371,
+            743,
+            388
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "equation",
+        "img_path": "images/c91e374080efa361cd236e1f2f3fbe019a714ed3acb3b6a59b32d405d734b775.jpg",
+        "text": "$$\n\\mathbb { E } [ g ( S _ { \\mathrm { o u t } } ) \\mid \\bar { S } , \\mathcal { E } ] \\ge ( 1 - \\varepsilon _ { 0 } ) ( 1 - 1 / e ) g ( O _ { g } ) + \\frac { 1 } { e } g ( \\mathcal { O } ) - \\eta .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            277,
+            398,
+            717,
+            431
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "Because",
+        "bbox": [
+            94,
+            441,
+            165,
+            457
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "equation",
+        "img_path": "images/89c439805cc8405635558f7509361a93c1aafcb2560890aad737a0bc1741f5f7.jpg",
+        "text": "$$\n\\frac { 1 } { e } \\geq \\frac { 1 } { 2 } ( 1 - 1 / e ) ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            431,
+            452,
+            563,
+            484
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "taking expectation over the preprocessing randomness $\\bar { S }$ conditioned on $\\mathcal { E }$ and using linearity of expectation gives",
+        "bbox": [
+            93,
+            491,
+            903,
+            526
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0e8e092661b58146ad9840404fa259d8432f624c2d11b97592921dec475c94b7.jpg",
+        "text": "$$\n\\begin{array} { c l l } { { \\mathbb { E } [ g ( S _ { \\mathrm { o u t } } ) \\mid { \\mathcal { E } } ] \\geq ( 1 - \\varepsilon _ { 0 } ) ( 1 - 1 / e ) \\mathbb { E } \\left[ g ( O _ { g } ) + { \\frac { 1 } { 2 } } g ( { \\mathcal { O } } ) \\mid { \\mathcal { E } } \\right] } } \\\\ { { - C _ { 2 } \\varepsilon \\mathrm { O P T } - C _ { 3 } k \\xi . } } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            277,
+            522,
+            715,
+            579
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "Therefore",
+        "bbox": [
+            93,
+            587,
+            178,
+            602
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "equation",
+        "img_path": "images/58302924a123f4856b9fcdb22575196eac9df5118894a0d3f68000b149755aa3.jpg",
+        "text": "$$\n\\mathbb { E } [ f ( A _ { \\mathrm { o u t } } ) \\mid \\mathcal { E } ] \\geq \\left( 1 - \\frac { 1 } { e } - C _ { 6 } \\varepsilon \\right) \\mathrm { O P T } - C _ { 7 } k \\xi .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            313,
+            598,
+            681,
+            633
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "It remains to remove the conditioning. Since $f ( A _ { \\mathrm { o u t } } ) \\geq 0$",
+        "bbox": [
+            120,
+            640,
+            580,
+            657
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3b59217665a575723815beae1d177136e21b274abca773a560fb25e7a071696c.jpg",
+        "text": "$$\n\\begin{array} { r } { \\mathbb { E } [ f ( A _ { \\mathrm { o u t } } ) ] \\geq \\mathbb { P } ( \\mathcal { E } ) \\mathbb { E } [ f ( A _ { \\mathrm { o u t } } ) \\mid \\mathcal { E } ] \\geq ( 1 - \\rho ) \\mathbb { E } [ f ( A _ { \\mathrm { o u t } } ) \\mid \\mathcal { E } ] . } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            274,
+            670,
+            720,
+            689
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "For either objective class, the conditional lower bound has the form $c \\mathrm { O P T } - C ^ { \\prime } \\varepsilon \\mathrm { O P T } - C ^ { \\prime \\prime } k \\xi$ with $c \\in \\{ 1 / e , 1 - 1 / e \\}$ . Multiplication by $1 - \\rho$ therefore changes the leading coeficient by at most $\\rho$ because $\\mathrm { O P T } \\leq 1$ . Taking $\\rho = \\varepsilon / 1 0 0$ and enlarging the universal constants gives",
+        "bbox": [
+            93,
+            702,
+            901,
+            753
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "equation",
+        "img_path": "images/710fb4a61919698a9cd7c025e4a078d5e69b3b0491087299b1296565a8291730.jpg",
+        "text": "$$\n\\mathbb { E } [ f ( A _ { \\mathrm { o u t } } ) ] \\geq \\left\\{ \\begin{array} { l l } { ( 1 / e - \\varepsilon ) \\mathrm { O P T } - C k \\xi , } & { f \\mathrm { ~ n o n - m o n o t o n e } , } \\\\ { ( 1 - 1 / e - \\varepsilon ) \\mathrm { O P T } - C k \\xi , } & { f \\mathrm { ~ m o n o t o n e } . } \\end{array} \\right.\n$$",
+        "text_format": "latex",
+        "bbox": [
+            258,
+            767,
+            735,
+            811
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "The oracle complexity is given by Lemma 5.10.",
+        "bbox": [
+            120,
+            824,
+            496,
+            840
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "Corollary 5.12 (Resilience parameters). In the resilience parameterization of Definition $3 . 1 , \\ S G S -$ Poisson is $( 1 / e , \\ 2 , \\ 2 , \\ \\widetilde { O } ( n k ^ { 2 } ) , \\ O ( k ) ) \\ f o r$ non-monotone submodular maximization and $( 1 - 1 / e , \\ 2 , \\ 2 , \\ \\widetilde O ( n k ^ { 2 } ) , \\ O ( k ) )$ for monotone submodular maximization.",
+        "bbox": [
+            93,
+            853,
+            982,
+            905
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "page_number",
+        "text": "20",
+        "bbox": [
+            486,
+            948,
+            509,
+            962
+        ],
+        "page_idx": 19
+    },
+    {
+        "type": "text",
+        "text": "6 Ofline-to-Online CMAB",
+        "text_level": 2,
+        "bbox": [
+            94,
+            74,
+            424,
+            93
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "We now use the resilience theorem only as an ofline primitive. The controlled oracle is an analysis interface for this ofline subroutine; it is not assumed to be directly available to the online learner. In the CMAB application, the ofline value estimates are generated by the exploration mechanism in the ofline-to-online reduction. The online conversion is the single-agent specialization of the framework of [8]; we use their theorem in its general $( \\alpha , \\beta , \\gamma , \\psi , \\delta )$ form. This avoids introducing a separate fixed-accuracy $T ^ { 2 / 3 }$ theorem and lets the query-complexity exponent $\\beta$ directly determine the final horizon exponent.",
+        "bbox": [
+            93,
+            108,
+            903,
+            212
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "Theorem 6.1 (ofline-to-online reduction, [8]). Suppose $\\delta \\ > \\ 0$ and an ofline algorithm $\\mathcal { A } ( \\varepsilon )$ is $( \\alpha , \\beta , \\gamma , \\psi , \\delta )$ -resilient in the sense of Definition 3.1, with oracle complexity $N ( \\varepsilon ) = \\widetilde O \\big ( \\psi \\varepsilon ^ { - \\beta } \\log ^ { \\gamma } ( 1 / \\varepsilon ) \\big )$ Then, for stochastic single-agent CMAB with full-bandit feedback, whenever T satisfies the following horizon condition, $\\textstyle T \\geq \\operatorname* { m a x } \\left\\{ \\psi , { \\frac { 2 \\psi } { \\delta ^ { \\beta + 1 } } } \\right\\}$ , the reduction in $[ 8 ]$ using A as its ofline subroutine achieves",
+        "bbox": [
+            93,
+            222,
+            901,
+            299
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "equation",
+        "img_path": "images/a38d067c845409a76b78c4c08c7101f73caa98edb96606dc52c8271b249e9752.jpg",
+        "text": "$$\nR _ { \\alpha } ( T ) = \\widetilde { \\cal O } \\left( \\delta ^ { \\frac { 2 } { 3 + \\beta } } \\psi ^ { \\frac { 1 } { 3 + \\beta } } T ^ { \\frac { 2 + \\beta } { 3 + \\beta } } \\right) ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            379,
+            310,
+            617,
+            339
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "where the logarithmic dependence on T and the exponent $\\gamma$ are absorbed into ${ \\widetilde { O } } ( \\cdot )$ . The theorem eliminates the ofline ε-approximation loss and therefore gives α-regret, rather than $( \\alpha - \\varepsilon ) \\ – r e g r e t .$",
+        "bbox": [
+            93,
+            354,
+            901,
+            390
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "Thus, we obtain the following.",
+        "bbox": [
+            122,
+            400,
+            364,
+            416
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "Corollary 6.2 (Full-bandit CMAB under general matroids). For stochastic full-bandit CMAB with a general rank-k matroid and a nonnegative submodular mean reward, there exist algorithms satisfying, for all horizons $\\begin{array} { r } { T \\ge \\operatorname* { m a x } \\left\\{ \\psi , \\frac { 2 \\psi } { \\delta ^ { 3 } } \\right\\} } \\end{array}$ ，",
+        "bbox": [
+            93,
+            428,
+            903,
+            484
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "equation",
+        "img_path": "images/33a73b20ca5dc06d27811619fa9de448636a18d5389d058707ea187b9714c2c0.jpg",
+        "text": "$$\nR _ { 1 / e } ( T ) = \\widetilde { O } \\Big ( n ^ { 1 / 5 } k ^ { 4 / 5 } T ^ { 4 / 5 } \\Big )\n$$",
+        "text_format": "latex",
+        "bbox": [
+            385,
+            486,
+            609,
+            513
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "for non-monotone rewards and",
+        "bbox": [
+            93,
+            520,
+            344,
+            536
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "equation",
+        "img_path": "images/b60d16d78cd2d2c694b311f8b470b9b7310d76f7f3707365055081df2037b0eb.jpg",
+        "text": "$$\nR _ { 1 - 1 / e } ( T ) = \\widetilde { O } \\Big ( n ^ { 1 / 5 } k ^ { 4 / 5 } T ^ { 4 / 5 } \\Big )\n$$",
+        "text_format": "latex",
+        "bbox": [
+            377,
+            534,
+            617,
+            560
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "for monotone rewards, where one may take",
+        "bbox": [
+            93,
+            568,
+            437,
+            584
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "equation",
+        "img_path": "images/734a0b1a8681c829f22a427dab3fbcd9976c7b8b466bbf0ba5c016b5428db976.jpg",
+        "text": "$$\n\\psi = \\widetilde O ( n k ^ { 2 } ) , \\qquad \\delta = O ( k ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            387,
+            595,
+            606,
+            616
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "In particular, since a resilience guarantee with parameter $\\delta _ { 0 }$ also holds with any $\\delta \\geq \\delta _ { 0 }$ , we may take the universal constant in $\\delta = { \\cal { O } } ( k )$ large enough that $\\delta \\geq 1$ . The admissibility condition is then satisfied whenever",
+        "bbox": [
+            93,
+            630,
+            901,
+            679
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "equation",
+        "img_path": "images/a874766d9e120e59028b877e0ae46793a0d75ea2ef0565cffb5ad6f940a01e4c.jpg",
+        "text": "$$\nT \\geq 2 \\psi , \\qquad \\psi = \\widetilde O ( n k ^ { 2 } ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            393,
+            678,
+            601,
+            698
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "Thus $T \\geq { \\widetilde { O } } ( n k ^ { 2 } )$ is a suficient order-of-growth condition, up to the universal constant in the horizon requirement. For smaller horizons, the same order bound can be made formally valid after enlarging its universal constant, since $R _ { \\alpha } ( T ) \\leq T$ under the present normalization.",
+        "bbox": [
+            93,
+            705,
+            901,
+            757
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "Proof. Theorem 5.11 and Corollary 5.12 give",
+        "bbox": [
+            94,
+            768,
+            452,
+            785
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "equation",
+        "img_path": "images/bb7f1ebf216b6ee4df7a74c934fd9b1b699255b147513b7f3f4fa154573ad81b.jpg",
+        "text": "$$\n\\beta = 2 , \\qquad \\gamma = 2 , \\qquad \\psi = \\widetilde O ( n k ^ { 2 } ) , \\qquad \\delta = O ( k ) ,\n$$",
+        "text_format": "latex",
+        "bbox": [
+            300,
+            797,
+            694,
+            816
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "with $\\alpha = 1 / e$ in the non-monotone case and $\\alpha = 1 - 1 / e$ in the monotone case. Theorem 6.1 therefore requires",
+        "bbox": [
+            93,
+            830,
+            900,
+            863
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "equation",
+        "img_path": "images/77619d4417eb47fe2ccd8be4afd04f376fc8661c1893f8be7fba67958449019b.jpg",
+        "text": "$$\nT \\geq \\operatorname* { m a x } \\left\\{ \\psi , \\frac { 2 \\psi } { \\delta ^ { 3 } } \\right\\} .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            416,
+            861,
+            576,
+            898
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "page_number",
+        "text": "21",
+        "bbox": [
+            486,
+            948,
+            508,
+            962
+        ],
+        "page_idx": 20
+    },
+    {
+        "type": "text",
+        "text": "After enlarging δ by a universal constant if necessary, we may assume $\\delta \\geq 1$ , so a suficient condition is $T \\geq 2 \\psi = \\widetilde { \\cal O } ( n k ^ { 2 } )$ . Applying Theorem 6.1 with $\\beta = 2$ then yields",
+        "bbox": [
+            93,
+            77,
+            901,
+            112
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "equation",
+        "img_path": "images/3d9dec08a4c03a21a166644f9c06bf943538d7b882f88619fe468034e36ff1aa.jpg",
+        "text": "$$\n\\begin{array} { r c l } { { } } & { { } } & { { R _ { \\alpha } ( T ) = \\widetilde O \\Bigl ( ( k ) ^ { 2 / 5 } ( n k ^ { 2 } ) ^ { 1 / 5 } T ^ { 4 / 5 } \\Bigr ) } } \\\\ { { } } & { { } } & { { = \\widetilde O \\Bigl ( n ^ { 1 / 5 } k ^ { 4 / 5 } T ^ { 4 / 5 } \\Bigr ) . } } \\end{array}\n$$",
+        "text_format": "latex",
+        "bbox": [
+            367,
+            118,
+            627,
+            175
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "This proves both claims.",
+        "bbox": [
+            93,
+            181,
+            292,
+            198
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "7 Discussion of Technical Novelty",
+        "text_level": 2,
+        "bbox": [
+            93,
+            219,
+            506,
+            241
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "We separate the imported ingredients from the new technical statements.",
+        "bbox": [
+            93,
+            253,
+            673,
+            271
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "Imported ingredients. The proof uses three external algorithmic components: (i) the exact SGS-Poisson process and its Poisson diferential analysis [12]; (ii) the standard Residual Random Greedy exchange lemma [3]; and (iii) the single-agent ofline-to-online CMAB conversion of [8]. None of these ingredients is claimed as new here.",
+        "bbox": [
+            93,
+            290,
+            903,
+            359
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "New technical statements. The paper proves:",
+        "bbox": [
+            93,
+            376,
+            496,
+            393
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "(i) robust RRG under an arbitrary adversarially controlled oracle;",
+        "bbox": [
+            111,
+            400,
+            637,
+            417
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "(ii) a realized constant-factor optimum certificate that can drive an adaptive controlled-oracle stopping rule;",
+        "bbox": [
+            106,
+            426,
+            901,
+            460
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "(iii) the resilient adaptive-preprocessing drift inequality of Lemma 5.6,",
+        "bbox": [
+            101,
+            469,
+            660,
+            488
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "equation",
+        "img_path": "images/e9bcfd51bfbb990b244c0d476b6ca1b3cabf9257e2f2cbdebdfe95061b74921a.jpg",
+        "text": "$$\n\\mathbb { E } [ M _ { t + 1 } - M _ { t } \\mid { \\mathcal { F } } _ { t } ] \\geq { \\frac { 8 { \\mathrm { O P T } } - k \\xi } { k - t } } ;\n$$",
+        "text_format": "latex",
+        "bbox": [
+            383,
+            492,
+            655,
+            526
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "(iv) the robust almost-above-average swap guarantee of Lemma 5.9 for the exact SGS-Poisson implementation, with error $O ( \\varepsilon \\mathrm { O P T } + k \\xi )$ ;",
+        "bbox": [
+            101,
+            536,
+            903,
+            570
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "(v) the resulting adversarial resilience parameters",
+        "bbox": [
+            106,
+            580,
+            504,
+            597
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "equation",
+        "img_path": "images/a689fe80b442b06f583a5d9293201d9bcdacb20a947786e182ede25e58d8dd8e.jpg",
+        "text": "$$\n( 1 / e , 2 , 2 , \\widetilde O ( n k ^ { 2 } ) , O ( k ) ) \\quad \\mathrm { a n d } \\quad ( 1 - 1 / e , 2 , 2 , \\widetilde O ( n k ^ { 2 } ) , O ( k ) ) ;\n$$",
+        "text_format": "latex",
+        "bbox": [
+            282,
+            603,
+            758,
+            623
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "Here, we detail technical novelty in two of the steps.",
+        "bbox": [
+            93,
+            635,
+            509,
+            652
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "Why the adaptive-preprocessing lemma (Lemma 5.6) is not routine perturbation. A pointwise perturbation argument would attempt to compare the noisy execution with the exact execution. This is impossible in general: an arbitrarily small change in marginal weights can switch the maximumweight base, which can switch the exchange map, which can switch the stopping time and every subsequent state of the process. Moreover, $\\widehat { f }$ need not be submodular. Our proof instead evaluates the true objective along the controlled-oracle trajectory and constructs the exchange potential",
+        "bbox": [
+            93,
+            670,
+            905,
+            775
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "equation",
+        "img_path": "images/884cdc6d8eb814001c0299163ad61163d602a74a603278d5bbcdd38ba8e8ea0f.jpg",
+        "text": "$$\nM _ { t } = f ( Q _ { t } \\cup O _ { t } ) + { \\frac { 1 } { 2 } } f ( Q _ { t } ) .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            387,
+            777,
+            607,
+            810
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "The key drift inequality uses the residual rank $k - t \\colon$",
+        "bbox": [
+            93,
+            814,
+            511,
+            832
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "equation",
+        "img_path": "images/0648a312b362ca5d49f5c8093a18b2e5428763084965e449a3828abb9e4f4a09.jpg",
+        "text": "$$\n\\mathbb { E } [ \\Delta M _ { t } \\mid \\mathcal { F } _ { t } ] \\geq \\frac { 8 \\mathrm { O P T } - k \\xi } { k - t } .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            387,
+            835,
+            607,
+            869
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "Thus the proof never needs the controlled-oracle trajectory to remain close to the exact trajectory. This is the central structural reason that the oracle error is absorbed as $O ( k \\xi )$ rather than multiplied by the number of adaptive decisions.",
+        "bbox": [
+            93,
+            875,
+            903,
+            926
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "page_number",
+        "text": "22",
+        "bbox": [
+            486,
+            948,
+            509,
+            962
+        ],
+        "page_idx": 21
+    },
+    {
+        "type": "text",
+        "text": "Why the swap lemma (Lemma 5.9) is also nontrivial. The SGS-Poisson implementation does not merely need a good estimate of one marginal. It needs a base whose sum of multilinear marginals satisfies the almost-above-average condition while the resulting exchange map satisfies the validity and right-continuity conditions. We therefore concentrate the base-sum random variable directly. The controlled oracle contributes only $O ( k \\xi )$ to a base comparison, while the sampling term is proportional to the residual marginal scale. This yields",
+        "bbox": [
+            93,
+            77,
+            901,
+            180
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "equation",
+        "img_path": "images/d01e76317cb8a8059eceb289fc6f13251a920fffa796979c5b400a7a4a743a02.jpg",
+        "text": "$$\n\\eta \\leq C _ { 1 } \\varepsilon \\mathrm { O P T } + C _ { 2 } k \\xi .\n$$",
+        "text_format": "latex",
+        "bbox": [
+            410,
+            191,
+            584,
+            208
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "text",
+        "text": "The relative form $\\varepsilon \\mathrm { O P T }$ is essential: replacing it by an absolute $O ( \\varepsilon )$ term would not imply the desired $( \\alpha - \\varepsilon ) \\mathrm { O P T } - O ( k \\xi )$ resilience statement.",
+        "bbox": [
+            93,
+            219,
+            900,
+            253
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "text",
+        "text": "8 Conclusion",
+        "text_level": 2,
+        "bbox": [
+            94,
+            277,
+            267,
+            296
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "text",
+        "text": "We established adversarial resilience of the SGS-Poisson paradigm for nonnegative submodular maximization over general matroids. The Poisson process, single-element exchange mechanism, and spiteful drop rule are unchanged. The key technical result is a resilient adaptive-preprocessing theorem: despite controlled-oracle maximum-base decisions and a noisy stopping time, a matroid-exchange potential retains positive drift. This produces the residual marginal certificate required by SGS-Poisson, after which robust almost-above-average swaps preserve its Poisson diferential inequality.",
+        "bbox": [
+            93,
+            310,
+            901,
+            412
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "text",
+        "text": "The resulting ofline algorithms have limiting approximation factors $1 / e$ and $1 - 1 / e ,$ additive sensitivity $O ( k \\xi )$ , and $\\widetilde { O } ( n k ^ { 2 } \\varepsilon ^ { - 2 } )$ controlled-oracle complexity. Through the single-agent ofline-to-online CMAB reduction, our resilience parameters yield exact limiting approximation-regret factors $1 / e$ and $1 - 1 / e$ with $\\widetilde { O } ( n ^ { 1 / 5 } k ^ { 4 / 5 } T ^ { 4 / 5 } )$ regret.",
+        "bbox": [
+            93,
+            412,
+            901,
+            482
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "text",
+        "text": "References",
+        "text_level": 2,
+        "bbox": [
+            94,
+            505,
+            225,
+            523
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "[1] Kshipra Bhawalkar, Yang Cai, Zhe Feng, Christopher Liaw, and Tao Lin. A unified approach to submodular maximization under noise. volume 38, pages 166355–166383, 2025.",
+            "[2] Niv Buchbinder and Moran Feldman. Deterministic algorithm and faster algorithm for submodular maximization subject to a matroid constraint. SIAM Journal on Computing, pages FOCS24–85, 2025.",
+            "[3] Niv Buchbinder, Moran Feldman, Joseph Naor, and Roy Schwartz. Submodular maximization with cardinality constraints. In Proceedings of the twenty-fifth annual ACM-SIAM symposium on Discrete algorithms, pages 1433–1452, 2014.",
+            "[4] Gruia Calinescu, Chandra Chekuri, Martin Pal, and Jan Vondr´ak. Maximizing a monotone submodular function subject to a matroid constraint. SIAM Journal on Computing, 40(6):1740– 1766, 2011.",
+            "[5] Moran Feldman, Joseph Naor, and Roy Schwartz. A unified continuous greedy algorithm for submodular maximization. In 2011 IEEE 52nd annual symposium on foundations of computer science, pages 570–579, 2011.",
+            "[6] Yuval Filmus and Justin Ward. Monotone submodular maximization over a matroid via non-oblivious local search. SIAM Journal on Computing, 43(2):514–542, 2014.",
+            "[7] Fares Fourati, Vaneet Aggarwal, Christopher Quinn, and Mohamed-Slim Alouini. Randomized greedy learning for non-monotone stochastic submodular maximization under full-bandit feedback. In International Conference on Artificial Intelligence and Statistics, pages 7455–7471, 2023."
+        ],
+        "bbox": [
+            106,
+            537,
+            900,
+            571
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "page_number",
+        "text": "23",
+        "bbox": [
+            486,
+            948,
+            509,
+            960
+        ],
+        "page_idx": 22
+    },
+    {
+        "type": "list",
+        "sub_type": "ref_text",
+        "list_items": [
+            "[8] Fares Fourati, Mohamed-Slim Alouini, and Vaneet Aggarwal. Federated combinatorial multi-agent multi-armed bandits. In Proceedings of the 41st International Conference on Machine Learning, volume 235, pages 13760–13782, 2024.",
+            "[9] Fares Fourati, Christopher John Quinn, Mohamed-Slim Alouini, and Vaneet Aggarwal. Combinatorial stochastic-greedy bandit. In Proceedings of the AAAI Conference on Artificial Intelligence, volume 38, pages 12052–12060, 2024.",
+            "[10] Amit Ganz Rozenman, Ariel Kulik, Roy Schwartz, and Mohit Singh. A poisson process for submodular maximization. In Proceedings of the 58th Annual ACM Symposium on Theory of Computing, pages 2152–2163, 2026.",
+            "[11] Andreas Krause and Daniel Golovin. Submodular function maximization. Tractability, 3(71-104):3, 2014.",
+            "[12] Ariel Kulik, Thiago Oliveira, Roy Schwartz, and Mohit Singh. If it is good then drop it–a spiteful poisson process for submodular maximization. arXiv preprint arXiv:2608.05062, 2026.",
+            "[13] Guanyu Nie, Mridul Agarwal, Abhishek Kumar Umrawal, Vaneet Aggarwal, and Christopher John Quinn. An explore-then-commit algorithm for submodular maximization under full-bandit feedback. In Uncertainty in Artificial Intelligence, pages 1541–1551, 2022.",
+            "[14] Guanyu Nie, Vaneet Aggarwal, and Christopher John Quinn. Stochastic k-submodular bandits with full bandit feedback. In Proceedings of AAMAS, May 2025.",
+            "[15] Guanyu Nie, Yididiya Y Nadew, Yanhui Zhu, Vaneet Aggarwal, and Christopher John Quinn. A framework for adapting ofline algorithms to solve combinatorial multi-armed bandit problems with bandit feedback. In International Conference on Machine Learning, pages 26166–26198, 2023."
+        ],
+        "bbox": [
+            106,
+            77,
+            901,
+            128
+        ],
+        "page_idx": 23
+    },
+    {
+        "type": "page_number",
+        "text": "24",
+        "bbox": [
+            486,
+            948,
+            509,
+            962
+        ],
+        "page_idx": 23
+    }
+]
