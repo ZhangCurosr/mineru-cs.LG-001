@@ -3,5 +3,32 @@
  "batch_id": "705df0f2-b91a-4bcf-b5dd-e48a2a7b479f",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:05",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/4e7bb6c3-d102-4f87-87b4-fc862675d508.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/4e7bb6c3-d102-4f87-87b4-fc862675d508.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:45:23",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "方言鲁棒性",
+    "越南语",
+    "LLM评估",
+    "VialectBench",
+    "有害翻转率",
+    "低资源语言"
+   ],
+   "field": "多语言与大模型鲁棒性",
+   "innovations": [
+    "首个面向越南语义义保留方言的并行鲁棒性基准 VialectBench，覆盖6方言群与4任务",
+    "引入有害翻转率(HFR)与置信度侵蚀指标，揭示aggregate指标掩盖的质变性预测失败",
+    "通过词汇引导采样+双评审质量控制构建人工方言改写流程，控制变量分离区域语言形式影响"
+   ],
+   "benchmarks": [
+    "UIT-VSMEC",
+    "ViANLI",
+    "ViQuAD",
+    "ViMMRC 2.0"
+   ]
+  }
+ }
 }

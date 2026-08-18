@@ -3,5 +3,31 @@
  "batch_id": "ab97d182-44c2-42a4-b499-107aefc8c9ad",
  "token": "sk-LV19Ft0NN...",
  "created_at": "2026-08-12 15:02:42",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/a0142b67-c60c-4b86-be8e-f594da1112e6.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/a0142b67-c60c-4b86-be8e-f594da1112e6.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:48:11",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "gradient descent",
+    "stepsize schedule",
+    "lower bound",
+    "convex optimization",
+    "acceleration",
+    "last-iterate convergence",
+    "Moreau envelope",
+    "matching bound"
+   ],
+   "field": "优化理论",
+   "innovations": [
+    "证明预定非负步长调度下GD收敛率下界为Ω(T^{-p}), p>√(2+√3)",
+    "通过Moreau包络几何构造与匹配论建立顺序无关下界",
+    "首次严格排除仅靠步长调度达到O(T^{-2})最优收敛率的可能性"
+   ],
+   "benchmarks": [
+    "No experimental benchmarks; theoretical lower bound in smooth convex optimization"
+   ]
+  }
+ }
 }

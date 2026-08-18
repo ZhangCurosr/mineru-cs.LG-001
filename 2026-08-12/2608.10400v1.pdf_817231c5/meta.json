@@ -3,5 +3,29 @@
  "batch_id": "817231c5-d6b0-49e6-ac90-62830a6e3f0e",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:42:46",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/9028b4d7-575e-4dbd-adec-ab874294f609.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/9028b4d7-575e-4dbd-adec-ab874294f609.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:41:42",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "judicial decision-making",
+    "interpretable ML",
+    "Rashomon set",
+    "bail hearings",
+    "algorithmic behavior",
+    "consistency analysis"
+   ],
+   "field": "可解释AI与司法决策",
+   "innovations": [
+    "提出Rashomon集合+不可解释案例识别框架检验法官算法化程度",
+    "设计三元组一致性实验量化法官自我一致与跨法官一致",
+    "跨Rashomon集合平均变量重要性揭示跨法官决策差异与潜在偏见"
+   ],
+   "benchmarks": [
+    "Harris County misdemeanor bail dataset (22,361 cases, 21 magistrates)"
+   ]
+  }
+ }
 }

@@ -3,5 +3,34 @@
  "batch_id": "e4f3ae6a-c2e5-41cf-9c16-a1382f9c9fa4",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:42:46",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/4e7bb6c3-d102-4f87-87b4-fc862675d508.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/4e7bb6c3-d102-4f87-87b4-fc862675d508.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:45:57",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Vietnamese dialects",
+    "LLM robustness",
+    "dialect benchmark",
+    "parallel rewriting",
+    "harmful-flip rate",
+    "Vietnamese NLP",
+    "cross-dialect evaluation"
+   ],
+   "field": "多语言/方言LLM鲁棒性评估",
+   "innovations": [
+    "首个端到端越南语方言鲁棒性平行基准VialectBench，400标准实例覆盖六种方言组和四种任务",
+    "引入有害翻转率（HFR）指标，量化标准正确→方言错误的预测翻转",
+    "揭示模型方言鲁棒性与绝对能力的解耦：GPT-4o最强且最稳，Vistral-7B小差距但低绝对性能"
+   ],
+   "benchmarks": [
+    "VialectBench",
+    "UIT-VSMEC",
+    "ViANLI",
+    "ViQuAD",
+    "ViMMRC 2.0"
+   ]
+  }
+ }
 }

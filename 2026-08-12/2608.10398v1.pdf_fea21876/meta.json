@@ -3,5 +3,32 @@
  "batch_id": "fea21876-7cee-4480-9c40-09195572ea4b",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:34:31",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/8808aff0-4762-45bf-b292-4f9dd6201dfb.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/8808aff0-4762-45bf-b292-4f9dd6201dfb.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:40:50",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "evidential learning",
+    "variational autoencoder",
+    "uncertainty-aware generation",
+    "normal-inverse-gamma",
+    "epistemic uncertainty",
+    "latent hierarchy",
+    "synthetic data",
+    "stress testing"
+   ],
+   "field": "不确定性感知生成模型",
+   "innovations": [
+    "用 NIG 层次替代标准 VAE 的确定性均值/方差输出，显式分离潜位置不确定性 u_epi 与采样变异 u_var",
+    "证明边际 Student-t 不可识别分解，需直接 NIG-to-NIG 正则化；推导 λ_NIG 的似然标定公式",
+    "设计零位移控制实验分离锚点可靠性效应与扰动致错效应，揭示 u_epi 的双重生成策略价值"
+   ],
+   "benchmarks": [
+    "MNIST generation pilot",
+    "frozen MLP classifier error stratification by within-class u_epi percentile"
+   ]
+  }
+ }
 }

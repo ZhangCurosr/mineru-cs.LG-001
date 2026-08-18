@@ -3,5 +3,31 @@
  "batch_id": "75441636-5576-42aa-9aea-63d7a999f7f3",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:34:31",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/9028b4d7-575e-4dbd-adec-ab874294f609.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/9028b4d7-575e-4dbd-adec-ab874294f609.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:41:06",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "司法决策可解释性",
+    "Rashomon集",
+    "保释决策",
+    "可解释机器学习",
+    "法官一致性分析",
+    "稀疏决策树",
+    "算法公平性"
+   ],
+   "field": "可解释AI与司法决策",
+   "innovations": [
+    "系统性构建每位法官的Rashomon集并识别不可解释案例用于去噪",
+    "通过Triplet最近邻+分歧规则挖掘同时度量法官自一致性与跨Judge一致性",
+    "基于Rashomon集与Bootstrap聚合的跨模型特征重要性分析方法揭示judge-level偏见差异"
+   ],
+   "benchmarks": [
+    "Harris County Misdemeanor Bail Dataset (2020-2025)",
+    "21 Magistrate Judge Decision Modeling"
+   ]
+  }
+ }
 }

@@ -3,5 +3,30 @@
  "batch_id": "444a665b-b981-4352-8760-f12e9c88d3ae",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:34:26",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/a0142b67-c60c-4b86-be8e-f594da1112e6.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/a0142b67-c60c-4b86-be8e-f594da1112e6.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:47:31",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "gradient descent",
+    "stepsize schedule",
+    "convergence lower bound",
+    "smooth convex optimization",
+    "last-iterate convergence",
+    "Moreau envelope",
+    "Lyapunov analysis"
+   ],
+   "field": "优化理论与收敛性分析",
+   "innovations": [
+    "建立预设非负步长调度下纯GD最后迭代收敛的新下界Ω(T^{-p}), p>√(2+√3)≈1.9319",
+    "通过Moreau包络构造显式困难实例将调度分析转化为几何量估计",
+    "提出匹配- Lyapunov方法消除步长时序依赖并控制质量增长"
+   ],
+   "benchmarks": [
+    "无数值实验，纯理论下界结果"
+   ]
+  }
+ }
 }

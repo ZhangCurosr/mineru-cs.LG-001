@@ -3,5 +3,34 @@
  "batch_id": "72c9f41d-9078-4db4-9caf-327892d762c5",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:17",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/9b224bc5-3f47-477e-9a36-c5cded506971.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/9b224bc5-3f47-477e-9a36-c5cded506971.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:44:46",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "confidence calibration",
+    "reliability reranking",
+    "selective prediction",
+    "label-wise monotone projection",
+    "information access",
+    "post-hoc calibration"
+   ],
+   "field": "模型校准与不确定性量化",
+   "innovations": [
+    "定义后校准残差可靠性重排问题，将可靠性评估与概率校准、候选排序解耦",
+    "提出MRP标签单调可靠性投影，学习标签条件单调映射函数并在格点上参数化实现",
+    "通过固定决策协议与结构性消融证明增益来源于标签条件残差可靠性而非全局重映射"
+   ],
+   "benchmarks": [
+    "Amazon ESCI",
+    "MSLR-WEB10K",
+    "Alloprof-Rerank",
+    "ESCI-Rerank-US",
+    "WANDS",
+    "SciDocs"
+   ]
+  }
+ }
 }

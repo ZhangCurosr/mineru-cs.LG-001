@@ -3,5 +3,33 @@
  "batch_id": "79dadac0-3b38-4fe9-9032-46f047436f69",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:34:27",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/4e7bb6c3-d102-4f87-87b4-fc862675d508.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/4e7bb6c3-d102-4f87-87b4-fc862675d508.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:45:35",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Vietnamese Dialects",
+    "LLM Robustness",
+    "Dialect Benchmarking",
+    "VialectBench",
+    "Harmful-flip Rate",
+    "Meaning-preserving Rewriting"
+   ],
+   "field": "低资源语言与方言鲁棒性评估",
+   "innovations": [
+    "首个越南语方言鲁棒性并行基准VialectBench（400标准→2400方言改写）",
+    "提出有害翻转率（HFR）量化方言导致的预测不一致性",
+    "揭示绝对能力与方言稳定性非正相关的实证发现"
+   ],
+   "benchmarks": [
+    "VialectBench",
+    "UIT-VSMEC",
+    "ViANLI",
+    "ViQuAD",
+    "ViMMRC 2.0"
+   ]
+  }
+ }
 }

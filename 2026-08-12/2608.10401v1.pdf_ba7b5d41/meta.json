@@ -3,5 +3,30 @@
  "batch_id": "ba7b5d41-5522-4d21-aef0-03738cc91376",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:06",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/d61f4c5d-02ab-46cc-aff9-f409a7478aa8.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/d61f4c5d-02ab-46cc-aff9-f409a7478aa8.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:42:34",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "ICSI",
+    "自动视场调整",
+    "LSTM",
+    "眼动意图识别",
+    "视图扩展显微镜",
+    "微操作辅助"
+   ],
+   "field": "显微操作人机协同与AI辅助",
+   "innovations": [
+    "基于LSTM隐式解读自然注视与持卵管运动学，实现ICSI自动FOV调整",
+    "单专家时序数据训练避免多模态冲突，推理延迟<6ms",
+    "新手在自动FOV下中位完成时间51.5s，与专家传统显微镜45s无显著差异"
+   ],
+   "benchmarks": [
+    "ICSI微珠模拟任务完成时间",
+    "专家传统显微镜参考性能"
+   ]
+  }
+ }
 }

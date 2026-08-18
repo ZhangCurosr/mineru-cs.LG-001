@@ -3,5 +3,33 @@
  "batch_id": "15d9f983-edf1-4d48-b876-ed21bf2940dd",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:34:29",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/1c3b50af-3d97-437f-a302-be57d3fd0795.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/1c3b50af-3d97-437f-a302-be57d3fd0795.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:43:25",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Agentic RL",
+    "分布式训练系统",
+    "弹性调度",
+    "异步流水线",
+    "KV Cache 管理",
+    "RL goodput",
+    "多模态 agent"
+   ],
+   "field": "分布式 RL 系统",
+   "innovations": [
+    "任务级 CTB 调度替代请求级连续 batching 以保护多轮 KV cache",
+    "RA²P 双模式 Ref-Actor 流水线根据就绪信号动态选择解耦/共置执行",
+    "ERS 利用权重同步窗口实现零开销 rank 弹性迁移"
+   ],
+   "benchmarks": [
+    "WebShop",
+    "AlfWorld",
+    "OSWorld",
+    "ScienceBoard"
+   ]
+  }
+ }
 }

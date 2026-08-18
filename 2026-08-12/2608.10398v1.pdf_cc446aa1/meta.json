@@ -3,5 +3,31 @@
  "batch_id": "cc446aa1-4419-4443-8188-304680e28310",
  "token": "sk-LV19Ft0NN...",
  "created_at": "2026-08-12 15:02:37",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/8808aff0-4762-45bf-b292-4f9dd6201dfb.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/8808aff0-4762-45bf-b292-4f9dd6201dfb.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:39:26",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "evidential learning",
+    "variational autoencoder",
+    "uncertainty-aware generation",
+    "normal-inverse-gamma",
+    "epistemic uncertainty",
+    "synthetic data",
+    "generative AI"
+   ],
+   "field": "生成模型不确定性量化",
+   "innovations": [
+    "用NIG层级后验替代VAE确定性输出，显式分解潜位置不确定性u_epi与变异性u_var",
+    "证明完整NIG正则化是识别两类不确定性的必要条件，推导ELBO等价性与lambda_NIG自校准公式",
+    "提出零位移控制条件分离锚点可靠性效应与扰动归因效应，验证u_epi分层能力"
+   ],
+   "benchmarks": [
+    "MNIST",
+    "MNIST frozen classifier accuracy 96.85%"
+   ]
+  }
+ }
 }

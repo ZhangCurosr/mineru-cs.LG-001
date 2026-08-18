@@ -3,5 +3,29 @@
  "batch_id": "8f65b37e-1c9a-46df-9908-86d8edc3fb70",
  "token": "sk-LV19Ft0NN...",
  "created_at": "2026-08-12 15:02:37",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/05b549ff-9ead-4783-8fe4-7a9afa3396ce.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/05b549ff-9ead-4783-8fe4-7a9afa3396ce.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:37:43",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "世界模型",
+    "离策略强化学习",
+    "自动驾驶决策",
+    "Soft Actor-Critic",
+    "RSSM",
+    "样本效率"
+   ],
+   "field": "基于模型的强化学习",
+   "innovations": [
+    "将SAC离策略学习整合进RSSM隐状态世界模型，实现真实与生成数据的混合优化",
+    "提出短视界潜轨迹与真实数据混合的离线回放策略，自动平衡数据效用与模型偏差",
+    "在预测轨迹上采用n步目标估计，提升价值学习对远期奖励信息的利用效率"
+   ],
+   "benchmarks": [
+    "MetaDrive BIG_BLOCK_SEQUENCE-CC"
+   ]
+  }
+ }
 }

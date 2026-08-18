@@ -3,5 +3,30 @@
  "batch_id": "26933830-60e6-41ab-a4b4-c280c1a2b808",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:17",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/537dd8db-117d-4b9a-99c6-49b2ee1b584f.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/537dd8db-117d-4b9a-99c6-49b2ee1b584f.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:47:19",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "梯度下降加速",
+    "步长调度",
+    "收敛下界",
+    "光滑凸优化",
+    "Moreau包络",
+    "匹配论证",
+    "Lyapunov分析"
+   ],
+   "field": "凸优化理论",
+   "innovations": [
+    "建立纯GD预定义步长下界Ω(T^{-p}), p>√(2+√3)≈1.9319，首次证明仅步长调节无法达O(T^{-2})",
+    "提出Moreau包络+正交锚点构造任意步长调度的几何难例",
+    "用匹配论证去除长步时序依赖并引入Lyapunov势函数控制质量增长"
+   ],
+   "benchmarks": [
+    "无数值基准; 理论下界: Ω(T^{-1.9319}), 已知上界: O(T^{-1.2715})"
+   ]
+  }
+ }
 }

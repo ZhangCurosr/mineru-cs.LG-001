@@ -3,5 +3,30 @@
  "batch_id": "dae46767-3118-4391-8a1f-d10947d445ac",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:42:48",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/8808aff0-4762-45bf-b292-4f9dd6201dfb.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/8808aff0-4762-45bf-b292-4f9dd6201dfb.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:40:01",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "evidential learning",
+    "variational autoencoder",
+    "normal-inverse-gamma",
+    "epistemic uncertainty",
+    "uncertainty-aware generation",
+    "synthetic data",
+    "stress testing"
+   ],
+   "field": "生成模型的可靠性与不确定性量化",
+   "innovations": [
+    "在 VAE 每个潜坐标上建立输入依赖的 NIG 层次后验并显式分离 u_epu 与 u_var",
+    "证明直接 NIG-to-NIG 正则化是识别不确定性分解的必要条件并给出精确 ELBO 解释",
+    "提出三条件对照 (A/C/I) 分离锚点可靠性效应与扰动致失效率"
+   ],
+   "benchmarks": [
+    "MNIST"
+   ]
+  }
+ }
 }

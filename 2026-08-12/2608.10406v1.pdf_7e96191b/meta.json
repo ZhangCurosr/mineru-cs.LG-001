@@ -3,5 +3,35 @@
  "batch_id": "7e96191b-6a5c-4523-b578-d751b98a6bd1",
  "token": "sk-LV19Ft0NN...",
  "created_at": "2026-08-12 15:02:35",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/419f94b9-6cbb-4d8d-af96-07e28bc51fcd.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/419f94b9-6cbb-4d8d-af96-07e28bc51fcd.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:45:17",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "post-hoc calibration",
+    "reliability reranking",
+    "monotone projection",
+    "selective prediction",
+    "relevance prediction",
+    "error detection",
+    "fallback routing"
+   ],
+   "field": "信息检索与可信预测",
+   "innovations": [
+    "提出固定决策协议下的标签维度单调可靠性投影（MRP），将校准置信度重新解释为决策级正确性可靠性",
+    "以单调格点+logit插值+二阶差分正则实现可学习且严格单调的标签条件映射",
+    "证明校准与可靠性重排序正交：强校准不保证好重排序，MRP可在不改概率前提下持续提升AUPR-Error/AURC与fallback收益"
+   ],
+   "benchmarks": [
+    "Amazon ESCI",
+    "MSLR-WEB10K",
+    "Alloprof-Rerank",
+    "ESCI-Rerank-US",
+    "WANDS",
+    "SciDocs"
+   ]
+  }
+ }
 }

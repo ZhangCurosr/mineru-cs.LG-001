@@ -3,5 +3,32 @@
  "batch_id": "04d00df9-9552-4b31-8572-29926ef224a3",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:42:46",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/1c3b50af-3d97-437f-a302-be57d3fd0795.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/1c3b50af-3d97-437f-a302-be57d3fd0795.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:44:08",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Agentic RL",
+    "KV Cache Scheduling",
+    "Asynchronous Training",
+    "Goodput Optimization",
+    "Elastic Resource Scaling",
+    "Multi-turn Inference"
+   ],
+   "field": "分布式强化学习系统",
+   "innovations": [
+    "CTB 将调度粒度从 request 提升到 task 级以保留多轮 KV cache",
+    "RA²P 基于 RAS/TPRM 就绪信号选择解耦流式或共置聚合执行模式",
+    "ERS 复用 on-policy sync 边界实现零开销 rank 弹性迁移"
+   ],
+   "benchmarks": [
+    "WebShop",
+    "AlfWorld",
+    "OS-World",
+    "ScienceBoard"
+   ]
+  }
+ }
 }

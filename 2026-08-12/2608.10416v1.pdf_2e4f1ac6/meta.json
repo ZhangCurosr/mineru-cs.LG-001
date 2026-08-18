@@ -3,5 +3,28 @@
  "batch_id": "2e4f1ac6-fd22-4761-b45b-d142e7d30619",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:05",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/92f9b060-1c89-4aef-aae1-0b81e333f213.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/92f9b060-1c89-4aef-aae1-0b81e333f213.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:48:15",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "逆距注意力",
+    "Polyak-Lojasiewicz不等式",
+    "双曲几何",
+    "球面几何",
+    "有效秩",
+    "稀疏路由",
+    "Transformer",
+    "非欧神经网络"
+   ],
+   "field": "注意力机制理论与优化",
+   "innovations": [
+    "建立逆距注意力在欧氏/双曲/球面几何下的统一理论框架，证明其相比Softmax在表达力、优化收敛和泛化上的指数级优势",
+    "提出含10个模块的Riemann GeoResolver架构，包括HIDA算子族、双曲曲率压缩、球面逆距注意力和测地线稀疏路由",
+    "首次在完整QKV Transformer架构下证明逆距注意力的电路分离、PL不等式和有效秩有界性"
+   ]
+  }
+ }
 }

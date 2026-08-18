@@ -3,5 +3,32 @@
  "batch_id": "cbcc1929-cb1f-4aff-8f2f-69ec78584690",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:34:32",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/79dccad3-9804-41fb-b484-0d6d2da4350b.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/79dccad3-9804-41fb-b484-0d6d2da4350b.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:38:22",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "双曲守恒律",
+    "激波",
+    "物理信息神经网络",
+    "弱形式",
+    "熵条件",
+    "DFFT"
+   ],
+   "field": "物理信息神经网络求解偏微分方程",
+   "innovations": [
+    "将弱形式和熵条件统一为积分损失并通过DFFT高效求解，避免人工粘性和对抗训练",
+    "提出S-Rate和S-Acc两类激波感知评估指标",
+    "预选取三角基测试函数替代WPINN的对抗训练，实现稳定高效学习"
+   ],
+   "benchmarks": [
+    "Burgers方程(1D/2D)",
+    "LWR交通流模型",
+    "可压Euler方程Sod激波管",
+    "线性迁移方程"
+   ]
+  }
+ }
 }

@@ -3,5 +3,35 @@
  "batch_id": "abb48725-f220-4262-81d0-ae50f622a938",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:42:47",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/419f94b9-6cbb-4d8d-af96-07e28bc51fcd.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/419f94b9-6cbb-4d8d-af96-07e28bc51fcd.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:44:51",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "relevance prediction",
+    "confidence calibration",
+    "reliability reranking",
+    "selective prediction",
+    "monotone projection",
+    "post-hoc calibration",
+    "information access"
+   ],
+   "field": "可靠性校准与信息检索",
+   "innovations": [
+    "提出固定决策协议解耦可靠性重排序与概率校准",
+    "MRP: 为每个预测标签学习单调置信度-正确性映射曲线用于残差风险重排序",
+    "结构化消融证明增益来自标签条件残差可靠性而非全局置信度重映射"
+   ],
+   "benchmarks": [
+    "Amazon ESCI",
+    "MSLR-WEB10K",
+    "Alloprof-Rerank",
+    "ESCI-Rerank-US",
+    "WANDS",
+    "SciDocs"
+   ]
+  }
+ }
 }

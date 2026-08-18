@@ -3,5 +3,32 @@
  "batch_id": "695c9727-5afc-4220-9942-819372d9cbb0",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:04",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/0de7c510-b98d-42b4-bd58-2c6fba020bc3.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/0de7c510-b98d-42b4-bd58-2c6fba020bc3.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:43:12",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "reinforcement learning",
+    "agentic RL",
+    "distributed systems",
+    "KV cache",
+    "elastic scheduling",
+    "goodput optimization"
+   ],
+   "field": "大模型分布式训练系统",
+   "innovations": [
+    "任务级CTB调度解决多轮agentic KV cache预占",
+    "基于RAS/TPRM的双模式RA²P消除Ref-Actor模型交替抖动",
+    "利用on-policy sync边界实现零开销ERS弹性资源缩放"
+   ],
+   "benchmarks": [
+    "WebShop",
+    "AlfWorld",
+    "OSWorld",
+    "ScienceBoard"
+   ]
+  }
+ }
 }

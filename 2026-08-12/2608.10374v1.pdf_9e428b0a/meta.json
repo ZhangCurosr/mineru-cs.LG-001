@@ -3,5 +3,31 @@
  "batch_id": "9e428b0a-8570-45ba-bf41-c112dd7a7e7c",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 16:05:08",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/1ce98c2c-e72d-4944-bd6a-135fb79534d2.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/1ce98c2c-e72d-4944-bd6a-135fb79534d2.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:38:10",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "异方差回归",
+    "自然梯度",
+    "Fisher信息矩阵",
+    "不确定性估计",
+    "输出层修正",
+    "KL散度"
+   ],
+   "field": "概率机器学习/不确定性量化",
+   "innovations": [
+    "提出仅作用于输出层的Fisher几何修正Fisher8，无需数据集依赖超参数即可稳定均值-方差联合训练",
+    "推导局部KL方差作为诊断指标，揭示特征空间活跃与分布可移动性的本质区别",
+    "将β-NLL、Faithful、Wong-Toi正则等独立stabilizer统一为同一几何修正的重叠分量"
+   ],
+   "benchmarks": [
+    "UCI Regression（8数据集）",
+    "FAIR Universe Weak Lensing Challenge",
+    "Rotated MNIST"
+   ]
+  }
+ }
 }

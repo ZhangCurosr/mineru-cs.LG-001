@@ -3,5 +3,32 @@
  "batch_id": "3eceebe8-d07f-419f-a4e4-644bd9e06f9d",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:19",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/e1eedbe1-6df6-4987-ae0f-09c5b87d529d.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/e1eedbe1-6df6-4987-ae0f-09c5b87d529d.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:37:41",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Topology Optimization",
+    "Thermo-Mechanical Design",
+    "Geometric Nonlinearity",
+    "Hencky Strain",
+    "Temperature-Dependent Properties",
+    "Physics-Informed Gaussian Process",
+    "Multi-Material Design"
+   ],
+   "field": "多物理场拓扑优化",
+   "innovations": [
+    "首次将二次Hencky对数应变本构引入热机械多材料拓扑优化，利用其对数空间精确加法热本征应变分解",
+    "构建m-PIGP同步分析设计框架，整合有限应变、T依赖属性与可制造性约束",
+    "提出因子交叉评估协议，严格分离本构律与属性模型误差并揭示线性模型自欺式可靠性"
+   ],
+   "benchmarks": [
+    "热执行器（Thermal Actuator）",
+    "热夹爪（Thermal Gripper）",
+    "673 K / 873 K / 1073 K 三档设计温度"
+   ]
+  }
+ }
 }

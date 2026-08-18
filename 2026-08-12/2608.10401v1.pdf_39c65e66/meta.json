@@ -3,5 +3,31 @@
  "batch_id": "39c65e66-40ba-4122-a06d-b5d968465506",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:17",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/04390e8c-a4c4-4173-8880-6ca7149ec2c7.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/04390e8c-a4c4-4173-8880-6ca7149ec2c7.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:42:34",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "ICSI",
+    "field-of-view adjustment",
+    "LSTM",
+    "gaze-based intention recognition",
+    "micromanipulation",
+    "view-expansive microscope",
+    "human-robot interaction"
+   ],
+   "field": "显微操纵辅助系统",
+   "innovations": [
+    "首个基于LSTM隐式眼动意图识别的ICSI自动FOV预测系统，无需显式gaze控制",
+    "单专家训练策略规避ICSI操作多模态问题，确保模型学习目标一致性",
+    "FOV中心动态跟随持卵管位置的平滑变换机制，消除视野切换过程中的视觉脱靶"
+   ],
+   "benchmarks": [
+    "Kruskal-Wallis test with Bonferroni correction",
+    "Novice median time: 51.5s (auto) vs 68.0s (manual), p=0.02"
+   ]
+  }
+ }
 }
