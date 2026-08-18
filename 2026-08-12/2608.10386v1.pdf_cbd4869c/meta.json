@@ -3,5 +3,30 @@
  "batch_id": "cbd4869c-9f0c-4982-b0e0-91217354b974",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:06",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/fbe2986c-b345-40e6-b63b-809f48159a7c.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/fbe2986c-b345-40e6-b63b-809f48159a7c.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:23:22",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "强化学习",
+    "自动驾驶",
+    "世界模型",
+    "离策略学习",
+    "Dreamer",
+    "SAC",
+    "MetaDrive"
+   ],
+   "field": "基于模型强化学习的自动驾驶决策",
+   "innovations": [
+    "提出结合RSSM世界模型与离策略SAC的Dreamer-SAC框架，混合真实与潜空间生成轨迹进行策略优化",
+    "发现并验证rollout长度与策略性能间的倒U型关系，确立短时rollout的最优平衡点",
+    "针对预测轨迹采用n-step目标估计，提升模型生成经验的利用效率，抑制模型偏差累积"
+   ],
+   "benchmarks": [
+    "MetaDrive BIG_BLOCK_SEQUENCE_CC"
+   ]
+  }
+ }
 }

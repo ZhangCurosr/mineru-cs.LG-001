@@ -3,5 +3,31 @@
  "batch_id": "73817149-29c0-4ab4-b7a6-fcc89b8842aa",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:34:36",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/d721287b-a6e0-4f37-b7b6-0ba4f3691677.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/d721287b-a6e0-4f37-b7b6-0ba4f3691677.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:14:53",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Diferentiable Predictive Control",
+    "Control Barrier Functions",
+    "topological feasibility",
+    "safe learning-based control",
+    "deterministic guarantees",
+    "homotopy training"
+   ],
+   "field": "安全机器学习控制",
+   "innovations": [
+    "建立DPC拓扑可行性严格理论，证明有限样本可导出确定性闭环可行性保证",
+    "提出CBF代理损失与双阶段同伦训练方案，平衡训练稳定性与严格可行性",
+    "推导显式可行半径，利用Heine-Borel定理证明可达安全集的有限开覆盖存在性"
+   ],
+   "benchmarks": [
+    "Nonholonomic mobile robot navigation",
+    "Unstable linear system stabilization",
+    "Constrained quadcopter system stabilization"
+   ]
+  }
+ }
 }

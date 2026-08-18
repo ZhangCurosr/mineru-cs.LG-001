@@ -3,5 +3,32 @@
  "batch_id": "fcdae409-a5f1-4c80-ae01-4555fcbc705c",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:42:52",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/d721287b-a6e0-4f37-b7b6-0ba4f3691677.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/d721287b-a6e0-4f37-b7b6-0ba4f3691677.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:14:22",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Differentiable Predictive Control",
+    "Control Barrier Functions",
+    "Feasibility Guarantee",
+    "Learning-based Control",
+    "Topological Analysis",
+    "Safe Control",
+    "Offline Policy Learning"
+   ],
+   "field": "学习控制系统的可行性分析与安全保障",
+   "innovations": [
+    "首次为DPC建立基于拓扑分析的确定性闭环可行性保证",
+    "提出CBF代理离线两阶段同调训练策略实现无在线滤波器的严格可行性",
+    "证明训练样本数增加时约束违反概率单调收敛至零（有限步内）"
+   ],
+   "benchmarks": [
+    "Nonholonomic Mobile Robot Navigation",
+    "Unstable Linear System Stabilization",
+    "Constrained Quadcopter System Stabilization"
+   ]
+  }
+ }
 }

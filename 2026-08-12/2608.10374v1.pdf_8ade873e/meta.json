@@ -3,5 +3,30 @@
  "batch_id": "8ade873e-898a-4166-87d5-77c81d92cef8",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:34:33",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/1ce98c2c-e72d-4944-bd6a-135fb79534d2.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/1ce98c2c-e72d-4944-bd6a-135fb79534d2.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:21:26",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "异方差回归",
+    "自然梯度",
+    "不确定性估计",
+    "Fisher几何",
+    "训练稳定性"
+   ],
+   "field": "不确定性学习/概率神经网络",
+   "innovations": [
+    "输出层Fisher几何修正稳定异方差回归训练",
+    "局部KL方差作为特征-分布移动性诊断指标",
+    "统一解释先验stabilizer为同一几何修正的不同组件"
+   ],
+   "benchmarks": [
+    "UCI回归数据集",
+    "NeurIPS 2025弱引力透镜挑战赛",
+    "旋转MNIST表征学习任务"
+   ]
+  }
+ }
 }

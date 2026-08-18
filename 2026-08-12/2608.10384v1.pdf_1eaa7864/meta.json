@@ -3,5 +3,33 @@
  "batch_id": "1eaa7864-7efd-4f3e-baea-5cf53349d591",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:24",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/68d93916-e970-4ff9-8172-6fd39a0d04c2.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/68d93916-e970-4ff9-8172-6fd39a0d04c2.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:22:30",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Lévy-driven generative models",
+    "inverse sampling",
+    "score-based generative models",
+    "Markov generator",
+    "α-stable distribution",
+    "nonlocal sampling",
+    "channel estimation",
+    "diffusion models"
+   ],
+   "field": "生成模型与随机过程",
+   "innovations": [
+    "推导 Lévy 驱动 Markov 过程反向生成子的闭式表达并揭示非局域密度比结构",
+    "提出扩散-小跳-大跳三组分分解的结构化逆采样框架，神经网络仅预测标量跳率",
+    "证明边缘可训练函数定理并设计轻量 CNN+MLP 跳率网络实现高效非局域采样"
+   ],
+   "benchmarks": [
+    "OFDM-SISO channel estimation (TDL-A/C/D)",
+    "NMSE",
+    "BER"
+   ]
+  }
+ }
 }

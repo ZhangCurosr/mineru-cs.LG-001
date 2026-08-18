@@ -3,5 +3,32 @@
  "batch_id": "8fc0df78-a417-475d-84a3-1bcc66a950f6",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:42:51",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/e1eedbe1-6df6-4987-ae0f-09c5b87d529d.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/e1eedbe1-6df6-4987-ae0f-09c5b87d529d.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:15:47",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Topology Optimization",
+    "Thermo-Mechanical Design",
+    "Geometric Nonlinearity",
+    "Hencky Strain",
+    "Physics-Informed Machine Learning",
+    "Multi-Material Design",
+    "Temperature-Dependent Properties",
+    "Compliant Mechanisms"
+   ],
+   "field": "多物理场拓扑优化与计算设计",
+   "innovations": [
+    "提出含有限应变与可制造性约束的 m-PIGP 同时式优化框架",
+    "引入 Hencky 对数应变本构用于热机拓扑优化并利用其热本征应变可加性",
+    "建立正交析因评估协议量化几何非线性与温度依赖属性的独立贡献"
+   ],
+   "benchmarks": [
+    "Thermal Actuator at 673/873/1073 K",
+    "Thermal Gripper at 673/873/1073 K"
+   ]
+  }
+ }
 }

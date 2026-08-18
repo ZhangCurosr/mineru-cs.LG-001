@@ -3,5 +3,31 @@
  "batch_id": "3f03bf81-1390-4dff-adf3-054a6c779895",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:42:50",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/1ce98c2c-e72d-4944-bd6a-135fb79534d2.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/1ce98c2c-e72d-4944-bd6a-135fb79534d2.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:22:27",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "异方差回归",
+    "自然梯度",
+    "不确定性量化",
+    "Fisher信息矩阵",
+    "神经网络训练稳定性",
+    "KL散度"
+   ],
+   "field": "不确定性量化与可靠预测",
+   "innovations": [
+    "输出层Fisher几何校正统一已有稳定化方法",
+    "局部KL方差诊断特征空间分布移动性",
+    "仅需学习率超参数实现近似KL信任半径控制"
+   ],
+   "benchmarks": [
+    "UCI回归基准",
+    "弱引力透镜宇宙学",
+    "旋转MNIST"
+   ]
+  }
+ }
 }

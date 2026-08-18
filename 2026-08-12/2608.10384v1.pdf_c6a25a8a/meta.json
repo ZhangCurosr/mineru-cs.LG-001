@@ -3,5 +3,32 @@
  "batch_id": "c6a25a8a-1ede-4c87-b16c-0448878ec118",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:42:50",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/aad8300a-e48a-47a3-902e-188722887719.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/aad8300a-e48a-47a3-902e-188722887719.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:22:51",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Levy process",
+    "inverse sampling",
+    "score-based generative model",
+    "α-stable distribution",
+    "channel estimation",
+    "nonlocal dynamics",
+    "Markov generator"
+   ],
+   "field": "生成模型与逆问题求解",
+   "innovations": [
+    "从生成器视角推导Levy驱动过程的反向动态，揭示非局部密度比驱动的状态依赖Markov跳跃核",
+    "提出跳跃率-幅度解耦的半解析逆采样器，神经网络仅学习标量跳跃率，幅度从解析条件分布采样",
+    "设计极坐标降维+预计算CDF查表+top-K截断的高效高维跳跃采样技术"
+   ],
+   "benchmarks": [
+    "OFDM-SISO信道估计 (TDL-A/C/D)",
+    "NMSE",
+    "BER"
+   ]
+  }
+ }
 }

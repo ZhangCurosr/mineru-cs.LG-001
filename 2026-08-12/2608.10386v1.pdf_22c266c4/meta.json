@@ -3,5 +3,31 @@
  "batch_id": "22c266c4-b8ad-4077-86f9-9a7e0114d8a5",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 16:05:07",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/05b549ff-9ead-4783-8fe4-7a9afa3396ce.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/05b549ff-9ead-4783-8fe4-7a9afa3396ce.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:22:57",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Model-Based Reinforcement Learning",
+    "Latent World Model",
+    "Off-Policy Learning",
+    "Autonomous Driving",
+    "Dreamer-SAC",
+    "MetaDrive",
+    "Rollout Horizon"
+   ],
+   "field": "自动驾驶决策与模型基强化学习",
+   "innovations": [
+    "提出RSSM与SAC结合的离策略潜世界模型框架，实现真实经验与短滚出轨迹的混合学习",
+    "设计n步目标估计机制，更充分利用模型生成轨迹中的未来奖励信息",
+    "系统揭示rollout horizon与策略性能的倒U型关系，确立H=5的最优平衡点"
+   ],
+   "benchmarks": [
+    "MetaDrive BIG_BLOCK_SEQUENCE_CC",
+    "3倍长度泛化道路网络测试"
+   ]
+  }
+ }
 }

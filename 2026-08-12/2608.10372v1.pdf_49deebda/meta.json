@@ -3,5 +3,30 @@
  "batch_id": "49deebda-df91-40be-8c7f-799af40e1d0e",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 16:05:08",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/922a582b-d517-442c-96ca-8f0de6131d03.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/922a582b-d517-442c-96ca-8f0de6131d03.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:19:56",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "post-hoc calibration",
+    "uncertainty quantification",
+    "monotone neural networks",
+    "temperature scaling",
+    "accuracy preservation"
+   ],
+   "field": "模型校准与不确定性量化",
+   "innovations": [
+    "提出 InvLT：通过共享标量 MLP 元素级变换 logit，参数量与类别数无关",
+    "用辅助逆网络重构损失软性诱导单调性，避免 UMNN 的数值积分开销",
+    "在 CIFAR/ImageNet 七种架构上统一最优，推理速度比最强基线快 5 倍"
+   ],
+   "benchmarks": [
+    "CIFAR-10",
+    "CIFAR-100",
+    "ImageNet"
+   ]
+  }
+ }
 }

@@ -3,5 +3,31 @@
  "batch_id": "9361ef2f-fea1-4f1a-a15f-89c0eceeedbe",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 16:05:08",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/eb50427f-569b-463c-958b-ba7631a2b085.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/eb50427f-569b-463c-958b-ba7631a2b085.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:17:05",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "IoT Intrusion Detection",
+    "Explainable AI",
+    "TreeSHAP",
+    "Explanation Cost",
+    "Explanation Stability",
+    "Selective XAI",
+    "CICIoT2023",
+    "Resource-Aware XAI"
+   ],
+   "field": "可解释AI与网络安全交叉",
+   "innovations": [
+    "首次联合评估TreeSHAP解释成本、局部稳定性与选择性解释策略在IoT IDS中的操作权衡",
+    "构建防泄露的二元CICIoT2023语料库，消除54.8%重复数据的精确特征向量重叠",
+    "提出验证集校准的选择性解释策略，在平衡测试上90% FNR覆盖可实现28-32%计算节省"
+   ],
+   "benchmarks": [
+    "CICIoT2023"
+   ]
+  }
+ }
 }

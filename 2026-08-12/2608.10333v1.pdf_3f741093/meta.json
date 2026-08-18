@@ -3,5 +3,30 @@
  "batch_id": "3f741093-eb72-4d85-956c-2c319ca990c5",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:34:36",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/d80df95b-9298-49b2-b9f3-ad7466c93add.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/d80df95b-9298-49b2-b9f3-ad7466c93add.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:14:25",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "LLM Agent",
+    "Model Routing",
+    "Small Language Model Adaptation",
+    "Verifiable Execution",
+    "Skill Library",
+    "Cost-Efficient Inference"
+   ],
+   "field": "大规模智能体系统的模型适应与路由",
+   "innovations": [
+    "提出以单次调用为单元、通过多轮迭代轨迹适应来提升小型模型本身能力的协议",
+    "设计基于外部SkillBook和验证器回退的保守联合准入部署机制"
+   ],
+   "benchmarks": [
+    "HumanEval",
+    "MBPP",
+    "TAU-2"
+   ]
+  }
+ }
 }

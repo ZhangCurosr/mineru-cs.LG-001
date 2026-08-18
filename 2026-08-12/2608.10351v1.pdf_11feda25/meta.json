@@ -3,5 +3,29 @@
  "batch_id": "11feda25-cd4d-46cf-aab5-50bb0bf9167c",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:42:50",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/3887b8c2-4172-4650-a650-e5d9b8f3a7cc.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/3887b8c2-4172-4650-a650-e5d9b8f3a7cc.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:18:05",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Tensor Networks",
+    "Deep Learning",
+    "High-dimensional PDEs",
+    "CPD",
+    "Scientific ML"
+   ],
+   "field": "科学机器学习",
+   "innovations": [
+    "提出 Tensor-Featured Training 交替优化框架",
+    "利用随机化 CPD-RALS 将 DNN 输出分解为特征以降低 8 个数量级存储",
+    "结合 Rank-1 与 Tensor 特征加速 40 维高维函数学习"
+   ],
+   "benchmarks": [
+    "Nonlinear Elliptic Equation (5-15d)",
+    "Hyperbolic Wave Equation (15-40d)"
+   ]
+  }
+ }
 }

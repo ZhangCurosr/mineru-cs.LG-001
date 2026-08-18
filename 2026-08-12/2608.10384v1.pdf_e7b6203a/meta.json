@@ -3,5 +3,31 @@
  "batch_id": "e7b6203a-2566-4c76-b1fd-52e8814c1cba",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 16:05:07",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/aad8300a-e48a-47a3-902e-188722887719.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/aad8300a-e48a-47a3-902e-188722887719.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:22:21",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Levy process",
+    "inverse sampling",
+    "generative model",
+    "score matching",
+    "jump process",
+    "channel estimation"
+   ],
+   "field": "Levy驱动的生成模型与逆向采样",
+   "innovations": [
+    "从生成器视角推导Levy驱动过程反向动力学的非局部跳跃核结构",
+    "提出速率-幅度解耦的结构化逆向采样器，神经网络仅学习大跳跃速率",
+    "建立边际可训练函数理论为大跳跃速率网络提供训练基础"
+   ],
+   "benchmarks": [
+    "OFDM-SISO信道估计",
+    "TDL-A/C/D信道模型",
+    "混合高斯与SαS脉冲噪声"
+   ]
+  }
+ }
 }

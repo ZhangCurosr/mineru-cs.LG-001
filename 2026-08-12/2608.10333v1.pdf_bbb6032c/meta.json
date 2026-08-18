@@ -3,5 +3,31 @@
  "batch_id": "bbb6032c-ffc8-477d-a662-92098158f978",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:08",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/d80df95b-9298-49b2-b9f3-ad7466c93add.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/d80df95b-9298-49b2-b9f3-ad7466c93add.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:16:13",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "LLM Agent",
+    "Model Routing",
+    "Small Language Model Adaptation",
+    "SkillBook",
+    "Verifier-backed Fallback",
+    "Multi-cycle Evolution",
+    "Code Generation"
+   ],
+   "field": "Agent 系统模型适配与路由",
+   "innovations": [
+    "以单次调用为适应单元的多周期进化协议，同时更新 SkillBook/小模型适配器/路由器",
+    "依赖感知的 Skill→LLM→Router 调度与联合 replay 准入机制",
+    "Input-only 路由+verifier-backed fallback 架构实现 88.3% pass/60.8% 成本的 cost-quality 操作点"
+   ],
+   "benchmarks": [
+    "HumanEval+MBPP (582 held-out)",
+    "TAU-2 (35-task fixed split)"
+   ]
+  }
+ }
 }

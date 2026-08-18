@@ -3,5 +3,32 @@
  "batch_id": "87901527-269d-4539-a4fd-660d99b9b5c7",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:23",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/26b556ab-9812-400b-a2bf-632f9fb5d663.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/26b556ab-9812-400b-a2bf-632f9fb5d663.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:23:57",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "hyperbolic conservation laws",
+    "physics-informed neural networks",
+    "weak formulation",
+    "entropy condition",
+    "shock capturing",
+    "discrete fast Fourier transform"
+   ],
+   "field": "偏微分方程物理信息神经网络",
+   "innovations": [
+    "弱形式与熵条件联合嵌入PINN损失，无需先验间断位置",
+    "预选择三角基测试函数并采用DFFT加速时空积分，避免对抗训练不稳定",
+    "提出S-Rate与S-Acc激波感知指标以量化间断捕捉能力"
+   ],
+   "benchmarks": [
+    "Burgers equation 1D",
+    "LWR traffic model",
+    "Compressible Euler Sod shock tube",
+    "2D scalar Burgers equation"
+   ]
+  }
+ }
 }

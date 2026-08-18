@@ -3,5 +3,31 @@
  "batch_id": "84d368b8-d5b6-49d0-9a6f-d78eb68b40cf",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 16:05:10",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/d721287b-a6e0-4f37-b7b6-0ba4f3691677.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/d721287b-a6e0-4f37-b7b6-0ba4f3691677.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:13:52",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "可微预测控制",
+    "控制屏障函数",
+    "可行性保证",
+    "拓扑分析",
+    "离线学习控制",
+    "安全控制"
+   ],
+   "field": "学习基预测控制",
+   "innovations": [
+    "首次建立DPC可行性的拓扑分析框架，证明确定性闭环可行性",
+    "提出CBF代理损失与两阶段同调训练策略实现离线严格可行性",
+    "证明违反概率随训练样本数单调收敛至零的存在性定理"
+   ],
+   "benchmarks": [
+    "Nonholonomic mobile robot navigation",
+    "Unstable linear system stabilization",
+    "Constrained quadcopter stabilization"
+   ]
+  }
+ }
 }

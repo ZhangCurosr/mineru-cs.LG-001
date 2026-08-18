@@ -3,5 +3,29 @@
  "batch_id": "3fc85136-a9ac-48fd-85e3-4f86bf879aec",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 16:05:08",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/fe29a77e-2fc1-41ee-81ca-7ce7930f03da.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/fe29a77e-2fc1-41ee-81ca-7ce7930f03da.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:19:41",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "reinforcement learning",
+    "tool-use agents",
+    "FlexAttention",
+    "GRPO",
+    "long-context training",
+    "memory efficiency",
+    "dual-control environment"
+   ],
+   "field": "长程 Agent 强化学习训练系统",
+   "innovations": [
+    "零值sink等价性将可学习sink机制纳入可微训练路径，避免O(n²)显存物化",
+    "GRPO+VERL数据流+FlexAttention的模块化集成，解决长程工具调用agent的显存墙问题"
+   ],
+   "benchmarks": [
+    "τ²-Bench retail"
+   ]
+  }
+ }
 }

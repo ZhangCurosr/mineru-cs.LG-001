@@ -3,5 +3,30 @@
  "batch_id": "de3bd487-9bd6-48b5-b22a-265289e37c87",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:07",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/fe29a77e-2fc1-41ee-81ca-7ce7930f03da.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/fe29a77e-2fc1-41ee-81ca-7ce7930f03da.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:19:17",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Reinforcement Learning",
+    "Tool-Use Agents",
+    "Long-Horizon Planning",
+    "FlexAttention",
+    "GRPO",
+    "Memory Efficiency",
+    "Agentic RL"
+   ],
+   "field": "智能体强化学习系统",
+   "innovations": [
+    "提出SINKFLEX-RL模块化训练系统整合环境接口与可微attention",
+    "零值sink代数等价转换避免显式token材料化",
+    "sink-aware FlexAttention路径支持异构掩码与模型特定缩放"
+   ],
+   "benchmarks": [
+    "τ²-Bench"
+   ]
+  }
+ }
 }

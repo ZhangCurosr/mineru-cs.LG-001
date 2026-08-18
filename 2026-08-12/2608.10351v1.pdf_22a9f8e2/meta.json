@@ -3,5 +3,32 @@
  "batch_id": "22a9f8e2-db05-4a4a-99f8-78ed91df622a",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:08",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/3887b8c2-4172-4650-a650-e5d9b8f3a7cc.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/3887b8c2-4172-4650-a650-e5d9b8f3a7cc.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:17:40",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "张量网络",
+    "深度学习优化",
+    "高维函数学习",
+    "PDE求解",
+    "随机张量分解",
+    "物理信息神经网络",
+    "上下文特征"
+   ],
+   "field": "科学机器学习 / 高维PDE的神经优化加速",
+   "innovations": [
+    "提出Tensor-Featured两阶段交替优化框架，将CPD分解的DNN作为上下文特征注入输入层加速训练",
+    "揭示直接DNN特征无效而CPD近似有效的机制，并给出随机化CPD-RALS降低存储复杂度至少8个数量级",
+    "将秩-1特征与张量特征组合使用，在5-40维PDE学习任务上显著提升DNN收敛速度和精度"
+   ],
+   "benchmarks": [
+    "15维非线性椭圆方程",
+    "15维双曲波动方程",
+    "40维双曲波动方程"
+   ]
+  }
+ }
 }

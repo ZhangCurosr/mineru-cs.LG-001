@@ -3,5 +3,28 @@
  "batch_id": "b73a9dec-cd5f-4bf9-9681-3d5259321d56",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:34:32",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/05b549ff-9ead-4783-8fe4-7a9afa3396ce.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/05b549ff-9ead-4783-8fe4-7a9afa3396ce.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:23:36",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "模型引导强化学习",
+    "隐式世界模型",
+    "自动驾驶决策",
+    "离线策略学习",
+    "样本效率"
+   ],
+   "field": "自动驾驶强化学习",
+   "innovations": [
+    "提出 Dreamer-SAC 框架，将 RSSM 世界模型与离线策略 SAC 结合实现混合 replay 学习",
+    "设计 n-step 目标估计用于预测轨迹价值学习，提升模型生成经验的利用效率",
+    "揭示 rollout 视场与策略性能的倒 U 型关系，确定短视场最优平衡点"
+   ],
+   "benchmarks": [
+    "MetaDrive BIG_BLOCK_SEQUENCE-CC"
+   ]
+  }
+ }
 }

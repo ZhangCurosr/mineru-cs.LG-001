@@ -3,5 +3,32 @@
  "batch_id": "79c717c3-b1eb-4af8-a93b-0abc7c992e03",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:07",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/922a582b-d517-442c-96ca-8f0de6131d03.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/922a582b-d517-442c-96ca-8f0de6131d03.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:20:25",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "post-hoc calibration",
+    "temperature scaling",
+    "monotone neural network",
+    "InvLT",
+    "accuracy preservation",
+    "uncertainty calibration",
+    "computational efficiency"
+   ],
+   "field": "深度学习校准与不确定性估计",
+   "innovations": [
+    "共享标量MLP逐元素作用logits并以逆网络重建损失软约束单调性",
+    "避免UMNN类方法的数值积分，训练与推理显著更快",
+    "在CIFAR/ImageNet与七种架构上一致获得最佳ECE/NLL并保持原分类精度"
+   ],
+   "benchmarks": [
+    "CIFAR-10",
+    "CIFAR-100",
+    "ImageNet"
+   ]
+  }
+ }
 }

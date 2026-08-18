@@ -3,5 +3,31 @@
  "batch_id": "a92680cb-ca1e-4669-9983-60ebf531c5d3",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:34:35",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/3887b8c2-4172-4650-a650-e5d9b8f3a7cc.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/3887b8c2-4172-4650-a650-e5d9b8f3a7cc.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 03:18:48",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "tensor network",
+    "deep neural network",
+    "canonical polyadic decomposition",
+    "high-dimensional function learning",
+    "PDE solving",
+    "randomized ALS",
+    "scientific machine learning"
+   ],
+   "field": "科学机器学习/高维函数逼近",
+   "innovations": [
+    "提出Tensor-Featured两阶段交替优化框架，将CPD分解特征注入DNN输入层加速高维函数学习",
+    "揭示预训练DNN直接作特征无效的机制，证明CPD平滑后的TN特征才是有效上下文",
+    "改进随机化CPD-RALS引入KRP行归一化，存储开销降低8-34个数量级"
+   ],
+   "benchmarks": [
+    "15维非线性椭圆方程",
+    "15/40维双曲波方程"
+   ]
+  }
+ }
 }
