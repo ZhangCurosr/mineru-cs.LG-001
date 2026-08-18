@@ -4,5 +4,30 @@
  "title": "High-Order-Liquid-Evidence-Encoding-for-Gradual-GNSS-Spoofin",
  "token": "sk-wGl2gwQjA...",
  "created_at": "2026-08-13 07:10:35",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/90f5d94b-89eb-4494-9d72-13b3980f40de.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/90f5d94b-89eb-4494-9d72-13b3980f40de.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:25:03",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "GNSS spoofing detection",
+    "autonomous driving",
+    "liquid neural networks",
+    "high-order evidence",
+    "causal temporal modeling",
+    "sensor consistency"
+   ],
+   "field": "自动驾驶系统安全",
+   "innovations": [
+    "将渐进GNSS欺骗检测形式化为因果位移一致性建模并推导物理引导残差证据",
+    "构建残差级别及其一阶/二阶离散变化的高阶证据流并按阶次选择上下文",
+    "为各证据流设计独立自适应液态编码器并通过层级耦合实现因果端点预测"
+   ],
+   "benchmarks": [
+    "AV-GPS Dataset (Dataset 1/2/3)",
+    "GPS-IDS baseline"
+   ]
+  }
+ }
 }

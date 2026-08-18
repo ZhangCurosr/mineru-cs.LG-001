@@ -4,5 +4,33 @@
  "title": "L-O-D-E-S-TA-R-TRUSTWORTHY-ENTROPY-IS-NAVIGATED-NOT-MERELY-M",
  "token": "sk-NnOQ8YDzm...",
  "created_at": "2026-08-13 14:56:24",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/aa854be7-faf1-4abb-8150-85b35d05cb84.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/aa854be7-faf1-4abb-8150-85b35d05cb84.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:27:54",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Retrieval-Augmented Generation",
+    "Entropy-based Selection",
+    "Uncertainty Estimation",
+    "Frozen LLM",
+    "Reinforcement Learning",
+    "Question Answering"
+   ],
+   "field": "检索增强生成与不确定性建模",
+   "innovations": [
+    "提出有向熵干预框架，通过RL学习的固定极化器字符串引导冻结LLM的熵方向性分离误导性与支持性段落",
+    "揭示最低熵选择在confidently-wrong场景下的系统性失效并提出修复方案",
+    "构建14种方法的统一公平比较基准，LODESTAR在所有70个单元格胜出"
+   ],
+   "benchmarks": [
+    "NQ-Open",
+    "SQuAD",
+    "TriviaQA",
+    "EntityQuestions",
+    "WebQuestions"
+   ]
+  }
+ }
 }

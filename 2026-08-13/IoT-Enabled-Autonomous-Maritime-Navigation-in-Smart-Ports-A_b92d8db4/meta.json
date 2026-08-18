@@ -4,5 +4,32 @@
  "title": "IoT-Enabled-Autonomous-Maritime-Navigation-in-Smart-Ports-A",
  "token": "sk-Dw4PCoiSK...",
  "created_at": "2026-08-13 14:56:03",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/0110ac75-434c-47f9-9c69-8aea373caa68.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/0110ac75-434c-47f9-9c69-8aea373caa68.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:26:46",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "IoT边缘智能",
+    "自主海上导航",
+    "课程学习",
+    "共享循环PPO",
+    "COLREGs合规",
+    "部分可观测决策"
+   ],
+   "field": "边缘强化学习与自主导航",
+   "innovations": [
+    "共享循环PPO架构实现边缘设备可复用策略部署",
+    "混合课程学习（设计阶段+性能阈值）渐进提升训练鲁棒性",
+    "基于船舶安全域的COLREGs连续奖励感知设计"
+   ],
+   "benchmarks": [
+    "Stage 1洛杉矶港: 成功率96.2%",
+    "Stage 2新加坡港: 成功率90.5%",
+    "Stage 3鹿特丹港: 成功率85.6%",
+    "对比基线: DDPG/SAC/Standard PPO"
+   ]
+  }
+ }
 }

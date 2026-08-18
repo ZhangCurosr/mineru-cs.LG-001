@@ -4,5 +4,35 @@
  "title": "LoongReflect-Boosting-Long-Horizon-Reflection-in-Search-Agen",
  "token": "sk-FMTQpgZxg...",
  "created_at": "2026-08-13 14:56:22",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/816d70cc-3d3a-43aa-8cf3-078e11fead6c.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/816d70cc-3d3a-43aa-8cf3-078e11fead6c.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:31:12",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "long-horizon reasoning",
+    "reflection agent",
+    "reinforcement learning",
+    "knowledge retrieval",
+    "distillation",
+    "trajectory tree"
+   ],
+   "field": "长程智能体与反思学习",
+   "innovations": [
+    "将反思形式化为记忆控制策略，通过显式动作支持可逆轨迹分支恢复",
+    "双通道优化结合全局视角蒸馏与结果对齐，并通过前瞻协调消除方向冲突",
+    "答案遮蔽教师提供密集局部监督，避免答案模仿并聚焦状态诊断"
+   ],
+   "benchmarks": [
+    "HotpotQA",
+    "2WikiMultiHopQA",
+    "Bamboogle",
+    "FRAMES",
+    "MuSiQue",
+    "MATH",
+    "GSM8K"
+   ]
+  }
+ }
 }

@@ -4,5 +4,32 @@
  "title": "JAPE-Joint-Anomaly-Prediction-and-Intrinsic-Explanation-in-M",
  "token": "sk-zw57yHIgm...",
  "created_at": "2026-08-13 14:55:25",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/c5999be8-59e5-4f68-9b6e-92b4e7da7e10.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/c5999be8-59e5-4f68-9b6e-92b4e7da7e10.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:27:28",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "多变量时间序列",
+    "异常预测",
+    "依赖结构建模",
+    "可解释AI",
+    "时空表征"
+   ],
+   "field": "时间序列异常检测与预测",
+   "innovations": [
+    "解耦时空表征DSTR：将时间演化与跨变量依赖分离为双轴交替操作，避免弱结构信号被强时间模式淹没",
+    "双视图告警机制：融合数值预报与动态依赖图的交叉注意力，捕捉弱前兆下的结构异常证据",
+    "原生预测性解释NPE：复用预测中间产物计算图偏离得分，零额外成本提供变量级解释"
+   ],
+   "benchmarks": [
+    "SMD",
+    "WADI",
+    "MSL",
+    "PSM",
+    "EXATHLON"
+   ]
+  }
+ }
 }

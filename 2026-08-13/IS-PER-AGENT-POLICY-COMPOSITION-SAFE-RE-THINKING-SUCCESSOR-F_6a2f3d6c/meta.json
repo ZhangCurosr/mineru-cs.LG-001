@@ -4,5 +4,10 @@
  "title": "IS-PER-AGENT-POLICY-COMPOSITION-SAFE-RE-THINKING-SUCCESSOR-F",
  "token": "sk-4qwN7yoJ8...",
  "created_at": "2026-08-13 14:55:29",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/838ff070-b5ae-4a59-b2bb-0ecc253c868d.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/838ff070-b5ae-4a59-b2bb-0ecc253c868d.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:26:39",
+  "chunks": 1
+ }
 }

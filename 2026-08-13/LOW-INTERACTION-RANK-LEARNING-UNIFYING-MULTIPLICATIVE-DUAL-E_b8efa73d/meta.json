@@ -4,5 +4,34 @@
  "title": "LOW-INTERACTION-RANK-LEARNING-UNIFYING-MULTIPLICATIVE-DUAL-E",
  "token": "sk-gD7m2ian9...",
  "created_at": "2026-08-13 07:10:49",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/43e75233-7a64-4c7f-aea9-23b4fa1defe9.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/43e75233-7a64-4c7f-aea9-23b4fa1defe9.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:29:36",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "双编码器",
+    "交互谱",
+    "规范对称性",
+    "白化",
+    "算子学习",
+    "对比学习",
+    "低秩近似",
+    "可识别性"
+   ],
+   "field": "表示学习与架构理论",
+   "innovations": [
+    "建立交互谱理论统一刻画乘性双编码器头的近似与估计性质",
+    "将归一化方案统一为规范固定选择并严格分类残差对称群",
+    "证明白化在谱间隙下唯一恢复交互模式到置换和符号"
+   ],
+   "benchmarks": [
+    "DeepONet算子学习(heat/Burgers/Darcy)",
+    "CLIP-CIFAR100概念轴提取",
+    "布尔等值函数平坦谱基准",
+    "合成Legendre模式控制实验"
+   ]
+  }
+ }
 }

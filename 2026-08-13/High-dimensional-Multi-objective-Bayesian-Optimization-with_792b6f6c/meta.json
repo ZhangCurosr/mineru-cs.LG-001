@@ -4,5 +4,31 @@
  "title": "High-dimensional-Multi-objective-Bayesian-Optimization-with",
  "token": "sk-0a1o6nr9t...",
  "created_at": "2026-08-13 14:55:26",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/f52a3c50-9a14-41c0-8744-083ed58e7881.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/f52a3c50-9a14-41c0-8744-083ed58e7881.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:25:34",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Multi-objective Bayesian Optimization",
+    "High-dimensional Optimization",
+    "Variable Interaction Analysis",
+    "Additive Kernel",
+    "Expensive Black-box Optimization",
+    "Pareto Front Approximation"
+   ],
+   "field": "高维多目标贝叶斯优化",
+   "innovations": [
+    "提出基于变量交互学习的可分性自动判定与子空间划分策略，无需额外昂贵评估",
+    "将可加分核结构首次引入多目标 BO 框架并配合虚拟导数正则化",
+    "通过 SVM 二元分类器从已有数据中学习变量交互关系并推断全局可分性"
+   ],
+   "benchmarks": [
+    "DTLZ2 (10/30/100D)",
+    "Airfoil Shape Optimization (20D/40D)",
+    "Trajectory Planning (60D)"
+   ]
+  }
+ }
 }

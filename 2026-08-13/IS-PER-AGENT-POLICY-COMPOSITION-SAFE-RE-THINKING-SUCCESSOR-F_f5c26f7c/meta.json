@@ -4,5 +4,31 @@
  "title": "IS-PER-AGENT-POLICY-COMPOSITION-SAFE-RE-THINKING-SUCCESSOR-F",
  "token": "sk-AG7sAmdzS...",
  "created_at": "2026-08-13 07:10:52",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/838ff070-b5ae-4a59-b2bb-0ecc253c868d.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/838ff070-b5ae-4a59-b2bb-0ecc253c868d.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:26:26",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "successor features",
+    "multi-agent reinforcement learning",
+    "policy transfer",
+    "generalized policy improvement",
+    "safety guarantee",
+    "heterogeneous objectives",
+    "traffic signal control"
+   ],
+   "field": "合作多智能体强化学习与策略迁移",
+   "innovations": [
+    "首次证明多智能体独立组合可能严格劣于策略库所有策略，揭示值函数过时机制",
+    "提出分层方法 MA‑USFA，同时保证安全性与异构任务灵活性",
+    "给出独立组合安全保证的充要条件（选择对齐与值有效性）并刻画安全区域"
+   ],
+   "benchmarks": [
+    "SFWorld 网格世界",
+    "曼哈顿 28x7 交通信号控制网络 (196 agents)"
+   ]
+  }
+ }
 }

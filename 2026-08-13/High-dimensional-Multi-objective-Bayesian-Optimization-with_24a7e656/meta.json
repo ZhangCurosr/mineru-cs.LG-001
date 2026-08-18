@@ -4,5 +4,30 @@
  "title": "High-dimensional-Multi-objective-Bayesian-Optimization-with",
  "token": "sk-Zs9k8BxOo...",
  "created_at": "2026-08-13 07:10:40",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/f52a3c50-9a14-41c0-8744-083ed58e7881.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/f52a3c50-9a14-41c0-8744-083ed58e7881.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:25:13",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "多目标贝叶斯优化",
+    "高维优化",
+    "变量交互分析",
+    "加法核",
+    "帕累托前沿"
+   ],
+   "field": "高维多目标贝叶斯优化",
+   "innovations": [
+    "基于SVM无监督学习的决策变量交互分组与可分性判定机制",
+    "将加法核高斯过程推广至多目标场景并实现子空间局部优化",
+    "结合虚拟导数符号观测的高维批量采集函数优化策略"
+   ],
+   "benchmarks": [
+    "DTLZ2 (10/30/100维)",
+    "NACA翼型气动优化 (20/40维)",
+    "Rover轨迹规划 (60维)"
+   ]
+  }
+ }
 }

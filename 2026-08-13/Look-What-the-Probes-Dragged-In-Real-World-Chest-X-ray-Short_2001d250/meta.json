@@ -4,5 +4,31 @@
  "title": "Look-What-the-Probes-Dragged-In-Real-World-Chest-X-ray-Short",
  "token": "sk-dKfLTOMDH...",
  "created_at": "2026-08-13 14:54:55",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/a80a5c34-d135-4739-ba3c-6aa4f33481c8.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/a80a5c34-d135-4739-ba3c-6aa4f33481c8.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:30:44",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "MedCLIP",
+    "捷径学习",
+    "线性探针",
+    "校准分析",
+    "胸部X光",
+    "视觉语言模型",
+    "数据质量"
+   ],
+   "field": "医学影像AI的公平性与可靠性",
+   "innovations": [
+    "将线性探针评估框架从CNN扩展到VLM架构，诊断MedCLIP的捷径学习行为",
+    "揭示真实世界局部捷径（引流管）和扩散捷径（扫描仪噪声）在不同网络深度的涌现模式",
+    "通过手动分析发现公开医学数据集NIH-CXR14和PadChest的严重数据质量问题"
+   ],
+   "benchmarks": [
+    "NIH-CXR14",
+    "PadChest"
+   ]
+  }
+ }
 }

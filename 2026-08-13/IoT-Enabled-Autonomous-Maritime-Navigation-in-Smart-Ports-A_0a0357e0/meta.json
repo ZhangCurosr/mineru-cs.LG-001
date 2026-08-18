@@ -4,5 +4,31 @@
  "title": "IoT-Enabled-Autonomous-Maritime-Navigation-in-Smart-Ports-A",
  "token": "sk-YrIlRFySy...",
  "created_at": "2026-08-13 07:11:05",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/0110ac75-434c-47f9-9c69-8aea373caa68.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/0110ac75-434c-47f9-9c69-8aea373caa68.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:26:52",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "IoT autonomous navigation",
+    "curriculum learning",
+    "shared recurrent policy",
+    "COLREGs compliance",
+    "edge intelligence",
+    "autonomous surface vehicle"
+   ],
+   "field": "自主航海与边缘智能",
+   "innovations": [
+    "提出面向物联网边缘设备的共享循环PPO策略学习框架，实现多设备复用与全机载执行",
+    "设计三维渐进课程学习策略（规模-交互-环境复杂度），提升密集港口场景下的泛化与鲁棒性",
+    "将COLREGs规则转化为基于船舶安全域的区域感知连续奖励信号，实现合规导航的端到端学习"
+   ],
+   "benchmarks": [
+    "Los Angeles Port (Stage 1)",
+    "Singapore Port - Pasir Panjang (Stage 2)",
+    "Rotterdam Port (Stage 3)"
+   ]
+  }
+ }
 }

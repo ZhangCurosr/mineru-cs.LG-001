@@ -4,5 +4,31 @@
  "title": "Highlights",
  "token": "sk-rvQMAAO2D...",
  "created_at": "2026-08-13 14:55:32",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/25eb8ad1-f583-4c19-81df-1dc41ccee7b1.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/25eb8ad1-f583-4c19-81df-1dc41ccee7b1.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:25:48",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "随机场重建",
+    "Sinkhorn 散度",
+    "最优传输",
+    "不确定性量化",
+    "随机神经网络",
+    "条件分布匹配"
+   ],
+   "field": "科学机器学习 / 随机场不确定性量化",
+   "innovations": [
+    "将局部最优传输框架从精确 Wasserstein 距离推广至去偏 Sinkhorn 散度，实现高效可微的条件分布重建",
+    "建立局部 Sinkhorn 散度的泛化误差理论界，揭示正则化参数对逼近偏差与统计效率的权衡机制",
+    "证明基于邻域的简单 SNN + Sinkhorn 损失可超越 CVAE/CNF 等复杂条件生成模型"
+   ],
+   "benchmarks": [
+    "一维双模高斯混合条件分布重建",
+    "随机 Darcy 流（25维输出）",
+    "随机 FitzHugh-Nagumo 耦合振荡系统（10维）"
+   ]
+  }
+ }
 }

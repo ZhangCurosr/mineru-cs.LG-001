@@ -4,5 +4,34 @@
  "title": "L-O-D-E-S-TA-R-TRUSTWORTHY-ENTROPY-IS-NAVIGATED-NOT-MERELY-M",
  "token": "sk-JMLCbBCEj...",
  "created_at": "2026-08-13 07:10:27",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/aa854be7-faf1-4abb-8150-85b35d05cb84.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/aa854be7-faf1-4abb-8150-85b35d05cb84.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:28:15",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "retrieval-augmented generation",
+    "entropy-based selection",
+    "trustworthy RAG",
+    "frozen LLM",
+    "reinforcement learning",
+    "answer selection",
+    "uncertainty estimation"
+   ],
+   "field": "检索增强生成与可信问答",
+   "innovations": [
+    "首次以第三份冻结LLM的熵响应作为文本干预的评分信号",
+    "用GRPO离线训练单条自然语言偏振器引导定向熵",
+    "在统一冻结受访者设置下对14种已发表选择器实现全面超越"
+   ],
+   "benchmarks": [
+    "NQ-Open",
+    "SQuAD",
+    "TriviaQA",
+    "EntityQuestions",
+    "WebQuestions"
+   ]
+  }
+ }
 }

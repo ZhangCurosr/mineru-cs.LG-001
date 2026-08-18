@@ -4,5 +4,32 @@
  "title": "Highlights",
  "token": "sk-iG65PZaJv...",
  "created_at": "2026-08-13 07:11:00",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/25eb8ad1-f583-4c19-81df-1dc41ccee7b1.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/25eb8ad1-f583-4c19-81df-1dc41ccee7b1.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:25:53",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "随机场重建",
+    "Sinkhorn散度",
+    "最优传输",
+    "不确定性量化",
+    "随机神经网络",
+    "条件分布匹配",
+    "科学机器学习"
+   ],
+   "field": "科学机器学习/不确定性量化",
+   "innovations": [
+    "提出基于局部去偏Sinkhorn散度的SNN训练框架，替代计算昂贵的精确局部Wasserstein距离",
+    "建立局部Sinkhorn损失的泛化误差界，揭示熵正则化对高维统计收敛的改善作用",
+    "在随机Darcy流和FHN动力学系统上验证方法优于多种生成模型基线"
+   ],
+   "benchmarks": [
+    "1D条件分布重建（双模高斯混合）",
+    "随机Darcy流（2D空间域，64×64网格）",
+    "随机FitzHugh–Nagumo动力学系统（10维SDE，5神经元耦合网络）"
+   ]
+  }
+ }
 }

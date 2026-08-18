@@ -4,5 +4,32 @@
  "title": "Latent-variable-models-for-simultaneous-EOV-identification-a",
  "token": "sk-dY4OBV5wM...",
  "created_at": "2026-08-13 06:51:54",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/b0645acc-ac88-4821-8fd7-7ebf34a66d6c.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/b0645acc-ac88-4821-8fd7-7ebf34a66d6c.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:29:56",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "结构健康监测",
+    "环境工作变异性",
+    "高斯过程",
+    "卡尔曼滤波",
+    "种群SHM",
+    "分层贝叶斯",
+    "隐变量模型",
+    "鲁棒门控"
+   ],
+   "field": "结构健康监测中的环境变异性处理",
+   "innovations": [
+    "将未观测EOV建模为共享Matérn高斯过程潜变量并以时间相关性而非方差主导性识别，避免损伤信号被投影法误删",
+    "分层贝叶斯种群扩展使数据稀缺结构通过共识先验借用信息，显著提升小样本EUV去除与检测性能",
+    "引入鲁棒Kalman门控机制排除损伤污染观测，克服慢特征方法对渐进性损伤的遮蔽问题"
+   ],
+   "benchmarks": [
+    "DAMASCOS Lamb波复合材料实验数据集",
+    "模拟九风机海上风电场数据集（N=9, M=3, T=730天）"
+   ]
+  }
+ }
 }

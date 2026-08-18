@@ -4,5 +4,30 @@
  "title": "LEMUR-Latent-Entropy-aware-Multimodal-Unlearning-via-Visual",
  "token": "sk-yjjHVmEWF...",
  "created_at": "2026-08-13 07:10:46",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e2e8e8f7-4d0a-4b48-8e88-37b412fc800a.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e2e8e8f7-4d0a-4b48-8e88-37b412fc800a.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:28:25",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "machine unlearning",
+    "multimodal large reasoning models",
+    "entropy-aware intervention",
+    "privacy leakage",
+    "inference-time unlearning",
+    "visual anchoring"
+   ],
+   "field": "多模态大模型隐私安全",
+   "innovations": [
+    "利用 token 级两阶段熵签名作为推理时干预信号，首次实现 RL 训练 MLRM 的无训练 unlearning",
+    "熵调制的视觉锚点 latent injection 机制，在抑制 sensitive recall 的同时保持推理流畅性",
+    "自适应熵阈值退出 + 冷却窗口防止离散/latent 解码振荡的动态相持续时间控制"
+   ],
+   "benchmarks": [
+    "MLLMU-Bench",
+    "VQAv2"
+   ]
+  }
+ }
 }

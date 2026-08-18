@@ -4,5 +4,31 @@
  "title": "Learning-with-Bilevel-Minimax-Optimization-for-Eficient-and",
  "token": "sk-1jVZGxTQ1...",
  "created_at": "2026-08-13 07:10:34",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/c9d6eac3-e491-46d0-9bc0-4977e244591a.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/c9d6eac3-e491-46d0-9bc0-4977e244591a.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:30:24",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "迁移攻击",
+    "对抗攻击",
+    "双层优化",
+    "极小极大优化",
+    "对抗鲁棒性",
+    "语义分割"
+   ],
+   "field": "对抗机器学习",
+   "innovations": [
+    "首次将迁移攻击形式化为双层极小极大优化框架，显式耦合初始化、扰动与代理权重三元交互",
+    "提出SWMSingle-step联合更新与IGACG隐式超梯度近似的高效求解器",
+    "在分类与分割任务上系统性超越10+基线，跨架构迁移增益达23.28%ASR"
+   ],
+   "benchmarks": [
+    "ImageNet-1K",
+    "Cityscapes",
+    "ADE20K"
+   ]
+  }
+ }
 }

@@ -4,5 +4,30 @@
  "title": "MBA-Multimodal-Benchmark-and-Agents-for-Real-World-Business",
  "token": "sk-aeujzMN4P...",
  "created_at": "2026-08-13 14:55:45",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6ca57983-0680-45cf-98a9-996ecdb43705.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6ca57983-0680-45cf-98a9-996ecdb43705.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:31:57",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Multimodal Benchmark",
+    "Business Ideation",
+    "GRPO",
+    "Reinforcement Learning",
+    "MLLM",
+    "RAG",
+    "LLM-as-a-Judge"
+   ],
+   "field": "多模态大语言模型应用",
+   "innovations": [
+    "提出首个多模态商业创意基准测试MBA-Bench，覆盖6个视觉域30K样本",
+    "设计盲态/已知态专用智能体MBA-b/k，结合SFT与GRPO及新颖的奖励机制进行训练",
+    "构建基于外部知识库MBA-Library的可行性奖励，缓解LLM幻觉并提升事实准确性"
+   ],
+   "benchmarks": [
+    "MBA-Bench"
+   ]
+  }
+ }
 }

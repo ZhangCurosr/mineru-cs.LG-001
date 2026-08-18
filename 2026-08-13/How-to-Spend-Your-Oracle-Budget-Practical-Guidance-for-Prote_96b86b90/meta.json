@@ -4,5 +4,31 @@
  "title": "How-to-Spend-Your-Oracle-Budget-Practical-Guidance-for-Prote",
  "token": "sk-7NOZt17oN...",
  "created_at": "2026-08-13 07:10:25",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/7edcb0a4-52b8-4bdd-9e76-63369f81b44c.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/7edcb0a4-52b8-4bdd-9e76-63369f81b44c.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:26:18",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "蛋白质结构预测",
+    "Oracle引导",
+    "贝叶斯优化",
+    "潜空间优化",
+    "DPO",
+    "FK-steering",
+    "扩散模型"
+   ],
+   "field": "蛋白质结构与药物设计中的AI生成模型",
+   "innovations": [
+    "首次将O3优化框架应用于蛋白质结构预测模型，在Oracle预算受限条件下实现高效引导",
+    "系统比较四类引导方法在不同Oracle预算下的性能，揭示O3低预算优势与FK/DPO高预算优势的定性权衡",
+    "对比在线与离线DPO变体，证明在线自适应重采样是DPO在预算约束下有效的关键因素"
+   ],
+   "benchmarks": [
+    "PDB: 1CLL (Calmodulin, TM-score Oracle)",
+    "PDB: 9EEH (E. coli ATCase, MolProbity Oracle)"
+   ]
+  }
+ }
 }

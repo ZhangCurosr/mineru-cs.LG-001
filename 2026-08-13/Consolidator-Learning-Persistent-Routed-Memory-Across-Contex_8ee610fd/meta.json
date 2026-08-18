@@ -4,5 +4,32 @@
  "title": "Consolidator-Learning-Persistent-Routed-Memory-Across-Contex",
  "token": "sk-yjjHVmEWF...",
  "created_at": "2026-08-13 07:10:44",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/ad5c65dd-4e5f-43b9-8ffa-dd9c187c2cb4.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/ad5c65dd-4e5f-43b9-8ffa-dd9c187c2cb4.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:23:49",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "explicit memory",
+    "memory consolidation",
+    "short-term memory",
+    "long-term memory",
+    "hierarchical routing",
+    "phasor memory network",
+    "parameter-efficient adaptation"
+   ],
+   "field": "显式记忆架构与参数高效自适应",
+   "innovations": [
+    "Shared slot-local phase transform for replay-free STM-to-LTM consolidation",
+    "Direct LTM-conditioned routing making retained state an access state for frozen router",
+    "Sequential same-address update task isolating four memory lifecycle functions"
+   ],
+   "benchmarks": [
+    "ADD10 modulo-10 mapping",
+    "AFFINE10 modulo-10 mapping",
+    "Same-address update recall"
+   ]
+  }
+ }
 }
