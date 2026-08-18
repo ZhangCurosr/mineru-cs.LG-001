@@ -3,5 +3,29 @@
  "batch_id": "1ed4bdcb-d027-498f-a50b-300f86e70fa5",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:42:54",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/5e8bf4bd-85a5-4191-bcdb-3c70604d9d61.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/5e8bf4bd-85a5-4191-bcdb-3c70604d9d61.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:58:29",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Offline-to-online Reinforcement Learning",
+    "Critic-Free Pretraining",
+    "Flow Matching",
+    "Policy Fine-tuning",
+    "Distribution Shift"
+   ],
+   "field": "在线强化学习微调",
+   "innovations": [
+    "完全放弃离线阶段的 Critic 训练，仅保留 Actor 的行为克隆预训练",
+    "在线阶段开始前初始化全新 Critic 并进行极短时间（如 10K 步）的热身校准",
+    "该方法与多种 Flow-based O2O 算法兼容，在稀疏奖励操作任务上取得或超越基线性能"
+   ],
+   "benchmarks": [
+    "OGBench (Cube-Double/Triple/Quadruple, Puzzle-4x4, Scene)",
+    "Robomimic (Lift, Can, Square)"
+   ]
+  }
+ }
 }

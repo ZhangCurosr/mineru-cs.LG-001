@@ -3,5 +3,32 @@
  "batch_id": "e70d5fd3-0d0f-43e5-a078-01cf6cd54893",
  "token": "sk-LV19Ft0NN...",
  "created_at": "2026-08-12 14:59:19",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/3ac39fd2-bd93-46c4-a260-96f410b10f76.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/3ac39fd2-bd93-46c4-a260-96f410b10f76.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:55:52",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "LLM acquisition agent",
+    "reward-SNR detectability floor",
+    "Structured Hypothesis Embeddings",
+    "heterogeneous treatment effect",
+    "recommender systems",
+    "active learning",
+    "value of information"
+   ],
+   "field": "推荐系统与LLM辅助特征可学习性",
+   "innovations": [
+    "提出reward-SNR可检测性下界 rho*(N)=2.8/sqrt(N)，区分均值效应检测与per-instance acquisition策略学习",
+    "诊断表观oracle增益实为噪声order statistics，matched-noise placebo复现>=100%",
+    "提出design-time regime gate作为floor之下的可行部署单元并给出四步处方"
+   ],
+   "benchmarks": [
+    "MIND",
+    "REES46",
+    "Amazon-Beauty"
+   ]
+  }
+ }
 }

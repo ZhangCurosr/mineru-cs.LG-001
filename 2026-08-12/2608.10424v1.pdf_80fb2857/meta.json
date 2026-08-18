@@ -3,5 +3,31 @@
  "batch_id": "80fb2857-5349-4abd-afd3-c9ca1fd3e40e",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:42:45",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/e55db3cd-d975-418a-a6bf-901bcabdc393.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/e55db3cd-d975-418a-a6bf-901bcabdc393.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:52:41",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "autoresearch agents",
+    "tree search",
+    "debug consultant",
+    "Thompson Sampling",
+    "hyperparameter tuning",
+    "MLE-bench",
+    "LLM agents"
+   ],
+   "field": "自动机器学习与智能体系统",
+   "innovations": [
+    "全局调试顾问实现跨树分支的失败知识共享",
+    "Thompson Sampling增强的代码搜索节点选择策略",
+    "预算感知的超参调优强制控制机制"
+   ],
+   "benchmarks": [
+    "MLE-bench",
+    "Kaggle Playground Series"
+   ]
+  }
+ }
 }

@@ -3,5 +3,34 @@
  "batch_id": "56dc0757-b0c2-4988-92a1-7252dbaa37e9",
  "token": "sk-7NOZt17oN...",
  "created_at": "2026-08-12 15:02:48",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/6cccd5bc-1765-449e-b731-78aa25ee22c0.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/6cccd5bc-1765-449e-b731-78aa25ee22c0.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:58:29",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "fair representation learning",
+    "continuous sensitive attributes",
+    "HSIC",
+    "demographic parity",
+    "kernel methods",
+    "fairness-accuracy tradeoff",
+    "joint distribution"
+   ],
+   "field": "公平机器学习",
+   "innovations": [
+    "将连续敏感属性的条件型公平准则统一为单一联合差异的可分解特例（解构恒等式）",
+    "建立HSIC与条件MMD积分的谱等价性，并证明其对GDP的有限样本控制",
+    "提出FRHSIC算法，以O(n^{-1/2})速率替代O(n^{-2/5})条件估计，训练提速约36×"
+   ],
+   "benchmarks": [
+    "Adult",
+    "ACS Income",
+    "MEPS",
+    "Communities and Crime",
+    "COMPAS"
+   ]
+  }
+ }
 }

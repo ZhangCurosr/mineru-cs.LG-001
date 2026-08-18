@@ -3,5 +3,30 @@
  "batch_id": "7ce38101-8a12-4369-bfd5-81706cd2e7ac",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 16:05:06",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/0249a42b-eb4c-494b-a177-4c1a07ec1d9d.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/0249a42b-eb4c-494b-a177-4c1a07ec1d9d.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:51:54",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "mixture of experts",
+    "token-adaptive computation",
+    "shared expert",
+    "dynamic routing",
+    "domain generalization",
+    "sparse upcycling"
+   ],
+   "field": "高效深度学习架构",
+   "innovations": [
+    "揭示共享建模、细粒度计算与动态路由间的顺序依赖，提出'先共享再路由剩余'统一原则",
+    "UniF-MoE通过单一token依赖预算联合控制共享宽度和内容、残差专家数三个决策",
+    "Gram正则化路由嵌入促进专家多样性与稀疏重叠，简化路由几何"
+   ],
+   "benchmarks": [
+    "DomainBed",
+    "GLUE"
+   ]
+  }
+ }
 }

@@ -3,5 +3,31 @@
  "batch_id": "2a3a8c2d-f7ad-4dcc-af9b-12f2a5c1617b",
  "token": "sk-n7iJ0Z1Ol...",
  "created_at": "2026-08-12 14:59:17",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/23d8b55e-9e16-498b-97a5-3bbfe92154f6.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/23d8b55e-9e16-498b-97a5-3bbfe92154f6.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:01:53",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "federated reinforcement learning",
+    "personalized federated learning",
+    "intrinsic motivation",
+    "random network distillation",
+    "exploration",
+    "sparse reward",
+    "cold-start adaptation"
+   ],
+   "field": "联邦强化学习",
+   "innovations": [
+    "将RND内在动机引入个性化联邦强化学习，设计客户端本地好奇探索+服务器全局新奇先验的双层协调架构",
+    "提出压缩探索摘要的隐私保护通信协议，服务器仅聚合低维统计量即可广播全局探索导向",
+    "基于全局新奇先验的有偏经验采样策略，使客户端在保持个性化策略的同时协同覆盖更广状态空间"
+   ],
+   "benchmarks": [
+    "MountainCar-v0",
+    "CartPole-sparse"
+   ]
+  }
+ }
 }

@@ -3,5 +3,30 @@
  "batch_id": "d7b7ff10-56df-4954-b586-4be598638f38",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:42:45",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/a0142b67-c60c-4b86-be8e-f594da1112e6.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/a0142b67-c60c-4b86-be8e-f594da1112e6.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:52:40",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "梯度下降",
+    "步长调度",
+    "收敛下界",
+    "平滑凸优化",
+    "加速度",
+    "Moreau包络",
+    "匹配方法"
+   ],
+   "field": "优化理论",
+   "innovations": [
+    "建立预定非负步长调度下GD末次迭代收敛的下界Ω(T^{-1.9319})",
+    "证明步长调度alone无法达到最优O(T^{-2})加速",
+    "结合几何构造、序无关匹配与Lyapunov分析的新下界证明框架"
+   ],
+   "benchmarks": [
+    "理论下界（无数值基准）"
+   ]
+  }
+ }
 }

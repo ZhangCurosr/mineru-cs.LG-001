@@ -3,5 +3,29 @@
  "batch_id": "448067b9-85ab-4c8d-abcf-60c5ad5c2510",
  "token": "sk-n7iJ0Z1Ol...",
  "created_at": "2026-08-12 14:59:18",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/cc439245-6227-455a-a32a-5a8924b47ce5.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/cc439245-6227-455a-a32a-5a8924b47ce5.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:02:15",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "molecular LLM",
+    "property prediction",
+    "rationale-guided",
+    "substructure attribution",
+    "GNN explainability",
+    "multi-granular decomposition"
+   ],
+   "field": "分子性质预测与大语言模型融合",
+   "innovations": [
+    "首个将GNN子结构归因作为LLM提示证据的多粒度理由引导分子LLM",
+    "两阶段训练解耦模态对齐与解释性证据利用",
+    "五维诊断框架验证模型真正读取并利用了方向/排名/子结构证据"
+   ],
+   "benchmarks": [
+    "MoleculeNet (BACE, BBBP, ClinTox, HIV, SIDER, Tox21, ESOL, Lipo)"
+   ]
+  }
+ }
 }

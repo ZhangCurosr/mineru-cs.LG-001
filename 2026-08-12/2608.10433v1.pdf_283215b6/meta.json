@@ -3,5 +3,34 @@
  "batch_id": "283215b6-a6ed-496e-95d7-14317a14fd3c",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:42:54",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/fb189a4f-36a4-43bc-b855-a666bad248a9.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/fb189a4f-36a4-43bc-b855-a666bad248a9.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:54:38",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "time-series forecasting",
+    "delay recovery",
+    "explainability",
+    "causal audit",
+    "recoverability",
+    "routing"
+   ],
+   "field": "时序预测可解释性与因果审计",
+   "innovations": [
+    "提出可恢复性-报告-功能性使用三阶段分离审计框架",
+    "证明正确报告与近oracle预测仍可共存于错误滞后使用",
+    "硬one-hot路由实现报告-使用精确对齐的理论保障与实证"
+   ],
+   "benchmarks": [
+    "DelayBench-TS",
+    "P1 point-delay",
+    "P2 ARX delay",
+    "P3 finite-kernel",
+    "Beijing air-quality semi-synthetic",
+    "Hydraulic semi-synthetic"
+   ]
+  }
+ }
 }

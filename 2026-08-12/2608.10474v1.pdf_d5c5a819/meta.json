@@ -3,5 +3,31 @@
  "batch_id": "d5c5a819-bd9d-4bfe-a634-2cfe9bb2c3a1",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:42:43",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/56914648-da6c-4758-bcf1-5bdb69e3cec9.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/56914648-da6c-4758-bcf1-5bdb69e3cec9.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:00:16",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "popularity bias",
+    "recommendation systems",
+    "dynamical systems",
+    "two-time-scale stochastic approximation",
+    "fairness",
+    "user churn",
+    "equilibrium analysis"
+   ],
+   "field": "推荐系统公平性与动态建模",
+   "innovations": [
+    "建立推荐参数与用户到达率耦合的两时间尺度ODE框架，给出流行度偏好涌现的精确阈值定理",
+    "推导对称保留所有用户类别的充分与存在性条件",
+    "在4.1亿真实交互日志上验证动力学预测并导出均衡错误率缓解策略"
+   ],
+   "benchmarks": [
+    "Amazon Music production logs (410M interactions)",
+    "Synthetic 2D Gaussian user features"
+   ]
+  }
+ }
 }

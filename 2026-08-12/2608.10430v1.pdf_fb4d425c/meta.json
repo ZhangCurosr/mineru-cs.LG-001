@@ -3,5 +3,31 @@
  "batch_id": "fb4d425c-8837-4b56-bfd2-c11c40559e87",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:34:27",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/829f4b63-9731-46d6-ba0d-07baa561fdca.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/829f4b63-9731-46d6-ba0d-07baa561fdca.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:54:07",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "hallucination detection",
+    "agentic AI",
+    "mechanistic interpretability",
+    "low-rank adaptation",
+    "real-time guardrail",
+    "specification grounding"
+   ],
+   "field": "AI代理幻觉检测与可解释性",
+   "innovations": [
+    "并发LoRA适配器重构残差流以提取规格grounding信号",
+    "掩码诊断目标实现生成与检测解耦",
+    "将内部不确定性转化为可定位的自然语言反馈"
+   ],
+   "benchmarks": [
+    "Qwen3-4B ID/OOD",
+    "Llama-xLAM-2-8B",
+    "ToolAlpaca"
+   ]
+  }
+ }
 }

@@ -3,5 +3,34 @@
  "batch_id": "2560a04c-78ce-47e6-96ee-56100b707eb0",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:05",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/fb189a4f-36a4-43bc-b855-a666bad248a9.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/fb189a4f-36a4-43bc-b855-a666bad248a9.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:54:05",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "时间序列预测",
+    "延迟估计",
+    "可解释性",
+    "功能使用",
+    "路由机制",
+    "可恢复性"
+   ],
+   "field": "时间序列可解释AI",
+   "innovations": [
+    "提出可恢复性-报告-功能使用三层次审计框架，分离数据限制与模型缺陷",
+    "理论证明正确报告与近oracle预测不蕴含正确使用，揭示报告-使用解耦现象",
+    "设计hard one-hot路由实现报告与使用的精确对齐，off-report响应归零"
+   ],
+   "benchmarks": [
+    "DelayBench-TS",
+    "P1点延迟任务",
+    "P2自回归+延迟任务",
+    "P3有限核任务",
+    "Beijing空气质量半合成测试",
+    "Hydraulic系统半合成测试"
+   ]
+  }
+ }
 }

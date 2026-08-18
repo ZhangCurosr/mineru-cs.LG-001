@@ -3,5 +3,31 @@
  "batch_id": "83a85daa-3908-4712-bfe1-d7a6c90d227e",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:03",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/56914648-da6c-4758-bcf1-5bdb69e3cec9.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/56914648-da6c-4758-bcf1-5bdb69e3cec9.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:00:07",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "popularity bias",
+    "recommendation systems",
+    "dynamical systems",
+    "two-time-scale stochastic approximation",
+    "user churn",
+    "equalized odds",
+    "online learning"
+   ],
+   "field": "推荐系统中的公平性与偏差",
+   "innovations": [
+    "建立推荐系统 popularity bias 的双时标 ODE 动力学框架，揭示偏差涌现的机理",
+    "严格证明 (0,0) 均衡不可达并导出 bias 涌现的临界阈值 p*",
+    "给出对称双类保留的充分条件（Thm 4.3）与存在性结果（Thm 4.4）"
+   ],
+   "benchmarks": [
+    "Amazon Music 生产日志 (~410M 交互)",
+    "合成 2 维高斯分布"
+   ]
+  }
+ }
 }

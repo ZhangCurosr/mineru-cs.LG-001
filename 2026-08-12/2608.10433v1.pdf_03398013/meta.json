@@ -3,5 +3,33 @@
  "batch_id": "03398013-1f9b-4122-af5e-49708e82be7d",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:16",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/7a961826-cfd2-43f3-96b3-54e3b30394f3.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/7a961826-cfd2-43f3-96b3-54e3b30394f3.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:54:09",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "time-series forecasting",
+    "delay estimation",
+    "interpretability",
+    "recoverability",
+    "functional use",
+    "causal discovery",
+    "synthetic benchmark"
+   ],
+   "field": "时间序列可解释性与结构识别",
+   "innovations": [
+    "提出recoverability-report-functional-use三阶段审计框架并证明三重成功不蕴含功能对齐",
+    "给出门控路由的no-bypass理论保证并在合成/真实输入验证"
+   ],
+   "benchmarks": [
+    "P1 point-delay",
+    "P2 ARX delay",
+    "P3 finite kernel",
+    "Beijing air-quality semi-synthetic",
+    "Hydraulic semi-synthetic"
+   ]
+  }
+ }
 }

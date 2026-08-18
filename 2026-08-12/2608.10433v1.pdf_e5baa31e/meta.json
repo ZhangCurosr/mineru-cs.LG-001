@@ -3,5 +3,34 @@
  "batch_id": "e5baa31e-15ad-4fd7-9ed2-a50121191161",
  "token": "sk-LV19Ft0NN...",
  "created_at": "2026-08-12 15:02:41",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/fb189a4f-36a4-43bc-b855-a666bad248a9.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/fb189a4f-36a4-43bc-b855-a666bad248a9.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:54:42",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "time-series forecasting",
+    "temporal delay",
+    "interpretability",
+    "causal discovery",
+    "recoverability",
+    "functional use",
+    "routing mechanism"
+   ],
+   "field": "时序预测可解释性",
+   "innovations": [
+    "三层审计框架：可恢复性→恢复/报告→功能使用，证明正确报告+近Oracle预测不蕴含实际使用",
+    "输入条件化可恢复性度量（Bayes风险/轮廓得分）分离数据模糊性与模型误差",
+    "无旁路灯由分解与硬one-hot路由提供报告-使用精确对齐的理论保证"
+   ],
+   "benchmarks": [
+    "P1点延迟合成基准",
+    "P2 ARX输出记忆基准",
+    "P3有限核库基准",
+    "北京空气质量半合成迁移",
+    "液压系统半合成迁移"
+   ]
+  }
+ }
 }

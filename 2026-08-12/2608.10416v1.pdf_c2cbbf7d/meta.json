@@ -3,5 +3,30 @@
  "batch_id": "c2cbbf7d-3fd3-48a6-9d69-6038036e4dca",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-12 15:02:03",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/92f9b060-1c89-4aef-aae1-0b81e333f213.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/92f9b060-1c89-4aef-aae1-0b81e333f213.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:54:25",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "inverse distance attention",
+    "hyperbolic geometry",
+    "spherical routing",
+    "Polyak-Lojasiewicz inequality",
+    "effective rank",
+    "non-Euclidean deep learning",
+    "memory compression"
+   ],
+   "field": "注意力机制理论与优化",
+   "innovations": [
+    "首次为IDA在完整QKV框架中建立电路分离、PL不等式与有效秩界三大理论保证",
+    "提出双曲存储-球面路由分离的十模块Riemann GeoResolver统一架构",
+    "设计带质量与通信复杂度双重保证的测地线稀疏路由（GSR）"
+   ],
+   "benchmarks": [
+    "论文未提供实验，无benchmark"
+   ]
+  }
+ }
 }

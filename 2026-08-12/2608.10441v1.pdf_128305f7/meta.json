@@ -3,5 +3,32 @@
  "batch_id": "128305f7-15a7-439b-9e33-811fcba82b7e",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:04",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/3ac39fd2-bd93-46c4-a260-96f410b10f76.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/3ac39fd2-bd93-46c4-a260-96f410b10f76.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:55:07",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "acquisition agent",
+    "reward-SNR",
+    "structured hypothesis embeddings",
+    "HTE",
+    "design-time regime gate",
+    "LLM-as-feature",
+    "recommender"
+   ],
+   "field": "LLM-enhanced recommendation with offline acquisition policy",
+   "innovations": [
+    "提出 reward-SNR 可检测性下限 ρ*≈2.8/√N，区分平均效应检测与 per-instance 策略可学习性",
+    "证明 in-sample oracle 增益常为噪声 order statistics，matched-moment noise placebo 可复现 ≥100%",
+    "以 SHE 为实例给出 backbone- 与 regime-条件价值的可复现分解，并提出四步 design-time gate 部署处方"
+   ],
+   "benchmarks": [
+    "MIND",
+    "Amazon-Beauty",
+    "REES46"
+   ]
+  }
+ }
 }

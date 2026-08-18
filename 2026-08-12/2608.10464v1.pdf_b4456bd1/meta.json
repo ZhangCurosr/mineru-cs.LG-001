@@ -3,5 +3,32 @@
  "batch_id": "b4456bd1-6320-428f-b539-a36be6b8574b",
  "token": "sk-LV19Ft0NN...",
  "created_at": "2026-08-12 14:59:19",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/0feb345f-9668-43c6-b084-303bd793f374.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/0feb345f-9668-43c6-b084-303bd793f374.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:56:51",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "量子增量学习",
+    "混合态原型",
+    "Hilbert-Schmidt距离",
+    "CCPS",
+    "SWAP测试",
+    "QCNN",
+    "持续学习",
+    "NISQ"
+   ],
+   "field": "量子机器学习/增量学习",
+   "innovations": [
+    "提出基于CCPS混合态原型的量子增量学习框架，通过添加原型而非扩展电路宽度实现类别可扩展性",
+    "将Hilbert-Schmidt距离分解为SWAP测试加权求和，实现硬件友好的量子度量分类",
+    "混合态原型具有PCA-like低秩近似能力，可在受限量子电路宽度下实现噪声鲁棒的高维特征集中"
+   ],
+   "benchmarks": [
+    "CIFAR-100",
+    "TinyImageNet"
+   ]
+  }
+ }
 }

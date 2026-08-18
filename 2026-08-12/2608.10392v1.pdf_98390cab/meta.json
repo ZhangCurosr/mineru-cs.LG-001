@@ -3,5 +3,30 @@
  "batch_id": "98390cab-bbfc-4f9f-b1c9-28396f42b72d",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-12 15:34:31",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/0249a42b-eb4c-494b-a177-4c1a07ec1d9d.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/0249a42b-eb4c-494b-a177-4c1a07ec1d9d.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:51:49",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "mixture of experts",
+    "shared expert",
+    "token-adaptive computation",
+    "dynamic routing",
+    "sparse upcycling",
+    "domain generalization"
+   ],
+   "field": "高效 MoE 架构设计",
+   "innovations": [
+    "提出\"先共享、再路由剩余\"的统一原则，将共享建模、细粒度计算与动态路由耦合为有序流程",
+    "设计 UniF-MoE 框架，通过单一 token 依赖预算协调共享宽度、共享内容与残差 expert 数量",
+    "引入 Gram 正交正则化塑造 router embedding 几何，促进专家多样性与稀疏重叠"
+   ],
+   "benchmarks": [
+    "DomainBed",
+    "GLUE"
+   ]
+  }
+ }
 }

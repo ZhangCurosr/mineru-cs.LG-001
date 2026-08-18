@@ -3,5 +3,30 @@
  "batch_id": "2e7755d8-184f-449c-8f88-f28b3cbb61a8",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 15:42:43",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/0feb345f-9668-43c6-b084-303bd793f374.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/0feb345f-9668-43c6-b084-303bd793f374.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:56:22",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "量子增量学习",
+    "混合态原型",
+    "量子神经网络",
+    "灾难性遗忘",
+    "Hilbert-Schmidt距离",
+    "CCPS"
+   ],
+   "field": "量子机器学习/增量学习",
+   "innovations": [
+    "提出基于CCPS混合态原型的量子增量学习框架，避免正交基态容量约束",
+    "利用HS距离分解与SWAP test实现高效量子原型度量，计算复杂度低于传统距离度量",
+    "设计两阶段解耦训练范式（辅助MLP头+冻结主干+独立原型拟合），有效缓解量子灾难性遗忘"
+   ],
+   "benchmarks": [
+    "CIFAR-100",
+    "TinyImageNet"
+   ]
+  }
+ }
 }

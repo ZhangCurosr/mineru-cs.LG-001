@@ -3,5 +3,30 @@
  "batch_id": "85ca6ef4-00a7-4425-9434-08ed64e54cb0",
  "token": "sk-LV19Ft0NN...",
  "created_at": "2026-08-12 15:02:34",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/829f4b63-9731-46d6-ba0d-07baa561fdca.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/829f4b63-9731-46d6-ba0d-07baa561fdca.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 04:53:25",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "hallucination detection",
+    "specification grounding",
+    "agent safety",
+    "parameter-efficient fine-tuning",
+    "mechanistic interpretability",
+    "tool-calling"
+   ],
+   "field": "AI智能体安全与幻觉检测",
+   "innovations": [
+    "Latent Critic: 通过LoRA适配器并发重塑残差流实现单次前向传播的可操作幻觉定位",
+    "掩码诊断目标: 屏蔽生成loss仅在触发token上计算梯度以专注不确定性提取",
+    "证明秩不变线性可分几何重塑可显著提升跨分布幻觉检测鲁棒性"
+   ],
+   "benchmarks": [
+    "ToolAlpaca",
+    "自建ID工具调用评测集"
+   ]
+  }
+ }
 }
