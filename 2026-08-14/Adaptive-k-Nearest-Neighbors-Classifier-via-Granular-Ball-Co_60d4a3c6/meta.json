@@ -4,5 +4,34 @@
  "title": "Adaptive-k-Nearest-Neighbors-Classifier-via-Granular-Ball-Co",
  "token": "sk-ZGznq9xBq...",
  "created_at": "2026-08-14 04:09:41",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/08f4aa8e-276c-4758-bd38-31af4c7c7bc0.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/08f4aa8e-276c-4758-bd38-31af4c7c7bc0.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:05:57",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "KNN",
+    "Granular-Ball Computing",
+    "Adaptive Classification",
+    "Fisher Criterion",
+    "Noise Robustness",
+    "Multi-Granularity"
+   ],
+   "field": "机器学习分类算法",
+   "innovations": [
+    "提出√n粗划分+Fisher准则的自适应粒球生成框架，突破纯标签纯度约束",
+    "设计基于最近粒球的自适应邻域构建机制，动态确定有效k值",
+    "引入样本数加权距离机制，增强对噪声粒球的鲁棒性"
+   ],
+   "benchmarks": [
+    "UCI 12个基准数据集",
+    "Santander",
+    "creditcard",
+    "covertype",
+    "Higgs",
+    "supersymmetry"
+   ]
+  }
+ }
 }

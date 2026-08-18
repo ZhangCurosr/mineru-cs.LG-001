@@ -4,5 +4,31 @@
  "title": "TailBooster-A-Dual-Layer-Generative-Framework-for-Extreme-Va",
  "token": "sk-zybFjYcVd...",
  "created_at": "2026-08-13 14:56:22",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/cca478b3-00f7-43bd-bcd0-eb734fb9719b.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/cca478b3-00f7-43bd-bcd0-eb734fb9719b.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:00:59",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Generative AI",
+    "Extreme Value Theory",
+    "Synthetic Data Augmentation",
+    "Anomaly Detection",
+    "Tabular Data Generation",
+    "Air Traffic Management",
+    "Operationally Valid Synthetic Data"
+   ],
+   "field": "极端事件预测与合成数据增强",
+   "innovations": [
+    "双层层生成框架：IQR统计异常层+自编码器操作清洗层，在混合类型表格数据上同时解决尾部低估和操作有效性问题",
+    "数据驱动的操作清洗机制，通过AE重建误差百分位阈值替代手工物理规则，提升合成极端记录的操作有效性",
+    "定向极端子集训练策略使回归预测MAE降低29-57%，显著优于传统合成数据"
+   ],
+   "benchmarks": [
+    "BTS U.S. Domestic Flight Records (NY State, Jan 2023)",
+    "Six regression models: Random Forest, XGBoost, CatBoost, LightGBM, SVR, k-NN"
+   ]
+  }
+ }
 }

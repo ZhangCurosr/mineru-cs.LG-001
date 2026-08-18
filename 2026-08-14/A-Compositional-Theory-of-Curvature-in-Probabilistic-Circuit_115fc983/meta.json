@@ -4,5 +4,29 @@
  "title": "A-Compositional-Theory-of-Curvature-in-Probabilistic-Circuit",
  "token": "sk-RsHYrwqhL...",
  "created_at": "2026-08-14 04:14:02",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/b8de0bb0-beb4-49a6-b9d8-6b7d732a0878.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/b8de0bb0-beb4-49a6-b9d8-6b7d732a0878.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:04:50",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Probabilistic Circuits",
+    "Sharpness-Aware Learning",
+    "Hessian Trace",
+    "Curvature Decomposition",
+    "Tractable Regularization",
+    "EM Learning"
+   ],
+   "field": "可 tractable 概率建模与学习",
+   "innovations": [
+    "证明PC的Hessian迹可精确分解为局部曲率与上下文流量的乘积T_n=F_n^2·t_n",
+    "提出基于局部曲率的自适应门控正则化器，在保持闭式EM更新的同时避免全局正则的欠拟合",
+    "形式化分析全局迹对浅层高流量节点的深度偏置机制"
+   ],
+   "benchmarks": [
+    "DEBD (20 binary density estimation datasets)"
+   ]
+  }
+ }
 }

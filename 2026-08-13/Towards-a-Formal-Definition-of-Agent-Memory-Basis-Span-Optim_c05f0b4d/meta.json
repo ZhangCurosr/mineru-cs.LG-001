@@ -4,5 +4,30 @@
  "title": "Towards-a-Formal-Definition-of-Agent-Memory-Basis-Span-Optim",
  "token": "sk-F0hECVUrq...",
  "created_at": "2026-08-13 14:55:30",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e79f7cfd-7c72-4640-962d-8a6279a28847.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e79f7cfd-7c72-4640-962d-8a6279a28847.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:02:17",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Agent Memory",
+    "formal definition",
+    "utility–capacity frontier",
+    "sequential memorization",
+    "coverage vs precision",
+    "generation operator",
+    "noisy extraction"
+   ],
+   "field": "多智能体系统与记忆机制",
+   "innovations": [
+    "将Agent记忆形式化为事件基与生成空间的覆盖问题，并提出效用–容量前沿作为可比最优性度量",
+    "在噪声提取下分离覆盖与精度并定义水膨胀度",
+    "将持续记忆写入统一为延迟奖励序列MDP并给出渐进式问题分类"
+   ],
+   "benchmarks": [
+    "Homer's Odyssey illustrative instance; existing systems mapping (LongBench, MemAgent, Memory-R1, HippoRAG, MemGPT, MemOS, MemoryBank, Generative Agents, Reflexion, etc.)"
+   ]
+  }
+ }
 }

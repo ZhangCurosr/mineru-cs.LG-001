@@ -4,5 +4,31 @@
  "title": "The-Advective-Fisher-Rao-Geometry-of-Deterministic-Measure-T",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-13 07:11:45",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/ef3bab2b-d88e-479c-a030-504e5eb4580b.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/ef3bab2b-d88e-479c-a030-504e5eb4580b.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:02:30",
+  "chunks": 5,
+  "meta": {
+   "keywords": [
+    "Advective Fisher-Rao",
+    "Flow Matching",
+    "最优传输",
+    "Bregman散度",
+    "自然梯度",
+    "生成模型",
+    "测度空间几何"
+   ],
+   "field": "生成模型与最优传输的几何基础",
+   "innovations": [
+    "建立AFR度量下流匹配能量梯度的闭合形式，证明密度差即为最优更新方向",
+    "揭示Bregman散度与速度场L^2距离的精确等价关系",
+    "证明L^2梯度与m-测地线方向的渐近一致性并给出偏差界"
+   ],
+   "benchmarks": [
+    "多模态合成分布（混合高斯、环形分布）",
+    "W_2距离评估"
+   ]
+  }
+ }
 }

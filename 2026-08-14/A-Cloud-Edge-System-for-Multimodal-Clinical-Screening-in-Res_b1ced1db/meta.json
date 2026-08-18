@@ -4,5 +4,31 @@
  "title": "A-Cloud-Edge-System-for-Multimodal-Clinical-Screening-in-Res",
  "token": "sk-aeujzMN4P...",
  "created_at": "2026-08-14 04:10:50",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/337dad0c-d513-46b0-abb8-395017b7c1e3.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/337dad0c-d513-46b0-abb8-395017b7c1e3.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:04:31",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "cloud-edge computing",
+    "multimodal clinical AI",
+    "rural healthcare",
+    "LLM orchestration",
+    "bandwidth-constrained systems",
+    "factual grounding"
+   ],
+   "field": "资源受限环境下的多模态临床决策支持",
+   "innovations": [
+    "云边协作架构解耦感知与推理，提升事实依据性与带宽无关延迟",
+    "边缘LLM调度器动态选择诊断工具，平衡证据完整性与资源约束",
+    "提出带宽受限临床AI评估框架，涵盖稀疏/密集输入压力与四维质量指标"
+   ],
+   "benchmarks": [
+    "100例多模态临床病例集（心脏/产科/创伤/眼科）",
+    "Rural Low/Moderate/Good 三种网络配置",
+    "Oracle Accuracy, Coverage Precision/Recall, KG Verification, Reasoning Quality"
+   ]
+  }
+ }
 }

@@ -4,5 +4,31 @@
  "title": "A-Contract-Grade-Verifier-for-LLM-Generated-GPU-Kernels-and",
  "token": "sk-NSDKB0rML...",
  "created_at": "2026-08-14 04:08:45",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/7fb235d7-1f22-43e6-ab7c-a24582000cf0.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/7fb235d7-1f22-43e6-ab7c-a24582000cf0.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:04:50",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "GPU kernel generation",
+    "LLM verification",
+    "contract-grade correctness",
+    "Blackwell tcgen05",
+    "GDN backward",
+    "kernel benchmarking"
+   ],
+   "field": "AI for systems / GPU kernel verification",
+   "innovations": [
+    "12-gate contract-grade verifier with tolerance-free gates operationalizing Kernel Contracts taxonomy at scale",
+    "Large-scale rigor-gap audit revealing 39.5% tolerance-free failures in accepted ML-generated kernels",
+    "First native Blackwell tcgen05 training backward for GDN family verified against double-precision oracle"
+   ],
+   "benchmarks": [
+    "KernelBench",
+    "Dr. Kernel / KernelGYM",
+    "Sakana AI CUDA Engineer archive"
+   ]
+  }
+ }
 }

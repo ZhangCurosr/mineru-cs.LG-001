@@ -4,5 +4,32 @@
  "title": "A-PROBE-DIRECTION-IS-A-PROPERTY-OF-ITS-PROMPT",
  "token": "sk-JdJPQj6CY...",
  "created_at": "2026-08-14 14:48:56",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/2385de70-cc41-462a-979f-4f6fcd480f5c.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/2385de70-cc41-462a-979f-4f6fcd480f5c.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:05:16",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "probe direction",
+    "generalizability theory",
+    "evaluation awareness",
+    "activation engineering",
+    "prompt sensitivity",
+    "reproducibility",
+    "variance decomposition",
+    "surface confound"
+   ],
+   "field": "语言模型可解释性与评估方法学",
+   "innovations": [
+    "用因子交叉设计证明 probe direction 是提示词属性而非模型属性，相关系数范围覆盖[-0.988, +0.939]",
+    "引入 Generalizability Theory 方差分解证明模型本身仅贡献 0.8% 方差，交互项主导",
+    "发现 scoring split 可由表面形式以 AUROC=0.993 解码，内容无关方向可重现大量发表分数"
+   ],
+   "benchmarks": [
+    "stages oversight split (Laine et al., 2024)",
+    "harmless/harmful instruction split (Arditi et al., 2024)"
+   ]
+  }
+ }
 }

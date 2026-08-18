@@ -4,5 +4,33 @@
  "title": "Branch-and-Bound-for-Relational-Verification-of-Neural-Netwo",
  "token": "sk-nY8L7ieIq...",
  "created_at": "2026-08-14 14:49:04",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/96898b6d-f96b-4aa8-ba00-114110482c45.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/96898b6d-f96b-4aa8-ba00-114110482c45.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:07:13",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "神经网路验证",
+    "关系验证",
+    "分支定界",
+    "全局鲁棒性",
+    "对偶公式",
+    "关系神经元"
+   ],
+   "field": "神经网络形式化验证",
+   "innovations": [
+    "首个针对关系验证的BaB框架SABRE，以关系神经元为分割对象",
+    "基于对偶公式的关系神经元选择策略，常数时间估计分割收益",
+    "完整推导关系场景对偶公式并证明其用于选择的有效性"
+   ],
+   "benchmarks": [
+    "ACAS Xu",
+    "MNIST-F",
+    "MNIST-C",
+    "CIFAR-10",
+    "GTSRB"
+   ]
+  }
+ }
 }

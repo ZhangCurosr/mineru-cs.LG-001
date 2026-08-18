@@ -4,5 +4,32 @@
  "title": "CW-BASS-v2-Saturation-Aware-Pseudo-Label-Selection-for-Semi",
  "token": "sk-EwecAZ9oF...",
  "created_at": "2026-08-14 14:49:17",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/ae7e5705-753b-4578-be0f-9c5c52e42799.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/ae7e5705-753b-4578-be0f-9c5c52e42799.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:07:25",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "semi-supervised segmentation",
+    "pseudo-label selection",
+    "foundation models",
+    "DINOv2",
+    "confidence saturation",
+    "adaptive thresholding",
+    "model calibration"
+   ],
+   "field": "半监督语义分割",
+   "innovations": [
+    "饱和度感知门控：一次前向测量可靠度π_kept决定严格/自适应阈值",
+    "保持出校准：无偏噪声估计打破在批估计向下偏差反馈循环",
+    "稳定性置信度下限：证明保留率被固定分位数有界而非坍缩至1"
+   ],
+   "benchmarks": [
+    "Pascal VOC 2012 1/8",
+    "Cityscapes 1/8",
+    "ADE20K 1/8"
+   ]
+  }
+ }
 }

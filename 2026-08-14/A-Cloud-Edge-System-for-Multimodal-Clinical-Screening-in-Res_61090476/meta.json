@@ -4,5 +4,33 @@
  "title": "A-Cloud-Edge-System-for-Multimodal-Clinical-Screening-in-Res",
  "token": "sk-aeujzMN4P...",
  "created_at": "2026-08-14 14:49:19",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/337dad0c-d513-46b0-abb8-395017b7c1e3.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/337dad0c-d513-46b0-abb8-395017b7c1e3.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:04:23",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "cloud-edge collaboration",
+    "multimodal clinical screening",
+    "edge AI",
+    "LLM orchestrator",
+    "rural healthcare",
+    "factual grounding",
+    "bandwidth-constrained AI"
+   ],
+   "field": "边缘智能与临床决策支持",
+   "innovations": [
+    "云-边缘协同架构：边缘专用模型将原始医学数据压缩为结构化JSON，云端LLM仅推理结构化输出以提升事实grounding",
+    "边缘LLM编排器动态选择诊断工具，解耦数据采集与跨模态推理，缓解agentic系统的under-acquire问题",
+    "带宽不变延迟设计：仅传输约6.5KB结构化证据，延迟25-38秒且不受网络profile影响，较云端基线降低三个数量级传输量"
+   ],
+   "benchmarks": [
+    "100-case multimodal clinical benchmark (cardiac/obstetric/trauma/ophthalmology)",
+    "Three simulated rural network profiles (Rural Low/Moderate/Good)",
+    "KG verification cascade (5-stage MeSH-based)",
+    "MedR-Bench reasoning quality decomposition"
+   ]
+  }
+ }
 }

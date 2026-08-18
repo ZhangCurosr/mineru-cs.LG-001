@@ -4,5 +4,32 @@
  "title": "A-Multispectral-Framework-for-the-Detection-of-Calcium-Carbi",
  "token": "sk-mBuyDYvkR...",
  "created_at": "2026-08-14 14:49:31",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/0fea06a9-3d44-461a-9539-4f118d263dab.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/0fea06a9-3d44-461a-9539-4f118d263dab.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:05:32",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Multispectral sensing",
+    "Calcium carbide detection",
+    "Fruit ripening",
+    "Shelf life estimation",
+    "XGBoost",
+    "Vis-NIR spectroscopy",
+    "Non-invasive detection",
+    "Food safety"
+   ],
+   "field": "农业食品智能检测",
+   "innovations": [
+    "提出低成本 AS7265x 多光谱框架同时实现 CaC2 催熟鉴别与货架期预测",
+    "构建光谱比值+PCA+环境参数的多维特征工程策略并结合 SHAP 可解释性分析"
+   ],
+   "benchmarks": [
+    "SVM",
+    "Decision Tree",
+    "MLP"
+   ]
+  }
+ }
 }

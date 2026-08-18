@@ -4,5 +4,27 @@
  "title": "Active-Trace-Complexity-Bounds-for-Moreau-Yosida-Unadjusted",
  "token": "sk-07nfPn8BZ...",
  "created_at": "2026-08-14 14:48:52",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/0ea74ef6-2782-414c-959f-1fe31e45df50.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/0ea74ef6-2782-414c-959f-1fe31e45df50.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:05:40",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "MYULA",
+    "Moreau-Yosida平滑",
+    "活性迹",
+    "Langevin Monte Carlo",
+    "非光滑采样",
+    "曲率-管估计",
+    "Wasserstein复杂度"
+   ],
+   "field": "非光滑复合目标Langevin采样理论",
+   "innovations": [
+    "提出参考热路径活性迹B_ref替代全局曲率界d/lambda控制离散化误差",
+    "建立曲率-管接口将弱Hessian迹的空间集中转化为lambda无关的上界",
+    "证明lasso/group lasso/TV等结构化惩罚下MYULA端到端复杂度为O(eps^{-2})"
+   ]
+  }
+ }
 }

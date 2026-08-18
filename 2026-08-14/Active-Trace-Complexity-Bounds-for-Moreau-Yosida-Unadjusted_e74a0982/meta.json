@@ -4,5 +4,10 @@
  "title": "Active-Trace-Complexity-Bounds-for-Moreau-Yosida-Unadjusted",
  "token": "sk-07nfPn8BZ...",
  "created_at": "2026-08-14 04:09:51",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/0ea74ef6-2782-414c-959f-1fe31e45df50.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/0ea74ef6-2782-414c-959f-1fe31e45df50.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:05:57",
+  "chunks": 1
+ }
 }

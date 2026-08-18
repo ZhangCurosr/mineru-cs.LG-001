@@ -4,5 +4,34 @@
  "title": "A-Compositional-Theory-of-Curvature-in-Probabilistic-Circuit",
  "token": "sk-RsHYrwqhL...",
  "created_at": "2026-08-14 14:49:15",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/b8de0bb0-beb4-49a6-b9d8-6b7d732a0878.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/b8de0bb0-beb4-49a6-b9d8-6b7d732a0878.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:04:43",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Probabilistic Circuits",
+    "Sharpness-Aware Learning",
+    "Hessian Trace",
+    "Curvature Regularization",
+    "Compositional Decomposition",
+    "EM Learning"
+   ],
+   "field": "可 tractable 概率图模型与几何优化",
+   "innovations": [
+    "证明求和节点Hessian迹贡献可因式分解为电路流平方与局部曲率的乘积T_n=F_n²·t_n",
+    "提出基于局部迹的门控自适应正则化方法，在保留闭式EM更新的同时实现逐节点精细正则化分配",
+    "形式化揭示全局排名逆转条件，解释均匀迹正则化导致高数据量欠拟合的根本机制"
+   ],
+   "benchmarks": [
+    "DEBD (20 binary density estimation datasets)",
+    "accidents",
+    "ad",
+    "baudio",
+    "bbc",
+    "dna"
+   ]
+  }
+ }
 }

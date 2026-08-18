@@ -4,5 +4,30 @@
  "title": "TradingMoE-Routing-the-Right-Experts-in-Evolving-Markets",
  "token": "sk-dD4E81LFV...",
  "created_at": "2026-08-13 07:11:11",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/c63c53b3-5c8d-4faa-8714-248a2e0f680b.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/c63c53b3-5c8d-4faa-8714-248a2e0f680b.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:03:48",
+  "chunks": 4,
+  "meta": {
+   "keywords": [
+    "Mixture of Experts",
+    "Trading",
+    "Large Language Models",
+    "Financial Decision Making",
+    "Routing",
+    "Sparse Models"
+   ],
+   "field": "LLM-based量化交易与金融决策",
+   "innovations": [
+    "Query-Key Router实现token级交易需求与可学习专家的紧凑匹配",
+    "Sparse Expert Selection Update通过采样inactive experts提供无偏路由梯度并等价于一阶反事实信用更新",
+    "在冻结LLM backbone上嵌入低秩residual experts并跨股票与加密货币市场零微调验证"
+   ],
+   "benchmarks": [
+    "FNSPID衍生美股基准（33只、11行业）",
+    "自采集加密货币基准（10种）"
+   ]
+  }
+ }
 }

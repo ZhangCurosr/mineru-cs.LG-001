@@ -4,5 +4,29 @@
  "title": "ROBUST-AND-EFFICIENT-NOISY-LABEL-TIME-SERIES-CLASSIFICATION",
  "token": "sk-WFixZKKH5...",
  "created_at": "2026-08-13 14:55:08",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/af556234-6c82-4830-95a0-eb76a09902e9.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/af556234-6c82-4830-95a0-eb76a09902e9.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:00:15",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Time Series Classification",
+    "Noisy Labels",
+    "Dynamic Time Warping",
+    "Granular Ball Computing",
+    "Nearest Neighbor",
+    "Label Noise Robustness"
+   ],
+   "field": "时间序列分类与噪声鲁棒学习",
+   "innovations": [
+    "首次将粒球计算直接应用于 DTW 距离空间实现时序分类",
+    "提出标签感知分裂策略以生成更紧凑且更具区分力的粒球表示"
+   ],
+   "benchmarks": [
+    "UCR2018",
+    "Multiverse"
+   ]
+  }
+ }
 }

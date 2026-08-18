@@ -4,5 +4,31 @@
  "title": "Bagging-Robustly-Learns-VC-Classes-with-Linear-Sample-Comple",
  "token": "sk-ZHrWl9Czg...",
  "created_at": "2026-08-14 14:48:50",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/136850c7-1693-4743-941a-fdf36d1e9dd5.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/136850c7-1693-4743-941a-fdf36d1e9dd5.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:06:04",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "adversarial robustness",
+    "VC classes",
+    "sample complexity",
+    "RERM",
+    "bagging",
+    "oracle complexity",
+    "improper learning",
+    "dual VC dimension"
+   ],
+   "field": "理论机器学习/鲁棒学习",
+   "innovations": [
+    "提出Bagging RERM算法实现线性样本复杂度O(d/n)的对抗性鲁棒学习",
+    "证明oracle复杂度下界Ω(d*)的紧性，显示d*依赖不可避免",
+    "解决Montasser等人2022年猜想dim(F,U)≤O(d)"
+   ],
+   "benchmarks": [
+    "理论分析（无实验基准）"
+   ]
+  }
+ }
 }

@@ -4,5 +4,33 @@
  "title": "A-Multispectral-Framework-for-the-Detection-of-Calcium-Carbi",
  "token": "sk-mBuyDYvkR...",
  "created_at": "2026-08-14 04:14:02",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/0fea06a9-3d44-461a-9539-4f118d263dab.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-14/0fea06a9-3d44-461a-9539-4f118d263dab.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:05:13",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "多光谱检测",
+    "碳化钙催熟",
+    "XGBoost",
+    "无损检测",
+    "保质期预测",
+    "PCA降维",
+    "AS7265x",
+    "农产品质量"
+   ],
+   "field": "农业食品智能检测",
+   "innovations": [
+    "低成本多光谱+XGBoost端到端框架实现催熟方法分类与保质期回归联合预测",
+    "306种光谱比率特征结合Spearman/IoU筛选策略区分时间进展指示器与方法判别器",
+    "SHAP可解释性与生理机制映射形成光谱检测-机器学习-领域知识闭环"
+   ],
+   "benchmarks": [
+    "SVM",
+    "Decision Tree",
+    "MLP Neural Network"
+   ]
+  }
+ }
 }

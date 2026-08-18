@@ -4,5 +4,32 @@
  "title": "LOW-INTERACTION-RANK-LEARNING-UNIFYING-MULTIPLICATIVE-DUAL-E",
  "token": "sk-NVka6yfS0...",
  "created_at": "2026-08-13 14:55:29",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/43e75233-7a64-4c7f-aea9-23b4fa1defe9.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/43e75233-7a64-4c7f-aea9-23b4fa1defe9.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:00:45",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "双塔编码器",
+    "交互谱",
+    "规范对称性",
+    "白化",
+    "对比学习",
+    "算子学习",
+    "样本复杂度"
+   ],
+   "field": "双塔编码器统一理论",
+   "innovations": [
+    "以交互谱统一分析乘性双塔架构的近似、可识别性与适用性边界",
+    "证明白化是唯一完全固定规范对称性的归一化方式并恢复可解释模式",
+    "建立基于谱衰减率的架构适用性判别准则（平坦谱导致指数维需求）"
+   ],
+   "benchmarks": [
+    "合成 Legendre 核",
+    "DeepONet 四个算子（heat/antiderivative/Burgers/Darcy）",
+    "CLIP ViT-B/32 跨预训练配对（CIFAR-100 概念探针）"
+   ]
+  }
+ }
 }

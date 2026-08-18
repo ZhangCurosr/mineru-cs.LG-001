@@ -4,5 +4,29 @@
  "title": "Tight-Nonasymptotic-Local-Convergence-of-Sinkhorn-Knopp",
  "token": "sk-JiEKTe0tT...",
  "created_at": "2026-08-13 07:10:38",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/aa557df3-a079-4a34-ae02-945d012c9058.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/aa557df3-a079-4a34-ae02-945d012c9058.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:01:35",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Sinkhorn-Knopp",
+    "matrix scaling",
+    "nonasymptotic local convergence",
+    "semi-dual",
+    "accelerated gradient",
+    "optimal transport"
+   ],
+   "field": "矩阵缩放与最优运输的算法分析",
+   "innovations": [
+    "首个与渐近 Jacobian 速率紧匹配的非渐近局部线性收敛界",
+    "基于半对偶的光滑结构给出全局与局部加速版本"
+   ],
+   "benchmarks": [
+    "Random entropic OT (n=200)",
+    "MNIST entropic OT (n=784)"
+   ]
+  }
+ }
 }

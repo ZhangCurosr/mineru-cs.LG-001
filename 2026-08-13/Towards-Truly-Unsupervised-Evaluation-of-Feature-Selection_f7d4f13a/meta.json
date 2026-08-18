@@ -4,5 +4,30 @@
  "title": "Towards-Truly-Unsupervised-Evaluation-of-Feature-Selection",
  "token": "sk-4LF0lBYcu...",
  "created_at": "2026-08-13 14:54:57",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6d2df2be-d437-4372-b05e-fd7a63ac5cc5.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6d2df2be-d437-4372-b05e-fd7a63ac5cc5.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:01:54",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Unsupervised Evaluation",
+    "Feature Selection",
+    "Optimal Transport",
+    "Dimensionality Reduction",
+    "Subspace Similarity",
+    "PCA"
+   ],
+   "field": "特征选择评估方法",
+   "innovations": [
+    "提出基于PCA子空间与最优传输分布相似度的真正无监督特征选择评估框架",
+    "系统批判现有'无监督评估'实为有监督评估的概念缺陷",
+    "对比四种OT度量在特征选择评估中的行为差异"
+   ],
+   "benchmarks": [
+    "FSEVAL",
+    "8个公开高维数据集"
+   ]
+  }
+ }
 }

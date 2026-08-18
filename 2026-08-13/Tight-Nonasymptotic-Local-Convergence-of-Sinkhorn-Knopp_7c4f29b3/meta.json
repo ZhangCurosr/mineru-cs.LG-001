@@ -4,5 +4,30 @@
  "title": "Tight-Nonasymptotic-Local-Convergence-of-Sinkhorn-Knopp",
  "token": "sk-iG65PZaJv...",
  "created_at": "2026-08-13 14:55:07",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/aa557df3-a079-4a34-ae02-945d012c9058.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/aa557df3-a079-4a34-ae02-945d012c9058.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 19:01:26",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Sinkhorn-Knopp",
+    "矩阵缩放",
+    "非渐近收敛分析",
+    "交替最小化",
+    "半对偶优化",
+    "最优传输"
+   ],
+   "field": "凸优化与矩阵算法理论",
+   "innovations": [
+    "首次建立SK算法紧致非渐近局部线性收敛分析，速率与渐近Jacobian分析匹配",
+    "揭示SK局部次优性并提出OSMS/PAGD两种加速变体，局部复杂度改善至O(1/sqrt(sigma_2) log(1/eps))",
+    "基于半对偶formulation改进密集矩阵一阶算法复杂度从O(n^(7/3)/eps^(2/3))至O(n^(9/4)/sqrt(eps))"
+   ],
+   "benchmarks": [
+    "熵正则化最优传输随机实例",
+    "MNIST OT实例"
+   ]
+  }
+ }
 }
