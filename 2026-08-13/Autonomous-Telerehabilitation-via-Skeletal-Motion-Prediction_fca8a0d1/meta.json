@@ -4,5 +4,31 @@
  "title": "Autonomous-Telerehabilitation-via-Skeletal-Motion-Prediction",
  "token": "sk-7NOZt17oN...",
  "created_at": "2026-08-13 04:49:35",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/25ee9dc7-d30a-4501-8bdb-204238d08d67.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/25ee9dc7-d30a-4501-8bdb-204238d08d67.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:27:48",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "telerehabilitation",
+    "skeleton-based action recognition",
+    "motion prediction",
+    "MMD-NCA",
+    "joint-level feedback",
+    "human-robot interaction"
+   ],
+   "field": "骨骼动作分析与康复机器人",
+   "innovations": [
+    "将整体动作质量分类与关节级偏差预测集成到统一远程康复流水线",
+    "基于MMD-NCA的tempo-invariant动作评估",
+    "颜色编码JPE可视化反馈方案"
+   ],
+   "benchmarks": [
+    "Human3.6M",
+    "PROZIS Challenge",
+    "CMU Mocap"
+   ]
+  }
+ }
 }

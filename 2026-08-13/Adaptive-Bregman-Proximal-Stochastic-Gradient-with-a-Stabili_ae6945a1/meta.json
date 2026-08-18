@@ -4,5 +4,33 @@
  "title": "Adaptive-Bregman-Proximal-Stochastic-Gradient-with-a-Stabili",
  "token": "sk-7NOZt17oN...",
  "created_at": "2026-08-13 14:56:21",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/69a216bc-2d8e-4628-914d-18112ed52d91.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/69a216bc-2d8e-4628-914d-18112ed52d91.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:21:03",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Bregman 优化",
+    "方差缩减",
+    "Barzilai-Borwein 步长",
+    "自适应步长",
+    "随机优化",
+    "非欧几何",
+    "SAGA"
+   ],
+   "field": "随机优化与一阶方法",
+   "innovations": [
+    "提出 Ada-BPSG：基于 SAGA 表的中位数聚合稳定 BB 步长，无需线搜索",
+    "在一般有限维范数空间中建立 O(n/K) 凸 ergodic 速率与重启线性速率的理论保证",
+    "针对线性预测损失将 SAGA 表从 O(nd) 压缩至 O(n) 标量表实现"
+   ],
+   "benchmarks": [
+    "LibSVM logistic regression (mushrooms, ijcnn1, w8a, covtype)",
+    "Simplex-constrained Poisson inverse problem",
+    "Samson hyperspectral unmixing",
+    "Sparse NMF on ORL dataset"
+   ]
+  }
+ }
 }

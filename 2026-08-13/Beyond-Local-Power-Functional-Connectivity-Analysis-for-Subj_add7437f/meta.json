@@ -4,5 +4,10 @@
  "title": "Beyond-Local-Power-Functional-Connectivity-Analysis-for-Subj",
  "token": "sk-Hms67LeAf...",
  "created_at": "2026-08-13 14:56:23",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/d1761ba4-debd-45e5-a50e-26efb7521b3a.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/d1761ba4-debd-45e5-a50e-26efb7521b3a.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:30:26",
+  "chunks": 1
+ }
 }

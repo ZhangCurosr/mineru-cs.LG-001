@@ -4,5 +4,33 @@
  "title": "Automated-binary-classification-of-hazelnut-X-ray-images-A-d",
  "token": "sk-JiEKTe0tT...",
  "created_at": "2026-08-13 07:10:39",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/c3324610-e43b-4548-9f83-8b602a010d65.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/c3324610-e43b-4548-9f83-8b602a010d65.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:25:00",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "X-ray imaging",
+    "hazelnut quality assessment",
+    "binary classification",
+    "deep learning benchmark",
+    "transfer learning",
+    "ensemble methods",
+    "agricultural AI"
+   ],
+   "field": "农业食品智能检测",
+   "innovations": [
+    "首个公开榛子X射线二分类基准数据集与评估协议",
+    "分组轮换划分策略防止批次信息泄漏",
+    "概率聚合集成提升小样本放射图像分类稳健性"
+   ],
+   "benchmarks": [
+    "Balanced Accuracy",
+    "Healthy Recall",
+    "Defect Recall",
+    "False Positives/Negatives"
+   ]
+  }
+ }
 }

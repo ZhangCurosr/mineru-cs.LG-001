@@ -4,5 +4,32 @@
  "title": "Adversarial-Resilience-of-Poisson-Process-Submodular-Maximiz",
  "token": "sk-07nfPn8BZ...",
  "created_at": "2026-08-13 14:54:54",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/0352ff5e-69dd-4406-8af0-a8f4ffdf618f.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/0352ff5e-69dd-4406-8af0-a8f4ffdf618f.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:23:53",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "submodular maximization",
+    "matroid constraint",
+    "Poisson process",
+    "adversarial oracle",
+    "full-bandit CMAB",
+    "offline-to-online reduction",
+    "approximation factor",
+    "regret bound"
+   ],
+   "field": "组合优化与在线学习",
+   "innovations": [
+    "证明SGS-Poisson在受控Oracle误差下保持1/e与1-1/e极限近似因子",
+    "构造交换势漂移不等式吸收O(kξ)误差",
+    "通过黑盒归约获得一般拟阵全Bandit CMAB的最优regret界"
+   ],
+   "benchmarks": [
+    "general matroid-constrained submodular maximization",
+    "stochastic full-bandit CMAB with single-agent feedback"
+   ]
+  }
+ }
 }

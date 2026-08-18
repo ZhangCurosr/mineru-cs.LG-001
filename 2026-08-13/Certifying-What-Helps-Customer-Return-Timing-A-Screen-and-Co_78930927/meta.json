@@ -4,5 +4,32 @@
  "title": "Certifying-What-Helps-Customer-Return-Timing-A-Screen-and-Co",
  "token": "sk-jX4FaQZVZ...",
  "created_at": "2026-08-13 07:11:07",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/f5be95cb-5926-4562-a3ee-c44fb799c6a0.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/f5be95cb-5926-4562-a3ee-c44fb799c6a0.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:33:01",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "temporal point processes",
+    "customer return",
+    "conditioning",
+    "positive control",
+    "model-free ceiling",
+    "decay",
+    "NLL calibration",
+    "screen-and-confirm"
+   ],
+   "field": "时序点过程与用户行为建模",
+   "innovations": [
+    "screen-and-confirm认证协议：通过合成正控制使real-data null可解释为无信号而非方法弱",
+    "model-free可预测性上界：以r²/η²量化gap方差解释比例，证实returns接近near-memoryless",
+    "在四数据集上认证decay nearly sufficient且额外conditioning冗余或有害"
+   ],
+   "benchmarks": [
+    "EasyTPP-Gatech (Amazon, Taobao, RetailRocket)",
+    "Thumbtack (proportional relative NLL)"
+   ]
+  }
+ }
 }

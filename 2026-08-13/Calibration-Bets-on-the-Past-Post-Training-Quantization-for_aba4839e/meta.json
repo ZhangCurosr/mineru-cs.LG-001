@@ -4,5 +4,29 @@
  "title": "Calibration-Bets-on-the-Past-Post-Training-Quantization-for",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-13 07:11:19",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/52f482ed-8d0a-4aeb-93cb-c938a57d0e78.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/52f482ed-8d0a-4aeb-93cb-c938a57d0e78.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:31:50",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "post-training quantization",
+    "activation calibration",
+    "financial time-series forecasting",
+    "volatility forecasting",
+    "distribution shift"
+   ],
+   "field": "低精度金融时间序列预测",
+   "innovations": [
+    "首次系统在金融预测walk-forward协议下研究PTQ激活校准",
+    "揭示4位激活损失由范围可恢复与架构相关残余两部分组成",
+    "提出基于市场 regime 敏感性的部署决策指南"
+   ],
+   "benchmarks": [
+    "S&P 500 volatility forecasting",
+    "Information Coefficient (IC)"
+   ]
+  }
+ }
 }

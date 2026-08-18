@@ -4,5 +4,31 @@
  "title": "Beyond-Single-Turn-Confidence-Trajectory-Adapted-Uncertainty",
  "token": "sk-jX4FaQZVZ...",
  "created_at": "2026-08-13 07:11:06",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/74243a73-9220-46e9-b471-7d52b4c2ce32.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/74243a73-9220-46e9-b471-7d52b4c2ce32.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:31:09",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "uncertainty quantification",
+    "LLM agents",
+    "trajectory-level confidence",
+    "tool-use agents",
+    "self-consistency",
+    "white-box scoring",
+    "reflexive scoring"
+   ],
+   "field": "大语言模型 Agent 不确定性感知",
+   "innovations": [
+    "首次系统比较白盒/黑盒/反思式三类UQ方法在多轮Agent轨迹上的可迁移性",
+    "提出轨迹等效率(TER)——基于独立LLM judge的结果等效判定，和6种动作结构一致性度量",
+    "揭示白盒评分对跨轮聚合策略的极端敏感性（同base score不同聚合可造成>0.5 AUROC swing）"
+   ],
+   "benchmarks": [
+    "BFCL-v4",
+    "τ²-bench (airline, telecom, retail)"
+   ]
+  }
+ }
 }

@@ -4,5 +4,33 @@
  "title": "AI4AI-at-Test-Time-Strong-to-Weak-Capability-Transfer-via-Ha",
  "token": "sk-WJrSFDicB...",
  "created_at": "2026-08-13 14:54:50",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/4fef70cb-64fb-4cfd-a648-372b60cd26db.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/4fef70cb-64fb-4cfd-a648-372b60cd26db.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:17:10",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "strong-to-weak scaffolding",
+    "test-time capability transfer",
+    "Theory-of-Mind",
+    "inference-time harness",
+    "deterministic offloading",
+    "cognitive load reduction",
+    "model distillation"
+   ],
+   "field": "推理时能力迁移与模型脚手架设计",
+   "innovations": [
+    "提出并系统验证 strong-to-weak scaffolding 作为训练时蒸馏的测试时互补范式",
+    "揭示确定性 offloading 比例与目标模型性能提升之间的强关联（r=0.72）",
+    "证明 builder 推理努力对 harness 质量具有单调正向影响，而验证预算不是关键因素"
+   ],
+   "benchmarks": [
+    "BigToM",
+    "Hi-ToM",
+    "MMToM-QA",
+    "MuMA-ToM"
+   ]
+  }
+ }
 }

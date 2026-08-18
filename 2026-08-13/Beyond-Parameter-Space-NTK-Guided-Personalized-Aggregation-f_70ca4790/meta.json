@@ -4,5 +4,33 @@
  "title": "Beyond-Parameter-Space-NTK-Guided-Personalized-Aggregation-f",
  "token": "sk-Wt6bONApk...",
  "created_at": "2026-08-13 14:55:18",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/d81c3ded-3e88-4d90-a7ef-8f63971d5b4a.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/d81c3ded-3e88-4d90-a7ef-8f63971d5b4a.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:29:50",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "federated learning",
+    "neural tangent kernel",
+    "personalized aggregation",
+    "robust FL",
+    "P2P topology",
+    "function space"
+   ],
+   "field": "联邦学习鲁棒性与个性化聚合",
+   "innovations": [
+    "提出基于NTK的函数空间agreement score用于个性化更新选择，超越参数空间度量",
+    "在P2P拓扑下首次实现客户端侧本地函数空间行为评估的联邦聚合",
+    "设计round-dependent正则化聚合规则缓解异构环境下的client drift"
+   ],
+   "benchmarks": [
+    "FEMNIST",
+    "Camelyon17-WILDS",
+    "ISIC19",
+    "Fetal Abdominal Structures Ultrasound",
+    "ChestXRay"
+   ]
+  }
+ }
 }

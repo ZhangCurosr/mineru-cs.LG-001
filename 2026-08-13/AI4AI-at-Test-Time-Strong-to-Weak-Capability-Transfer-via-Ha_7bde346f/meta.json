@@ -4,5 +4,33 @@
  "title": "AI4AI-at-Test-Time-Strong-to-Weak-Capability-Transfer-via-Ha",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-13 07:11:25",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/4fef70cb-64fb-4cfd-a648-372b60cd26db.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/4fef70cb-64fb-4cfd-a648-372b60cd26db.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:21:05",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "strong-to-weak scaffolding",
+    "test-time capability transfer",
+    "inference-time harness",
+    "theory of mind",
+    "cognitive load offloading",
+    "deterministic solver",
+    "builder-target paradigm"
+   ],
+   "field": "大语言模型推理增强与能力迁移",
+   "innovations": [
+    "形式化并系统验证了测试时强-弱能力迁移（Strong-to-Weak Scaffolding）新范式，不更新目标模型参数即可实现近乎翻倍的性能提升",
+    "揭示认知负荷卸载（Determinism Fraction, r=0.72）是 Harness 效能提升的核心因果机制",
+    "提出 Headroom Law：Scaffolding 增益与目标模型剩余误差空间强相关，为弱模型部署提供指导原则"
+   ],
+   "benchmarks": [
+    "BigToM",
+    "Hi-ToM",
+    "MMToM-QA",
+    "MuMA-ToM"
+   ]
+  }
+ }
 }

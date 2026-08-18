@@ -3,5 +3,34 @@
  "batch_id": "e65a9a87-b7e7-486c-99de-1b4bca58be52",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:02",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/66fdc92a-7615-479a-b804-563ea67e054b.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/66fdc92a-7615-479a-b804-563ea67e054b.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:15:07",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "超宽带光网络",
+    "物理层建模",
+    "数字孪生",
+    "线性调制层",
+    "少样本微调",
+    "GSNR 估计",
+    "混合放大",
+    "ISRS"
+   ],
+   "field": "光通信物理层建模与数字孪生",
+   "innovations": [
+    "EDFA异质性驱动的分解式GSNR建模策略，将端到端预测拆解为NLI/ASE/信号功率三子任务",
+    "基于LMLs的DeepModNet架构，通过域标签条件调制实现跨场景泛化与参数高效共享",
+    "基于映射一致性的域判别器引导少样本微调，仅用20个样本即可快速适配未见场景"
+   ],
+   "benchmarks": [
+    "BaseCondNet（静态条件建模基线）",
+    "GNPy物理仿真",
+    "35场景域感知预测",
+    "12未见场景少样本微调"
+   ]
+  }
+ }
 }

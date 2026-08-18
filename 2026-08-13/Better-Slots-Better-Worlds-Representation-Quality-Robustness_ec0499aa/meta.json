@@ -4,5 +4,32 @@
  "title": "Better-Slots-Better-Worlds-Representation-Quality-Robustness",
  "token": "sk-9ieZJEGxv...",
  "created_at": "2026-08-13 14:54:56",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/89260e8d-f1c6-4af7-a18b-c14522f40ced.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/89260e8d-f1c6-4af7-a18b-c14522f40ced.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:28:09",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "object-centric world model",
+    "representation quality",
+    "distribution shift",
+    "model-predictive control",
+    "slot attention",
+    "visual features"
+   ],
+   "field": "物体中心表示学习与世界模型",
+   "innovations": [
+    "系统性验证槽质量与规划成功的正相关关系及其饱和现象",
+    "揭示高质量槽表示下掩码和本体感觉输入成为冗余机制",
+    "证明冻结预训练特征而非物体中心结构是分布偏移鲁棒性的关键"
+   ],
+   "benchmarks": [
+    "PushT",
+    "OGBench-Cube",
+    "FG-ARI",
+    "mBO"
+   ]
+  }
+ }
 }

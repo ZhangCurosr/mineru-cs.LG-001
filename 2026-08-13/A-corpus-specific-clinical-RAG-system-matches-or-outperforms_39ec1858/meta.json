@@ -4,5 +4,31 @@
  "title": "A-corpus-specific-clinical-RAG-system-matches-or-outperforms",
  "token": "sk-twhrLv2pG...",
  "created_at": "2026-08-13 14:54:53",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/959b024a-0eee-482d-a5fe-330e5844809a.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/959b024a-0eee-482d-a5fe-330e5844809a.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:18:06",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "RAG",
+    "HealthBench",
+    "临床推理",
+    "专用语料库",
+    "模型评测",
+    "LMIC医疗AI"
+   ],
+   "field": "临床领域特定RAG系统评测",
+   "innovations": [
+    "在公开独立基准上证明语料特化RAG可匹敌/超越最前沿通用LLM",
+    "引入无利益冲突第三方+开放权重中立judge的双重验证流程",
+    "提出语料特异性为RAG临床AI核心设计变量并用分轴结果提供证据"
+   ],
+   "benchmarks": [
+    "HealthBench",
+    "GPT-4.1 judge rubric scoring",
+    "DeepSeek-V4-Pro neutral scoring"
+   ]
+  }
+ }
 }

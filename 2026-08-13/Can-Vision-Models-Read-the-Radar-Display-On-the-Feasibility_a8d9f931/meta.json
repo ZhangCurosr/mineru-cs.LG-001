@@ -4,5 +4,29 @@
  "title": "Can-Vision-Models-Read-the-Radar-Display-On-the-Feasibility",
  "token": "sk-1jVZGxTQ1...",
  "created_at": "2026-08-13 07:10:34",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/92fdbba3-0ae2-4d28-bf3b-1ea31c84a740.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/92fdbba3-0ae2-4d28-bf3b-1ea31c84a740.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:34:00",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "航空交通复杂度",
+    "雷达图像",
+    "Vision Transformer",
+    "视觉可行性",
+    "内在复杂度",
+    "差异化注意力掩码",
+    "交通几何"
+   ],
+   "field": "空域复杂度估计与视觉感知建模",
+   "innovations": [
+    "首次系统验证雷达图像作为航空交通复杂度估计输入格式的可行性，并通过扰动实验证明模型响应与真实几何贡献成正比",
+    "提出差异化注意力掩码策略，在 patch-to-patch 层保留空白背景编码空间关系、在 CQT-to-patch 层仅关注含飞机 patch 避免信息稀释"
+   ],
+   "benchmarks": [
+    "内源性复杂度四分量回归"
+   ]
+  }
+ }
 }

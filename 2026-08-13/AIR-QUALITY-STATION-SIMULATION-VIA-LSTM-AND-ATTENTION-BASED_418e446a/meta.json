@@ -4,5 +4,32 @@
  "title": "AIR-QUALITY-STATION-SIMULATION-VIA-LSTM-AND-ATTENTION-BASED",
  "token": "sk-aknYEUs8O...",
  "created_at": "2026-08-13 07:10:32",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/073ef83a-5b0f-4711-9437-913ad76bbb76.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/073ef83a-5b0f-4711-9437-913ad76bbb76.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:17:58",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "air quality simulation",
+    "LSTM",
+    "spatiotemporal attention",
+    "data imputation",
+    "virtual sensor",
+    "PM10 forecasting"
+   ],
+   "field": "环境信息学/空气质量建模",
+   "innovations": [
+    "提出SATADL时空双模块架构用于实时虚拟代理站模拟",
+    "周期性时间特征嵌入结合正弦/余弦位置编码捕捉日/周/年周期模式",
+    "明确区分站点模拟与预测任务的信息可用性与因果约束差异"
+   ],
+   "benchmarks": [
+    "R²",
+    "RMSE",
+    "12-hour simulation",
+    "48-hour simulation"
+   ]
+  }
+ }
 }

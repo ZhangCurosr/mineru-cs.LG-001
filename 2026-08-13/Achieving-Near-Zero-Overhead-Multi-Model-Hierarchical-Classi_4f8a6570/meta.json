@@ -4,5 +4,32 @@
  "title": "Achieving-Near-Zero-Overhead-Multi-Model-Hierarchical-Classi",
  "token": "sk-AG7sAmdzS...",
  "created_at": "2026-08-13 14:55:06",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6a773806-6f18-4cd3-a2fe-d87d071a2963.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6a773806-6f18-4cd3-a2fe-d87d071a2963.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:21:49",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "DLA 部署",
+    "INT8 量化",
+    "边缘推理",
+    "异步并行流水线",
+    "Quantization-Aware Training",
+    "TensorRT",
+    "Jetson Orin",
+    "多模型分类"
+   ],
+   "field": "边缘设备深度学习部署",
+   "innovations": [
+    "发现 PTQ 熵校准在 DLA INT8 上严重失效并提出人工动态范围修复方案",
+    "GPU+DLA 帧 N-1 异步并行架构实现分类零开销",
+    "完整五步 DLA 定制模型部署方法论及九项工程约束文档化"
+   ],
+   "benchmarks": [
+    "Jetson Orin NX 1080p/720p YOLOv11m+PCN 流水线 FPS",
+    "双头行人属性分类准确率与 ROC-AUC"
+   ]
+  }
+ }
 }

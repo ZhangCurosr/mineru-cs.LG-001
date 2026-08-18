@@ -4,5 +4,31 @@
  "title": "Achieving-Near-Zero-Overhead-Multi-Model-Hierarchical-Classi",
  "token": "sk-dD4E81LFV...",
  "created_at": "2026-08-13 07:10:37",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6a773806-6f18-4cd3-a2fe-d87d071a2963.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6a773806-6f18-4cd3-a2fe-d87d071a2963.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:21:12",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "DLA",
+    "INT8量化",
+    "边缘推理",
+    "多模型并行",
+    "TensorRT",
+    "Jetson",
+    "量化感知训练"
+   ],
+   "field": "边缘设备深度学习部署",
+   "innovations": [
+    "提出五步 DLA INT8 零 fallback 部署方法论，覆盖架构适配到异步流水线集成",
+    "首次揭示 DLA INT8 上 PTQ 熵校准严重失效（75% vs FP32 94.5%），手动动态范围可恢复至 94%",
+    "Frame N−1 异步 GPU+DLA 并行流水线实现检测-分类近乎零额外延迟（12.5 vs 13.3 FPS）"
+   ],
+   "benchmarks": [
+    "Person Attribute Classification (私有数据集, ~2000 样本)",
+    "YOLOv11m + Dual-Head ResNet-34 on Jetson Orin NX"
+   ]
+  }
+ }
 }

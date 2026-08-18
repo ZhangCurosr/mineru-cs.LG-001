@@ -3,5 +3,44 @@
  "batch_id": "25453e1e-2acf-4bfa-a67b-a9942408609a",
  "token": "sk-n7iJ0Z1Ol...",
  "created_at": "2026-08-12 15:02:00",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/a955caa7-7a84-4088-a00e-1b8de8ed5dad.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/a955caa7-7a84-4088-a00e-1b8de8ed5dad.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:15:34",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Graph Rewiring",
+    "Over-squashing",
+    "Optimal Transport",
+    "Message-Passing Neural Networks",
+    "Pairwise Communication",
+    "Graph Structure Learning"
+   ],
+   "field": "图神经网络结构优化",
+   "innovations": [
+    "提出对偶通信短缺作为 over-squashing 的可计算代理，理论证明与 Jacobian-based shortage 常数因子等价",
+    "首次将 OT 用于图重连预算分配，理论证明相比 Greedy-Local 在目标覆盖上具有 TV 距离控制的优势",
+    "推导边插入的一阶支持变化公式，揭示 added-path contribution 与 normalization loss 的非单调权衡"
+   ],
+   "benchmarks": [
+    "Cora",
+    "CiteSeer",
+    "Texas",
+    "Cornell",
+    "Wisconsin",
+    "Chameleon",
+    "ENZYMES",
+    "MUTAG",
+    "PROTEINS",
+    "REDDIT-BINARY",
+    "COLLAB",
+    "Roman-Empire",
+    "Amazon-Ratings",
+    "Minesweeper",
+    "Tolokers",
+    "Questions"
+   ]
+  }
+ }
 }

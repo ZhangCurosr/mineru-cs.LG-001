@@ -4,5 +4,29 @@
  "title": "Better-Slots-Better-Worlds-Representation-Quality-Robustness",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-13 07:11:29",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/89260e8d-f1c6-4af7-a18b-c14522f40ced.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/89260e8d-f1c6-4af7-a18b-c14522f40ced.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:28:24",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "object-centric world model",
+    "SlotContrast",
+    "representation quality",
+    "distribution shift robustness",
+    "model-predictive control"
+   ],
+   "field": "对象中心视觉表示与世界模型",
+   "innovations": [
+    "系统建立slot质量与规划成功的正相关关系并揭示饱和效应",
+    "证明高质量slot下proprioception和masking辅助机制可被移除",
+    "分离预训练冻结特征与对象中心结构对OOD鲁棒性的贡献"
+   ],
+   "benchmarks": [
+    "PushT",
+    "OGBench-Cube"
+   ]
+  }
+ }
 }

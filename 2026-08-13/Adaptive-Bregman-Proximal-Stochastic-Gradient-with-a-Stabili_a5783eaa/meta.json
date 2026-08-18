@@ -4,5 +4,31 @@
  "title": "Adaptive-Bregman-Proximal-Stochastic-Gradient-with-a-Stabili",
  "token": "sk-mBuyDYvkR...",
  "created_at": "2026-08-13 06:51:50",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/69a216bc-2d8e-4628-914d-18112ed52d91.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/69a216bc-2d8e-4628-914d-18112ed52d91.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:20:27",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Bregman Proximal Gradient",
+    "Variance Reduction",
+    "Barzilai-Borwein Step Size",
+    "Finite-sum Optimization",
+    "Adaptive Stochastic Gradient"
+   ],
+   "field": "随机优化与自适应步长方法",
+   "innovations": [
+    "中位数聚合稳定化BB步长：通过SAGA表secant对的分母加权平均抑制奇异曲率估计",
+    "非欧空间下首次建立BPSG在凸问题上的O(n/K)率与重启线性收敛率",
+    "无后效设计：步长自适应所需信息完全共享SAGA梯度表，无额外计算开销"
+   ],
+   "benchmarks": [
+    "LibSVM (mushrooms/ijcnn1/w8a/covtype)",
+    "Simplex-constrained Poisson Inverse Problem",
+    "Samson Hyperspectral Unmixing",
+    "Sparse Nonnegative Matrix Factorization (ORL)"
+   ]
+  }
+ }
 }

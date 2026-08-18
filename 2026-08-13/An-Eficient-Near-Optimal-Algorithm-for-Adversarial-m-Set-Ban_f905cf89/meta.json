@@ -4,5 +4,30 @@
  "title": "An-Eficient-Near-Optimal-Algorithm-for-Adversarial-m-Set-Ban",
  "token": "sk-Jd4ujJMnj...",
  "created_at": "2026-08-13 14:54:51",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/2c3281e9-2ee2-4a9f-ba25-25ecbeed6aae.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/2c3281e9-2ee2-4a9f-ba25-25ecbeed6aae.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:22:46",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "adversarial bandits",
+    "combinatorial optimization",
+    "weighted m-set distributions",
+    "high-probability regret",
+    "affine majorant",
+    "polynomial-time algorithm"
+   ],
+   "field": "在线学习 / 组合赌博机",
+   "innovations": [
+    "将KW算法二次校正项仿射化以保持分布族闭合",
+    "利用Cesari-Colomboni协方差界导出leverage score的仿射上界",
+    "通过近似KL投影维持边际概率约束实现多项式时间高效更新"
+   ],
+   "benchmarks": [
+    "EXP3-KW (Zimmert & Lattimore 2022)",
+    "DAG-based algorithm (Maiti et al. 2025)"
+   ]
+  }
+ }
 }

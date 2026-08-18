@@ -4,5 +4,30 @@
  "title": "Clustered-Randomized-Smoothing-for-Stochastic-Prediction-Fun",
  "token": "sk-JdJPQj6CY...",
  "created_at": "2026-08-13 14:54:57",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/4e499a2f-1d1f-4179-957c-61a0a34bf371.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/4e499a2f-1d1f-4179-957c-61a0a34bf371.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:35:03",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "randomized smoothing",
+    "stochastic prediction",
+    "robustness certification",
+    "multi-modal regression",
+    "clustered smoothing",
+    "adversarial robustness"
+   ],
+   "field": "鲁棒机器学习/安全关键预测",
+   "innovations": [
+    "提出clustered α-smoothing框架，通过逐簇局部α-trimmed平滑+混合组合避免多模态mode collapse",
+    "建立首个针对多模态随机预测器的概率鲁棒性下界定理，支持任意聚类算法",
+    "通过anchor points将非凸优化转化为可计算的线性规划下界"
+   ],
+   "benchmarks": [
+    "L-GAP driving simulator trajectory prediction",
+    "quadrotor navigation with obstacles (Badings et al. 2023)"
+   ]
+  }
+ }
 }

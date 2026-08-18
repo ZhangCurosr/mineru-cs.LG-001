@@ -4,5 +4,33 @@
  "title": "Attractor-Image-Based-Deep-Learning-of-Arterial-Pulse-Waves",
  "token": "sk-CZoysi7P5...",
  "created_at": "2026-08-13 14:54:54",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/084ed6de-f7fd-41f0-9a67-fc14c064b360.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/084ed6de-f7fd-41f0-9a67-fc14c064b360.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 07:24:23",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "SPAR",
+    "attractor reconstruction",
+    "pulse wave",
+    "age classification",
+    "PPG",
+    "tonometry",
+    "vascular ageing",
+    "CNN"
+   ],
+   "field": "心血管信号处理与可穿戴健康监测",
+   "innovations": [
+    "将SPAR吸引子图像首次用于脉搏波年龄分类任务",
+    "在紧密年龄段(35-40 vs 50-55)健康人群中实现70%+F1的双模态(age-approximation)分类",
+    "展示SPAR对噪声的内在鲁棒性并跨tonometry与PPG验证"
+   ],
+   "benchmarks": [
+    "Asklepios tonometry (35-40 vs 50-55, internal)",
+    "Asklepios broader age range (30-40 vs 50-59)",
+    "Vortal PPG (18-35 vs 70+)"
+   ]
+  }
+ }
 }
