@@ -4,5 +4,32 @@
  "title": "Faithful-Suficient-and-Understandable-Rethinking-Graph-Count",
  "token": "sk-oJ013oevc...",
  "created_at": "2026-08-13 14:54:56",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/228c13e8-7259-4fb4-989b-1da091adae58.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/228c13e8-7259-4fb4-989b-1da091adae58.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:07:05",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Graph Counterfactual Explanation",
+    "Discrete Diffusion",
+    "Gumbel-Max Inversion",
+    "Classifier-Free Guidance",
+    "Explainable GNN",
+    "Molecular Graphs"
+   ],
+   "field": "图机器学习可解释性",
+   "innovations": [
+    "提出基于 Gumbel-Max 后验一致性的离散扩散反演方案，实现原条件下精确重建、新条件下最小必要编辑",
+    "将反事实稀疏性转化为动态预算 τ 搜索，避免训练期惩罚项调参",
+    "推导并落地 NA/Sparsity/NAFR/SMILES 统一评估框架，实现跨方法公平对比"
+   ],
+   "benchmarks": [
+    "Mutagenicity",
+    "Benzene",
+    "PROTEINS",
+    "TWITTER"
+   ]
+  }
+ }
 }

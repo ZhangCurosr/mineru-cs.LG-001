@@ -4,5 +4,31 @@
  "title": "GCPO-Diagnosing-and-Constraining-Subspace-Geometry-in-Rollou",
  "token": "sk-Tq65tdoLK...",
  "created_at": "2026-08-13 14:55:28",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e41fc9d4-5918-473c-9cc1-e60b62799de4.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e41fc9d4-5918-473c-9cc1-e60b62799de4.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:08:04",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "reinforcement learning",
+    "policy optimization",
+    "parameter geometry",
+    "LLM post-training",
+    "subspace analysis",
+    "stability"
+   ],
+   "field": "大语言模型强化学习",
+   "innovations": [
+    "提出维度校正的步级主子空间重叠度量诊断训练不稳定",
+    "GCPO通过硬双边正交投影约束参数更新方向",
+    "证明主子空间重叠与性能下降的剂量依赖因果关系"
+   ],
+   "benchmarks": [
+    "MATH500",
+    "HumanEval+",
+    "ToolAlpaca"
+   ]
+  }
+ }
 }

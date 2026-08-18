@@ -4,5 +4,33 @@
  "title": "Direct-Acceleration-of-Stochastic-Root-Finding-Without-Varia",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-13 07:11:32",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6d27f5af-e307-444d-adf5-3d7b9fcca929.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6d27f5af-e307-444d-adf5-3d7b9fcca929.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:02:38",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "随机算子求根",
+    "对偶锚加速",
+    "cocoercive算子",
+    "方差缩减",
+    "Halpern迭代",
+    "双循环正则化",
+    "oracle复杂度",
+    "minimax优化"
+   ],
+   "field": "随机优化与单调包含",
+   "innovations": [
+    "揭示对偶锚机制（Dual-OHM）对随机噪声的内生鲁棒性，首次无需方差缩减实现O(epsilon^{-3})随机根查找",
+    "在强单调+cocoercive假设下通过早停达到tilde{O}(epsilon^{-2})近最优oracle复杂度",
+    "建立基于留一稳定性的随机误差传播上界技术，证明误差累积权重为O(N)而非OHM的O(N^2)"
+   ],
+   "benchmarks": [
+    "Worst-case非扩张不动点算子（d=2001）",
+    "有限和cocoercive算子（n=200, d=200）",
+    "SCSC Huber正则化minimax问题（d=50）"
+   ]
+  }
+ }
 }

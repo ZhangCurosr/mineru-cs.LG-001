@@ -4,5 +4,31 @@
  "title": "Forward-and-Inverse-Virtual-Metrology-for-Phototransistor-Ga",
  "token": "sk-sKVjU65N5...",
  "created_at": "2026-08-13 14:56:37",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/95a06f3a-5470-483e-9418-2f06e5b2e0f9.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/95a06f3a-5470-483e-9418-2f06e5b2e0f9.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:07:52",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "虚拟计量",
+    "小样本学习",
+    "层次化混合效应模型",
+    "不确定性量化",
+    "数据质量评估",
+    "逆向配方搜索"
+   ],
+   "field": "半导体制造中的过程建模与虚拟计量",
+   "innovations": [
+    "发现光电晶体管增益方差约半数来自批次间变异且位置效应跨批次符号翻转",
+    "提出面向批‑晶‑芯三层实体的多层级数据质量评估与跨层链接分数",
+    "构建带高斯过程不确定性信任分层的前向‑逆向虚拟计量管道及可溯源本地 LLM 助手"
+   ],
+   "benchmarks": [
+    "LOBO-CV R^2",
+    "ICC (内向相关系数)",
+    "Marginal/Conditional R^2"
+   ]
+  }
+ }
 }

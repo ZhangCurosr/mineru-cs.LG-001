@@ -4,5 +4,33 @@
  "title": "CookVoice-Unified-Framework-for-Style-Controllable-Multi-Mod",
  "token": "sk-YrIlRFySy...",
  "created_at": "2026-08-13 07:11:05",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e4ef9ff9-afcc-4a95-845f-1a471427ec13.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e4ef9ff9-afcc-4a95-845f-1a471427ec13.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:01:29",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "voice generation",
+    "unified framework",
+    "style controllable",
+    "prosody control",
+    "flow-matching",
+    "non-autoregressive"
+   ],
+   "field": "语音/歌声生成",
+   "innovations": [
+    "提出三因子分解（内容/韵律/风格）与灵活帧级对齐的统一人声生成框架",
+    "支持多模态风格（文本/参考语音）与多类型韵律（离散/连续）的随机条件混合训练",
+    "以 43.51M 轻量参数实现强可控性与高效推理（RTF 0.04）"
+   ],
+   "benchmarks": [
+    "TTS MOS / WER",
+    "TTSV MOS / MC-MOS / WER",
+    "S-SIM",
+    "F0-RMSE",
+    "F0-CORR"
+   ]
+  }
+ }
 }

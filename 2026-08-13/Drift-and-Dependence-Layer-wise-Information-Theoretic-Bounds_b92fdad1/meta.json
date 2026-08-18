@@ -4,5 +4,10 @@
  "title": "Drift-and-Dependence-Layer-wise-Information-Theoretic-Bounds",
  "token": "sk-2d8Cyf5aG...",
  "created_at": "2026-08-13 14:55:27",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/7c3ac6d7-3837-4dc8-a08a-5c8b98c65869.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/7c3ac6d7-3837-4dc8-a08a-5c8b98c65869.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:05:50",
+  "chunks": 4
+ }
 }

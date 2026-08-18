@@ -4,5 +4,30 @@
  "title": "Distillation-of-Foundation-Models-for-Time-dependent-PDEs",
  "token": "sk-mtKOSZtKc...",
  "created_at": "2026-08-13 14:56:37",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/9724647e-352f-447a-8096-bf2550e9955b.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/9724647e-352f-447a-8096-bf2550e9955b.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:03:02",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "知识蒸馏",
+    "PDE 基础模型",
+    "四阶神经算子",
+    "等变性",
+    "自回归 rollout",
+    "低资源代理模型"
+   ],
+   "field": "PDE 物理信息机器学习",
+   "innovations": [
+    "提出 TREX，无需初始条件分布的教师 rollout 扩展蒸馏方法",
+    "周期噪声注入提升 rollout 状态覆盖并教学生局部恢复行为",
+    "将等变性嵌入轻量学生架构，蒸馏后可超越教师精度并显著提升长 rollout 鲁棒性"
+   ],
+   "benchmarks": [
+    "Poseidon (NS-PwC, NS-BB, NS-SVS, CE-RPUI)",
+    "Kolmogorov Flow (Walrus)"
+   ]
+  }
+ }
 }

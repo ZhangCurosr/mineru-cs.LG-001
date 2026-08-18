@@ -4,5 +4,36 @@
  "title": "FLARE-LOW-RANK-ATTENTION-WITH-DYNAMIC-ATTENTION-ROUTING",
  "token": "sk-jIjWdfVgv...",
  "created_at": "2026-08-13 07:11:25",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/47b890d7-e7cc-49ba-b9fd-3a2624524922.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/47b890d7-e7cc-49ba-b9fd-3a2624524922.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:06:09",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "低秩注意力",
+    "动态路由",
+    "PDE 代理",
+    "上下文并行",
+    "FLARE",
+    "token mixer",
+    "SDPA",
+    "多 GPU"
+   ],
+   "field": "物理信息神经网络与高效注意力",
+   "innovations": [
+    "用输入 token 动态合成 M 路路由查询，替代 FLARE 的固定查询参数",
+    "三串行 SDPA 实现秩≤M 编码-解码混用器，零新 kernel",
+    "精确 token-sharded 上下文并行，通信 payload 与 N 无关"
+   ],
+   "benchmarks": [
+    "Elasticity (972 points)",
+    "Darcy (7225 points)",
+    "Airfoil (11271 points)",
+    "Pipe (16641 points)",
+    "DrivAerML-40K (40K points)",
+    "Long Range Arena"
+   ]
+  }
+ }
 }

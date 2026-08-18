@@ -4,5 +4,36 @@
  "title": "Continuous-Latent-Predictive-Modeling-with-Semantic-Alignmen",
  "token": "sk-xuJlHjv3a...",
  "created_at": "2026-08-13 14:55:43",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/d6db85e6-e2c7-4ffe-b6b1-6d8abc94f72a.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/d6db85e6-e2c7-4ffe-b6b1-6d8abc94f72a.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:00:28",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "EEG foundation model",
+    "continuous latent prediction",
+    "semantic alignment",
+    "language-EEG integration",
+    "NeuralBench",
+    "self-supervised learning"
+   ],
+   "field": "脑电解码与多模态对齐",
+   "innovations": [
+    "提出BLPM框架，将EEG解码重构为连续语义嵌入预测问题",
+    "设计CELP编码器，通过latent target prediction学习可迁移EEG表征",
+    "提出MQSD模块，利用语言引导语义query分解EEG表示并与LLM空间对齐"
+   ],
+   "benchmarks": [
+    "NeuralBench",
+    "TUEG",
+    "TUAB",
+    "TUEV",
+    "COG-BCI",
+    "FACED",
+    "PhysioNet-MI",
+    "HMC"
+   ]
+  }
+ }
 }

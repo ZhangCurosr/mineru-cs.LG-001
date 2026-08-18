@@ -4,5 +4,35 @@
  "title": "CookVoice-Unified-Framework-for-Style-Controllable-Multi-Mod",
  "token": "sk-kBmY9IM4V...",
  "created_at": "2026-08-13 14:55:32",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e4ef9ff9-afcc-4a95-845f-1a471427ec13.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e4ef9ff9-afcc-4a95-845f-1a471427ec13.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:01:25",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "voice generation",
+    "unified framework",
+    "style control",
+    "flow matching",
+    "singing voice synthesis",
+    "text-to-speech"
+   ],
+   "field": "多模态语音生成",
+   "innovations": [
+    "帧级灵活对齐机制实现内容-韵律-风格的细粒度解耦控制",
+    "单模型统一支持 TTS/TTSV/风格可控生成/声音模仿/转换等多种任务",
+    "43.51M 轻量 DiT-S + Flow-Matching 实现 4 ODE 步高效推理"
+   ],
+   "benchmarks": [
+    "Baker",
+    "LJSpeech",
+    "ESD",
+    "CREMA-D",
+    "CommonPhone",
+    "Genshin Voice",
+    "GTSinger"
+   ]
+  }
+ }
 }

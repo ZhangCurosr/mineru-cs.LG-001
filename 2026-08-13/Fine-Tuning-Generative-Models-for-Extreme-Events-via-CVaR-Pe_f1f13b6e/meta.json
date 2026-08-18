@@ -4,5 +4,31 @@
  "title": "Fine-Tuning-Generative-Models-for-Extreme-Events-via-CVaR-Pe",
  "token": "sk-jX4FaQZVZ...",
  "created_at": "2026-08-13 07:11:21",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/1798967f-05b1-45b1-97a9-35094ba2bdd2.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/1798967f-05b1-45b1-97a9-35094ba2bdd2.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:07:30",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "重尾分布",
+    "CVaR",
+    "Wasserstein梯度流",
+    "生成模型微调",
+    "极端事件",
+    "尾部无偏学习"
+   ],
+   "field": "生成模型与重尾分布学习",
+   "innovations": [
+    "提出CVaR惩罚的Wasserstein梯度流损失泛函，解决重尾学习的过早饱和问题",
+    "首次推导经验测度下CVaR的变分次梯度，基于Clarke广义梯度与Rockafellar-Uryasev表示",
+    "设计CVaR-GPA粒子算法，使用动能停止准则实现自适应深度的黑盒微调"
+   ],
+   "benchmarks": [
+    "Fama-French 25投资组合",
+    "Student-t分布(二维/五维)",
+    "Neal's funnel分布"
+   ]
+  }
+ }
 }

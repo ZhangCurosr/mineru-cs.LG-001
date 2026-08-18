@@ -4,5 +4,31 @@
  "title": "Confidence-Calibration-of-Deep-Learning-Systems",
  "token": "sk-jywkrqzJV...",
  "created_at": "2026-08-13 14:55:18",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/41cb6a18-3040-42b9-b419-ca86a06bee2d.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/41cb6a18-3040-42b9-b419-ca86a06bee2d.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:01:29",
+  "chunks": 5,
+  "meta": {
+   "keywords": [
+    "置信度校准",
+    "共形预测",
+    "差分隐私",
+    "域适应",
+    "标签噪声",
+    "鲁棒机器学习"
+   ],
+   "field": "置信度校准与不确定性量化",
+   "innovations": [
+    "提出基于噪声转移矩阵的抗噪校准框架，校准性能逼近干净标签场景",
+    "扩展共形预测至含噪标签场景并提供有限样本覆盖保证",
+    "提出LDP-CP框架桥接隐私保护与不确定性量化，揭示隐私-性能权衡"
+   ],
+   "benchmarks": [
+    "UTDC-Meta",
+    "UTDC-ATC",
+    "UTDC-PN"
+   ]
+  }
+ }
 }

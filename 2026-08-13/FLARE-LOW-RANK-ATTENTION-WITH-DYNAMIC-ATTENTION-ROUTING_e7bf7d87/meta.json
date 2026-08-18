@@ -4,5 +4,34 @@
  "title": "FLARE-LOW-RANK-ATTENTION-WITH-DYNAMIC-ATTENTION-ROUTING",
  "token": "sk-hRG9yTz20...",
  "created_at": "2026-08-13 14:56:04",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/47b890d7-e7cc-49ba-b9fd-3a2624524922.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/47b890d7-e7cc-49ba-b9fd-3a2624524922.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:06:02",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "low-rank attention",
+    "PDE surrogate",
+    "dynamic routing",
+    "context parallelism",
+    "scaled dot-product attention",
+    "neural operator"
+   ],
+   "field": "偏微分方程代理模型与高效注意力",
+   "innovations": [
+    "通过一次额外 SDPA 从输入合成固定查询，使压缩模板输入条件化",
+    "保持显式 rank-M encode-decode 分解与 O(NM) 复杂度，不改残差深度/宽度",
+    "提出与 N 无关通信量的 token-sharded context parallel 分布式实现"
+   ],
+   "benchmarks": [
+    "Elasticity",
+    "Darcy",
+    "Airfoil",
+    "Pipe",
+    "DrivAerML-40K",
+    "Long Range Arena"
+   ]
+  }
+ }
 }

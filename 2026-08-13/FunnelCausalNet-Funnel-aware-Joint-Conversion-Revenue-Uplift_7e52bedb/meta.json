@@ -4,5 +4,31 @@
  "title": "FunnelCausalNet-Funnel-aware-Joint-Conversion-Revenue-Uplift",
  "token": "sk-I70XXkbCl...",
  "created_at": "2026-08-13 07:10:47",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/4bd28fb3-9633-43de-999f-80123f3518b0.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/4bd28fb3-9633-43de-999f-80123f3518b0.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:07:39",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "uplift modeling",
+    "causal inference",
+    "funnel composition",
+    "coupon allocation",
+    "conformal prediction",
+    "budgeted optimization"
+   ],
+   "field": "因果推荐与增量营销",
+   "innovations": [
+    "硬漏斗结构 μ_gmv=μ_conv·μ_val 联合估计转化与GMV uplift并在零膨胀下给出MSE比值启发",
+    "RCT arm均值加性锚定的预算化多档分配",
+    "Bonferroni联合共形区间作为双目标审计层"
+   ],
+   "benchmarks": [
+    "Criteo-MT7",
+    "Hillstrom",
+    "OTA Hotel-Coupon RCT"
+   ]
+  }
+ }
 }

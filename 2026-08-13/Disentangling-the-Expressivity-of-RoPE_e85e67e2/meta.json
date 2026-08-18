@@ -4,5 +4,34 @@
  "title": "Disentangling-the-Expressivity-of-RoPE",
  "token": "sk-sKVjU65N5...",
  "created_at": "2026-08-13 07:10:28",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/bafb4b46-6c20-4ea3-bddd-d5eeda01d883.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/bafb4b46-6c20-4ea3-bddd-d5eeda01d883.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:03:14",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "RoPE",
+    "rotary position embeddings",
+    "expressivity",
+    "formal language theory",
+    "temporal logic",
+    "finite precision transformers",
+    "modular predicates"
+   ],
+   "field": "Transformer 位置编码的理论分析",
+   "innovations": [
+    "证明分量周期 RoPE 与 LTL[P, MOD] 精确等价，建立周期编码与模谓词的严格对应",
+    "证明常规非周期 RoPE 仅能实现有界固定偏移模拟（LTL[P, Y]），给出认证长度上界 N_max^(k)",
+    "调和模谓词与局部偏移两种 RoPE 解释，统一于完全均匀有限精度 transformer 框架"
+   ],
+   "benchmarks": [
+    "(aa)* even-length language",
+    "(ab)* repeated pattern language",
+    "aΣ* prefix language",
+    "Σ*a suffix language",
+    "Σ*abΣ* substring language"
+   ]
+  }
+ }
 }

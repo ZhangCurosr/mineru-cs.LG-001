@@ -4,5 +4,33 @@
  "title": "GCPO-Diagnosing-and-Constraining-Subspace-Geometry-in-Rollou",
  "token": "sk-I70XXkbCl...",
  "created_at": "2026-08-13 07:10:51",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e41fc9d4-5918-473c-9cc1-e60b62799de4.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e41fc9d4-5918-473c-9cc1-e60b62799de4.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:08:33",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "rollout RL",
+    "几何约束",
+    "主子空间重叠",
+    "GCPO",
+    "参数空间诊断",
+    "策略优化",
+    "能力保持",
+    "响应长度膨胀"
+   ],
+   "field": "大语言模型强化学习后训练",
+   "innovations": [
+    "提出维度校正的逐阶主子空间重叠度量作为训练不稳定性的几何诊断信号",
+    "GCPO通过双侧正交投影硬约束将策略更新限制在预训练主子空间的互补空间中",
+    "在Qwen3-8B和GLM4-9B上全面超越GRPO/DAPO/GSPO/GMPO并显著提升跨任务能力保持"
+   ],
+   "benchmarks": [
+    "MATH500",
+    "HumanEval+",
+    "ToolAlpaca"
+   ]
+  }
+ }
 }

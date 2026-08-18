@@ -4,5 +4,34 @@
  "title": "Earth-observation-embeddings-are-efective-sub-grid-descripto",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-13 07:11:22",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6e3d683d-dd87-4824-99a9-8c149556dcdc.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6e3d683d-dd87-4824-99a9-8c149556dcdc.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:05:06",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "probabilistic weather downscaling",
+    "earth observation embeddings",
+    "conditional neural processes",
+    "Tessera",
+    "off-grid prediction",
+    "statistical downscaling",
+    "Aurora AI forecast",
+    "CRPS"
+   ],
+   "field": "AI for weather/climate downscaling",
+   "innovations": [
+    "首次将冻结EO基础模型Tessera嵌入作为可转移子网格描述符注入ConvCNP降尺度",
+    "证明嵌入对温度和风速的变量特异性修正机制（地形主导温度、表面主导风速）",
+    "在Aurora预报输入和零本地数据冷启动场景下仍保持稳健增益"
+   ],
+   "benchmarks": [
+    "ERA5 reanalysis 0.25°",
+    "GHCNh hourly stations",
+    "Aurora 0.25° forecasts at +6/+24/+72h",
+    "Tessera 10 m pixel embeddings"
+   ]
+  }
+ }
 }

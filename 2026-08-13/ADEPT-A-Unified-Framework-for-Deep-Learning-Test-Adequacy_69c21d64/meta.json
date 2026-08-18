@@ -4,5 +4,26 @@
  "title": "ADEPT-A-Unified-Framework-for-Deep-Learning-Test-Adequacy",
  "token": "sk-Ir4JqYCnj...",
  "created_at": "2026-08-13 04:49:35",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/082369cd-e661-4868-9362-029bb295b1d9.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/082369cd-e661-4868-9362-029bb295b1d9.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 13:59:13",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Deep Learning Testing",
+    "Test Adequacy",
+    "Neuron Coverage",
+    "Mutation Testing",
+    "Surprise Adequacy",
+    "Decision Boundary",
+    "Framework"
+   ],
+   "field": "深度学习软件测试",
+   "innovations": [
+    "统一整合六类代表性DL测试充分性指标的模板化框架",
+    "缓存管理+YAML配置的结构化评测工作流"
+   ]
+  }
+ }
 }

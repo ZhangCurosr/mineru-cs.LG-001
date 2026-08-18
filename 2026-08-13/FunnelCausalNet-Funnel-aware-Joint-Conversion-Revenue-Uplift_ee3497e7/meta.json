@@ -4,5 +4,32 @@
  "title": "FunnelCausalNet-Funnel-aware-Joint-Conversion-Revenue-Uplift",
  "token": "sk-SDuVT3fV1...",
  "created_at": "2026-08-13 14:55:28",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/4bd28fb3-9633-43de-999f-80123f3518b0.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/4bd28fb3-9633-43de-999f-80123f3518b0.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:07:54",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "uplift modeling",
+    "causal inference",
+    "funnel composition",
+    "coupon allocation",
+    "conformal prediction",
+    "zero-inflated GMV",
+    "multi-tier treatment"
+   ],
+   "field": "因果机器学习与营销优化",
+   "innovations": [
+    "漏斗结构硬耦合的二元转化×条件价值联合估计并给出零膨胀 regime 下的领先阶 MSE 方差比",
+    "RCT 臂级锚定加法偏移修正+Lagrangian 多档预算分配流水线",
+    "Bonferroni 联合边际 conformal 区间与 Top-k 冲突审计层"
+   ],
+   "benchmarks": [
+    "Criteo-MT7 semi-synthetic",
+    "Hillstrom public RCT",
+    "OTA Hotel-Coupon industrial RCT"
+   ]
+  }
+ }
 }

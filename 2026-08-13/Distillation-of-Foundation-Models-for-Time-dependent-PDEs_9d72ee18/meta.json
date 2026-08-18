@@ -4,5 +4,30 @@
  "title": "Distillation-of-Foundation-Models-for-Time-dependent-PDEs",
  "token": "sk-sKVjU65N5...",
  "created_at": "2026-08-13 07:10:33",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/9724647e-352f-447a-8096-bf2550e9955b.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/9724647e-352f-447a-8096-bf2550e9955b.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:03:01",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "知识蒸馏",
+    "偏微分方程",
+    "基础模型",
+    "傅里叶神经算子",
+    "自回归预测",
+    "等变性"
+   ],
+   "field": "科学机器学习/PDE求解",
+   "innovations": [
+    "提出TREX框架，通过教师自回归展开在未知初始条件分布下蒸馏PDE基础模型",
+    "周期性噪声注入增强状态空间覆盖，使学生匹配或超越教师精度",
+    "结合TFNO等变架构，参数量减少3600倍同时推理加速10倍以上"
+   ],
+   "benchmarks": [
+    "Poseidon下游流体任务(NS-PwC/NS-BB/NS-SVS/CE-RPUI)",
+    "Kolmogorov Flow数据集(Walrus教师)"
+   ]
+  }
+ }
 }

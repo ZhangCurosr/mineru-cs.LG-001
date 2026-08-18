@@ -4,5 +4,31 @@
  "title": "FQTree-Fine-grained-Quantization-and-Hardware-Generation-of",
  "token": "sk-vBvZ06NsJ...",
  "created_at": "2026-08-13 14:54:53",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/d82dd1b3-fb87-4807-b9a0-8402af4f5b50.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/d82dd1b3-fb87-4807-b9a0-8402af4f5b50.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:06:45",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Boosted Decision Trees",
+    "Quantization-Aware Training",
+    "FPGA Deployment",
+    "Hardware Generation",
+    "Fine-grained Quantization",
+    "Mixed-Precision"
+   ],
+   "field": "低资源机器学习硬件加速",
+   "innovations": [
+    "硬件感知的叶节点量化公式与偏置折叠，使叶节点位宽随动态范围自适应",
+    "扩展DAIS IR增加显式MUX算子，实现BDT量化模型到RTL/HLS的编译器级自动降规",
+    "量化感知训练与硬件生成E2E打通，细粒度控制特征/阈值/叶节点独立精度"
+   ],
+   "benchmarks": [
+    "JSC (OpenML 42468 Jet Substructure Classification)",
+    "MNIST",
+    "NID (UNSW-NB15 Binarized)"
+   ]
+  }
+ }
 }

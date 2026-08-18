@@ -4,5 +4,36 @@
  "title": "FM-LLM-A-Frequency-Enhanced-Mixture-of-Experts-Framework-for",
  "token": "sk-1TedD2e6f...",
  "created_at": "2026-08-13 14:56:03",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/5bfe21ff-ffe0-47d2-8709-cf38f788ef3d.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/5bfe21ff-ffe0-47d2-8709-cf38f788ef3d.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:06:45",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "time series forecasting",
+    "large language model",
+    "mixture of experts",
+    "Fourier analysis network",
+    "frequency-aware",
+    "autoregressive",
+    "few-shot/zero-shot"
+   ],
+   "field": "时间序列预测与大模型适配",
+   "innovations": [
+    "无需prompt的谱token对齐器，将FAN谐波表示直接注入冻结LLM以避免序列扩展开销",
+    "受限不对称MoE解码：共享Fourier专家建模周期主干、路由FFN专家建模非周期残差",
+    "时频混合损失与信号衰减加权联合优化，缓解长视距自回归误差累积"
+   ],
+   "benchmarks": [
+    "ETTm1/m2",
+    "ETTh1/h2",
+    "Electricity",
+    "Traffic",
+    "Weather",
+    "PEMS03/04/07/08",
+    "M4"
+   ]
+  }
+ }
 }

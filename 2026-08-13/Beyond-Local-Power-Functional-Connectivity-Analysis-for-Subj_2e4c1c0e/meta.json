@@ -4,5 +4,32 @@
  "title": "Beyond-Local-Power-Functional-Connectivity-Analysis-for-Subj",
  "token": "sk-OZiRtsQic...",
  "created_at": "2026-08-13 07:10:26",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/d1761ba4-debd-45e5-a50e-26efb7521b3a.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/d1761ba4-debd-45e5-a50e-26efb7521b3a.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 13:59:45",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "EEG",
+    "Functional Connectivity",
+    "Phase Locking Value",
+    "Learning Style Recognition",
+    "FSLSM",
+    "Subject-Independent Classification",
+    "LOSO-CV",
+    "Systematic Neural Inversion"
+   ],
+   "field": "脑机接口与认知计算",
+   "innovations": [
+    "发现PLV在跨被试学习风格识别中的有效性及VV维度70%最高准确率",
+    "首次揭示'系统神经倒置'现象：稳定个体连接签名可与群体决策边界完全相反",
+    "建立严格LOSO-CV验证框架，量化EEG学习风格识别的泛化鸿沟"
+   ],
+   "benchmarks": [
+    "LOSO-CV Subject-Level Accuracy",
+    "70:30 Intra-Subject Split Accuracy"
+   ]
+  }
+ }
 }

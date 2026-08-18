@@ -4,5 +4,33 @@
  "title": "Forward-and-Inverse-Virtual-Metrology-for-Phototransistor-Ga",
  "token": "sk-mBuyDYvkR...",
  "created_at": "2026-08-13 07:10:31",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/95a06f3a-5470-483e-9418-2f06e5b2e0f9.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/95a06f3a-5470-483e-9418-2f06e5b2e0f9.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 14:07:39",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Virtual Metrology",
+    "Semiconductor Manufacturing",
+    "Hierarchical Modelling",
+    "Small-Sample Learning",
+    "Uncertainty Quantification",
+    "Data Quality",
+    "Phototransistor Gain",
+    "Mixed-Effects Model"
+   ],
+   "field": "制造过程虚拟量测与分层建模",
+   "innovations": [
+    "发现光晶体管增益方差约一半源于运行间差异（ICC≈0.5），揭示配方模型的预测上限",
+    "提出多层数据质量评估框架与显式跨层关联分数，适配制造嵌套物理实体",
+    "构建不确定性感知的前向预测与逆向配方搜索，并将GP预测标准差转化为工程师信任分级"
+   ],
+   "benchmarks": [
+    "LOBO-CV R² (Ridge recipe-only: 0.062/0.108; with position: 0.108/0.155)",
+    "GP cross-validation R²: 0.501 (Arm A) / 0.447 (Arm B)",
+    "MLDQ Linkage score: 97.89 (L3 plausibility 89.47)"
+   ]
+  }
+ }
 }
