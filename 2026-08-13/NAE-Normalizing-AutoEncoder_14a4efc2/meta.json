@@ -4,5 +4,38 @@
  "title": "NAE-Normalizing-AutoEncoder",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-13 07:11:32",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/7abe1b3e-e193-4328-8cab-c0a92e39947b.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/7abe1b3e-e193-4328-8cab-c0a92e39947b.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:32:40",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Normalizing Flows",
+    "AutoEncoder",
+    "Surrogate Loss",
+    "Conditional Loss",
+    "Generative Modeling",
+    "Density Estimation",
+    "Flow-based Models"
+   ],
+   "field": "Normalizing Flow 生成模型",
+   "innovations": [
+    "首次理论分析 flow autoencoder 训练动力学，揭示 encoder/decoder surrogate 与重建损失梯度对齐关系",
+    "提出 Conditional Surrogate Loss，动态选择与重建梯度对齐的 surrogate 提升训练稳定性和生成质量",
+    "在分子生成、表格数据和图像生成三模态上同时达到 SOTA，且仅需 9.9M 参数（CelebA）"
+   ],
+   "benchmarks": [
+    "DW4",
+    "LJ13",
+    "LJ55",
+    "QM9",
+    "Power",
+    "HEPMASS",
+    "MiniBooNE",
+    "Gas",
+    "CelebA (Pythae Benchmark)"
+   ]
+  }
+ }
 }

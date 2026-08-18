@@ -4,5 +4,33 @@
  "title": "REOPD-Reliability-Adaptive-Reward-Extrapolation-for-On-Polic",
  "token": "sk-ZGznq9xBq...",
  "created_at": "2026-08-13 14:55:27",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/81f03a4a-9bb8-40f1-ba04-2618d9ea6ec4.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/81f03a4a-9bb8-40f1-ba04-2618d9ea6ec4.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:35:12",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "on-policy distillation",
+    "reward extrapolation",
+    "adaptive supervision",
+    "teacher-student alignment",
+    "token-level weighting",
+    "micro-batch budget"
+   ],
+   "field": "大语言模型后训练与知识蒸馏",
+   "innovations": [
+    "Token-level compatibility weight 动态调制 beyond-teacher residual 的可靠程度",
+    "Micro-batch bounded extrapolation budget 通过 ρ/s 比值自适应控制全局外推强度",
+    "无需额外 verifier 或 rollout，完全复用 white-box OPD 已有 log-probs"
+   ],
+   "benchmarks": [
+    "AIME 2024/2025",
+    "HMMT February/November 2025",
+    "HumanEval+",
+    "MBPP+",
+    "LiveCodeBench v6 test6"
+   ]
+  }
+ }
 }

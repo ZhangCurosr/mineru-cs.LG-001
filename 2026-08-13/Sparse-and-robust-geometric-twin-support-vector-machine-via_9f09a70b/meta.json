@@ -4,5 +4,10 @@
  "title": "Sparse-and-robust-geometric-twin-support-vector-machine-via",
  "token": "sk-iaeYeK7Vr...",
  "created_at": "2026-08-13 14:55:33",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/c3b26ebe-5a6a-4355-a880-0ea5ce524392.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/c3b26ebe-5a6a-4355-a880-0ea5ce524392.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:38:31",
+  "chunks": 1
+ }
 }

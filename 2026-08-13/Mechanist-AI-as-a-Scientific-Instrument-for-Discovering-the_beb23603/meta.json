@@ -4,5 +4,33 @@
  "title": "Mechanist-AI-as-a-Scientific-Instrument-for-Discovering-the",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-13 07:11:34",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/906a70e0-07b4-423c-8858-ea4b7afd4231.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/906a70e0-07b4-423c-8858-ea4b7afd4231.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:32:07",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "mechanistic interpretability",
+    "AI scientist",
+    "belief-state reasoning",
+    "subliminal learning",
+    "causal intervention",
+    "knowledge graph",
+    "multi-agent framework"
+   ],
+   "field": "机器可解释性与AI自主科研",
+   "innovations": [
+    "提出Mechanist多智能体框架实现AI智能机制的自主发现与干预闭环",
+    "构建InterpPaper与SciAtlas双源知识图谱支持跨学科假设生成",
+    "定位并因果验证信念状态推理的可分离head并实现动态干预提升准确率"
+   ],
+   "benchmarks": [
+    "LabSafety-Bench",
+    "WK/PB/AB belief benchmark",
+    "Pythia pretraining checkpoints",
+    "Evo2-7B DNA sequence generation"
+   ]
+  }
+ }
 }

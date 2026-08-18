@@ -4,5 +4,32 @@
  "title": "Regime-Gated-Residual-Mixture-of-Experts-for-Cross-Sectional",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-13 07:11:22",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/cd4b508f-5e6c-445b-ac1e-dada9ae0291a.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/cd4b508f-5e6c-445b-ac1e-dada9ae0291a.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:35:53",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "mixture of experts",
+    "volatility forecasting",
+    "residual learning",
+    "gated routing",
+    "training stability",
+    "regime-aware",
+    "cross-sectional prediction"
+   ],
+   "field": "金融时间序列预测",
+   "innovations": [
+    "制度状态仅用于残差路由门控而非直接预测输入，隔离融入路径效应",
+    "软路由显著优于硬路由，连续重加权适配金融非平稳性",
+    "零初始化+冻结基设计消除MoE路由坍缩"
+   ],
+   "benchmarks": [
+    "U.S. equity panel 1,027 stocks 2018-2025",
+    "Japanese TSE Prime 1,552 stocks replication",
+    "Rolling walk-forward 30 windows ~1.9M out-of-sample forecasts"
+   ]
+  }
+ }
 }

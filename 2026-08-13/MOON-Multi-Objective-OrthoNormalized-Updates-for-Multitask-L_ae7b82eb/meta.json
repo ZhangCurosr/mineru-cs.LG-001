@@ -4,5 +4,33 @@
  "title": "MOON-Multi-Objective-OrthoNormalized-Updates-for-Multitask-L",
  "token": "sk-jX4FaQZVZ...",
  "created_at": "2026-08-13 14:55:07",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/f0ee44dc-85e1-40bc-ada5-32837da6845a.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/f0ee44dc-85e1-40bc-ada5-32837da6845a.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:31:42",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "多目标优化",
+    "多任务学习",
+    "矩阵参数优化",
+    "谱范数",
+    "核范数",
+    "正交归一化"
+   ],
+   "field": "多任务学习与优化算法",
+   "innovations": [
+    "在谱-核范数几何下推导多目标最速下降方向并生成正交化更新",
+    "证明矩阵几何下多目标优化的收敛性（O(T^{-1/2})确定性/O(T^{-1/4})随机）",
+    "通过Newton-Schulz近似和在线权重追踪实现高效可扩展的多目标矩阵优化"
+   ],
+   "benchmarks": [
+    "MultiMNIST",
+    "NYU-v2",
+    "CityScapes",
+    "QM9",
+    "CelebA"
+   ]
+  }
+ }
 }

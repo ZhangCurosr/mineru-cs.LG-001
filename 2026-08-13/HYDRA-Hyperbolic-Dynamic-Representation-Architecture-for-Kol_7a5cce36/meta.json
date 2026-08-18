@@ -4,5 +4,37 @@
  "title": "HYDRA-Hyperbolic-Dynamic-Representation-Architecture-for-Kol",
  "token": "sk-7NOZt17oN...",
  "created_at": "2026-08-13 07:10:25",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/362a3b38-262a-4f7c-b474-e493196148b1.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/362a3b38-262a-4f7c-b474-e493196148b1.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:31:26",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Kolmogorov-Arnold Networks",
+    "Hyperbolic representation",
+    "Poincaré ball",
+    "parameter-efficient deep learning",
+    "interpretable neural networks",
+    "low-rank prototype",
+    "radius control"
+   ],
+   "field": "可解释与高效深度学习架构",
+   "innovations": [
+    "将K AN样条更新置于Poincaré球切空间并在低秩原型中共享函数变换",
+    "引入双曲半径硬投影与软惩罚联合控制以稳定边界附近训练",
+    "以双曲潜轨迹与半径作为独立于SHAP的可解释诊断信号"
+   ],
+   "benchmarks": [
+    "CCPP",
+    "Energy Heating",
+    "Parkinsons Telemonitoring",
+    "Real Estate Valuation",
+    "Heart Statlog",
+    "Ionosphere",
+    "Phoneme",
+    "QSAR Biodegradation"
+   ]
+  }
+ }
 }

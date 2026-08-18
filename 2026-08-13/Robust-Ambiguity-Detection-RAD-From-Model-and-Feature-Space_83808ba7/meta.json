@@ -4,5 +4,31 @@
  "title": "Robust-Ambiguity-Detection-RAD-From-Model-and-Feature-Space",
  "token": "sk-Nw8TqBTK6...",
  "created_at": "2026-08-13 14:56:04",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6febdcad-5530-47d4-bf42-5c801bfc71e7.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6febdcad-5530-47d4-bf42-5c801bfc71e7.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:36:17",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "预测模糊性",
+    "鲁棒性",
+    "一致性强度量",
+    "拒绝学习",
+    "模型不确定性",
+    "RAD"
+   ],
+   "field": "机器学习可靠性与可解释性",
+   "innovations": [
+    "提出RAD框架通过模型空间和特征空间双维度量化预测模糊性",
+    "设计RAD Score-Pair和RAD Plot提供可解释的四象限诊断",
+    "基于Pareto前沿的RAD-Pareto-Rank用于下游拒绝预测任务"
+   ],
+   "benchmarks": [
+    "Synthetic Datasets (Blobs/Spirals/Circles/Moons/Checkerboard)",
+    "UCI ML Repository (16 datasets)",
+    "MNIST"
+   ]
+  }
+ }
 }

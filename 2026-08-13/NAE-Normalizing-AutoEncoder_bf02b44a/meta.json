@@ -4,5 +4,39 @@
  "title": "NAE-Normalizing-AutoEncoder",
  "token": "sk-JqniBRrr0...",
  "created_at": "2026-08-13 14:54:55",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/7abe1b3e-e193-4328-8cab-c0a92e39947b.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/7abe1b3e-e193-4328-8cab-c0a92e39947b.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:32:51",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Normalizing Flow",
+    "Flow Autoencoder",
+    "Generative Modeling",
+    "Injective Flow",
+    "Boltzmann Generator",
+    "Density Estimation"
+   ],
+   "field": "生成模型与正规化流",
+   "innovations": [
+    "提出条件代理损失，动态选择与重建梯度对齐的Encoder/Decoder代理",
+    "理论证明重建损失梯度自然分解为两个代理梯度之和且符号由局部Jacobian决定",
+    "将ReLU替换为SiLU以保留二阶导数信息，提升代理损失训练效果"
+   ],
+   "benchmarks": [
+    "DW4",
+    "LJ13",
+    "LJ55",
+    "QM9",
+    "Power",
+    "HEPMASS",
+    "MiniBooNE",
+    "Gas",
+    "CelebA",
+    "MNIST",
+    "CIFAR-10"
+   ]
+  }
+ }
 }

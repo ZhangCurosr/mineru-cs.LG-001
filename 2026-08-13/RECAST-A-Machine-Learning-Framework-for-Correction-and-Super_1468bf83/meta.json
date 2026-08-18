@@ -4,5 +4,35 @@
  "title": "RECAST-A-Machine-Learning-Framework-for-Correction-and-Super",
  "token": "sk-rXToje7Gi...",
  "created_at": "2026-08-13 14:55:45",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/ea118a93-ca3b-4893-ac63-7447ef80a3c4.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/ea118a93-ca3b-4893-ac63-7447ef80a3c4.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:34:37",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "PDE求解器",
+    "粗网格修正",
+    "超分辨率",
+    "求解器内回路训练",
+    "循环神经网络",
+    "SHRED",
+    "误差校正"
+   ],
+   "field": "科学机器学习",
+   "innovations": [
+    "首次将求解器修正与超分辨率解耦为两个互补组件并联合训练",
+    "采用求解器内回路多步 rollout 训练策略有效减少累积轨迹误差",
+    "基于SHRED架构利用时间历史替代空间测量实现高维状态重建"
+   ],
+   "benchmarks": [
+    "Advection-diffusion",
+    "KdV-Burgers",
+    "Electric-field propagation",
+    "FitzHugh-Nagumo",
+    "Schrödinger",
+    "Shallow-water/Saint-Venant"
+   ]
+  }
+ }
 }

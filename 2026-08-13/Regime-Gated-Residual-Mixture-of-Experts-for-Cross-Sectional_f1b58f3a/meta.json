@@ -4,5 +4,36 @@
  "title": "Regime-Gated-Residual-Mixture-of-Experts-for-Cross-Sectional",
  "token": "sk-qKu2Cn1y4...",
  "created_at": "2026-08-13 14:54:51",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/cd4b508f-5e6c-445b-ac1e-dada9ae0291a.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/cd4b508f-5e6c-445b-ac1e-dada9ae0291a.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:36:10",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "mixture of experts",
+    "residual learning",
+    "gated routing",
+    "volatility forecasting",
+    "training stability",
+    "regime information",
+    "cross-sectional prediction"
+   ],
+   "field": "金融时序预测 / 横截面波动率建模",
+   "innovations": [
+    "提出RG-ResMoE：冻结基网络+门控残差专家，将制度变量限定于路由门",
+    "信息匹配对比框架分离集成路径的贡献",
+    "软路由一致优于硬路由，残差分解是稳定性主因"
+   ],
+   "benchmarks": [
+    "Persistence",
+    "GARCH(1,1)",
+    "HAR",
+    "Ridge",
+    "MLP-S",
+    "MLP-L",
+    "Standard MoE"
+   ]
+  }
+ }
 }

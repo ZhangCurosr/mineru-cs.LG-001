@@ -4,5 +4,37 @@
  "title": "SOFTWATER-CLASS-AWARE-RATE-ALLOCATION-FOR-SOFTMAX-QUANTIZATI",
  "token": "sk-9BdnpHblK...",
  "created_at": "2026-08-13 07:11:42",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/24939adb-1e56-4769-9596-75b4dfdf2793.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/24939adb-1e56-4769-9596-75b4dfdf2793.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:37:22",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "softmax quantization",
+    "post-training quantization",
+    "rate-distortion",
+    "KL divergence",
+    "lattice quantization",
+    "class-aware allocation"
+   ],
+   "field": "大语言模型后训练量化",
+   "innovations": [
+    "将 softmax 层量化建模为 KL 率失真问题并推导可分离二阶代理",
+    "类侧×特征侧双轴 lattice 网格分配，仅一次前向传播获取两统计量",
+    "均匀混合平滑先验插值校准分布与均匀分配，保护稀有类量化稳定性"
+   ],
+   "benchmarks": [
+    "WikiText2",
+    "C4",
+    "ARC-Easy",
+    "ARC-Challenge",
+    "HellaSwag",
+    "LAMBADA",
+    "WinoGrande",
+    "PIQA",
+    "OpenBookQA"
+   ]
+  }
+ }
 }

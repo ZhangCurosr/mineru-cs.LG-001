@@ -4,5 +4,31 @@
  "title": "Sparse-and-robust-geometric-twin-support-vector-machine-via",
  "token": "sk-jX4FaQZVZ...",
  "created_at": "2026-08-13 07:11:04",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/c3b26ebe-5a6a-4355-a880-0ea5ce524392.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/c3b26ebe-5a6a-4355-a880-0ea5ce524392.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:38:26",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Twin SVM",
+    "鲁棒学习",
+    "特征选择",
+    "非对称损失",
+    "非凸优化",
+    "指数跟踪"
+   ],
+   "field": "鲁棒机器学习与特征选择",
+   "innovations": [
+    "提出非对称RoBoSS(aR)损失函数，同时抗标签噪声和重采样噪声",
+    "构建aRSGTSVM/aRSGTSVR统一框架，结合l1范数实现鲁棒性与特征选择",
+    "利用影响力函数从理论上证明aR损失的有界鲁棒性"
+   ],
+   "benchmarks": [
+    "UCI分类数据集(17个)",
+    "中国股票指数跟踪(6个指数)",
+    "合成数据(含不同噪声比例和维度配置)"
+   ]
+  }
+ }
 }

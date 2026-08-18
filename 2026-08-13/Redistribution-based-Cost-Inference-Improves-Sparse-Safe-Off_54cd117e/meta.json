@@ -4,5 +4,29 @@
  "title": "Redistribution-based-Cost-Inference-Improves-Sparse-Safe-Off",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-13 07:11:22",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/d3e34074-76cc-4531-9222-dff054d50026.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/d3e34074-76cc-4531-9222-dff054d50026.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:35:37",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "安全离线强化学习",
+    "稀疏监督",
+    "回报分解",
+    "CMDP",
+    "时间信用分配",
+    "约束优化"
+   ],
+   "field": "安全强化学习",
+   "innovations": [
+    "首次证明回报等价的成本重新分配严格保持CMDP可行策略集与拉格朗日鞍点不变",
+    "提出模块化RCI框架将轨迹级停止反馈转化为密集每步成本，解耦信号处理与策略学习"
+   ],
+   "benchmarks": [
+    "HighwayEnv",
+    "Safe-FetchReach"
+   ]
+  }
+ }
 }

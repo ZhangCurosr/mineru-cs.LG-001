@@ -4,5 +4,34 @@
  "title": "REOPD-Reliability-Adaptive-Reward-Extrapolation-for-On-Polic",
  "token": "sk-yjjHVmEWF...",
  "created_at": "2026-08-13 07:10:46",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/81f03a4a-9bb8-40f1-ba04-2618d9ea6ec4.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/81f03a4a-9bb8-40f1-ba04-2618d9ea6ec4.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:34:55",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "on-policy distillation",
+    "reward extrapolation",
+    "adaptive control",
+    "reliability weighting",
+    "large language model post-training"
+   ],
+   "field": "大语言模型后训练与知识蒸馏",
+   "innovations": [
+    "令牌级兼容性权重门控外推残差",
+    "微批次自适应预算动态调整外推强度",
+    "无需验证器的可靠性自适应奖励外推框架"
+   ],
+   "benchmarks": [
+    "AIME 2024",
+    "AIME 2025",
+    "HMMT February 2025",
+    "HMMT November 2025",
+    "HumanEval+",
+    "MBPP+",
+    "LiveCodeBench v6 test6"
+   ]
+  }
+ }
 }

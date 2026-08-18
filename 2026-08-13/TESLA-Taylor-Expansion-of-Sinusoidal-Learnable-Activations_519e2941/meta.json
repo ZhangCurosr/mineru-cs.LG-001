@@ -4,5 +4,35 @@
  "title": "TESLA-Taylor-Expansion-of-Sinusoidal-Learnable-Activations",
  "token": "sk-RdV3tP4AZ...",
  "created_at": "2026-08-13 14:56:37",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e2899168-8e54-44bd-aac7-02467b604749.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/e2899168-8e54-44bd-aac7-02467b604749.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:38:44",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "activations",
+    "spectral bias",
+    "parity problem",
+    "NTK",
+    "Lipschitz bound",
+    "Fourier activation",
+    "global interactions"
+   ],
+   "field": "神经网络激活函数设计与谱分析",
+   "innovations": [
+    "提出基于有限正弦/余弦基的可学习激活 TESLA，通过系数预算 A_K 在激活层直接控制有效多项式阶次",
+    "推导基于 A_K 的 Lipschitz/Rademacher 泛化界并分析 NTK 模态动力学 λ_m∝m^{-2}",
+    "在 parity/Forrelation/PINN/INR/ImageNet-100 上验证，32-bit parity 100K 样本达 95.87% 且在 30% 标签噪声下显著优于 SIREN 等基线"
+   ],
+   "benchmarks": [
+    "Parity (d=16-32)",
+    "Forrelation (n=12)",
+    "LPN",
+    "1D Burgers' equation PINN",
+    "Kodak24 / DIV2K INR",
+    "ImageNet-100"
+   ]
+  }
+ }
 }

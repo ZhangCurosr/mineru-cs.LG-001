@@ -4,5 +4,32 @@
  "title": "Rubric-Dropout-A-Simple-Way-to-Mitigate-Reward-Hacking-in-Ru",
  "token": "sk-gD7m2ian9...",
  "created_at": "2026-08-13 07:10:51",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/294e5859-efba-4e88-9079-2dc45a575f76.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/294e5859-efba-4e88-9079-2dc45a575f76.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:37:06",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Rubric Dropout",
+    "Reward Hacking",
+    "RLHF",
+    "GRPO",
+    "Reward Model",
+    "LLM Alignment"
+   ],
+   "field": "大语言模型对齐与强化学习",
+   "innovations": [
+    "提出 Rubric Dropout 方法，随机丢弃部分评估标准以缓解奖励破解",
+    "设计 in-loop 双 judge OOD 测量协议，首次在 rubric RL 中证明奖励破解现象",
+    "证明 group-shared mask 保持 GRPO 优势函数可比性，理论保证归一化因子抵消"
+   ],
+   "benchmarks": [
+    "HealthBench-Hard",
+    "ResearchQA",
+    "RubricHub-Medical",
+    "RubricHub-Science"
+   ]
+  }
+ }
 }

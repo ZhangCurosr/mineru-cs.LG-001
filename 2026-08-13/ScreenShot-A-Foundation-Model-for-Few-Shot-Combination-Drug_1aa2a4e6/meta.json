@@ -4,5 +4,33 @@
  "title": "ScreenShot-A-Foundation-Model-for-Few-Shot-Combination-Drug",
  "token": "sk-ZHrWl9Czg...",
  "created_at": "2026-08-13 14:55:18",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6a312a8d-eaee-40dd-8d77-3e015c11ceb8.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/6a312a8d-eaee-40dd-8d77-3e015c11ceb8.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:37:48",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "组合药物筛选",
+    "few-shot prediction",
+    "in-context learning",
+    "foundation model",
+    "active learning",
+    "hierarchical transformer",
+    "drug response prediction"
+   ],
+   "field": "计算肿瘤学 / 药物筛选",
+   "innovations": [
+    "层级Transformer基础模型实现无需微调的few-shot组合药物响应预测",
+    "基于治疗指数加权的k-means++主动学习策略以1/3预算达到均匀筛选相同命中召回率",
+    "UNK token机制支持未见药物的上下文推断"
+   ],
+   "benchmarks": [
+    "BATCHIE",
+    "NCI-ALMANAC",
+    "GDSC-SQ",
+    "PDO-Breast"
+   ]
+  }
+ }
 }

@@ -4,5 +4,30 @@
  "title": "Remote-Sensing-and-Machine-Learning-Based-Analysis-of-Land-U",
  "token": "sk-mBuyDYvkR...",
  "created_at": "2026-08-13 06:51:51",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/58bc097f-6e32-4154-8f50-d16cc656bbb8.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/58bc097f-6e32-4154-8f50-d16cc656bbb8.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:35:54",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Land Cover Change",
+    "Machine Learning",
+    "Remote Sensing",
+    "NDVI",
+    "Google Earth Engine",
+    "Urban Expansion"
+   ],
+   "field": "城市土地利用遥感监测",
+   "innovations": [
+    "集成Sentinel-2与机器学习在GEE平台实现达卡地区高精度土地覆盖变化检测",
+    "系统对比随机森林、决策树、KNN在热带城市环境下的分类性能",
+    "结合光谱指数与监督分类双重验证植被与水体损失趋势"
+   ],
+   "benchmarks": [
+    "ESA WorldCover 10m 2021",
+    "Sentinel-2 MSI 2019/2024"
+   ]
+  }
+ }
 }

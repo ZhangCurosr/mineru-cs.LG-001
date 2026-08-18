@@ -4,5 +4,34 @@
  "title": "MOON-Multi-Objective-OrthoNormalized-Updates-for-Multitask-L",
  "token": "sk-JiEKTe0tT...",
  "created_at": "2026-08-13 07:10:38",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/f0ee44dc-85e1-40bc-ada5-32837da6845a.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/f0ee44dc-85e1-40bc-ada5-32837da6845a.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:31:37",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "multi-task learning",
+    "multi-objective optimization",
+    "matrix optimization",
+    "orthonormalized updates",
+    "spectral norm",
+    "nuclear norm",
+    "Transformer"
+   ],
+   "field": "多目标优化与多任务学习",
+   "innovations": [
+    "提出MOON框架，在谱-核范数几何下联合推导多目标梯度操作与正交归一化更新",
+    "证明MOON在光滑非凸目标下确定性O(T^-1/2)与随机O(T^-1/4)收敛率",
+    "设计实用的动量聚合+Newton-Schulz近似+在线对偶权重三件套实现方案"
+   ],
+   "benchmarks": [
+    "MultiMNIST",
+    "NYU-v2",
+    "CityScapes",
+    "QM9",
+    "CelebA"
+   ]
+  }
+ }
 }

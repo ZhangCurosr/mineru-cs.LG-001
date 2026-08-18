@@ -4,5 +4,34 @@
  "title": "Small-Scale-Experiments-Are-We-There-Yet",
  "token": "sk-aknYEUs8O...",
  "created_at": "2026-08-13 07:10:31",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/4815cf1d-4119-4bf2-84cf-9bde10b6a654.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/4815cf1d-4119-4bf2-84cf-9bde10b6a654.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:38:07",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "scaling laws",
+    "small-scale experiments",
+    "hyperparameter tuning",
+    "noisy quadratic limit",
+    "pretraining loss",
+    "model-centric research"
+   ],
+   "field": "大模型训练与扩展定律",
+   "innovations": [
+    "揭示超参数调优深度是扩展定律在小尺度成立的首要条件",
+    "从几何降维角度解释超参数敏感性随模型规模下降",
+    "提出基于噪声二次极限的诊断方法论用于小规模实验设计"
+   ],
+   "benchmarks": [
+    "FineWeb-Edu 100B token subset",
+    "AI2 ARC (Easy/Challenge)",
+    "BoolQ",
+    "MMLU",
+    "OpenBookQA",
+    "PIQA"
+   ]
+  }
+ }
 }

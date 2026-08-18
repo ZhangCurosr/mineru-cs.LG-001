@@ -4,5 +4,32 @@
  "title": "ROBUST-AND-EFFICIENT-NOISY-LABEL-TIME-SERIES-CLASSIFICATION",
  "token": "sk-Zs9k8BxOo...",
  "created_at": "2026-08-13 07:10:45",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/af556234-6c82-4830-95a0-eb76a09902e9.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/af556234-6c82-4830-95a0-eb76a09902e9.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 17:35:21",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "time-series classification",
+    "label noise",
+    "dynamic time warping",
+    "granular ball computing",
+    "nearest neighbor",
+    "robust classification"
+   ],
+   "field": "时序分类与噪声鲁棒学习",
+   "innovations": [
+    "提出DTW-GBC框架，首次在DTW距离空间中构建颗粒球用于时序分类",
+    "设计标签感知递归分割策略，在相同粒度下生成更少颗粒球并保持或提升分类性能",
+    "通过粒粒度1-NN分类同时提升标签噪声鲁棒性并降低推理计算开销33.5%-92.4%"
+   ],
+   "benchmarks": [
+    "SyntheticControl",
+    "ECG5000",
+    "JapaneseVowels",
+    "ArticularyWordRecognition"
+   ]
+  }
+ }
 }
