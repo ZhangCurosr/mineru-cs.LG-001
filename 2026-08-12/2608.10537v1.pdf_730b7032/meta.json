@@ -3,5 +3,32 @@
  "batch_id": "730b7032-fe9a-4040-9a1d-86ae80a0deba",
  "token": "sk-7NOZt17oN...",
  "created_at": "2026-08-12 15:01:57",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/aba8c719-b100-474f-a797-86a179427901.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/aba8c719-b100-474f-a797-86a179427901.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:48:59",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "sparse autoencoders",
+    "mechanistic interpretability",
+    "feature abstraction",
+    "gradient-based analysis",
+    "activation steering",
+    "jailbreak mitigation",
+    "reasoning features"
+   ],
+   "field": " mechanistic interpretability / LLM可解释性",
+   "innovations": [
+    "提出FNL梯度影响力熵度量，无需标注和LLM即可量化SAE特征语义抽象程度",
+    "揭示越狱缓解有效特征实为低FNL位置信号而非语义理解",
+    "证明高FNL特征包络在推理模型上可实现超unsteered基线的推理增强"
+   ],
+   "benchmarks": [
+    "MATH-500",
+    "MMLU-Pro",
+    "StrongReject (404 requests)"
+   ]
+  }
+ }
 }

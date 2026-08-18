@@ -3,5 +3,31 @@
  "batch_id": "89c599af-c42b-469c-867c-dc55048b92f4",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:00",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/95f62e26-3ba8-4d0f-8082-96064539738a.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/95f62e26-3ba8-4d0f-8082-96064539738a.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:49:25",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Flow Matching",
+    "Image Restoration",
+    "Perceptual Loss",
+    "Gradient Alignment",
+    "Few-step Generation",
+    "Distortion-Perception Trade-off"
+   ],
+   "field": "图像恢复与生成",
+   "innovations": [
+    "提出LCPL在相邻轨迹预测间施加感知一致性约束，引导流场朝向锐利流形",
+    "设计冲突自由非对称梯度投影与SNR-adaptive权重调度，解决结构与感知多目标优化冲突"
+   ],
+   "benchmarks": [
+    "CelebA-Test",
+    "LFW-Test",
+    "CelebAdult",
+    "FFHQ"
+   ]
+  }
+ }
 }

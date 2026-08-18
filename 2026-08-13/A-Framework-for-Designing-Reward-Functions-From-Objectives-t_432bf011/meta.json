@@ -4,5 +4,28 @@
  "title": "A-Framework-for-Designing-Reward-Functions-From-Objectives-t",
  "token": "sk-EqwJR1nOB...",
  "created_at": "2026-08-13 14:54:50",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/56083522-5d87-4c21-a744-f6b52585de47.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/56083522-5d87-4c21-a744-f6b52585de47.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:53:47",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "reward function design",
+    "preference elicitation",
+    "causal DAG",
+    "separation oracle",
+    "reinforcement learning"
+   ],
+   "field": "奖励函数设计与人类对齐",
+   "innovations": [
+    "将奖励项选择归约至DAG最小代价部分覆盖并通过最大流多项式时间求解",
+    "首个基于分离预言机的确定性奖励权重拟合框架，保证O(n log κ)查询复杂度",
+    "从自然语言任务描述到可度量结果变量的系统化目标蒸馏工作流"
+   ],
+   "benchmarks": [
+    "无传统benchmark，理论框架性论文"
+   ]
+  }
+ }
 }

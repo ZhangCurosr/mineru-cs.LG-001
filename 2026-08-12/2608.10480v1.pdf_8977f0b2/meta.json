@@ -3,5 +3,39 @@
  "batch_id": "8977f0b2-ca8e-4fa1-89e0-4c1ccdffc290",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:02",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/cc439245-6227-455a-a32a-5a8924b47ce5.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/cc439245-6227-455a-a32a-5a8924b47ce5.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:46:04",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "分子大语言模型",
+    "可解释AI",
+    "子结构归因",
+    "MoleculeNet",
+    "多粒度推理",
+    "分子性质预测",
+    "图神经网络",
+    "指令微调"
+   ],
+   "field": "计算化学与分子人工智能",
+   "innovations": [
+    "首次将GNN派生的多粒度子结构归因以排名文本理由形式注入LLM提示",
+    "三视图分子分解策略(Murcko/BRICS/官能团)配合方向标签序列化",
+    "四项行为干预诊断+化学一致性验证系统性证明模型真正阅读rationale"
+   ],
+   "benchmarks": [
+    "MoleculeNet",
+    "BACE",
+    "BBBP",
+    "ClinTox",
+    "HIV",
+    "SIDER",
+    "Tox21",
+    "ESOL",
+    "Lipo"
+   ]
+  }
+ }
 }

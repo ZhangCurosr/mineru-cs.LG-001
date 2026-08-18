@@ -3,5 +3,30 @@
  "batch_id": "a6c91769-d886-4df8-9b34-3979520b2db6",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:01",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/031c93ba-412e-4669-9ace-e277bc4b331e.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/031c93ba-412e-4669-9ace-e277bc4b331e.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:48:14",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "LLM控制平面",
+    "意图驱动网络",
+    "负载均衡故障隔离",
+    "闭环保障",
+    "HAProxy",
+    "能力阈值"
+   ],
+   "field": "AI驱动的网络自动化",
+   "innovations": [
+    "发现约3B活跃参数的LLM控制能力阈值",
+    "揭示推理模式在固定cadence控制循环中的负面效应",
+    "构建了可复现的持久性故障基准"
+   ],
+   "benchmarks": [
+    "240-run sweep across 15 models",
+    "600-second deterministic fault benchmark"
+   ]
+  }
+ }
 }

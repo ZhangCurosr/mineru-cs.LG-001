@@ -3,5 +3,31 @@
  "batch_id": "7d3035f4-3284-4c24-a162-2b66976d3e3e",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:03",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/5e8bf4bd-85a5-4191-bcdb-3c70604d9d61.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/5e8bf4bd-85a5-4191-bcdb-3c70604d9d61.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:45:03",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Offline-to-Online RL",
+    "Critic-Free Pretraining",
+    "Flow Matching",
+    "Behavior Cloning",
+    "Actor-Critic",
+    "Distribution Shift",
+    "Warm-up Calibration"
+   ],
+   "field": "离线到在线强化学习",
+   "innovations": [
+    "提出无Critic离线训练范式，完全放弃离线阶段Critic训练以避免价值偏差",
+    "设计简洁的从零初始化+Critic短期热身校准方案，嵌入多种Flow-based O2O算法",
+    "通过理论分析与玩具MDP验证离线Critic的隐式悲观主义及其对在线微调的损害"
+   ],
+   "benchmarks": [
+    "OGBench (Cube-Double/Triple/Quadruple, Puzzle-4x4, Scene)",
+    "Robomimic (Lift, Can, Square)"
+   ]
+  }
+ }
 }

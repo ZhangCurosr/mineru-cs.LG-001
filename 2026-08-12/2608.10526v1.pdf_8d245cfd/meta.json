@@ -3,5 +3,31 @@
  "batch_id": "8d245cfd-bb40-41ca-869a-d4db48adb932",
  "token": "sk-7NOZt17oN...",
  "created_at": "2026-08-12 15:01:58",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/f6037a5e-c80d-491f-8cdd-90b74be40a09.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/f6037a5e-c80d-491f-8cdd-90b74be40a09.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:46:33",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Lipschitz bandits",
+    "multiplayer bandits",
+    "information asymmetry",
+    "discretization",
+    "distributed coordination",
+    "regret analysis"
+   ],
+   "field": "多智能体强化学习 / 分布式在线学习",
+   "innovations": [
+    "提出mECAB元算法，通过粗网格探索估计未知Lipschitz常数并自适应离散化联合动作空间",
+    "针对三类信息结构分别设计零成本共识、动作信号传递和抖动量化三种对齐机制",
+    "证明在最弱反馈条件下抖动量化可使disagreement代价降至与主导regret项同阶"
+   ],
+   "benchmarks": [
+    "L=1仿真场景",
+    "L=1000仿真场景",
+    "Est-L vs No-L对比"
+   ]
+  }
+ }
 }

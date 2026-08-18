@@ -3,5 +3,32 @@
  "batch_id": "0e8edeac-025e-4ad2-ab63-301cf4955e48",
  "token": "sk-n7iJ0Z1Ol...",
  "created_at": "2026-08-12 15:01:47",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/4c030576-79c5-4c87-98b8-cc4e78bba392.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/4c030576-79c5-4c87-98b8-cc4e78bba392.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:51:42",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "skill abstraction",
+    "cross-modal representation learning",
+    "robot imitation learning",
+    "few-shot adaptation",
+    "VQ-VAE",
+    "cross-embodiment transfer"
+   ],
+   "field": "机器人学习 / 技能抽象",
+   "innovations": [
+    "跨模态 VQ-VAE 联合编码语义意图与运动动力学的统一技能表示",
+    "动作重建目标替代像素重建以增强抗动态视觉干扰能力",
+    "解耦两阶段训练范式实现大规模预训练与轻量级部署的统一"
+   ],
+   "benchmarks": [
+    "LIBERO-90",
+    "LIBERO-Goal",
+    "LIBERO-Object",
+    "LIBERO-Spatial"
+   ]
+  }
+ }
 }

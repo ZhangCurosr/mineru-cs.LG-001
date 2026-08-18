@@ -3,5 +3,30 @@
  "batch_id": "91da5bf9-21c1-43ff-8c7a-d7caa9a4bd25",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:02",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/f6037a5e-c80d-491f-8cdd-90b74be40a09.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/f6037a5e-c80d-491f-8cdd-90b74be40a09.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:46:34",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Lipschitz bandits",
+    "multiplayer bandits",
+    "unknown Lipschitz constant",
+    "coordination without communication",
+    "dithered quantization",
+    "information asymmetry",
+    "discretization"
+   ],
+   "field": "多智能体在线学习",
+   "innovations": [
+    "提出 mECAB 元算法，在未知 Lipschitz 常数下通过三种信息结构分别实现多玩家离散化共识",
+    "在 Problem C 中引入抖动量化，使共识失败概率独立于实例并以与主导项同阶代价控制 regret",
+    "证明共享奖励与可观测动作分别可零代价/以 1 样本代价换取 L 估计的一致性"
+   ],
+   "benchmarks": [
+    "simulated Lipschitz bandit with Gaussian noise, M=2, d=1, T=1e5"
+   ]
+  }
+ }
 }

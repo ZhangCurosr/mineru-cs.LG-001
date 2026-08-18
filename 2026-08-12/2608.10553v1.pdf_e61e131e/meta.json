@@ -3,5 +3,32 @@
  "batch_id": "e61e131e-9f9c-481b-aba2-193f37b9eb2e",
  "token": "sk-n7iJ0Z1Ol...",
  "created_at": "2026-08-12 15:02:02",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/7c9c6fd4-2eb6-4d4c-8d78-e27f90ecef48.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/7c9c6fd4-2eb6-4d4c-8d78-e27f90ecef48.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:50:21",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Conformal Prediction",
+    "Time Series Forecasting",
+    "Retrieval-Augmented",
+    "Uncertainty Quantification",
+    "Prediction Interval",
+    "Non-stationary"
+   ],
+   "field": "时间序列不确定性量化",
+   "innovations": [
+    "检索-校正解耦：以残差检索构建非对称局部区间形状，以归一化检索误差的共形校正确定覆盖尺度",
+    "归一化检索误差标量化：将非对称检索区间残余误差归一化为单值非共形分数进行分位数校准",
+    "非平稳序列下的覆盖率缺口界：不依赖可交换性假设，基于归一化检索误差分布稳定性给出理论保证"
+   ],
+   "benchmarks": [
+    "Air (PM10)",
+    "Solar (DHI)",
+    "Electricity",
+    "Wind"
+   ]
+  }
+ }
 }

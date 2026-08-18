@@ -3,5 +3,33 @@
  "batch_id": "7bd9929a-997c-4912-babb-61e69f797538",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:01",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/3095a97e-14b8-432a-b2ed-7cae2c51b4e8.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/3095a97e-14b8-432a-b2ed-7cae2c51b4e8.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:46:47",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "LLM reranking",
+    "reproducibility",
+    "pointwise ranking",
+    "contrastive prompting",
+    "statistical significance",
+    "Holm-Bonferroni",
+    "anchor-based ranking",
+    "BEIR"
+   ],
+   "field": "信息检索中的大语言模型重排序",
+   "innovations": [
+    "通过复现揭示8个未声明关键实现细节并建立压力测试框架",
+    "首次系统验证第一阶段检索器质量对重排序增益的条件性调节作用",
+    "证明简单锚点构建可替代复杂谱聚类且对比评分为核心贡献组件"
+   ],
+   "benchmarks": [
+    "TREC Deep Learning 2019",
+    "TREC Deep Learning 2020",
+    "BEIR (8 subsets including SciFact, NFCorpus, TREC-COVID, DBPedia-Entity)"
+   ]
+  }
+ }
 }

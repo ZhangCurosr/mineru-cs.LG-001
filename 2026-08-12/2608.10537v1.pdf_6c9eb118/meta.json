@@ -3,5 +3,31 @@
  "batch_id": "6c9eb118-2b9f-435e-b31f-9580b25d7695",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:01",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/39e7ee5a-39c1-4fbd-8db6-cf00a0e077a8.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/39e7ee5a-39c1-4fbd-8db6-cf00a0e077a8.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:49:04",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Sparse Autoencoders",
+    "Mechanistic Interpretability",
+    "Feature Nonlocality",
+    "Activation Steering",
+    "Semantic Abstractness",
+    "Jailbreak Mitigation"
+   ],
+   "field": "LLM 机械可解释性",
+   "innovations": [
+    "提出 Feature Nonlocality（FNL）作为无标签的 SAE 特征抽象度梯度度量",
+    "揭示 jailbreak 防御有效特征本质是位置指示器而非语义理解器",
+    "通过 FNL 引导的 envelope steering 在 DeepSeek-R1-Distill-Llama-8B 上实现 MATH-500 +4.6 分提升"
+   ],
+   "benchmarks": [
+    "MATH-500",
+    "MMLU-Pro",
+    "StrongReject Jailbreak Evaluation"
+   ]
+  }
+ }
 }

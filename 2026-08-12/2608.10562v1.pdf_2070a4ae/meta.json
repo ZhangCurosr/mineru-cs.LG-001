@@ -3,5 +3,31 @@
  "batch_id": "2070a4ae-0d76-493d-a2ba-e714bd340bda",
  "token": "sk-7NOZt17oN...",
  "created_at": "2026-08-12 15:01:56",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/7eed9bd4-a05f-44fa-a6b2-5086876ceac8.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/7eed9bd4-a05f-44fa-a6b2-5086876ceac8.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:51:04",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "转化率为预测",
+    "点击意图分解",
+    "广告排序",
+    "模型校准",
+    "信用归属",
+    "生产系统"
+   ],
+   "field": "计算广告学",
+   "innovations": [
+    "提出点击意图分解框架解决 CVR 校准偏差",
+    "证明单输出架构的可观测性屏障",
+    "设计生产级信用归属与一致性系统"
+   ],
+   "benchmarks": [
+    "Meta 社交平台广告生产数据",
+    "Normalized Entropy 评估",
+    "线上转化率提升实验"
+   ]
+  }
+ }
 }

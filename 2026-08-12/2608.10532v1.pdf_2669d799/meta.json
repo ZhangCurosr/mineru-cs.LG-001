@@ -3,5 +3,31 @@
  "batch_id": "2669d799-e3d7-453c-8e23-593e2707cffd",
  "token": "sk-n7iJ0Z1Ol...",
  "created_at": "2026-08-12 15:02:33",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/031c93ba-412e-4669-9ace-e277bc4b331e.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/031c93ba-412e-4669-9ace-e277bc4b331e.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:48:57",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Large Language Models",
+    "Software-Defined Load Balancing",
+    "Control Plane Policies",
+    "Closed-Loop Control",
+    "Fault Isolation",
+    "HAProxy",
+    "AIOps"
+   ],
+   "field": "intent-based networking",
+   "innovations": [
+    "发现~3B活跃参数的能力阈值，超阈后所有架构在~88% 5xx减少上饱和",
+    "揭示推理模式使控制循环超时（10×令牌开销）反而降低有效性",
+    "提出护栏层+轻量非推理模型的性价比最优部署范式"
+   ],
+   "benchmarks": [
+    "HAProxy persistent fault benchmark",
+    "Grafana k6 load testing"
+   ]
+  }
+ }
 }

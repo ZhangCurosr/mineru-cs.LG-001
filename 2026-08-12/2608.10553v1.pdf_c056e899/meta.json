@@ -3,5 +3,30 @@
  "batch_id": "c056e899-3320-4c79-a541-3f0aa0d46625",
  "token": "sk-7NOZt17oN...",
  "created_at": "2026-08-12 15:01:56",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/97e26d95-9ed2-402d-a3c4-9e45760cd86d.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/97e26d95-9ed2-402d-a3c4-9e45760cd86d.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:49:29",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "Conformal Prediction",
+    "Time Series Forecasting",
+    "Retrieval-Augmented",
+    "Uncertainty Quantification",
+    "Prediction Intervals"
+   ],
+   "field": "时间序列不确定性量化",
+   "innovations": [
+    "提出检索-校正分离框架，将局部残差检索与共形标量校正解耦",
+    "构建非对称检索区间并归一化校正，实现局部适应性与覆盖率保证的统一"
+   ],
+   "benchmarks": [
+    "Air",
+    "Solar",
+    "Electricity",
+    "Wind"
+   ]
+  }
+ }
 }

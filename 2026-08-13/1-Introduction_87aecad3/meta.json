@@ -4,5 +4,29 @@
  "title": "1-Introduction",
  "token": "sk-uDfT0rM1x...",
  "created_at": "2026-08-13 14:55:29",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/2df5a7dd-cbbc-4f65-b83e-55446403e69f.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/2df5a7dd-cbbc-4f65-b83e-55446403e69f.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:54:50",
+  "chunks": 4,
+  "meta": {
+   "keywords": [
+    "知识编辑",
+    "非结构化知识编辑",
+    "可组合性",
+    "自蒸馏",
+    "混合策略"
+   ],
+   "field": "非结构化知识编辑",
+   "innovations": [
+    "提出HPSE混合策略解决UKE可组合性问题",
+    "建立特权-学生动态触发机制克服覆盖失败",
+    "理论证明混合信号随新token数线性增长"
+   ],
+   "benchmarks": [
+    "UnKEBench",
+    "MQuAKE-uns"
+   ]
+  }
+ }
 }

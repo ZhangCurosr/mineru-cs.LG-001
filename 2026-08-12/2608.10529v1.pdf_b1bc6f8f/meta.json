@@ -3,5 +3,29 @@
  "batch_id": "b1bc6f8f-a3ca-4a1f-ad2d-f0a4d207c48e",
  "token": "sk-7NOZt17oN...",
  "created_at": "2026-08-12 15:01:58",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/994836de-883d-4fd7-887b-fcbf2cc3a77c.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/994836de-883d-4fd7-887b-fcbf2cc3a77c.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:47:13",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "multi-agent bandits",
+    "heavy-tailed rewards",
+    "information asymmetry",
+    "decentralized learning",
+    "robust UCB",
+    "implicit signaling"
+   ],
+   "field": "多智能体强化学习 / 顺序决策",
+   "innovations": [
+    "提出三种无通信多智能体重尾老虎机的信息不对称形式化",
+    "设计mRUCB-A/B/C算法并证明regret几乎匹配集中式重尾速率",
+    "揭示动作可观测性能补偿共奖励缺失且协调成本与T、M无关"
+   ],
+   "benchmarks": [
+    "Pareto reward instance (M=2,K=2,T=10^6)"
+   ]
+  }
+ }
 }

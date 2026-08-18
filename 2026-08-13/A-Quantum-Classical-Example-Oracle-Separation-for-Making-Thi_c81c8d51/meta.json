@@ -4,5 +4,30 @@
  "title": "A-Quantum-Classical-Example-Oracle-Separation-for-Making-Thi",
  "token": "sk-EwecAZ9oF...",
  "created_at": "2026-08-13 14:55:30",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/fd8db7e9-c6ba-40e4-a7df-a91d5ada0ece.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/fd8db7e9-c6ba-40e4-a7df-a91d5ada0ece.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:54:56",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "PAC learning",
+    "quantum examples",
+    "sample complexity",
+    "oracle separation",
+    "hardcore predicate",
+    "Simon algorithm"
+   ],
+   "field": "量子计算学习理论",
+   "innovations": [
+    "首次证明量子样本比经典样本在学习setting中更强大（oracle separation）",
+    "推翻函数难学蕴含分布难生成的 conjecture，揭示学习与生成的本质差异",
+    "将近似Simon算法引入PAC学习框架，构造O(n) vs Ω(2^{n/2})指数级样本分离"
+   ],
+   "benchmarks": [
+    "Theorem 4.2: O(n) quantum samples vs Ω(2^{n/2}) classical samples for PAC generation",
+    "Theorem 3.2: function learning hardness does not imply distribution generation hardness"
+   ]
+  }
+ }
 }

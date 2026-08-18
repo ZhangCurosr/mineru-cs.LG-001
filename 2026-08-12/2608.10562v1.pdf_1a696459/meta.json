@@ -3,5 +3,31 @@
  "batch_id": "1a696459-886e-4da1-816b-5d33480e8031",
  "token": "sk-45Ifw5Iq3...",
  "created_at": "2026-08-12 16:05:00",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/7eed9bd4-a05f-44fa-a6b2-5086876ceac8.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/7eed9bd4-a05f-44fa-a6b2-5086876ceac8.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:50:00",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "conversion rate prediction",
+    "click-through rate",
+    "model calibration",
+    "click-intent decomposition",
+    "ads ranking",
+    "credit attribution",
+    "mixture of experts"
+   ],
+   "field": "计算广告与转化预估",
+   "innovations": [
+    "证明单输出CVR模型存在群条件校准的可观测性障碍，提出意图分解结构突破该障碍",
+    "利用日志点击类型作为免费行为监督信号，以<10⁻⁷%参数增量消除>99%校准误差",
+    "提出last-impression first-click信用归属策略及跨管道一致性条件，支持工业级部署"
+   ],
+   "benchmarks": [
+    "Meta生产广告holdback A/B测试",
+    "离线NE评估"
+   ]
+  }
+ }
 }

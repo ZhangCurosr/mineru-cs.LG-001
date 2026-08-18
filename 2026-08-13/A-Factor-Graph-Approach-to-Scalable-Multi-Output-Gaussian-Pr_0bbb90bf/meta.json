@@ -4,5 +4,31 @@
  "title": "A-Factor-Graph-Approach-to-Scalable-Multi-Output-Gaussian-Pr",
  "token": "sk-5WOIsMt5v...",
  "created_at": "2026-08-13 14:56:23",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/8d2183db-b3e7-464f-a816-975aba4e51ef.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-13/8d2183db-b3e7-464f-a816-975aba4e51ef.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:53:24",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "多输出高斯过程",
+    "因子图",
+    "消息传递",
+    "状态空间模型",
+    "部分观测",
+    "线性核化模型",
+    "Kalman平滑"
+   ],
+   "field": "贝叶斯深度学习/高斯过程",
+   "innovations": [
+    "将多输出GP回归表述为FFG上的精确高斯消息传递，推理复杂度O(C(DL²+L³))",
+    "最近邻链将低维输入几何压缩为一维马尔可夫序列，原生支持任意缺失观测模式无需协方差重构",
+    "给出链诱导核近似下GP后验参数的谱范数误差界，并证明不同起点的链长变化受O(log C)约束"
+   ],
+   "benchmarks": [
+    "Synthetic sensor network (M sweep)",
+    "ETTh1 electricity time series forecasting"
+   ]
+  }
+ }
 }

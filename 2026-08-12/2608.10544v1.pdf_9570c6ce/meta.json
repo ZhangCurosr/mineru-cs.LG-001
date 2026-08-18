@@ -3,5 +3,32 @@
  "batch_id": "9570c6ce-e939-42d8-9ff9-d3ae3b4a4057",
  "token": "sk-7NOZt17oN...",
  "created_at": "2026-08-12 15:01:56",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/b4f4f027-fc3f-4087-a088-47443dcb5926.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/b4f4f027-fc3f-4087-a088-47443dcb5926.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:49:32",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "图像恢复",
+    "流匹配",
+    "一致性训练",
+    "感知失真权衡",
+    "少步推理",
+    "梯度投影"
+   ],
+   "field": "图像恢复与生成",
+   "innovations": [
+    "提出PCFlow统一流匹配框架，直接联合优化失真与感知一致性",
+    "设计LCPL将感知约束扩展到轨迹相邻时间步",
+    "引入无冲突梯度投影策略解决结构-感知梯度冲突"
+   ],
+   "benchmarks": [
+    "CelebA-Test",
+    "LFW-Test",
+    "CelebAdult",
+    "FFHQ"
+   ]
+  }
+ }
 }

@@ -3,5 +3,32 @@
  "batch_id": "4f0a9c0c-a640-4147-b647-102382b12c2f",
  "token": "sk-n7iJ0Z1Ol...",
  "created_at": "2026-08-12 15:01:51",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/79b118eb-8ae5-4ffa-b1dd-0c84b7f22e67.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/79b118eb-8ae5-4ffa-b1dd-0c84b7f22e67.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:46:38",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "CNN inference cost prediction",
+    "energy-latency divergence",
+    "cross-GPU transferability",
+    "cascade ensemble",
+    "deployment screening",
+    "multi-target prediction",
+    "ResNet characterization"
+   ],
+   "field": "ML系统效率与部署",
+   "innovations": [
+    "揭示高负载下能耗与延迟3×发散及跨GPU目标级别可迁移性不对称",
+    "CARB级联混合集成框架以R²≈0.99联合预测能耗/延迟/显存",
+    "两阶段Pareto筛选工作流在秒级削减99.8%候选配置并维持95.8%预算分类准确率"
+   ],
+   "benchmarks": [
+    "RTX 5090",
+    "RTX 3080",
+    "13419 CNN configurations"
+   ]
+  }
+ }
 }

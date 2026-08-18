@@ -3,5 +3,29 @@
  "batch_id": "db748218-4b53-42a6-be30-01061648a466",
  "token": "sk-n7iJ0Z1Ol...",
  "created_at": "2026-08-12 15:02:03",
- "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/6b36da73-348d-4f3b-b156-e17a18ad1781.zip"
+ "result_url": "https://cdn-mineru.openxlab.org.cn/pdf/2026-08-12/6b36da73-348d-4f3b-b156-e17a18ad1781.zip",
+ "summarized": {
+  "model": "agnes-2.5-flash",
+  "at": "2026-08-18 05:47:56",
+  "chunks": 1,
+  "meta": {
+   "keywords": [
+    "multi-agent bandits",
+    "heavy-tailed rewards",
+    "decentralized learning",
+    "information asymmetry",
+    "robust UCB",
+    "implicit signaling"
+   ],
+   "field": "多智能体强化学习与bandit理论",
+   "innovations": [
+    "提出三种信息不对称结构下的去中心化厚尾MAB算法并给出匹配集中式的后悔界",
+    "利用动作偏离作为1-bit隐式通信信道实现无通信协同",
+    "系统揭示动作可观测性可在主要阶上补偿共同奖励缺失的理论价值"
+   ],
+   "benchmarks": [
+    "Pareto_reward_M2K2_T1e6"
+   ]
+  }
+ }
 }
